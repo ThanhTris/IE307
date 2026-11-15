@@ -25,13 +25,13 @@ export function DishSetupScreen({ draft, onChange, onBack, onContinue, onSchedul
     {notice ? <ToastNotice title={notice} tone={noticeTone} /> : null}
     {readOnly ? <StatusNotice title="Chỉ chủ phòng được sửa thiết lập" message="Bạn vẫn có thể chọn khẩu vị riêng." colors={colors} /> : null}
     {invalid ? <StatusNotice title={invalid} colors={colors} /> : null}
-    {heading('Buổi ăn', true)}<ChoiceGrid columns={2}>{tile => mealOptions.map(item => <SetupChoice key={item.id} width={tile} label={item.label} icon={item.icon} stacked compact selected={draft.mealSlot === item.id} disabled={disabled} onPress={() => { if (guard) guard({ ...draft, mealSlot: item.id }); else onChange(changeSetupMeal(draft, item.id, now())); }} />)}</ChoiceGrid>
+    {heading('Buổi ăn', true)}<ChoiceGrid>{mealOptions.map(item => <SetupChoice key={item.id} fill label={item.label} icon={item.icon} stacked compact selected={draft.mealSlot === item.id} disabled={disabled} onPress={() => { if (guard) guard({ ...draft, mealSlot: item.id }); else onChange(changeSetupMeal(draft, item.id, now())); }} />)}</ChoiceGrid>
     {heading('Thời gian', true)}<SetupTimeMode scheduled={draft.timeMode === 'scheduled'} scheduleOpen={scheduleOpen} disabled={disabled} onNow={() => onChange(switchToNow(draft, now()))} onSchedule={onSchedule} />
     {draft.timeMode === 'scheduled' && draft.desiredAt && Number.isFinite(Date.parse(draft.desiredAt)) ? <SetupScheduleSummary value={draft.desiredAt} onEdit={onSchedule} disabled={disabled} /> : null}
     {heading(draft.dishCount < 10 ? `Số món để lựa chọn · còn ${draft.dishCount} món phù hợp` : 'Số món để lựa chọn · 10–20', true)}<DishCount value={draft.dishCount} min={Math.min(10, draft.dishCount)} onChange={dishCount => onChange({ dishCount: shortageStep(draft.dishCount, dishCount) })} disabled={disabled} colors={colors} layout="inline" />
     {heading('Ngân sách mỗi người')}
     <View style={styles.grid}>{budgetOptions.map(item => <SetupChoice key={item.id ?? 'none'} label={item.label} icon={item.icon} selected={draft.budget === item.id} disabled={disabled} onPress={() => onChange({ budget: item.id })} />)}</View>
-    <SetupCheckboxRow label="Ưu tiên món khác 3 bữa gần đây" checked={hasRecentHistory === true && draft.avoidRecent} disabled={disabled || hasRecentHistory !== true} helper={hasRecentHistory === true ? 'Đã có lịch sử gần đây để tránh lặp.' : hasRecentHistory === false ? 'Chưa có lịch sử để tránh lặp.' : 'Chưa có dữ liệu lịch sử được cấp quyền.'} onPress={() => onChange({ avoidRecent: !draft.avoidRecent })} />
+    <SetupCheckboxRow label="Ưu tiên món khác 3 bữa gần đây" checked={hasRecentHistory === true && draft.avoidRecent} disabled={disabled || hasRecentHistory !== true} helper={hasRecentHistory === true ? 'Tránh 3 món đã chốt gần nhất của bạn.' : hasRecentHistory === false ? 'Cần bật Lưu lịch sử và có ít nhất một bữa đã chốt.' : 'Chưa có dữ liệu lịch sử được cấp quyền.'} onPress={() => onChange({ avoidRecent: !draft.avoidRecent })} />
     {heading('Rủ bạn ăn cùng')}<SetupInvitees ids={draft.inviteeIds} friends={friends} onEdit={onFriends} disabled={disabled} />{extra}
   </DishSetupFrame>;
 }

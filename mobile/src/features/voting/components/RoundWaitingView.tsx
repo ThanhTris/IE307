@@ -1,6 +1,7 @@
 import { ActivityIndicator, StyleSheet, Text, View } from 'react-native';
 import { AppButton, AppIcon, WaitingSummary, type Palette } from '../../../shared/ui';
 import { CountdownRing } from './CountdownRing';
+import { CONTAINER_GUTTER, CONTAINER_STYLE } from '../../../shared/ui/layout/ScreenContainer';
 
 /** Shown after the ballot is sent: who has voted, the 60 s window, and the host's early finish. */
 export function RoundWaitingView({ pending, waiting, needsRoundTwo, countdown, acknowledged, total, isHost, canFinish, onFinish, onRoundTwo, colors }: {
@@ -36,7 +37,7 @@ export function RoundWaitingView({ pending, waiting, needsRoundTwo, countdown, a
 }
 
 const styles = StyleSheet.create({
-  root: { flex: 1, alignItems: 'center', justifyContent: 'center', paddingHorizontal: 24, gap: 12 },
+  root: { flex: 1, alignItems: 'center', justifyContent: 'center', paddingHorizontal: CONTAINER_GUTTER, gap: 12, ...CONTAINER_STYLE },
   badge: { width: 72, height: 72, borderRadius: 36, alignItems: 'center', justifyContent: 'center', marginBottom: 4 },
   title: { fontFamily: 'InterBold', fontSize: 22, lineHeight: 30, textAlign: 'center' },
   body: { fontFamily: 'InterRegular', fontSize: 15, lineHeight: 22, textAlign: 'center', maxWidth: 320 },

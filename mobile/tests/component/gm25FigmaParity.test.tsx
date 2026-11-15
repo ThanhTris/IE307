@@ -36,7 +36,7 @@ describe('GM-25 Figma UI Parity Suite (Issue #86)', () => {
     },
     members: [
       { userId: 'usr_tri_001', displayName: 'Trí Thanh', isHost: true, ready: false, joinedAt: '2026-10-25T00:00:00Z' },
-      { userId: 'usr_tuan_002', displayName: 'Tuấn', isHost: false, ready: false, joinedAt: '2026-10-25T00:01:00Z' },
+      { userId: 'usr_tuan_002', displayName: 'Tuấn', isHost: false, ready: true, joinedAt: '2026-10-25T00:01:00Z' },
     ],
     round: 1,
     poolVersion: 1,
@@ -241,7 +241,7 @@ describe('GM-25 Figma UI Parity Suite (Issue #86)', () => {
       );
 
       expect(screen.getByText('Phòng #GCD999')).toBeOnTheScreen();
-      const resumeBtn = screen.getByRole('button', { name: 'Tiếp tục phiên' });
+      const resumeBtn = screen.getByRole('button', { name: 'Quay lại phòng' });
       expect(resumeBtn).toBeOnTheScreen();
       await fireEvent.press(resumeBtn);
       expect(onResume).toHaveBeenCalledTimes(1);
@@ -575,7 +575,7 @@ describe('GM-25 Figma UI Parity Suite (Issue #86)', () => {
 
   // Node 330:3070 — 06 · Phòng chờ / Chủ phòng / Thành viên
   describe('Node 330:3070 — Phòng chờ Live Lobby không có Ready flow', () => {
-    it('renders real lobby with 20 member capacity, host start without ready requirement', async () => {
+    it('renders real lobby with 20 member capacity, host starts when every member is ready', async () => {
       const client = createMockApiClient();
       const repo = createRoomRepository({ client });
       const onHome = jest.fn();
@@ -594,10 +594,11 @@ describe('GM-25 Figma UI Parity Suite (Issue #86)', () => {
       expect(await screen.findByText('GCD999')).toBeOnTheScreen();
       expect(screen.getByText('Thành viên (2)')).toBeOnTheScreen();
 
-      // Ready controls are removed
+      // Readiness is shown as a label, not a button (ADR-028)
       expect(screen.queryByRole('button', { name: /sẵn sàng/i })).toBeNull();
+      expect(screen.getByLabelText('Sẵn sàng')).toBeOnTheScreen();
 
-      // Host can start directly
+      // Host can start once nobody is still choosing
       const startBtn = screen.getByRole('button', { name: 'Bắt đầu chọn món' });
       expect(startBtn.props.accessibilityState.disabled).not.toBe(true);
 
@@ -613,6 +614,18 @@ describe('GM-25 Figma UI Parity Suite (Issue #86)', () => {
           }),
         })
       );
+    });
+
+    it('the host cannot start while a member is still choosing their taste', async () => {
+      const guest = sampleSnapshot.members[1]!;
+      guest.ready = false;
+      try {
+        const client = createMockApiClient();
+        await render(<LobbyScreen repository={createRoomRepository({ client })} roomId="room_live_001" currentUserId="usr_tri_001" onHome={jest.fn()} onStartRound={jest.fn()} />);
+        expect(await screen.findByText('Chờ 1 người chọn khẩu vị')).toBeOnTheScreen();
+        expect(screen.getByLabelText('Đang chọn khẩu vị')).toBeOnTheScreen();
+        expect(screen.getByRole('button', { name: 'Bắt đầu chọn món' }).props.accessibilityState.disabled).toBe(true);
+      } finally { guest.ready = true; }
     });
 
     it('member role shows leave room button with confirmation sheet', async () => {

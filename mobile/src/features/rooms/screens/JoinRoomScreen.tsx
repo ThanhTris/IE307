@@ -23,6 +23,8 @@ export type JoinRoomEntryProps = {
   onBack: () => void;
   createRequestId?: RequestIdFactory;
   linkError?: string;
+  /** Shown above the code entry: a way back into the room this account was last in (ADR-027). */
+  returnToRoom?: ReactNode;
   /** Live camera view; receives each scanned QR payload. Omitted in tests / when no camera is available. */
   renderScanner?: (onScanned: (raw: string) => void) => ReactNode;
 };
@@ -167,6 +169,7 @@ export function JoinRoomScreen(props: JoinRoomEntryProps) {
         <JoinEntryProblem code={flow.code} error={problem} busy={flow.readBusy} onRetry={() => { void flow.read(); }} onEdit={() => { flow.edit(); flow.editCode(''); checked.current = ''; }} onHome={props.onBack} />
       ) : (
         <>
+          {props.returnToRoom}
           {props.linkError ? (
             <StatusNotice
               title="Liên kết bị chặn"

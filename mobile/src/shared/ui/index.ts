@@ -1,6 +1,7 @@
 export * from './types';
 export * from './icons/AppIcon';
 export * from './layout/AppHeader';
+export * from './layout/ScreenContainer';
 export * from './layout/BrandLogo';
 export * from './layout/AppBottomNavigation';
 export * from './layout/ApiFeatureFrame';

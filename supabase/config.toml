@@ -21,7 +21,8 @@ sql_paths = []
 enabled = false
 
 [realtime]
-enabled = false
+# ADR-026: the app listens to new inbox rows (migration 0053) instead of reading every few seconds.
+enabled = true
 
 [studio]
 enabled = false

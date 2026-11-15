@@ -1,11 +1,13 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { Pressable, StyleSheet, Switch, Text, useWindowDimensions, View } from 'react-native';
+import { BackHandler, Pressable, StyleSheet, Switch, Text, useWindowDimensions, View } from 'react-native';
 import { useShellTheme } from '../../../shared/lib/useShellTheme';
 import { AppButton, AppIcon, LoadingState, SheetDialog, StatusNotice, ApiFeatureFrame } from '../../../shared/ui';
 import { errorMessage } from '../../friends/screens/FriendsScreen';
 import type { CanonicalHistoryItem, HistoryRow } from '../services/historyTypes';
 import { historyIdOf, historyTitle, type HistoryRepository } from '../services/historyRepository';
 import { ToastNotice, useToast } from '../../../shared/ui/feedback/Toast';
+import { ResultDishArtwork } from '../../../shared/ui/result/ResultDishArtwork';
+import { HistoryCard } from '../components/HistoryCard';
 import { podiumOrder } from '../../result/services/resultPresentation';
 
 const HISTORY_LOAD_TIMEOUT_MS = 15_000;
@@ -43,6 +45,12 @@ export function HistoryScreen({ repository, onNavigate, onHome }: Props) {
   const [consent, setConsent] = useState<boolean | undefined>();
   const [consentBusy, setConsentBusy] = useState(false);
   const selectedHistory = items.find((item): item is CanonicalHistoryItem => 'historyId' in item && item.historyId === selectedHistoryId);
+  // Android back closes the detail first (the header arrow does the same).
+  useEffect(() => {
+    if (!selectedHistoryId) return;
+    const listener = BackHandler.addEventListener('hardwareBackPress', () => { setSelectedHistoryId(null); return true; });
+    return () => listener.remove();
+  }, [selectedHistoryId]);
   const visibleItems = items.filter(item => {
     if (filter === 'all') return true;
     const decided = 'historyId' in item
@@ -114,6 +122,7 @@ export function HistoryScreen({ repository, onNavigate, onHome }: Props) {
       const result = await repository.updateConsent({ scope: 'personal', consent: next });
       if (!result.ok) { toast?.show({ title: 'Chưa cập nhật được', message: errorMessage(result.error.messageKey), tone: 'error' }); return; }
       setConsent(next);
+      await load(true);
       toast?.show({ title: next ? 'Đã bật lưu lịch sử' : 'Đã tắt lưu lịch sử', message: next ? 'Các bữa chốt từ giờ sẽ được lưu 30 ngày.' : 'Các bữa chốt từ giờ sẽ không được lưu.', tone: 'success' });
     } catch {
       toast?.show({ title: 'Chưa cập nhật được', message: 'Không kết nối được máy chủ.', tone: 'error' });
@@ -123,23 +132,31 @@ export function HistoryScreen({ repository, onNavigate, onHome }: Props) {
   };
 
   const confirm = async () => {
-    if (!action || lock.current) return;
+    if (!action) return;
+    const pending = action.item;
+    setAction(null);
+    await removeItem(pending);
+  };
+
+  /** Deletes one entry (swipe, or the confirmed button on the detail). */
+  const removeItem = async (item: HistoryRow): Promise<boolean> => {
+    if (lock.current) return false;
     lock.current = true;
     setBusy(true);
-    const pending = action;
-    setAction(null);
     setMessage(null);
     try {
-      const result = await repository.delete(historyIdOf(pending.item));
-      if (!result.ok) { setMessage({ text: errorMessage(result.error.messageKey), tone: 'error' }); return; }
+      const result = await repository.delete(historyIdOf(item));
+      if (!result.ok) { setMessage({ text: errorMessage(result.error.messageKey), tone: 'error' }); return false; }
       repository.invalidate();
       setFetchedAt('');
       setSelectedHistoryId(null);
-      setMessage({ text: 'Máy chủ đã nhận yêu cầu xóa. Đang tải lại lịch sử theo quyền hiện tại.', tone: 'success' });
+      toast?.show({ title: 'Đã xóa mục lịch sử', tone: 'success' });
       await load(true);
+      return true;
     } catch {
       setMessage({ text: 'Chưa rõ máy chủ đã nhận thao tác hay chưa. Tải lại lịch sử để kiểm tra trạng thái.', tone: 'error' });
       await load(true);
+      return false;
     } finally {
       lock.current = false;
       setBusy(false);
@@ -147,14 +164,15 @@ export function HistoryScreen({ repository, onNavigate, onHome }: Props) {
   };
 
   return (
-    <ApiFeatureFrame active="history" title="Lịch sử" onNavigate={onNavigate} onHome={onHome}>
+    <ApiFeatureFrame active="history" title={selectedHistory ? 'Chi tiết bữa ăn' : 'Lịch sử'} onNavigate={onNavigate} onHome={onHome}
+      onBack={selectedHistory ? () => setSelectedHistoryId(null) : undefined}>
       <View style={styles.content}>
-        <View>
-          <Text accessibilityRole="header" style={[styles.pageTitle, { color: colors.text }]}>{selectedHistory ? 'Chi tiết bữa ăn' : 'Lịch sử'}</Text>
-        </View>
+        {!selectedHistory ? <View>
+          <Text accessibilityRole="header" style={[styles.pageTitle, { color: colors.text }]}>Lịch sử</Text>
+        </View> : null}
 
         {selectedHistory ? <SavedHistoryDetail item={selectedHistory} largeText={largeText} colors={colors}
-          onBack={() => setSelectedHistoryId(null)} onCreateNew={() => onNavigate('/room/create')}
+          onCreateNew={() => onNavigate('/room/create')}
           onDelete={() => setAction({ kind: 'delete', item: selectedHistory })} busy={busy} /> : null}
 
         {!selectedHistory ? <View accessibilityRole="tablist" style={[styles.filters, largeText && styles.filtersLarge, { backgroundColor: colors.warm }]}>
@@ -200,26 +218,10 @@ export function HistoryScreen({ repository, onNavigate, onHome }: Props) {
             const score = scored?.topDishes.find(entry => entry.isWinner)?.score;
             const winner = canonical && item.result.status === 'DECIDED' ? item.result.winner?.name : !canonical ? item.winnerName : undefined;
             const isLegacy = canonical && item.result.status === 'DECIDED' && !scored;
-            return <View key={historyIdOf(item)} style={[styles.historyCard, { backgroundColor: colors.surface, borderColor: colors.line }]}>
-              <View style={styles.cardMain}>
-                <View style={[styles.dishIcon, { backgroundColor: colors.warm }]}>{decided ? <AppIcon name="bowl" size={24} color={colors.text} /> : <AppIcon name="noodles" size={24} color={colors.text} />}</View>
-                <View style={styles.cardCopy}>
-                  <Text numberOfLines={2} style={[styles.cardTitle, { color: colors.text }]}>{decided ? winner ?? historyTitle(item) : 'Chưa chốt món'}</Text>
-                  <Text style={[styles.caption, { color: colors.muted }]}>{historyCardMetadata(item, date)}</Text>
-                </View>
-              </View>
-              {scored && scored.topDishes.length > 1 ? <View style={styles.rankList}>
-                {podiumOrder(scored.topDishes).map((entry, index) => <Text key={entry.dish.roundDishId} style={[styles.rankText, { color: colors.text }]}>{index + 1}. {entry.dish.name} · {entry.score} điểm</Text>)}
-              </View> : null}
-              <View style={[styles.cardFooter, largeText && styles.cardFooterLarge, { borderTopColor: colors.line }]}>
-                <Text style={[styles.score, { color: colors.text }]}>{score !== undefined ? `${score} điểm` : isLegacy ? 'Kết quả cũ' : !decided ? 'Cả nhóm chưa chọn được món' : 'Đã chốt'}</Text>
-                {decided ? <Text style={[styles.winnerLabel, { color: colors.green }]}>Món được chọn</Text> : null}
-              </View>
-              <View style={[styles.rowActions, largeText && styles.rowActionsLarge]}>
-                {canonical ? <AppButton label="Xem chi tiết đã lưu" variant="quiet" onPress={() => setSelectedHistoryId(item.historyId)} disabled={busy} colors={colors} style={styles.rowButton} /> : null}
-                <AppButton label="Xóa" variant="secondary" onPress={() => setAction({ kind: 'delete', item })} disabled={busy} colors={colors} style={styles.deleteButton} />
-              </View>
-            </View>;
+            return <HistoryCard key={historyIdOf(item)} title={decided ? winner ?? historyTitle(item) : 'Chưa chốt món'} meta={historyCardMetadata(item, date)} decided={decided}
+              ranks={scored && scored.topDishes.length > 1 ? podiumOrder(scored.topDishes).map((entry, index) => `${index + 1}. ${entry.dish.name} · ${entry.score} điểm`) : []}
+              footer={score !== undefined ? `${score} điểm` : isLegacy ? 'Kết quả cũ' : !decided ? 'Cả nhóm chưa chọn được món' : 'Đã chốt'} winnerLabel={decided ? 'Món được chọn' : undefined}
+              largeText={largeText} disabled={busy} onOpen={canonical ? () => setSelectedHistoryId(item.historyId) : undefined} onDelete={() => removeItem(item)} colors={colors} />;
           })}</View>)}
         </View> : null}
 
@@ -245,11 +247,10 @@ function FilterButton({ title, value, selected, onSelect, largeText, colors }: {
   </Pressable>;
 }
 
-function SavedHistoryDetail({ item, largeText, colors, onBack, onCreateNew, onDelete, busy }: {
+function SavedHistoryDetail({ item, largeText, colors, onCreateNew, onDelete, busy }: {
   item: CanonicalHistoryItem;
   largeText: boolean;
   colors: ReturnType<typeof useShellTheme>['colors'];
-  onBack: () => void;
   onCreateNew: () => void;
   onDelete: () => void;
   busy: boolean;
@@ -258,27 +259,15 @@ function SavedHistoryDetail({ item, largeText, colors, onBack, onCreateNew, onDe
   const decided = result.status === 'DECIDED';
   const scored = 'topDishes' in result ? result : undefined;
   const winner = decided ? result.winner?.name : undefined;
-  const winnerScore = scored?.topDishes.find(entry => entry.isWinner)?.score;
+  const winnerArtwork = scored?.topDishes.find(entry => entry.isWinner)?.dish.artwork?.uri;
   const finalizedAt = result.finalizedAt;
   const desiredAt = item.desiredAt;
   const participants = item.participants;
 
   return <View style={styles.detailContent}>
-    <AppButton label="Quay lại lịch sử" variant="quiet" onPress={onBack} disabled={busy} colors={colors} style={styles.detailBack} />
     <Text style={[styles.detailTitle, largeText && styles.detailTitleLarge, { color: colors.text }]}>{winner ?? 'Chưa có món được chọn'}</Text>
-    <Text style={[styles.caption, { color: colors.muted }]}>{item.scope === 'personal' ? 'Lịch sử cá nhân' : 'Lịch sử nhóm'} · {formatHistoryDate(item.createdAt)}</Text>
-
     <View style={[styles.detailWinner, { backgroundColor: colors.warm }]}>
-      <View style={[styles.statusPill, { backgroundColor: colors.surface }]}>
-        <Text style={[styles.statusText, { color: colors.text }]}>{decided ? 'Đã chốt' : 'Chưa đồng thuận'}</Text>
-      </View>
-      <View style={styles.detailWinnerBody}>
-        <View style={styles.detailWinnerCopy}>
-          <Text style={[styles.detailDish, largeText && styles.detailDishLarge, { color: colors.text }]}>{winner ?? (result.reasonCode === 'ALL_REMOVED' ? 'Nhóm đã loại hết các món' : 'Không có món đủ đồng thuận')}</Text>
-          {winnerScore !== undefined ? <Text style={[styles.detailScore, { color: colors.text }]}>{winnerScore} điểm</Text> : null}
-        </View>
-        <View style={[styles.detailIcon, { backgroundColor: colors.surface }]}><AppIcon name="bowl" size={24} color={colors.text} /></View>
-      </View>
+      <ResultDishArtwork uri={winnerArtwork} label={winner ?? 'Chưa có món được chọn'} winner={decided} size={168} colors={colors} />
       {!scored && decided ? <Text style={[styles.caption, { color: colors.muted }]}>Phiên bản kết quả cũ không lưu điểm hoặc bảng xếp hạng.</Text> : null}
     </View>
 
@@ -298,14 +287,25 @@ function SavedHistoryDetail({ item, largeText, colors, onBack, onCreateNew, onDe
       {participants?.length ? <View style={styles.participantList}>{participants.map((person, index) => <View key={`${person.role}-${index}-${person.displayName}`} style={[styles.participantPill, { backgroundColor: colors.warm }]}>
         <Text style={[styles.participantInitial, { color: colors.text }]}>{person.displayName.trim().charAt(0).toLocaleUpperCase()}</Text>
         <Text style={[styles.participantName, { color: colors.text }]}>{person.displayName}</Text>
-      </View>)}</View> : <Text style={[styles.caption, { color: colors.text }]}>{item.memberCount ? `${item.memberCount} thành viên` : 'Thông tin thành viên không được lưu trong bản này.'}</Text>}
-      <Text style={[styles.caption, { color: colors.muted }]}>{desiredAt ? `Bữa ăn dự kiến · ${formatHistoryDate(desiredAt)}` : 'Không có thời gian bữa ăn dự kiến'}</Text>
-      <Text style={[styles.caption, { color: colors.muted }]}>{`Kết quả chốt · ${formatHistoryDate(finalizedAt)}`}</Text>
-      <Text style={[styles.caption, { color: colors.muted }]}>{`Lưu đến · ${formatHistoryDate(item.expiresAt)}`}</Text>
+      </View>)}</View> : null}
+      <InfoRow icon="friends" label="Thành viên" value={item.memberCount ? `${item.memberCount} người` : 'Không lưu'} colors={colors} />
+      <InfoRow icon="calendar" label="Bữa ăn dự kiến" value={desiredAt ? formatHistoryDate(desiredAt) : 'Không đặt giờ'} colors={colors} />
+      <InfoRow icon="check" label="Kết quả chốt" value={formatHistoryDate(finalizedAt)} colors={colors} />
+      <InfoRow icon="hourglass" label="Lưu đến" value={formatHistoryDate(item.expiresAt)} colors={colors} last />
     </View>
 
     <AppButton label="Tạo phòng mới" onPress={onCreateNew} disabled={busy} colors={colors} />
-    <AppButton label="Xóa mục lịch sử" variant="secondary" onPress={onDelete} disabled={busy} colors={colors} />
+    <Pressable accessibilityRole="button" accessibilityLabel="Xóa mục lịch sử" disabled={busy} onPress={onDelete} style={styles.detailDelete}>
+      <AppIcon name="trash" size={16} color={colors.danger} /><Text style={[styles.detailDeleteText, { color: colors.danger }]}>Xóa mục lịch sử</Text>
+    </Pressable>
+  </View>;
+}
+
+function InfoRow({ icon, label, value, colors, last }: { icon: Parameters<typeof AppIcon>[0]['name']; label: string; value: string; colors: ReturnType<typeof useShellTheme>['colors']; last?: boolean }) {
+  return <View style={[styles.infoRow, !last && { borderBottomColor: colors.line, borderBottomWidth: StyleSheet.hairlineWidth }]}>
+    <View style={[styles.infoIcon, { backgroundColor: colors.warm }]}><AppIcon name={icon} size={16} color={colors.primary} /></View>
+    <Text style={[styles.infoLabel, { color: colors.muted }]}>{label}</Text>
+    <Text numberOfLines={2} style={[styles.infoValue, { color: colors.text }]}>{value}</Text>
   </View>;
 }
 
@@ -365,18 +365,9 @@ const styles = StyleSheet.create({
   content: { gap: 18 },
   pageTitle: { fontFamily: 'InterBold', fontSize: 30, lineHeight: 40 },
   detailContent: { gap: 14 },
-  detailBack: { alignSelf: 'flex-start', minHeight: 44 },
   detailTitle: { fontFamily: 'InterBold', fontSize: 28, lineHeight: 36 },
   detailTitleLarge: { fontSize: 32, lineHeight: 40 },
-  detailWinner: { minHeight: 180, borderRadius: 18, padding: 20, gap: 14 },
-  statusPill: { alignSelf: 'flex-start', minHeight: 28, borderRadius: 14, paddingHorizontal: 14, justifyContent: 'center' },
-  statusText: { fontFamily: 'InterSemiBold', fontSize: 12, lineHeight: 18 },
-  detailWinnerBody: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', gap: 16 },
-  detailWinnerCopy: { flex: 1, minWidth: 0, gap: 12 },
-  detailDish: { fontFamily: 'InterBold', fontSize: 22, lineHeight: 30 },
-  detailDishLarge: { fontSize: 26, lineHeight: 34 },
-  detailScore: { fontFamily: 'InterBold', fontSize: 16, lineHeight: 24 },
-  detailIcon: { width: 78, height: 78, borderRadius: 18, alignItems: 'center', justifyContent: 'center' },
+  detailWinner: { borderRadius: 18, paddingVertical: 20, paddingHorizontal: 16, gap: 12, alignItems: 'center' },
   detailSectionTitle: { fontFamily: 'InterBold', fontSize: 18, lineHeight: 26, marginTop: 4 },
   detailRanking: { borderWidth: 1, borderRadius: 18, paddingHorizontal: 14 },
   detailRankRow: { minHeight: 58, flexDirection: 'row', alignItems: 'center', gap: 12 },
@@ -384,7 +375,13 @@ const styles = StyleSheet.create({
   rankBadgeText: { fontFamily: 'InterBold', fontSize: 18, lineHeight: 24 },
   detailRankDish: { flex: 1, minWidth: 0, fontFamily: 'InterSemiBold', fontSize: 14, lineHeight: 20 },
   detailRankScore: { fontFamily: 'InterSemiBold', fontSize: 14, lineHeight: 20 },
-  participantCard: { borderWidth: 1, borderRadius: 16, padding: 14, gap: 10 },
+  participantCard: { borderWidth: 1, borderRadius: 16, paddingHorizontal: 14, paddingVertical: 12, gap: 10 },
+  infoRow: { minHeight: 44, flexDirection: 'row', alignItems: 'center', gap: 10, paddingBottom: 10 },
+  infoIcon: { width: 28, height: 28, borderRadius: 8, alignItems: 'center', justifyContent: 'center' },
+  infoLabel: { fontFamily: 'InterRegular', fontSize: 13, lineHeight: 18 },
+  infoValue: { flex: 1, textAlign: 'right', fontFamily: 'InterSemiBold', fontSize: 13, lineHeight: 18 },
+  detailDelete: { alignSelf: 'center', minHeight: 44, flexDirection: 'row', alignItems: 'center', gap: 6, paddingHorizontal: 12 },
+  detailDeleteText: { fontFamily: 'InterSemiBold', fontSize: 14, lineHeight: 20 },
   participantList: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
   participantPill: { minHeight: 36, borderRadius: 18, paddingHorizontal: 10, flexDirection: 'row', alignItems: 'center', gap: 6 },
   participantInitial: { fontFamily: 'InterBold', fontSize: 11, lineHeight: 16 },
@@ -397,22 +394,7 @@ const styles = StyleSheet.create({
   section: { gap: 12 },
   sectionTop: { minHeight: 28, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
   sectionTitle: { fontFamily: 'InterSemiBold', fontSize: 18, lineHeight: 26 },
-  historyCard: { borderWidth: 1, borderRadius: 16, padding: 15, gap: 10 },
-  cardMain: { minHeight: 68, flexDirection: 'row', alignItems: 'center', gap: 16 },
-  dishIcon: { width: 68, height: 68, borderRadius: 16, alignItems: 'center', justifyContent: 'center' },
-  cardCopy: { flex: 1, minWidth: 0, gap: 4 },
-  cardTitle: { fontFamily: 'InterSemiBold', fontSize: 16, lineHeight: 22 },
   caption: { fontFamily: 'InterRegular', fontSize: 12, lineHeight: 18 },
-  rankList: { paddingTop: 2, gap: 4 },
-  rankText: { fontFamily: 'InterRegular', fontSize: 12, lineHeight: 18 },
-  cardFooter: { minHeight: 38, borderTopWidth: StyleSheet.hairlineWidth, paddingTop: 8, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', gap: 10 },
-  cardFooterLarge: { flexDirection: 'column', alignItems: 'stretch' },
-  score: { fontFamily: 'InterSemiBold', fontSize: 13, lineHeight: 20, flex: 1 },
-  winnerLabel: { fontFamily: 'InterSemiBold', fontSize: 12, lineHeight: 18 },
-  rowActions: { flexDirection: 'row', gap: 8 },
-  rowActionsLarge: { flexDirection: 'column' },
-  rowButton: { flex: 1, minHeight: 48 },
-  deleteButton: { minWidth: 80, minHeight: 48 },
   emptyState: { alignItems: 'center', justifyContent: 'center', paddingVertical: 40, gap: 12 },
   emptyIcon: { width: 112, height: 112, borderRadius: 56, alignItems: 'center', justifyContent: 'center' },
   emptyTitle: { fontFamily: 'InterBold', fontSize: 20, lineHeight: 28, textAlign: 'center' },

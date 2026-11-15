@@ -7,6 +7,7 @@ import type { RoomRepository } from '../../rooms/services/roomRepository';
 import { createNativePushService } from '../services/nativePush';
 import { clearPushRegistrationSecrets, getActivePushDriver, getPushDeviceId, isGm29QaPushEnabled, pushSetupIssue } from '../services/expoPushDriver';
 import { ToastNotice } from '../../../shared/ui/feedback/Toast';
+import { CONTAINER_STYLE, CONTAINER_GUTTER } from '../../../shared/ui/layout/ScreenContainer';
 
 export function PushSettingsScreen({ repository, onHome, onInbox }: {
   repository: RoomRepository;
@@ -212,7 +213,7 @@ export function PushSettingsScreen({ repository, onHome, onInbox }: {
 
 const styles = StyleSheet.create({
   root: { flex: 1 },
-  content: { flexGrow: 1, padding: 16, gap: 16, width: '100%', maxWidth: 640, alignSelf: 'center' },
+  content: { flexGrow: 1, padding: CONTAINER_GUTTER, gap: 16, ...CONTAINER_STYLE },
   card: { borderWidth: 1, borderRadius: 16, padding: 16, gap: 12 },
   qaCard: { borderWidth: 1, borderRadius: 16, padding: 12, gap: 10 },
   qaTitle: { fontSize: 16, lineHeight: 23, fontWeight: '700' },

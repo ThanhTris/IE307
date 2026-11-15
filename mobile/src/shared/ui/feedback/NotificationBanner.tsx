@@ -4,6 +4,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useShellTheme } from '../../lib/useShellTheme';
 import { radii, spacing, typography } from '../../theme/tokens';
 import { AppIcon, type AppIconName } from '../icons/AppIcon';
+import { CONTAINER_STYLE } from '../layout/ScreenContainer';
 
 /**
  * In-app notification banner (ADR-026): something that happened to the user because of someone else (a friend request,
@@ -24,6 +25,11 @@ type NotificationItem = NotificationInput & { id: number };
 type NotificationApi = { notify: (input: NotificationInput) => void };
 
 const NotificationContext = createContext<NotificationApi | null>(null);
+/** What the layers draw. A native Modal is its own window above the screen, so each modal mounts a host (like ToastHost). */
+type NotificationHosts = { current?: NotificationItem; waiting: number; done: (id: number) => void; top: number; register: (id: number) => () => void };
+const NotificationHostsContext = createContext<NotificationHosts | null>(null);
+let nextHostId = 0;
+const ROOT_HOST = 0;
 export const useNotifications = () => useContext(NotificationContext);
 
 export const NOTIFICATION_DURATION_MS = 5000;
@@ -39,11 +45,32 @@ export function NotificationProvider({ children }: PropsWithChildren) {
   }, []);
   const done = useCallback((id: number) => setQueue(current => current.filter(item => item.id !== id)), []);
   const api = useMemo(() => ({ notify }), [notify]);
-  const current = queue[0];
-  return <NotificationContext.Provider value={api}>
+  const [hosts, setHosts] = useState<number[]>([]);
+  const register = useCallback((id: number) => {
+    setHosts(list => [...list, id]);
+    return () => setHosts(list => list.filter(host => host !== id));
+  }, []);
+  const top = hosts.length ? hosts[hosts.length - 1]! : ROOT_HOST;
+  const shared = useMemo(() => ({ current: queue[0], waiting: queue.length - 1, done, top, register }), [queue, done, top, register]);
+  return <NotificationContext.Provider value={api}><NotificationHostsContext.Provider value={shared}>
     {children}
-    {current ? <NotificationCard key={current.id} item={current} waiting={queue.length - 1} onDone={done} /> : null}
-  </NotificationContext.Provider>;
+    <NotificationLayer hostId={ROOT_HOST} />
+  </NotificationHostsContext.Provider></NotificationContext.Provider>;
+}
+
+/** Mount inside a native Modal so a notification stays visible above it. */
+export function NotificationHost() {
+  const shared = useContext(NotificationHostsContext);
+  const [hostId] = useState(() => ++nextHostId);
+  const register = shared?.register;
+  useEffect(() => register?.(hostId), [register, hostId]);
+  return <NotificationLayer hostId={hostId} />;
+}
+
+function NotificationLayer({ hostId }: { hostId: number }) {
+  const shared = useContext(NotificationHostsContext);
+  if (!shared || shared.top !== hostId || !shared.current) return null;
+  return <NotificationCard key={shared.current.id} item={shared.current} waiting={shared.waiting} onDone={shared.done} />;
 }
 
 function NotificationCard({ item, waiting, onDone }: { item: NotificationItem; waiting: number; onDone: (id: number) => void }) {
@@ -84,8 +111,8 @@ function NotificationCard({ item, waiting, onDone }: { item: NotificationItem; w
 }
 
 const styles = StyleSheet.create({
-  host: { position: 'absolute', left: spacing.lg, right: spacing.lg, zIndex: 1100, elevation: 1100, alignItems: 'stretch' },
-  card: { flexDirection: 'row', alignItems: 'center', gap: spacing.md, paddingVertical: spacing.md, paddingHorizontal: spacing.lg, borderRadius: radii.lg, borderWidth: StyleSheet.hairlineWidth, shadowColor: '#000', shadowOpacity: 0.15, shadowRadius: 10, shadowOffset: { width: 0, height: 4 }, elevation: 8 },
+  host: { position: 'absolute', left: 0, right: 0, paddingHorizontal: spacing.lg, zIndex: 1100, elevation: 1100, alignItems: 'center' },
+  card: { ...CONTAINER_STYLE, flexDirection: 'row', alignItems: 'center', gap: spacing.md, paddingVertical: spacing.md, paddingHorizontal: spacing.lg, borderRadius: radii.lg, borderWidth: StyleSheet.hairlineWidth, shadowColor: '#000', shadowOpacity: 0.15, shadowRadius: 10, shadowOffset: { width: 0, height: 4 }, elevation: 8 },
   icon: { width: 36, height: 36, borderRadius: 18, alignItems: 'center', justifyContent: 'center' },
   texts: { flex: 1, minWidth: 0, gap: 2 },
   title: { ...typography.bodyBold },

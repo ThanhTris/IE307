@@ -77,7 +77,7 @@ export function LobbyMealEditor({ field, gateway, onClose, onSaved, now = Date.n
   return <>
     <SheetDialog visible={visible} title={field ? titles[field] : ''} onClose={() => { if (!busy) onClose(); }} showClose={false} colors={colors}>
       {!draft && field ? <LobbyMealEditorSkeleton field={field} colors={colors} /> : null}
-      {draft && field === 'meal' ? <ChoiceGrid columns={2}>{tile => mealOptions.map(item => <SetupChoice key={item.id} width={tile} label={item.label} icon={item.icon} stacked compact selected={draft.mealSlot === item.id} disabled={busy} onPress={() => { guard({ ...draft, mealSlot: item.id }); }} />)}</ChoiceGrid> : null}
+      {draft && field === 'meal' ? <ChoiceGrid>{mealOptions.map(item => <SetupChoice key={item.id} fill label={item.label} icon={item.icon} stacked compact selected={draft.mealSlot === item.id} disabled={busy} onPress={() => { guard({ ...draft, mealSlot: item.id }); }} />)}</ChoiceGrid> : null}
       {draft && field === 'budget' ? <View style={styles.grid}>{budgetOptions.map(item => <SetupChoice key={item.id ?? 'none'} label={item.label} icon={item.icon} selected={draft.budget === item.id} disabled={busy} onPress={() => { void save({ ...draft, budget: item.id }); }} />)}</View> : null}
       {draft && field === 'time' ? <SetupTimeMode scheduled={draft.timeMode === 'scheduled'} scheduleOpen={schedule !== undefined} disabled={busy} onNow={() => { void save(switchToNow(draft, now())); }}
         onSchedule={() => setSchedule(draft.timeMode === 'scheduled' && draft.desiredAt && Number.isFinite(Date.parse(draft.desiredAt)) ? draft.desiredAt : defaultScheduledTime(now()))} /> : null}

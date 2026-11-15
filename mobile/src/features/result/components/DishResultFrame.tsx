@@ -3,6 +3,7 @@ import { BackHandler, Pressable, ScrollView, StyleSheet, Text, View } from 'reac
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useAppFonts } from '../../../bootstrap/AppFontProvider';
 import { useShellTheme } from '../../../shared/lib/useShellTheme';
+import { CONTAINER_STYLE } from '../../../shared/ui/layout/ScreenContainer';
 
 /** One way out: the X in the header goes home, where a new room is started. */
 export function DishResultFrame({ children, onHome }: { children: ReactNode; onHome: () => void; onNewSession?: () => void }) {
@@ -15,4 +16,4 @@ export function DishResultFrame({ children, onHome }: { children: ReactNode; onH
     </ScrollView>
   </SafeAreaView>;
 }
-const styles = StyleSheet.create({ root: { flex: 1 }, header: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: 12, width: '100%', maxWidth: 480, alignSelf: 'center', minHeight: 60 }, close: { minHeight: 48, minWidth: 48, justifyContent: 'center', alignItems: 'center' }, cross: { fontSize: 34, lineHeight: 40 }, title: { flex: 1, textAlign: 'center', fontSize: 20, lineHeight: 28 }, content: { flexGrow: 1, width: '100%', maxWidth: 480, alignSelf: 'center', padding: 24, paddingTop: 4, gap: 16 } });
+const styles = StyleSheet.create({ root: { flex: 1 }, header: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: 12, ...CONTAINER_STYLE, minHeight: 60 }, close: { minHeight: 48, minWidth: 48, justifyContent: 'center', alignItems: 'center' }, cross: { fontSize: 34, lineHeight: 40 }, title: { flex: 1, textAlign: 'center', fontSize: 20, lineHeight: 28 }, content: { flexGrow: 1, ...CONTAINER_STYLE, padding: 24, paddingTop: 4, gap: 16 } });

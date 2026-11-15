@@ -8,6 +8,7 @@ import { useToast } from '../../../shared/ui/feedback/Toast';
 import { ChoiceIconView, type ChoiceIcon } from '../../../shared/ui/icons/ChoiceIcon';
 import { SetupCheckboxRow } from '../../context/components/SetupCheckboxRow';
 import { permissionCopy, type PermissionKind, type PermissionService, type RawPermission } from '../services/appPermissions';
+import { FOCUSED_STYLE } from '../../../shared/ui/layout/ScreenContainer';
 
 const KINDS: PermissionKind[] = ['notifications', 'camera', 'location'];
 const ICONS: Record<PermissionKind, ChoiceIcon> = {
@@ -86,7 +87,7 @@ export function PermissionsWelcomeScreen({ service, history, onDone }: { service
 
 const styles = StyleSheet.create({
   root: { flex: 1 },
-  content: { flexGrow: 1, padding: 24, gap: 16, width: '100%', maxWidth: 480, alignSelf: 'center', justifyContent: 'center' },
+  content: { flexGrow: 1, padding: 24, gap: 16, ...FOCUSED_STYLE, justifyContent: 'center' },
   title: { fontSize: 24, lineHeight: 32, textAlign: 'center' },
   subtitle: { fontSize: 14, lineHeight: 21, textAlign: 'center' },
   list: { gap: 10 },

@@ -3,6 +3,7 @@ import { useLocalSearchParams, useRouter } from 'expo-router';
 import { VoteScreen } from '../../features/voting';
 import { useRoomRepository } from '../../bootstrap/RoomRepositoryProvider';
 import { createDurableVoteRepository } from '../../features/voting/services/durableVoteRepository';
+import { VoteSkeleton } from '../../features/voting/components/VoteSkeleton';
 import { RequireActiveSession } from '../../features/auth/components/RequireActiveSession';
 
 export default function VoteRoute() {
@@ -16,7 +17,7 @@ export default function VoteRoute() {
   }, [live.repository]);
 
   return (
-    <RequireActiveSession onHome={() => router.replace('/')}>
+    <RequireActiveSession onHome={() => router.replace('/')} loading={<VoteSkeleton />}>
       <VoteScreen
         key={`${identityId}:${typeof roomId === 'string' ? roomId : 'missing-room'}`}
         identityId={identityId}

@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import { useAppFonts } from '../../../bootstrap/AppFontProvider';
 import { useShellTheme } from '../../../shared/lib/useShellTheme';
@@ -16,12 +16,15 @@ export function RoundTwoNotice({ remaining, onContinue, seconds = ROUND_TWO_NOTI
   const { colors } = useShellTheme(), { textStyle } = useAppFonts();
   const [left, setLeft] = useState(seconds);
   const cap = getRoundTwoEliminationCap(remaining);
+  // The parent passes a new function on every render; keep the countdown timer independent of it.
+  const continueRef = useRef(onContinue);
+  useEffect(() => { continueRef.current = onContinue; });
 
   useEffect(() => {
-    if (left <= 0) { onContinue(); return; }
+    if (left <= 0) { continueRef.current(); return; }
     const timer = setTimeout(() => setLeft(value => value - 1), 1000);
     return () => clearTimeout(timer);
-  }, [left, onContinue]);
+  }, [left]);
 
   return <SheetDialog visible title="Chưa chốt được món" presentation="dialog" showHandle={false} showClose={false} showTitle={false} onClose={onContinue} colors={colors}>
     <View style={styles.body}>

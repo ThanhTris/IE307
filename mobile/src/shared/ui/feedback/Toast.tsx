@@ -1,3 +1,4 @@
+import { CONTAINER_STYLE } from '../layout/ScreenContainer';
 import { createContext, useCallback, useContext, useEffect, useMemo, useState, type PropsWithChildren } from 'react';
 import { Animated, Pressable, StyleSheet, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -126,8 +127,8 @@ export function ToastNotice({ title, message, tone }: ToastInput) {
 }
 
 const styles = StyleSheet.create({
-  host: { position: 'absolute', left: spacing.lg, right: spacing.lg, gap: spacing.sm, zIndex: 1000, elevation: 1000 },
-  card: { borderRadius: radii.lg, borderLeftWidth: 4, borderWidth: StyleSheet.hairlineWidth, shadowColor: '#000', shadowOpacity: 0.15, shadowRadius: 10, shadowOffset: { width: 0, height: 4 }, elevation: 6 },
+  host: { position: 'absolute', left: 0, right: 0, paddingHorizontal: spacing.lg, alignItems: 'center', gap: spacing.sm, zIndex: 1000, elevation: 1000 },
+  card: { ...CONTAINER_STYLE, borderRadius: radii.lg, borderLeftWidth: 4, borderWidth: StyleSheet.hairlineWidth, shadowColor: '#000', shadowOpacity: 0.15, shadowRadius: 10, shadowOffset: { width: 0, height: 4 }, elevation: 6 },
   inline: { padding: spacing.md, elevation: 0, shadowOpacity: 0 },
   row: { flexDirection: 'row', alignItems: 'center', gap: spacing.md, paddingVertical: spacing.md, paddingHorizontal: spacing.lg },
   texts: { flex: 1, gap: 2 },

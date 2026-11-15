@@ -409,11 +409,9 @@ describe('GM-25 Review Feedback Regression Suite', () => {
     const client = createMockApiClient({ getRoomSnapshot, removeRoomMember });
     await render(<LobbyScreen repository={client} roomId="room_live_123" currentUserId={sampleUser.id} onHome={jest.fn()} />);
 
-    // Nobody can remove the host. Swiping reveals "Xóa", and removing someone is still confirmed in a dialog.
+    // Nobody can remove the host. Swiping a row past half deletes it at once (the bin button is the TalkBack path).
     expect(screen.queryByRole('button', { name: 'Xóa Trí Thanh khỏi phòng' })).toBeNull();
     await user.press(await screen.findByRole('button', { name: 'Xóa Thành viên 2 khỏi phòng' }));
-    expect(removeRoomMember).not.toHaveBeenCalled();
-    await user.press(screen.getByRole('button', { name: 'Xóa' }));
 
     await waitFor(() => expect(removeRoomMember).toHaveBeenCalledWith(expect.objectContaining({ roomId: 'room_live_123', memberUserId: 'usr_member_2', expectedVersion: 1 })));
     await waitFor(() => expect(screen.queryByText('Thành viên 2')).toBeNull());

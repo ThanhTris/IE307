@@ -1,8 +1,9 @@
 import { useCallback, useRef, useState } from 'react';
+import { ReturnToRoomCard } from '../../rooms/components/ReturnToRoomCard';
 import { Pressable, ScrollView, StyleSheet, Text, View, useWindowDimensions } from 'react-native';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useAppFonts } from '../../../bootstrap/AppFontProvider';
-import type { SessionUser } from '../../../data/api/contracts';
+import type { RoomSnapshot, SessionUser } from '../../../data/api/contracts';
 import { useInboxBadge } from '../../../shared/lib/inboxBadge';
 import { useShellTheme } from '../../../shared/lib/useShellTheme';
 import { ToastNotice } from '../../../shared/ui/feedback/Toast';
@@ -13,6 +14,7 @@ import { errorCopy, validDisplayName, type RoomEntryReceipt, type RoomEntryRepos
 import type { SessionIssue, SessionStatus } from '../../rooms/services/sessionState';
 import { useHomeRoom } from '../hooks/useHomeRoom';
 import { GuestSessionExpiredScreen } from './GuestSessionExpiredScreen';
+import { CONTAINER_STYLE, CONTAINER_GUTTER } from '../../../shared/ui/layout/ScreenContainer';
 
 export type HomeLiveSession = {
   status: SessionStatus;
@@ -28,6 +30,8 @@ export type HomeScreenProps = {
   repository: RoomEntryRepository;
   liveSession: HomeLiveSession;
   activeRoom?: RoomEntryReceipt | null;
+  /** Back into the account's last room (lobby or round 1) after a dropped connection (ADR-027). */
+  onReturnToRoom?: (room: RoomSnapshot) => void;
   roomRevision?: number;
   onCreate: () => void;
   onJoin: () => void;
@@ -47,7 +51,7 @@ export type HomeScreenProps = {
 };
 
 
-export function HomeScreen({ repository, liveSession, activeRoom, roomRevision, onCreate, onJoin, onResume, onFriends, onQuickInvite, onDevResult, onDevRoundTwo, onDevFlashcard, onDevIcons, onHistory, onInbox, onProfile, onTutorial }: HomeScreenProps) {
+export function HomeScreen({ repository, liveSession, activeRoom, onReturnToRoom, roomRevision, onCreate, onJoin, onResume, onFriends, onQuickInvite, onDevResult, onDevRoundTwo, onDevFlashcard, onDevIcons, onHistory, onInbox, onProfile, onTutorial }: HomeScreenProps) {
   const { colors } = useShellTheme();
   const { unread: unreadInbox } = useInboxBadge();
   const { textStyle } = useAppFonts();
@@ -152,7 +156,7 @@ export function HomeScreen({ repository, liveSession, activeRoom, roomRevision, 
     <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={homeStyles.content}>
       {sessionNotice}
       {room.loading ? <StatusNotice title="Đang kiểm tra phòng đã lưu…" colors={colors} /> : null}
-      {room.active && room.data ? <StatusNotice title={`Phòng #${room.data.code}`} message="Bạn có thể tiếp tục phiên hiện tại." actionLabel="Tiếp tục phiên" onAction={onResume} colors={colors} /> : null}
+      {room.active && room.data ? <StatusNotice title={`Phòng #${room.data.code}`} message="Bạn có thể tiếp tục phiên hiện tại." actionLabel="Quay lại phòng" onAction={onResume} colors={colors} /> : null}
       {room.error ? <StatusNotice title={room.unavailable ? 'Không thể tiếp tục phòng đã lưu' : 'Chưa kiểm tra được phòng đã lưu'} message={errorCopy[room.error]} actionLabel={room.unavailable ? undefined : 'Kiểm tra lại phòng'} onAction={room.unavailable ? undefined : room.retry} tone={room.unavailable ? undefined : 'error'} colors={colors} /> : null}
       {room.data && !room.active ? <StatusNotice title={room.data.state === 'EXPIRED' ? 'Phòng đã hết hạn' : 'Phòng đã kết thúc'} message="Bạn có thể tạo hoặc tham gia một phòng khác." colors={colors} /> : null}
 
@@ -191,6 +195,7 @@ export function HomeScreen({ repository, liveSession, activeRoom, roomRevision, 
         />
       </View>
       </View>
+      {!activeRoom && onReturnToRoom ? <ReturnToRoomCard repository={repository} userId={sessionUser?.id} enabled={sessionReady} revision={roomRevision} onReturn={onReturnToRoom} /> : null}
 
       <View style={[homeStyles.quickCard, { backgroundColor: colors.surface, borderColor: colors.line }]}>
         <View style={homeStyles.quickHeading}>
@@ -235,13 +240,13 @@ const homeStyles = StyleSheet.create({
   devLink: { alignItems: 'center', paddingVertical: 12 },
   devLinkText: { fontSize: 12, lineHeight: 18, textDecorationLine: 'underline' },
   root: { flex: 1 },
-  content: { flexGrow: 1, padding: spacing.xxl, paddingTop: spacing.xs, paddingBottom: spacing.xxl, gap: spacing.xxl, width: '100%', maxWidth: 480, alignSelf: 'center' },
+  content: { flexGrow: 1, padding: CONTAINER_GUTTER, paddingTop: spacing.xs, paddingBottom: spacing.xxl, gap: spacing.xxl, ...CONTAINER_STYLE },
   modeLabel: { alignSelf: 'flex-start', overflow: 'hidden', paddingHorizontal: spacing.md, paddingVertical: spacing.xs, borderRadius: radii.pill, fontSize: 12, lineHeight: 18 },
   intro: { gap: spacing.sm },
   title: { fontSize: 36, lineHeight: 44, fontWeight: '700' },
   entryGroup: { gap: spacing.md },
   actions: { flexDirection: 'row', gap: spacing.lg, alignItems: 'stretch' },
-  actionTile: { flex: 1, minWidth: 0, aspectRatio: 1, minHeight: 0, borderRadius: radii.xl, padding: spacing.md },
+  actionTile: { flex: 1, minWidth: 0, aspectRatio: 1, minHeight: 0, maxHeight: 200, borderRadius: radii.xl, padding: spacing.md },
   scaledTile: { aspectRatio: undefined, minHeight: 174 },
   quickCard: { borderWidth: 1.5, borderRadius: radii.xl, padding: spacing.lg, gap: spacing.lg },
   quickHeading: { minHeight: 48, marginVertical: -15, flexDirection: 'row', flexWrap: 'wrap', alignItems: 'center', gap: spacing.xs },

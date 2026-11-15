@@ -4,30 +4,35 @@ import { useCallback, useEffect, useMemo, useRef, useState, type PropsWithChildr
 import { InboxBadgeContext } from '../shared/lib/inboxBadge';
 import { createInboxRepository } from '../features/inbox/services/inboxRepository';
 import { isRoomResultForCurrentRoom, noticeForInboxItem, summaryNotice } from '../features/inbox/services/inboxNotice';
+import { subscribeInboxRealtime } from '../features/inbox/services/inboxRealtime';
 import { useNotifications } from '../shared/ui/feedback/NotificationBanner';
 import { useRoomRepository } from './RoomRepositoryProvider';
 
-/** How often the inbox is read while the app is in the foreground. The server allows 60 reads a minute. */
-export const INBOX_POLL_MS = 10_000;
+/** Only while the Realtime connection is down: how often the inbox is read instead. The server allows 60 reads a minute. */
+export const INBOX_FALLBACK_POLL_MS = 30_000;
+/** Several rows written together (a room result for many members) cause one read. */
+export const INBOX_PUSH_DEBOUNCE_MS = 300;
 
 /**
  * Keeps the bell's unread count fresh and shows a banner for each notification that arrived since the last read
- * (ADR-026). While the app is in the foreground it reads the inbox every 10 seconds; it also reads at sign-in, when the
- * app returns to the foreground and when something asks for a refresh, and it stops while the app is in the
- * background. The first read of a session never replays old rows one by one: unread rows become one summary banner.
- * Friend requests, accepted requests, invites to eat and room results all arrive as server inbox events.
+ * (ADR-026). The server pushes each new inbox row through Supabase Realtime while the app is in the foreground, so a
+ * notification shows within about a second and nothing is read while nothing happens. The inbox is also read at
+ * sign-in, when the app returns to the foreground, after the push connection comes back, and on request. Only while the
+ * push connection is down does it fall back to reading every 30 seconds. In the background the connection is closed.
+ * The first read of a session never replays old rows one by one: unread rows become one summary banner.
  */
 export function InboxBadgeProvider({ children }: PropsWithChildren) {
-  const live = useRoomRepository();
+  const roomSession = useRoomRepository();
   const notifications = useNotifications();
   const pathname = usePathname();
   const { roomId } = useGlobalSearchParams<{ roomId?: string }>();
-  const userId = live.user?.id;
-  const repository = useMemo(() => createInboxRepository(live.repository), [live.repository]);
+  const userId = roomSession.user?.id;
+  const repository = useMemo(() => createInboxRepository(roomSession.repository), [roomSession.repository]);
   const [unread, setUnread] = useState(0);
   const [revision, setRevision] = useState(0);
-  const [tick, setTick] = useState(0);
-  const refresh = useCallback(() => setTick(value => value + 1), []);
+  const pollRef = useRef<() => void>(() => undefined);
+  // Reads on request without tearing down the push connection.
+  const refresh = useCallback(() => pollRef.current(), []);
   const seen = useRef<Set<string> | null>(null);
   const notificationsRef = useRef(notifications);
   const whereRef = useRef({ pathname, roomId: typeof roomId === 'string' ? roomId : undefined });
@@ -39,11 +44,17 @@ export function InboxBadgeProvider({ children }: PropsWithChildren) {
     if (!userId) { const reset = setTimeout(() => setUnread(0), 0); return () => clearTimeout(reset); }
     let active = true;
     let inFlight = false;
-    let timer: ReturnType<typeof setInterval> | undefined;
+    let again = false;
+    let fallback: ReturnType<typeof setInterval> | undefined;
+    let debounce: ReturnType<typeof setTimeout> | undefined;
+    let stopRealtime: (() => void) | undefined;
+    let pushLive = false;
     const open = (path: string) => router.push(path as Href);
     const poll = async () => {
-      if (inFlight) return;
+      // A push that arrives during a read must not be lost: read once more afterwards.
+      if (inFlight) { again = true; return; }
       inFlight = true;
+      again = false;
       try {
         const result = await repository.list();
         if (!active || !result.ok) return;
@@ -67,17 +78,48 @@ export function InboxBadgeProvider({ children }: PropsWithChildren) {
           const notice = noticeForInboxItem(item);
           notify({ key: notice.key, title: notice.title, message: notice.message, icon: notice.icon, onPress: () => open(notice.path) });
         }
-      } catch { /* the bell keeps its last value; the next read retries */ } finally { inFlight = false; }
+      } catch { /* the bell keeps its last value; the next read retries */ } finally {
+        inFlight = false;
+        if (again && active) void poll();
+      }
     };
-    const start = () => { if (timer === undefined) timer = setInterval(() => { void poll(); }, INBOX_POLL_MS); };
-    const stop = () => { if (timer !== undefined) { clearInterval(timer); timer = undefined; } };
+    const startFallback = () => { if (fallback === undefined) fallback = setInterval(() => { void poll(); }, INBOX_FALLBACK_POLL_MS); };
+    const stopFallback = () => { if (fallback !== undefined) { clearInterval(fallback); fallback = undefined; } };
+    const pushed = () => {
+      if (debounce !== undefined) clearTimeout(debounce);
+      debounce = setTimeout(() => { debounce = undefined; void poll(); }, INBOX_PUSH_DEBOUNCE_MS);
+    };
+    const start = () => {
+      if (stopRealtime) return;
+      const baseUrl = process.env.EXPO_PUBLIC_SUPABASE_URL, apiKey = process.env.EXPO_PUBLIC_SUPABASE_PUBLISHABLE_KEY;
+      const session = roomSession.repository.getSessionApi();
+      if (!baseUrl || !apiKey || !session) { startFallback(); return; }
+      stopRealtime = subscribeInboxRealtime({
+        baseUrl, apiKey, userId,
+        getAccessToken: async () => { const token = await session.getAccessToken(); return token.ok ? token.data : undefined; },
+        onInsert: pushed,
+        onStatus: status => {
+          if (status === 'live') {
+            stopFallback();
+            // Rows written while the connection was down were not pushed: read once to catch up.
+            if (!pushLive) { pushLive = true; void poll(); }
+          } else if (status === 'down') { pushLive = false; startFallback(); }
+        },
+      });
+    };
+    const stop = () => {
+      stopRealtime?.(); stopRealtime = undefined; pushLive = false;
+      stopFallback();
+      if (debounce !== undefined) { clearTimeout(debounce); debounce = undefined; }
+    };
+    pollRef.current = () => { void poll(); };
     const first = setTimeout(() => { void poll(); }, 0);
     if (AppState.currentState !== 'background') start();
     const subscription = AppState.addEventListener('change', state => {
-      if (state === 'active') { void poll(); start(); } else stop();
+      if (state === 'active') { void poll(); start(); } else if (state === 'background') stop(); // iOS 'inactive' is brief (prompt, Control Center)
     });
-    return () => { active = false; clearTimeout(first); stop(); subscription.remove(); };
-  }, [repository, userId, tick]);
+    return () => { active = false; pollRef.current = () => undefined; clearTimeout(first); stop(); subscription.remove(); };
+  }, [repository, userId, roomSession.repository]);
 
   const value = useMemo(() => ({ unread, setUnread, refresh, revision, syncFriends: refresh }), [unread, refresh, revision]);
   return <InboxBadgeContext.Provider value={value}>{children}</InboxBadgeContext.Provider>;

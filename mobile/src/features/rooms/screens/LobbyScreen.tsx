@@ -17,6 +17,7 @@ import { RoomQrModal } from '../components/RoomQrModal';
 import { LobbyMealEditor, type MealField } from '../components/LobbyMealEditor';
 import type { DishSetupGateway } from '../../context/services/dishSetupGateway';
 import { ToastNotice } from '../../../shared/ui/feedback/Toast';
+import { CONTAINER_STYLE, CONTAINER_GUTTER, ICON_BUTTON_INSET } from '../../../shared/ui/layout/ScreenContainer';
 
 type Colors = ReturnType<typeof useShellTheme>['colors'];
 
@@ -54,7 +55,6 @@ export function LobbyScreen({
   const [showQr, setShowQr] = useState(false);
   const [editField, setEditField] = useState<MealField | null>(null);
   const [inviteOpen, setInviteOpen] = useState(false);
-  const [removeTarget, setRemoveTarget] = useState<{ userId: string; name: string } | null>(null);
   const [copied, setCopied] = useState(false);
   const lobby = useLobby({ repository, roomId, currentUserId, createRequestId, onStartRound, onHome });
   const { snapshot, displaySnapshot, loadError, loadState, confirm, setConfirm, notice, busy, busyRef, eligibilityError, viewer, isHost, reload, runWrite } = lobby;
@@ -87,6 +87,8 @@ export function LobbyScreen({
   }, [autoInvite, snapshot, isHost, busy, viewer, runWrite]);
   const ready = Boolean(room && loadState === 'ready' && viewer);
   const inLobby = room?.state === 'LOBBY';
+  // Members who are still choosing their taste (ADR-028): the host can start only when nobody is.
+  const waitingFor = room ? room.members.filter(member => member.userId !== room.hostUserId && (member as { ready?: boolean }).ready === false).length : 0;
   const exitLabel = isHost ? 'Hủy phòng' : 'Rời phòng';
   const copyCode = () => { if (!room) return; void Clipboard.setStringAsync(room.code).catch(() => undefined); setCopied(true); };
   const share = () => { if (room) void Share.share({ message: createJoinRoomShareMessage(room.code, createJoinRoomOpenLink(room.code)) }).catch(() => undefined); };
@@ -147,10 +149,11 @@ export function LobbyScreen({
                 <Text style={[styles.memberName, { color: colors.text }, textStyle(600)]}>{you ? `${member.displayName} (Bạn)` : member.displayName}</Text>
                 {host ? <Text style={[styles.caption, { color: colors.muted }, textStyle(400)]}>Chủ phòng</Text> : null}
               </View>
+              {!host && inLobby ? <ReadyBadge ready={(member as { ready?: boolean }).ready !== false} colors={colors} /> : null}
             </View>;
             // The host swipes a member's row to reveal "Xóa"; removing someone still asks first.
             return isHost && inLobby && !host && Boolean(repository.removeRoomMember)
-              ? <SwipeToDeleteRow key={member.userId} accessibilityLabel={`Xóa ${member.displayName} khỏi phòng`} disabled={busy} onDelete={() => setRemoveTarget({ userId: member.userId, name: member.displayName })} colors={colors}>{row}</SwipeToDeleteRow>
+              ? <SwipeToDeleteRow key={member.userId} accessibilityLabel={`Xóa ${member.displayName} khỏi phòng`} disabled={busy} onDelete={() => { void runWrite('remove', member.userId); }} colors={colors}>{row}</SwipeToDeleteRow>
               : row;
           })}
 
@@ -163,7 +166,10 @@ export function LobbyScreen({
 
       {room && ready ? <View style={[styles.footer, { paddingBottom: Math.max(insets.bottom, 16), backgroundColor: colors.background }]}>
         {isHost
-          ? <AppButton label="Bắt đầu chọn món" onPress={() => void runWrite('start')} disabled={!inLobby || Boolean(eligibilityError)} loading={busy} colors={colors} textStyle={textStyle(600)} />
+          ? <View style={styles.startColumn}>
+            {inLobby && waitingFor > 0 ? <Text style={[styles.startHint, { color: colors.muted }, textStyle(500)]}>{`Chờ ${waitingFor} người chọn khẩu vị`}</Text> : null}
+            <AppButton label="Bắt đầu chọn món" onPress={() => void runWrite('start')} disabled={!inLobby || Boolean(eligibilityError) || waitingFor > 0} loading={busy} colors={colors} textStyle={textStyle(600)} />
+          </View>
           : <AppButton label="Đang chờ chủ phòng" disabled onPress={() => undefined} colors={colors} textStyle={textStyle(600)} />}
       </View> : null}
 
@@ -173,13 +179,6 @@ export function LobbyScreen({
 
       {room && isHost ? <RoomInviteSheet visible={inviteOpen} onClose={() => setInviteOpen(false)} repository={repository} snapshot={room} busy={busy} colors={colors} onInvite={partnerId => { setInviteOpen(false); void runWrite('invite', partnerId); }} onFindFriends={onNavigate ? () => { setInviteOpen(false); onNavigate('/friends?from=lobby'); } : undefined} /> : null}
 
-      <SheetDialog visible={removeTarget !== null} presentation="dialog" showClose={false} showHandle={false} title={`Xóa ${removeTarget?.name ?? 'thành viên'} khỏi phòng?`} onClose={() => setRemoveTarget(null)} colors={colors}>
-        <Text style={[styles.body, { color: colors.muted }, textStyle(400)]}>Người này sẽ không còn trong phòng, nhưng vẫn có thể vào lại bằng mã phòng khi phòng còn mở.</Text>
-        <View style={styles.dialogActions}>
-          <AppButton label="Hủy" variant="secondary" onPress={() => setRemoveTarget(null)} colors={colors} style={styles.dialogButton} singleLine />
-          <AppButton label="Xóa" variant="danger" onPress={() => { const target = removeTarget; setRemoveTarget(null); if (target) void runWrite('remove', target.userId); }} colors={colors} style={styles.dialogButton} singleLine />
-        </View>
-      </SheetDialog>
       <SheetDialog visible={confirm !== null} presentation="dialog" showClose={false} title={confirm === 'cancel' ? 'Xác nhận hủy phòng?' : 'Xác nhận rời phòng?'} onClose={() => setConfirm(null)} colors={colors}>
         <Text style={[styles.body, { color: colors.muted }, textStyle(400)]}>{confirm === 'cancel' ? 'Phòng sẽ đóng với mọi thành viên.' : 'Bạn có thể vào lại bằng mã phòng khi phòng còn mở.'}</Text>
         <View style={styles.dialogActions}>
@@ -189,6 +188,14 @@ export function LobbyScreen({
       </SheetDialog>
     </SafeAreaView>
   );
+}
+
+function ReadyBadge({ ready, colors }: { ready: boolean; colors: Colors }) {
+  const tint = ready ? colors.green : colors.warning;
+  return <View accessibilityLabel={ready ? 'Sẵn sàng' : 'Đang chọn khẩu vị'} style={[styles.readyBadge, { borderColor: tint, backgroundColor: ready ? colors.warm : 'transparent' }]}>
+    <View style={[styles.readyDot, { backgroundColor: tint }]} />
+    <Text style={[styles.readyText, { color: tint }]}>{ready ? 'Sẵn sàng' : 'Đang chọn khẩu vị'}</Text>
+  </View>;
 }
 
 function IconButton({ label, onPress, disabled, colors, children }: { label: string; onPress: () => void; disabled?: boolean; colors: Colors; children: ReactNode }) {
@@ -315,10 +322,10 @@ function RoomInviteSheet({ visible, onClose, repository, snapshot, busy, colors,
 
 const styles = StyleSheet.create({
   root: { flex: 1 },
-  header: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: 8, minHeight: 56, width: '100%', maxWidth: 480, alignSelf: 'center' },
+  header: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: CONTAINER_GUTTER - ICON_BUTTON_INSET, minHeight: 72, ...CONTAINER_STYLE },
   headerTitle: { flex: 1, textAlign: 'center', fontSize: 18, lineHeight: 24 },
   iconButton: { width: 48, height: 48, borderRadius: 24, alignItems: 'center', justifyContent: 'center' },
-  content: { paddingHorizontal: 20, paddingTop: 8, paddingBottom: 24, gap: 14, width: '100%', maxWidth: 480, alignSelf: 'center' },
+  content: { paddingHorizontal: CONTAINER_GUTTER, paddingTop: 8, paddingBottom: 24, gap: 14, ...CONTAINER_STYLE },
   codeCard: { borderWidth: 1, borderRadius: 20, padding: 16, gap: 8 },
   codeRow: { flexDirection: 'row', alignItems: 'center', gap: 4 },
   code: { fontSize: 36, lineHeight: 44, letterSpacing: 1 },
@@ -363,6 +370,9 @@ const styles = StyleSheet.create({
   chip: { borderWidth: 1, borderRadius: 999, paddingHorizontal: 10, paddingVertical: 4 },
   chipText: { fontSize: 13, lineHeight: 18 },
   caption: { fontSize: 13, lineHeight: 18 },
+  startColumn: { gap: 8 }, startHint: { fontSize: 13, lineHeight: 18, textAlign: 'center' },
+  readyBadge: { flexDirection: 'row', alignItems: 'center', gap: 6, borderWidth: 1, borderRadius: 999, paddingHorizontal: 10, paddingVertical: 4 },
+  readyDot: { width: 7, height: 7, borderRadius: 4 }, readyText: { fontSize: 12, lineHeight: 16, fontWeight: '600' },
   body: { fontSize: 14, lineHeight: 20 },
-  footer: { paddingHorizontal: 20, paddingTop: 12, width: '100%', maxWidth: 480, alignSelf: 'center' },
+  footer: { paddingHorizontal: CONTAINER_GUTTER, paddingTop: 12, ...CONTAINER_STYLE },
 });

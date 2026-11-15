@@ -1,6 +1,7 @@
 import { Pressable, ScrollView, StyleSheet, Text } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useShellTheme } from '../../../shared/lib/useShellTheme';
+import { FOCUSED_STYLE } from '../../../shared/ui/layout/ScreenContainer';
 
 export function NotFoundScreen({ onHome }: { onHome: () => void }) {
   const { colors } = useShellTheme();
@@ -19,7 +20,7 @@ export function NotFoundScreen({ onHome }: { onHome: () => void }) {
 
 const styles = StyleSheet.create({
   root: { flex: 1 },
-  content: { flexGrow: 1, padding: 24, gap: 24, width: '100%', maxWidth: 600, alignSelf: 'center' },
+  content: { flexGrow: 1, padding: 24, gap: 24, ...FOCUSED_STYLE },
   title: { fontSize: 32, lineHeight: 40, fontWeight: '700' },
   body: { fontSize: 16, lineHeight: 24 },
   button: { minHeight: 52, paddingVertical: 16, paddingHorizontal: 20, borderRadius: 16, justifyContent: 'center', alignItems: 'center' },

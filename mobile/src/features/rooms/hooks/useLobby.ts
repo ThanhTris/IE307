@@ -196,8 +196,8 @@ export function useLobby({
         result = await api.inviteToRoom({ roomId: snapshot.roomId, partnerId: partnerId ?? 'usr_tuan_002', expectedVersion: snapshot.version, requestId });
       }
       if (!result.ok) {
-        const failure = result.error.messageKey === 'NOT_ENOUGH_MEMBERS'
-          ? errorCopy.NOT_ENOUGH_MEMBERS
+        const failure = result.error.messageKey === 'NOT_ENOUGH_MEMBERS' || result.error.messageKey === 'MEMBERS_NOT_READY'
+          ? errorCopy[result.error.messageKey]
           : result.error.messageKey;
         setNotice(`Chưa thực hiện được · ${failure}`); setNoticeTone('error');
         if (result.error.messageKey === 'TIMEOUT' || result.error.messageKey === 'NETWORK_ERROR') {

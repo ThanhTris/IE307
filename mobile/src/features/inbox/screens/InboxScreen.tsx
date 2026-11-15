@@ -71,11 +71,16 @@ export function InboxScreen({ repository, displayName, onNavigate, onHome, onPus
         setItems(current => {
           if (more) return [...current, ...result.data.items];
           const targeted = targetedItemRef.current;
+          if (silent) {
+            // Keep the older pages the person already loaded; only put the newest rows in front.
+            const freshIds = new Set(result.data.items.map(item => item.eventId));
+            return [...result.data.items, ...current.filter(item => !freshIds.has(item.eventId))];
+          }
           return targeted && targeted.eventId === openEventId
             ? [targeted, ...result.data.items.filter(item => item.id !== targeted.id)]
             : result.data.items;
         });
-        setCursor(result.data.nextCursor);
+        if (!(silent && !more && itemsRef.current.length > result.data.items.length)) setCursor(result.data.nextCursor);
       }
     } catch {
       if (!silent) { setItems([]); setCursor(undefined); setError('NETWORK_ERROR'); }

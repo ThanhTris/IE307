@@ -539,7 +539,7 @@ export class LiveRoomRepository implements RoomRepository {
       return { ok: false, error: { messageKey: 'NETWORK_ERROR' } };
     }
     const contractVersion = version === 'baseline' ? BASELINE_CONTRACT_VERSION : CANONICAL_CONTRACT_VERSION;
-    const isReadCommand = command === 'snapshot' || command === 'getDefaultPreferences';
+    const isReadCommand = command === 'snapshot' || command === 'getDefaultPreferences' || command === 'history';
     const finalPayload: Record<string, unknown> = {
       contractVersion,
       ...payload,

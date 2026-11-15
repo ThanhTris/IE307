@@ -160,6 +160,15 @@ export function createLiveDishSetupGateway(
       const consentRes = await repository.getHistoryConsent();
       if (!consentRes.ok) throw new Error(`Failed to read account history consent: ${consentRes.error.messageKey}`);
       const historyConsent = consentRes.data;
+      // "Prefer dishes other than the last 3 meals" needs the person's own saved history (ADR-028). Only the screens that
+      // show that option (a new room, or the host of a room) read it.
+      const readHasRecentHistory = async (): Promise<boolean> => {
+        if (!historyConsent.personal) return false;
+        try {
+          const history = await repository.dispatchDishSession<{ items?: { scope?: string }[] }>('history', {});
+          return history.ok && Array.isArray(history.data?.items) && history.data.items.some(item => item.scope === 'personal');
+        } catch { return false; /* the option is simply not offered */ }
+      };
       let accountDefaults = emptyPreferences(historyConsent.personal);
       try {
         const defsRes = await repository.getDefaultPreferences?.();
@@ -201,7 +210,7 @@ export function createLiveDishSetupGateway(
           historyConsent,
           room: cachedRoom,
           settings,
-          hasRecentHistory: false,
+          hasRecentHistory: isHost ? await readHasRecentHistory() : false,
           closedReason: snap.state === 'CANCELLED' ? 'cancelled' : isClosed ? 'closed' : undefined,
         };
       }
@@ -214,7 +223,7 @@ export function createLiveDishSetupGateway(
         accountDefaults,
         historyConsent,
         room: cachedRoom,
-        hasRecentHistory: false,
+        hasRecentHistory: await readHasRecentHistory(),
       };
     },
 

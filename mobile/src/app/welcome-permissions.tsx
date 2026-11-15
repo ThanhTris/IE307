@@ -17,7 +17,7 @@ export default function WelcomePermissionsRoute() {
     const repository = createHistoryRepository(live.repository, undefined, getDurableOutbox());
     return { save: async (enabled: boolean) => (await repository.updateConsent({ scope: 'personal', consent: enabled })).ok };
   }, [live.repository]);
-  const done = useCallback(() => { void markPermissionsOnboarded().then(() => router.replace('/')); }, [router]);
+  const done = useCallback(() => { void markPermissionsOnboarded(live.user?.id).then(() => router.replace('/')); }, [router, live.user?.id]);
   return <RequireActiveSession onHome={() => router.replace('/')}>
     <PermissionsWelcomeScreen service={service} history={history} onDone={done} />
   </RequireActiveSession>;

@@ -33,14 +33,14 @@ Mọi chỗ gọi toast phải truyền `tone` tường minh. `toneFromText` ch�
 | Phòng đã chốt món | Mọi thành viên | "Đã chốt món · Nhóm chọn: <món>" → kết quả |
 | Phòng kết thúc mà chưa có món chung | Mọi thành viên | "Chưa chốt được món · Phòng kết thúc mà chưa có món chung" → kết quả |
 
-Hộp thư được đọc lại mỗi 10 giây khi app mở và ở nền trước; mở app thì thông báo chưa đọc gộp thành một banner "Bạn có N thông báo chưa đọc". Khi app tắt hoặc chạy nền chỉ push thật mới báo (cần bản dev build và FCM, không chạy trên Expo Go).
+Khi app mở, server đẩy thông báo mới qua Supabase Realtime (dưới 1 giây), app không hỏi theo chu kỳ; chỉ khi mất kết nối mới đọc mỗi 30 giây; mở app thì thông báo chưa đọc gộp thành một banner "Bạn có N thông báo chưa đọc". Khi app tắt hoặc chạy nền chỉ push thật mới báo (cần bản dev build và FCM, không chạy trên Expo Go).
 
 ## Cách code
 
 - `ToastNotice` / `useToast().show(...)`: toast. Truyền `tone`.
 - `StatusNotice`: `tone="error"` thành toast đỏ (nút thử lại vẫn ở trên trang); mọi tone khác là chữ trên trang.
 - `RequestBanner`: `offline`/`stale` thành toast vàng, `error` thành toast đỏ, `info` là chữ trên trang.
-- `InboxBadgeProvider`: đọc hộp thư mỗi 10 giây, thông báo mới hiện `NotificationBanner` (qua `useNotifications().notify`), chạm mở Hộp thư, Bạn bè hoặc kết quả.
+- `InboxBadgeProvider`: nghe Realtime (`inboxRealtime.ts`), có dòng mới thì đọc hộp thư, thông báo mới hiện `NotificationBanner` (qua `useNotifications().notify`), chạm mở Hộp thư, Bạn bè hoặc kết quả.
 
 ## Rà soát ngày 2026-11-12
 

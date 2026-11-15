@@ -264,10 +264,12 @@ function isCanonicalPoolDish(value: unknown): boolean {
 }
 
 function isCanonicalMember(value: unknown): boolean {
-  return isRecord(value) && onlyKeys(value, ['userId', 'displayName', 'role', 'submissionStatus'])
+  return isRecord(value) && onlyKeys(value, ['userId', 'displayName', 'role', 'submissionStatus', 'ready'])
     && isUuid(value.userId) && isNonEmptyString(value.displayName)
     && value.displayName.length <= 24 && oneOf(value.role, ['HOST', 'MEMBER'])
-    && oneOf(value.submissionStatus, ['NOT_SUBMITTED', 'ACCEPTED']);
+    && oneOf(value.submissionStatus, ['NOT_SUBMITTED', 'ACCEPTED'])
+    // `ready` (ADR-028) is optional: older servers do not send it.
+    && optional(value.ready, isBoolean);
 }
 
 function isCanonicalPreferences(value: unknown): boolean {

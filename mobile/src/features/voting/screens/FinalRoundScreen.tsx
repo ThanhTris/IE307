@@ -20,13 +20,14 @@ import {
   type FinalScreenScenario,
 } from '../fixtures';
 import { ToastNotice } from '../../../shared/ui/feedback/Toast';
-import { VoteSkeleton } from '../components/VoteSkeleton';
+import { RoundTwoSkeleton } from '../components/RoundTwoSkeleton';
 import type { VoteRepository } from '../services/voteRepository';
 import { useRoundTwoVoting, type FinalChoice } from '../hooks/useRoundTwoVoting';
 import { FinalRoundHeaderAndOutcome } from '../components/FinalRoundHeaderAndOutcome';
 import { CandidateKeepRemoveCard } from '../components/CandidateKeepRemoveCard';
 import { RoundTwoView } from '../components/RoundTwoView';
 import { RoundWaitingView } from '../components/RoundWaitingView';
+import { CONTAINER_STYLE, CONTAINER_GUTTER } from '../../../shared/ui/layout/ScreenContainer';
 
 export type FinalRoundScreenProps = {
   candidates?: PoolDish[];
@@ -129,8 +130,7 @@ export function FinalRoundScreen({
   if (isLoadingSnapshot) {
     return (
       <SafeAreaView style={[styles.root, { backgroundColor: colors.background }]}>
-        <AppHeader title="Bình chọn · Vòng 2" onPressBrand={onBack} colors={colors} />
-        <VoteSkeleton label="Đang tải Vòng 2" colors={colors} />
+        <RoundTwoSkeleton label="Đang tải Vòng 2" colors={colors} />
       </SafeAreaView>
     );
   }
@@ -138,7 +138,7 @@ export function FinalRoundScreen({
   if (snapshotError && candidates.length === 0) {
     return (
       <SafeAreaView style={[styles.root, { backgroundColor: colors.background }]}>
-        <AppHeader title="Bình chọn · Vòng 2" onPressBrand={onBack} colors={colors} />
+        <AppHeader variant="back" title="Vòng 2" centeredTitle hideDivider onPressBack={onBack} colors={colors} />
         <View style={styles.loadingContainer}>
           <StatusNotice title="Không thể tải dữ liệu Vòng 2" message={`Lỗi: ${snapshotError}. Vui lòng kiểm tra lại kết nối mạng.`} tone="error" actionLabel="Thử lại tải phòng" onAction={() => void fetchSnapshot()} colors={colors} />
         </View>
@@ -195,7 +195,7 @@ export function FinalRoundScreen({
 
   return (
     <SafeAreaView style={[styles.root, { backgroundColor: colors.background }]}>
-      <AppHeader title="Bình chọn · Vòng 2" onPressBrand={onBack} colors={colors} />
+      <AppHeader variant="back" title="Bình chọn · Vòng 2" centeredTitle hideDivider onPressBack={onBack} colors={colors} />
       <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.content}>
         <FinalRoundHeaderAndOutcome
           showScenarioPicker={shouldShowScenarioPicker}
@@ -372,7 +372,7 @@ export function FinalRoundScreen({
 const styles = StyleSheet.create({
   root: { flex: 1 },
   sentButton: { marginHorizontal: 24, marginBottom: 24 },
-  content: { padding: 16, gap: 16, maxWidth: 600, width: '100%', alignSelf: 'center' },
+  content: { padding: CONTAINER_GUTTER, gap: 16, ...CONTAINER_STYLE },
   loadingContainer: { flex: 1, justifyContent: 'center', alignItems: 'center', padding: 24, gap: 16 },
   loadingText: { fontSize: 14, fontWeight: '600', textAlign: 'center' },
   batchActionsRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', gap: 10 },

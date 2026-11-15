@@ -35,6 +35,7 @@ export const errorCopy: Record<ErrorCode, string> = {
   ROOM_EXPIRED: 'Phòng đã hết hạn. Hãy nhờ chủ phòng tạo phòng mới.',
   ROOM_TERMINAL: 'Phòng đã kết thúc.', INVALID_ROOM_STATE: 'Trạng thái phòng đã thay đổi.',
   NOT_ENOUGH_MEMBERS: 'Cần ít nhất 2 thành viên trong phòng trước khi bắt đầu.',
+  MEMBERS_NOT_READY: 'Còn người đang chọn khẩu vị. Chờ họ sẵn sàng rồi bắt đầu.',
   CONTEXT_CHANGED: 'Bối cảnh đã đổi. Hãy kiểm tra và xác nhận lại.',
   ALREADY_SUBMITTED: 'Lựa chọn đã được nhận.', VERSION_CONFLICT: 'Dữ liệu đã cũ. Hãy tải lại trước khi tiếp tục.',
   REQUEST_ID_REUSED: 'Yêu cầu không còn khớp. Hãy tải lại màn hình.',

@@ -5,18 +5,27 @@ import { SetupChoice } from '../../src/features/context/components/SetupChoice';
 import { SetupScheduleSummary } from '../../src/features/context/components/SetupScheduleSummary';
 import { SetupTimeMode } from '../../src/features/context/components/SetupTimeMode';
 import { RoundTwoNotice } from '../../src/features/voting/components/RoundTwoNotice';
+import { gridColumns } from '../../src/features/context/components/ChoiceGrid';
 import { ToastProvider } from '../../src/shared/ui/feedback/Toast';
 
 const metrics = { frame: { x: 0, y: 0, width: 390, height: 844 }, insets: { top: 0, left: 0, right: 0, bottom: 0 } };
 const wrap = (node: React.ReactNode) => render(<SafeAreaProvider initialMetrics={metrics}><ToastProvider>{node}</ToastProvider></SafeAreaProvider>);
 
-test('a tile given an exact width uses it as its flex basis, so it fills the row', async () => {
-  await wrap(<SetupChoice label="Cơm" stacked width={150} selected={false} onPress={jest.fn()} />);
-  expect(screen.getByRole('button', { name: 'Cơm' })).toHaveStyle({ width: 150, flexBasis: 150, flexGrow: 0 });
+test('a tile inside a grid row shares the row equally', async () => {
+  await wrap(<SetupChoice label="Cơm" stacked fill selected={false} onPress={jest.fn()} />);
+  expect(screen.getByRole('button', { name: 'Cơm' })).toHaveStyle({ flexGrow: 1, flexBasis: 0 });
+});
+
+test('grid columns: 4 tiles go 2 x 2, 6 tiles go 3 or 2 by width, huge text is one column', () => {
+  expect(gridColumns(4, 390, 1)).toBe(2);
+  expect(gridColumns(6, 390, 1)).toBe(3);
+  expect(gridColumns(6, 340, 1)).toBe(2);
+  expect(gridColumns(6, 390, 1.3)).toBe(2);
+  expect(gridColumns(4, 390, 2)).toBe(1);
 });
 
 test('a compact tile is shorter than a normal stacked tile', async () => {
-  await wrap(<><SetupChoice label="Ăn sáng" stacked compact width={150} selected={false} onPress={jest.fn()} /><SetupChoice label="Ăn trưa" stacked width={150} selected={false} onPress={jest.fn()} /></>);
+  await wrap(<><SetupChoice label="Ăn sáng" stacked compact fill selected={false} onPress={jest.fn()} /><SetupChoice label="Ăn trưa" stacked fill selected={false} onPress={jest.fn()} /></>);
   const compact = screen.getByRole('button', { name: 'Ăn sáng' }).props.style;
   const normal = screen.getByRole('button', { name: 'Ăn trưa' }).props.style;
   const minHeight = (style: unknown) => (Array.isArray(style) ? style.flat(3) : [style]).reduce((value, part) => (part && typeof part === 'object' && 'minHeight' in part ? (part as { minHeight: number }).minHeight : value), 0);

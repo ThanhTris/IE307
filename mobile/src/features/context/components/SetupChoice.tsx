@@ -12,16 +12,15 @@ const LABEL_LINE_HEIGHT = 20;
 /** Height of a compact stacked tile (icon + one label line). */
 export const COMPACT_TILE_HEIGHT = 78;
 
-export function SetupChoice({ label, selected, onPress, disabled, icon, stacked = false, compact = false, checkbox = false, columns = 2, width }: {
+export function SetupChoice({ label, selected, onPress, disabled, icon, stacked = false, compact = false, checkbox = false, columns = 2, fill = false }: {
   label: string; selected: boolean; onPress: () => void; disabled?: boolean;
   icon?: ChoiceIcon; stacked?: boolean; /** A shorter stacked tile for short one-line labels (meal slots). */ compact?: boolean; checkbox?: boolean; columns?: 1 | 2 | 3;
-  /** Exact tile width from a ChoiceGrid; without it the tile flexes by `columns`. */
-  width?: number;
+  /** Inside a ChoiceGrid row: share the row equally (flex 1); without it the tile flexes by `columns`. */
+  fill?: boolean;
 }) {
   const { colors } = useShellTheme(), { textStyle } = useAppFonts(), { fontScale } = useWindowDimensions();
   if (checkbox) return <SetupCheckboxRow label={label} checked={selected} onPress={onPress} disabled={disabled} icon={icon} highlight />;
-  // `flexBasis` wins over `width` in Yoga, so an exact tile width must be the basis too or the tile stays 44% wide.
-  const sizing = width ? { width, flexBasis: width, flexGrow: 0, flexShrink: 0 } : { flexBasis: columns === 3 ? '28%' : columns === 1 ? '100%' : '44%' };
+  const sizing = fill ? { flexGrow: 1, flexShrink: 1, flexBasis: 0, minWidth: 0 } : { flexBasis: columns === 3 ? '28%' : columns === 1 ? '100%' : '44%' };
   return <Pressable accessibilityRole="button" accessibilityLabel={label}
     accessibilityState={{ selected, disabled }} disabled={disabled} onPress={onPress}
     style={({ pressed }) => [styles.choice, stacked && styles.stacked, stacked && compact && styles.compact, sizing, { borderColor: selected ? colors.green : colors.line, backgroundColor: selected ? colors.warm : colors.surface, opacity: disabled ? 0.5 : pressed ? 0.7 : 1 }]}>

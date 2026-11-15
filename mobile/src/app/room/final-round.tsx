@@ -3,6 +3,7 @@ import { useLocalSearchParams, useRouter } from 'expo-router';
 import { FinalRoundScreen } from '../../features/voting';
 import { useRoomRepository } from '../../bootstrap/RoomRepositoryProvider';
 import { createDurableVoteRepository } from '../../features/voting/services/durableVoteRepository';
+import { RoundTwoSkeleton } from '../../features/voting/components/RoundTwoSkeleton';
 import { RequireActiveSession } from '../../features/auth/components/RequireActiveSession';
 
 export default function FinalRoundRoute() {
@@ -16,7 +17,7 @@ export default function FinalRoundRoute() {
   }, [live.repository]);
 
   return (
-    <RequireActiveSession onHome={() => router.replace('/')}>
+    <RequireActiveSession onHome={() => router.replace('/')} loading={<RoundTwoSkeleton />}>
       <FinalRoundScreen
         key={`${identityId}:${typeof roomId === 'string' ? roomId : 'missing-room'}`}
         identityId={identityId}

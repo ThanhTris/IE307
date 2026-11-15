@@ -1,9 +1,10 @@
-import { useCallback, useMemo } from 'react';
+import { useCallback, useEffect, useMemo } from 'react';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useRoomRepository } from '../../bootstrap/RoomRepositoryProvider';
 import { RequireActiveSession } from '../../features/auth/components/RequireActiveSession';
 import { DishSetupFlow } from '../../features/context/screens/DishSetupFlow';
 import { createLiveDishSetupGateway } from '../../features/context/services/liveDishSetupGateway';
+import { queueReady } from '../../features/rooms/services/readyQueue';
 import { createDurableRequestId } from '../../features/rooms/services/roomRepository';
 import type { SetupRoom } from '../../features/context/services/dishSetup';
 
@@ -24,6 +25,14 @@ export default function DishSetupRoute() {
   // Friends picked during setup are invited from the lobby once the room exists.
   const toLobby = (room: SetupRoom, inviteeIds: string[]) => router.replace({ pathname: '/room/lobby', params: inviteeIds.length && !roomId ? { roomId: room.id, invite: inviteeIds.join(',') } : { roomId: room.id } });
   const gateway = useMemo(() => createLiveDishSetupGateway(live.repository, roomId), [live.repository, roomId]);
+  // While a member picks their taste they are "still choosing" (ADR-028); leaving the screen makes them ready again
+  // (saving already did). The server only accepts this in the lobby.
+  const repository = live.repository;
+  useEffect(() => {
+    if (!roomId || initialStage !== 'preferences') return;
+    void queueReady(repository, roomId, false);
+    return () => { void queueReady(repository, roomId, true); };
+  }, [repository, roomId, initialStage]);
   const generateRequestId = useCallback(() => createDurableRequestId('setup'), []);
   return (
     <RequireActiveSession onHome={back}>

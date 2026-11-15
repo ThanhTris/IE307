@@ -8,6 +8,7 @@ import {
 import { spacing, typography } from '../../theme/tokens';
 import { AppIcon, type AppIconName } from '../icons/AppIcon';
 import type { ComponentThemeProps } from '../types';
+import { CONTAINER_STYLE } from './ScreenContainer';
 
 export type HomeBottomNavigationItem = {
   id: string;
@@ -41,6 +42,7 @@ export function AppBottomNavigation({
         },
       ]}
     >
+      <View testID="app-nav-tabs" style={[styles.tabs, CONTAINER_STYLE]}>
       {items.map(item => {
         const selected = item.id === activeId;
         return (
@@ -59,6 +61,7 @@ export function AppBottomNavigation({
           </Pressable>
         );
       })}
+      </View>
     </View>
   );
 }
@@ -67,11 +70,10 @@ const styles = StyleSheet.create({
   bottomNav: {
     minHeight: 88,
     borderTopWidth: StyleSheet.hairlineWidth,
-    flexDirection: 'row',
-    alignItems: 'stretch',
     paddingHorizontal: spacing.sm,
     paddingTop: spacing.xs,
   },
+  tabs: { flexDirection: 'row', alignItems: 'stretch' },
   bottomNavItem: { flex: 1, minWidth: 0, minHeight: 64, alignItems: 'center', justifyContent: 'center', gap: spacing.xs, paddingVertical: spacing.xs },
   bottomNavLabel: { ...typography.caption, width: '100%', maxWidth: '100%', minWidth: 0, fontSize: 12, lineHeight: 18, fontWeight: '500', textAlign: 'center' },
   bottomNavLabelWrapped: { alignSelf: 'stretch', flexShrink: 1, flexWrap: 'wrap' },

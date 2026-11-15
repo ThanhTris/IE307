@@ -1,5 +1,7 @@
 import type { ReactNode } from 'react';
 import { Animated, KeyboardAvoidingView, Modal, Platform, Pressable, StyleSheet, Text, View, type StyleProp, type ViewStyle } from 'react-native';
+import { DIALOG_MAX_WIDTH } from '../layout/ScreenContainer';
+import { NotificationHost } from '../feedback/NotificationBanner';
 import { ToastHost } from '../feedback/Toast';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { radii, spacing, typography } from '../../theme/tokens';
@@ -58,6 +60,7 @@ export function SheetDialog({
       </SafeAreaView>
       </View>
       <ToastHost />
+      <NotificationHost />
     </Modal>
   );
 }
@@ -74,7 +77,7 @@ const styles = StyleSheet.create({
     gap: spacing.lg,
     flexShrink: 1,
     width: '100%',
-    maxWidth: 480,
+    maxWidth: DIALOG_MAX_WIDTH,
     alignSelf: 'center',
   },
   dialog: { borderRadius: radii.xl },

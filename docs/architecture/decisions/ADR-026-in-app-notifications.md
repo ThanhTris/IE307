@@ -2,7 +2,8 @@
 
 - Status: **Accepted by the project owner in chat on 2026-11-13** (to be re-confirmed by Trí in review).
 - Scope: mobile app and the canonical B-supplement runtime (`list_partner_inbox`, friend invitations).
-- Runtime: `0052_inbox_friend_accepted.sql` (schema 0.28.0), applied to the local QA database only.
+- Runtime: `0052_inbox_friend_accepted.sql` (schema 0.28.0) and `0053_inbox_realtime.sql` (schema 0.29.0), applied to the
+  local QA database only. Amended 2026-11-14 (decision 2): push through Realtime instead of a 10-second read.
 
 ## Context
 
@@ -22,10 +23,15 @@ first used, with no first-run request.
    to say what happened in plain words: a friend request names the sender, an accepted request names who accepted, an
    invite to eat reads "<name> rủ bạn đi ăn", a result reads "Đã chốt món · Nhóm chọn: <dish>" or "Chưa chốt được món".
    The wire shape is unchanged; the only new type is `friend_accepted` with `{ invitationId }`.
-2. **Reading is fast while the app is in front.** The provider reads the inbox every 10 seconds while the app is in the
-   foreground, immediately when it returns to the foreground, and stops in the background. The server limit is 60 reads a
-   minute. Notifications that were already unread when the app opened become one summary banner. Open lists (inbox,
-   friends) refresh quietly when something new arrives.
+2. **The server pushes, the app does not keep asking.** Notifications are rare, so the app does not read on a timer.
+   Supabase Realtime is enabled (`supabase/config.toml`); `0053` publishes `public.inbox` and lets `authenticated` read it,
+   still limited by RLS `gm17_inbox_self` to the account's own rows (the row has no message text, only ids and times).
+   While the app is in the foreground it keeps one WebSocket (platform WebSocket, Phoenix protocol, no new library)
+   subscribed to INSERTs on its own inbox rows; each push triggers one `list_partner_inbox` read (debounced 300 ms).
+   It also reads at sign-in, on return to the foreground and when the connection comes back (to catch rows written while
+   it was down). Only while the connection is down does it read every 30 seconds. In the background the socket is
+   closed. Notifications already unread when the app opened become one summary banner; open lists refresh quietly.
+   Push while the app is closed is a separate step (FCM, development build).
 3. **Banner, not toast.** `NotificationBanner` is a separate white card with a bell, queued, tappable, swipe up to dismiss.
    Toasts keep only API errors and create / add / edit / delete results (the `notification` toast tone is removed). No banner
    is shown over the inbox list or for the result of the room the person is already in.
@@ -41,10 +47,12 @@ first used, with no first-run request.
 
 ## Consequences
 
-- Foreground latency is at most about 10 seconds. Push while the app is closed still needs a development build and FCM
-  (stage 3B); it is not verified on Expo Go.
-- The inbox read rate per phone is about 6 a minute, plus screen loads; the 60 a minute limit has room for it.
-- Evidence: SQL test `ADR-026_inbox_friend_accepted.test.sql` (11/11), QA e2e `.work/e2e/31-test-notifications.mjs`
+- Foreground latency is under a second on QA (measured 437 ms from the invite to the pushed row). Nothing is read while
+  nothing happens. Push while the app is closed still needs a development build and FCM (stage 3B).
+- The running QA stack was created with Realtime off; `.work/e2e/32-qa-realtime.mjs` adds the container (run by `!phone`).
+  New stacks get it from the config. CI (`scripts/dish_v4_ci.py`) keeps Realtime excluded, it does not need it.
+- Evidence: SQL tests `ADR-026_inbox_friend_accepted.test.sql` (11/11) and `ADR-026_inbox_realtime.test.sql` (6/6), QA e2e
+  `.work/e2e/33-test-inbox-realtime.mjs` (push arrives, other accounts get nothing), `.work/e2e/31-test-notifications.mjs`
   (friend request, accepted request, invite to eat, decided and no-consensus results, history after consent, snack
   ranking), and Jest tests for the banner, polling, permissions and the round 2 notice.
 - Not run: SQL/domain parity CI, a test on a physical phone.

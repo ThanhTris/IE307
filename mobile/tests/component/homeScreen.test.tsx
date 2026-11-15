@@ -60,7 +60,7 @@ test('saved receipt is checked before offering continuation; ended room enables 
   await render(<HomeScreen repository={repository} liveSession={session()} activeRoom={receipt} onCreate={jest.fn()} onJoin={jest.fn()} onResume={jest.fn()} />);
   expect(screen.getByText('Đang kiểm tra phòng đã lưu…')).toBeOnTheScreen();
   expect(screen.getByRole('button', { name: 'Tạo phòng' })).toBeDisabled();
-  expect(screen.queryByRole('button', { name: 'Tiếp tục phiên' })).toBeNull();
+  expect(screen.queryByRole('button', { name: 'Quay lại phòng' })).toBeNull();
   await act(async () => pending.resolve({ ok: true, data: { ...data.data, state: 'EXPIRED' } }));
   expect(screen.getByText('Phòng đã hết hạn')).toBeOnTheScreen();
   expect(screen.getByRole('button', { name: 'Tạo phòng' })).toBeEnabled();
@@ -69,8 +69,8 @@ test('saved receipt is checked before offering continuation; ended room enables 
 test('Home offers continuation only for a verified member room', async () => {
   const repository = client(), onResume = jest.fn();
   await render(<HomeScreen repository={repository} liveSession={session()} activeRoom={receipt} onCreate={jest.fn()} onJoin={jest.fn()} onResume={onResume} />);
-  await screen.findByRole('button', { name: 'Tiếp tục phiên' });
-  await press('Tiếp tục phiên');
+  await screen.findByRole('button', { name: 'Quay lại phòng' });
+  await press('Quay lại phòng');
   expect(onResume).toHaveBeenCalledTimes(1);
   expect(screen.getByRole('button', { name: 'Tạo phòng' })).toBeDisabled();
 });
@@ -81,9 +81,9 @@ test('focus refresh hides the old active room until a fresh response arrives', a
   jest.spyOn(repository, 'getRoomSnapshot').mockResolvedValueOnce(result).mockReturnValue(pending.promise);
   const props = { repository, liveSession: session(), activeRoom: receipt, onCreate: jest.fn(), onJoin: jest.fn(), onResume: jest.fn() };
   const view = await render(<HomeScreen {...props} roomRevision={1} />);
-  await screen.findByRole('button', { name: 'Tiếp tục phiên' });
+  await screen.findByRole('button', { name: 'Quay lại phòng' });
   await view.rerender(<HomeScreen {...props} roomRevision={2} />);
-  expect(screen.queryByRole('button', { name: 'Tiếp tục phiên' })).toBeNull();
+  expect(screen.queryByRole('button', { name: 'Quay lại phòng' })).toBeNull();
   expect(screen.getByRole('button', { name: 'Tạo phòng' })).toBeDisabled();
   await act(async () => pending.resolve({ ok: false, error: { messageKey: 'ROOM_EXPIRED' } }));
   await waitFor(() => expect(screen.getByRole('button', { name: 'Tạo phòng' })).toBeEnabled());
@@ -95,7 +95,7 @@ test.each(['NOT_MEMBER', 'ROOM_NOT_FOUND', 'ROOM_EXPIRED'] as const)('unavailabl
   await render(<HomeScreen repository={repository} liveSession={session()} activeRoom={receipt} onCreate={jest.fn()} onJoin={jest.fn()} onResume={jest.fn()} />);
   await screen.findByText('Không thể tiếp tục phòng đã lưu');
   expect(screen.getByRole('button', { name: 'Tạo phòng' })).toBeEnabled();
-  expect(screen.queryByRole('button', { name: 'Tiếp tục phiên' })).toBeNull();
+  expect(screen.queryByRole('button', { name: 'Quay lại phòng' })).toBeNull();
 });
 
 test('room network retry preserves the receipt and does not create or join', async () => {
@@ -105,12 +105,12 @@ test('room network retry preserves the receipt and does not create or join', asy
   const create = jest.spyOn(repository, 'createRoom'), join = jest.spyOn(repository, 'joinRoom');
   await render(<ContinueSessionScreen repository={repository} receipt={receipt} userId={user.id} onHome={jest.fn()} onContinue={onContinue} />);
   await screen.findByText('Chưa kiểm tra được phòng');
-  expect(screen.getByRole('button', { name: 'Tiếp tục phiên' })).toBeDisabled();
-  await press('Tiếp tục phiên'); expect(onContinue).not.toHaveBeenCalled();
+  expect(screen.getByRole('button', { name: 'Quay lại phòng' })).toBeDisabled();
+  await press('Quay lại phòng'); expect(onContinue).not.toHaveBeenCalled();
   await press('Kiểm tra lại phòng');
   await screen.findByText('Bạn có phiên đang diễn ra');
   expect(read.mock.calls).toEqual([[receipt.roomId], [receipt.roomId]]);
-  await press('Tiếp tục phiên'); expect(onContinue).toHaveBeenCalledWith(expect.objectContaining({ roomId: receipt.roomId, state: 'LOBBY' }));
+  await press('Quay lại phòng'); expect(onContinue).toHaveBeenCalledWith(expect.objectContaining({ roomId: receipt.roomId, state: 'LOBBY' }));
   expect(create).not.toHaveBeenCalled(); expect(join).not.toHaveBeenCalled();
 });
 
@@ -122,7 +122,7 @@ test.each(['wrong-room', 'old-version', 'not-member'] as const)('continue reject
   await render(<ContinueSessionScreen repository={repository} receipt={receipt} userId={user.id} onHome={jest.fn()} onContinue={jest.fn()} />);
   await screen.findByText(invalid === 'not-member' ? 'Không thể tiếp tục phòng này' : 'Chưa kiểm tra được phòng');
   expect(screen.queryByText('Phòng của Minh')).toBeNull();
-  expect(screen.getByRole('button', { name: 'Tiếp tục phiên' })).toBeDisabled();
+  expect(screen.getByRole('button', { name: 'Quay lại phòng' })).toBeDisabled();
 });
 
 test.each(['EXPIRED', 'CANCELLED', 'DECIDED', 'NO_CONSENSUS', 'FINALIZED', 'COMPLETED'] as const)('continue does not label terminal state %s as active', async state => {
@@ -131,7 +131,7 @@ test.each(['EXPIRED', 'CANCELLED', 'DECIDED', 'NO_CONSENSUS', 'FINALIZED', 'COMP
   jest.spyOn(repository, 'getRoomSnapshot').mockResolvedValue({ ok: true, data: { ...result.data, state } });
   await render(<ContinueSessionScreen repository={repository} receipt={receipt} userId={user.id} onHome={jest.fn()} onContinue={jest.fn()} />);
   await screen.findByText(state === 'EXPIRED' ? 'Phòng đã hết hạn' : 'Phòng đã kết thúc');
-  expect(screen.getByRole('button', { name: 'Tiếp tục phiên' })).toBeDisabled();
+  expect(screen.getByRole('button', { name: 'Quay lại phòng' })).toBeDisabled();
 });
 
 test('continue never reads a private snapshot before identity is available', async () => {

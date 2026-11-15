@@ -9,6 +9,7 @@ import { validDisplayName } from '../../rooms/services/roomEntry';
 import type { HomeLiveSession } from './HomeScreen';
 import { WelcomeArtwork, WelcomeScreen } from './WelcomeScreen';
 import { ToastNotice } from '../../../shared/ui/feedback/Toast';
+import { FOCUSED_STYLE } from '../../../shared/ui/layout/ScreenContainer';
 
 type Props = {
   onContinue: (name: string) => Promise<boolean>;
@@ -129,7 +130,7 @@ export function GuestEntryScreen({ onContinue, onComplete, session, onSignIn, on
 
 const styles = StyleSheet.create({
   root: { flex: 1 },
-  content: { flex: 1, width: '100%', maxWidth: 480, alignSelf: 'center', paddingHorizontal: 30 },
+  content: { flex: 1, ...FOCUSED_STYLE, paddingHorizontal: 30 },
   back: { minHeight: 48, minWidth: 48, justifyContent: 'center', alignSelf: 'flex-start' },
   backLabel: { fontSize: 15, lineHeight: 22 },
   center: { flex: 1, justifyContent: 'center', paddingBottom: 48 },

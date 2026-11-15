@@ -5,6 +5,7 @@ import { useAppFonts } from '../../../bootstrap/AppFontProvider';
 import { useShellTheme } from '../../../shared/lib/useShellTheme';
 import { AppButton } from '../../../shared/ui';
 import { radii, spacing } from '../../../shared/theme/tokens';
+import { FOCUSED_STYLE } from '../../../shared/ui/layout/ScreenContainer';
 
 type Props = {
   onGuest: () => void;
@@ -55,7 +56,7 @@ export function WelcomeScreen({ onGuest, onSignIn, onSignUp, disabled, notice }:
 
 const styles = StyleSheet.create({
   root: { flex: 1 },
-  content: { flex: 1, width: '100%', maxWidth: 480, alignSelf: 'center' },
+  content: { flex: 1, ...FOCUSED_STYLE },
   hero: { flex: 1, paddingHorizontal: 30, paddingTop: 25, paddingBottom: 64, overflow: 'hidden' },
   headline: { marginTop: 72, fontSize: 50, lineHeight: 61 },
   subtitle: { fontSize: 17, lineHeight: 24 },

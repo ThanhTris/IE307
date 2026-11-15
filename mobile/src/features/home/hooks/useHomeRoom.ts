@@ -4,9 +4,9 @@ import { useRead } from '../../rooms/hooks/useRoomEntry';
 import type { RoomEntryReceipt, RoomEntryRepository } from '../../rooms/services/roomEntry';
 
 export const resumableRoom = (room: RoomSnapshot) =>
-  room.state === 'LOBBY' || room.state === 'ROUND_1' || room.state === 'ROUND_2' || room.state === 'VOTING';
+  room.state === 'LOBBY' || room.state === 'ROUND_1' || room.state === 'WAITING_1' || room.state === 'VOTING';
 
-export function useHomeRoom(repository: RoomEntryRepository, receipt: RoomEntryReceipt | null | undefined, userId?: string, enabled = true, revision = 0) {
+export function useHomeRoom(repository: RoomEntryRepository, receipt: Pick<RoomEntryReceipt, 'roomId'> & Partial<RoomEntryReceipt> | null | undefined, userId?: string, enabled = true, revision = 0) {
   const roomId = receipt?.roomId;
   const code = receipt?.code;
   const version = receipt?.version;
@@ -15,7 +15,7 @@ export function useHomeRoom(repository: RoomEntryRepository, receipt: RoomEntryR
     const result = await repository.getRoomSnapshot(roomId!);
     if (!result.ok) return result;
     const room = result.data;
-    if (room.roomId !== roomId || room.code !== code || room.version < (version ?? 0)) {
+    if (room.roomId !== roomId || (code !== undefined && room.code !== code) || room.version < (version ?? 0)) {
       return { ok: false as const, error: { messageKey: 'MALFORMED_RESPONSE' as const } };
     }
     if (!room.members.some(member => member.userId === userId)) {

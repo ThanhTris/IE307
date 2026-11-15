@@ -1,6 +1,7 @@
 import { Linking } from 'react-native';
 import { getActivePushDriver } from '../../inbox/services/expoPushDriver';
-import { NativeLocationAdapter } from '../../context/services/location/NativeLocationAdapter';
+import * as ExpoLocation from 'expo-location';
+import { NativeLocationAdapter, type NativeLocationProvider } from '../../context/services/location/NativeLocationAdapter';
 import { NativeQrScannerAdapter } from '../../rooms/services/joinLinks';
 
 /** The three things the app may ask the phone for. */
@@ -54,7 +55,7 @@ async function openAppSettings(): Promise<void> {
 
 function defaultDrivers(): PermissionDrivers {
   const camera = new NativeQrScannerAdapter();
-  const location = new NativeLocationAdapter();
+  const location = new NativeLocationAdapter(ExpoLocation as unknown as NativeLocationProvider);
   const fromCamera = (value: string): RawPermission => value === 'granted' ? 'granted' : value === 'undetermined' ? 'undetermined' : value === 'unavailable' ? 'unavailable' : 'denied';
   const fromLocation = (value: string): RawPermission => value === 'granted' ? 'granted' : value === 'undetermined' ? 'undetermined' : value === 'unavailable' ? 'unavailable' : 'denied';
   return {

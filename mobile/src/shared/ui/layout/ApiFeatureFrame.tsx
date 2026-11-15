@@ -5,6 +5,7 @@ import { AppBottomNavigation } from './AppBottomNavigation';
 import { AppHeader } from './AppHeader';
 import type { AppIconName } from '../icons/AppIcon';
 import { useShellTheme } from '../../lib/useShellTheme';
+import { CONTAINER_STYLE, CONTAINER_GUTTER } from './ScreenContainer';
 
 export type ApiFeature = 'friends' | 'inbox' | 'history' | 'profile';
 
@@ -36,7 +37,7 @@ export function ApiFeatureFrame({ active, title, onNavigate, onHome, onBack, hea
       {standalone ? (
         <AppHeader variant="back" title={title} centeredTitle hideDivider rightAction={headerAction} allowTitleWrap={largeText} onPressBack={onBack ?? onHome} showFriends={false} showInbox={false} showProfile={false} colors={{ ...colors, surface: colors.background }} />
       ) : null}
-      <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.content} keyboardShouldPersistTaps="handled">
+      <ScrollView testID="screen-content" showsVerticalScrollIndicator={false} contentContainerStyle={styles.content} keyboardShouldPersistTaps="handled">
         {children}
       </ScrollView>
       {!standalone ? <AppBottomNavigation items={bottomTabs} activeId={active} bottomInset={insets.bottom} allowLabelWrap={largeText} colors={colors} /> : null}
@@ -46,5 +47,5 @@ export function ApiFeatureFrame({ active, title, onNavigate, onHome, onBack, hea
 
 const styles = StyleSheet.create({
   root: { flex: 1 },
-  content: { flexGrow: 1, paddingHorizontal: 24, paddingTop: 24, paddingBottom: 32, gap: 16, width: '100%', maxWidth: 640, alignSelf: 'center' },
+  content: { flexGrow: 1, paddingHorizontal: CONTAINER_GUTTER, paddingTop: 24, paddingBottom: 32, gap: 16, ...CONTAINER_STYLE },
 });

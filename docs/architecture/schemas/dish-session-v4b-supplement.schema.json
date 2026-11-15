@@ -208,6 +208,10 @@
             "NOT_SUBMITTED",
             "ACCEPTED"
           ]
+        },
+        "ready": {
+          "type": "boolean",
+          "description": "Lobby readiness (ADR-028, migration 0055): false while the member is still choosing their taste; the host is always true."
         }
       },
       "additionalProperties": false

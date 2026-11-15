@@ -8,6 +8,7 @@ import { TutorialHomeStage } from '../components/TutorialHomeStage';
 import { TutorialHomeFooter } from '../components/TutorialHomeFooter';
 import { TutorialSetupStage } from '../components/TutorialSetupStage';
 import { TutorialSampleCard } from '../components/TutorialSampleCard';
+import { FOCUSED_STYLE } from '../../../shared/ui/layout/ScreenContainer';
 
 const expected: Partial<Record<number, VoteValue>> = { 2: 'NO', 3: 'OK', 4: 'WANT' };
 const labels = { NO: 'Không ăn', OK: 'Ăn được', WANT: 'Muốn ăn' };
@@ -69,7 +70,7 @@ export function TutorialScreen({ onExit, onComplete }: { onExit: () => void; onC
   </SafeAreaView>;
 }
 const styles = StyleSheet.create({
-  root: { flex: 1 }, content: { flexGrow: 1, width: '100%', maxWidth: 480, alignSelf: 'center', paddingHorizontal: 24, paddingVertical: 16, gap: 8 },
+  root: { flex: 1 }, content: { flexGrow: 1, ...FOCUSED_STYLE, paddingHorizontal: 24, paddingVertical: 16, gap: 8 },
   bar: { flexDirection: 'row', flexWrap: 'wrap', alignItems: 'center', borderRadius: 12, minHeight: 48, paddingRight: 12, gap: 8 }, barText: { fontSize: 12, lineHeight: 18 }, back: { minHeight: 48, minWidth: 48, alignItems: 'center', justifyContent: 'center' }, backIcon: { width: 20, height: 20 }, skip: { minHeight: 48, minWidth: 48, marginLeft: 'auto', alignItems: 'center', justifyContent: 'center' },
   body: { fontSize: 16, lineHeight: 24, textAlign: 'center' }, small: { fontSize: 12, lineHeight: 18 },
   sampleHeading: { flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'space-between', gap: 12, marginTop: 12 }, progressTrack: { height: 4, borderRadius: 2 }, progress: { height: 4, borderRadius: 2 },

@@ -9,6 +9,7 @@ import { radii, spacing, typography, type ThemeColors } from '../../theme/tokens
 import type { ComponentThemeProps } from '../types';
 import { AppIcon, type AppIconName } from '../icons/AppIcon';
 import { BrandLogo } from './BrandLogo';
+import { CONTAINER_GUTTER, CONTAINER_STYLE, ICON_BUTTON_INSET } from './ScreenContainer';
 
 export type AppHeaderProps = ComponentThemeProps & {
   variant?: 'home' | 'back' | 'room';
@@ -57,7 +58,8 @@ export function AppHeader({
 }: AppHeaderProps) {
   const showBrand = variant === 'home';
   return (
-    <View style={[styles.header, { backgroundColor: colors?.surface, borderBottomColor: colors?.line }, hideDivider && { borderBottomWidth: 0 }]}>
+    <View style={[styles.band, { backgroundColor: colors?.surface, borderBottomColor: colors?.line }, hideDivider && { borderBottomWidth: 0 }]}>
+    <View testID="app-header-content" style={[styles.header, CONTAINER_STYLE, showBrand ? styles.headerHome : styles.headerBack]}>
       {showBrand ? (
         <Pressable
           accessibilityRole="button"
@@ -152,6 +154,7 @@ export function AppHeader({
         ) : null}
       </View>
     </View>
+    </View>
   );
 }
 
@@ -191,13 +194,15 @@ function HeaderAction({
 }
 
 const styles = StyleSheet.create({
+  band: { width: '100%', borderBottomWidth: StyleSheet.hairlineWidth },
+  // The logo starts on the gutter; icon buttons are pulled out by their inner space so their icons sit on the gutter too.
+  headerHome: { paddingLeft: CONTAINER_GUTTER, paddingRight: CONTAINER_GUTTER - ICON_BUTTON_INSET },
+  headerBack: { paddingHorizontal: CONTAINER_GUTTER - ICON_BUTTON_INSET },
   header: {
     minHeight: 72,
-    paddingHorizontal: spacing.lg,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    borderBottomWidth: StyleSheet.hairlineWidth,
   },
   brand: { minHeight: 48, flexDirection: 'row', alignItems: 'center', gap: spacing.sm, flexShrink: 1 },
   headerVariant: { flex: 1, minWidth: 0, minHeight: 48, flexDirection: 'row', alignItems: 'center', gap: spacing.xs },

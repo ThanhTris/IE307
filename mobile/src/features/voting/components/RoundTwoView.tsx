@@ -3,7 +3,9 @@ import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import type { PoolDish } from '../../../data/api';
 import { AppButton, AppIcon, SheetDialog, type Palette } from '../../../shared/ui';
 import type { FinalChoice } from '../hooks/useRoundTwoVoting';
+import { RoundHeader } from './RoundHeader';
 import { RoundTwoDishRow } from './RoundTwoDishRow';
+import { CONTAINER_GUTTER, CONTAINER_STYLE } from '../../../shared/ui/layout/ScreenContainer';
 
 /**
  * Round 2: a list of the round-1 survivors, each with a checkbox. Ticking a dish removes it (up to the cap).
@@ -16,16 +18,12 @@ export function RoundTwoView({ candidates, choices, cap, removed, locked, submit
 }) {
   const [help, setHelp] = useState(false);
   return <View style={styles.root}>
-    <View style={styles.header}>
-      <View style={styles.side} />
-      <Text accessibilityRole="header" style={[styles.title, { color: colors.text }]}>Vòng 2</Text>
-      <View style={[styles.side, styles.actions]}>
-        <Pressable accessibilityRole="button" accessibilityLabel="Hướng dẫn" hitSlop={6} onPress={() => setHelp(true)}
-          style={({ pressed }) => [styles.iconButton, { backgroundColor: pressed ? colors.soft : 'transparent' }]}>
-          <AppIcon name="help" size={22} color={colors.text} />
-        </Pressable>
-      </View>
-    </View>
+    <RoundHeader title="Vòng 2" colors={colors}>
+      <Pressable accessibilityRole="button" accessibilityLabel="Hướng dẫn" hitSlop={6} onPress={() => setHelp(true)}
+        style={({ pressed }) => [styles.iconButton, { backgroundColor: pressed ? colors.soft : 'transparent' }]}>
+        <AppIcon name="help" size={22} color={colors.text} />
+      </Pressable>
+    </RoundHeader>
 
     <View style={styles.summary}>
       <Text style={[styles.summaryText, { color: colors.text }]}>Đã loại {removed}/{cap} món</Text>
@@ -55,12 +53,8 @@ export function RoundTwoView({ candidates, choices, cap, removed, locked, submit
 }
 
 const styles = StyleSheet.create({
-  root: { flex: 1, paddingHorizontal: 16 },
-  header: { minHeight: 56, flexDirection: 'row', alignItems: 'center' },
-  side: { width: 96 },
-  actions: { flexDirection: 'row', justifyContent: 'flex-end', gap: 4 },
+  root: { flex: 1, paddingHorizontal: CONTAINER_GUTTER, ...CONTAINER_STYLE },
   iconButton: { width: 44, height: 44, borderRadius: 22, alignItems: 'center', justifyContent: 'center' },
-  title: { flex: 1, textAlign: 'center', fontFamily: 'InterBold', fontSize: 20, lineHeight: 28 },
   summary: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 6 },
   summaryText: { fontFamily: 'InterSemiBold', fontSize: 14, lineHeight: 20 },
   link: { fontFamily: 'InterSemiBold', fontSize: 14, lineHeight: 20 },

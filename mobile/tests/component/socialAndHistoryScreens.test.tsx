@@ -200,11 +200,11 @@ test('live history opens the saved projection without re-reading the operational
   };
   await render(<HistoryScreen repository={repository as any} onNavigate={nav} onHome={home} />);
   expect(await screen.findByText(/Linh, Tú/)).toBeOnTheScreen();
-  await user.press(await screen.findByRole('button', { name: 'Xem chi tiết đã lưu' }));
+  await user.press(await screen.findByText(/Linh, Tú/));
   expect(screen.getByText('Chi tiết bữa ăn')).toBeOnTheScreen();
   expect(screen.getByText('Xếp hạng của nhóm')).toBeOnTheScreen();
   expect(screen.getByText('Bún bò Huế · Món được chọn')).toBeOnTheScreen();
-  expect(screen.getAllByText('4 điểm')).toHaveLength(2);
+  expect(screen.getAllByText('4 điểm')).toHaveLength(1);
   expect(screen.getByText('Linh')).toBeOnTheScreen();
   expect(screen.getByText('Tú')).toBeOnTheScreen();
   expect(screen.getByText(/Bữa ăn dự kiến/)).toBeOnTheScreen();

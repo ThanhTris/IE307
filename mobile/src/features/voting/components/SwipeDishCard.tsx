@@ -80,6 +80,9 @@ export function SwipeDishCard({ dish, currentVote, disabled, onVote, enterFlip, 
   // eslint-disable-next-line react-hooks/refs
   const responder = useMemo(() => PanResponder.create({
     onMoveShouldSetPanResponder: (_e, g) => !live.current.disabled && !leaving.current && Math.abs(g.dx) > 8 && Math.abs(g.dx) > Math.abs(g.dy),
+    // iOS may hand the touch to the back-swipe gesture; never give it up mid-swipe.
+    onPanResponderTerminationRequest: () => false,
+    onMoveShouldSetPanResponderCapture: (_e, g) => !live.current.disabled && !leaving.current && Math.abs(g.dx) > 8 && Math.abs(g.dx) > Math.abs(g.dy),
     onPanResponderMove: (_e, g) => pan.setValue({ x: g.dx, y: g.dy * 0.15 }),
     onPanResponderRelease: (_e, g) => {
       if (g.dx > SWIPE_THRESHOLD) fly('OK', 1);

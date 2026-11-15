@@ -59,6 +59,10 @@ function isInboxProjection(value: unknown): value is InboxItem {
     && Number.isInteger(metadata.eventVersion) && Number(metadata.eventVersion) >= 1;
 }
 
+const KNOWN_TYPES = new Set(['friend_invite', 'friend_accepted', 'room_invite', 'room_result']);
+/** A row of a type this build does not know (added by a newer server) is skipped; any other malformed row fails the page. */
+const isUnknownType = (value: unknown) => isRecord(value) && typeof value.type === 'string' && !KNOWN_TYPES.has(value.type);
+
 function malformedList(): ReadResult<InboxPage> {
   return { ok: false, error: { messageKey: 'MALFORMED_RESPONSE' } };
 }
@@ -129,10 +133,11 @@ export function createInboxRepository(roomRepository: RoomRepository): InboxRepo
     async list(cursor, knownEventIds = new Set()) {
       const result = await callSessionApi(roomRepository, client => client.listPartnerInbox(cursor));
       if (!result.ok) return result;
-      if (!Array.isArray(result.data) || !result.data.every(isInboxProjection)) return malformedList();
+      if (!Array.isArray(result.data) || !result.data.every(row => isInboxProjection(row) || isUnknownType(row))) return malformedList();
+      const rows = result.data.filter(isInboxProjection);
       const seen = new Set(knownEventIds);
       const handled = handledEventIds();
-      const items = result.data.filter(item => {
+      const items = rows.filter(item => {
         if (seen.has(item.eventId) || handled.has(item.eventId)) return false;
         seen.add(item.eventId);
         return true;

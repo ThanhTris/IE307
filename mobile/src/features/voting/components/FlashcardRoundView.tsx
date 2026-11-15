@@ -2,7 +2,9 @@ import { useState } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import type { PoolDish } from '../../../data/api';
 import { AppButton, AppIcon, SheetDialog, type Palette, type VoteValue } from '../../../shared/ui';
+import { RoundHeader } from './RoundHeader';
 import { SwipeDishCard } from './SwipeDishCard';
+import { CONTAINER_GUTTER, CONTAINER_STYLE } from '../../../shared/ui/layout/ScreenContainer';
 
 /**
  * Round 1 as a single flashcard deck: header (title, undo and help on the right), progress bar and the card centred
@@ -23,14 +25,10 @@ export function FlashcardRoundView({ pool, votes, index, retry, locked, canUndo,
     </Pressable>
   );
   return <View style={styles.root}>
-    <View style={styles.header}>
-      <View style={styles.side} />
-      <Text accessibilityRole="header" style={[styles.title, { color: colors.text }]}>Vòng 1</Text>
-      <View style={[styles.side, styles.actions]}>
-        {iconButton('Hoàn tác', 'undo', onUndo, !canUndo || locked)}
-        {iconButton('Hướng dẫn', 'help', () => setHelp(true))}
-      </View>
-    </View>
+    <RoundHeader title="Vòng 1" colors={colors}>
+      {iconButton('Hoàn tác', 'undo', onUndo, !canUndo || locked)}
+      {iconButton('Hướng dẫn', 'help', () => setHelp(true))}
+    </RoundHeader>
 
     <Text style={[styles.progressText, { color: colors.text }]}>{voted}/{pool.length} món</Text>
     <View style={[styles.track, { backgroundColor: colors.soft }]}>
@@ -61,12 +59,8 @@ export function FlashcardRoundView({ pool, votes, index, retry, locked, canUndo,
 }
 
 const styles = StyleSheet.create({
-  root: { flex: 1, paddingHorizontal: 16, paddingBottom: 24 },
-  header: { minHeight: 56, flexDirection: 'row', alignItems: 'center' },
-  side: { width: 96 },
-  actions: { flexDirection: 'row', justifyContent: 'flex-end', gap: 4 },
+  root: { flex: 1, paddingHorizontal: CONTAINER_GUTTER, paddingBottom: 24, ...CONTAINER_STYLE },
   iconButton: { width: 44, height: 44, borderRadius: 22, alignItems: 'center', justifyContent: 'center' },
-  title: { flex: 1, textAlign: 'center', fontFamily: 'InterBold', fontSize: 20, lineHeight: 28 },
   progressText: { fontFamily: 'InterSemiBold', fontSize: 14, marginBottom: 6 },
   track: { height: 6, borderRadius: 3, overflow: 'hidden' },
   fill: { height: 6, borderRadius: 3 },

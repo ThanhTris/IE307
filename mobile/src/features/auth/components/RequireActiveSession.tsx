@@ -5,12 +5,17 @@ import { useRoomRepository } from '../../../bootstrap/RoomRepositoryProvider';
 import { AppButton, AppHeader, StatusNotice } from '../../../shared/ui';
 import { useShellTheme } from '../../../shared/lib/useShellTheme';
 
-export function RequireActiveSession({ children, onHome }: { children: ReactNode; onHome: () => void }) {
+/**
+ * `loading`: what to show while the session is being restored. A screen with its own skeleton passes it, so the person never
+ * sees the home-style header and a "restoring" notice in between.
+ */
+export function RequireActiveSession({ children, onHome, loading }: { children: ReactNode; onHome: () => void; loading?: ReactNode }) {
   const live = useRoomRepository();
   const { colors } = useShellTheme();
   const [busy, setBusy] = useState(false);
 
   if (live.status === 'active' && live.user) return children;
+  if (loading && live.isInitializing) return <SafeAreaView style={{ flex: 1, backgroundColor: colors.background }}>{loading}</SafeAreaView>;
 
   const retryRestore = async () => {
     setBusy(true);

@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import {
   ScrollView,
   StyleSheet,
@@ -25,6 +25,7 @@ import { VoteDishCardItem } from '../components/VoteDishCardItem';
 import { FlashcardRoundView } from '../components/FlashcardRoundView';
 import { RoundWaitingView } from '../components/RoundWaitingView';
 import { RoundTwoNotice } from '../components/RoundTwoNotice';
+import { CONTAINER_STYLE, CONTAINER_GUTTER } from '../../../shared/ui/layout/ScreenContainer';
 
 export type VoteScreenProps = {
   pool?: PoolDish[];
@@ -67,9 +68,12 @@ export function VoteScreen({
   // Round 1 found no winner: tell the player before the screen moves on to round 2.
   const [roundTwoNotice, setRoundTwoNotice] = useState<PoolDish[] | null>(null);
   const announceRoundTwo = useCallback((candidates: PoolDish[]) => setRoundTwoNotice(candidates), []);
+  // The notice stays on screen (blank background) while the app moves to round 2, so nothing of round 1 flashes back
+  // behind the sliding screen; it goes only once.
+  const movedToRoundTwo = useRef(false);
   const continueToRoundTwo = useCallback(() => {
-    if (!roundTwoNotice) return;
-    setRoundTwoNotice(null);
+    if (!roundTwoNotice || movedToRoundTwo.current) return;
+    movedToRoundTwo.current = true;
     onGoToFinalRound?.(roundTwoNotice);
   }, [roundTwoNotice, onGoToFinalRound]);
   const roundTwoDialog = roundTwoNotice ? <RoundTwoNotice remaining={roundTwoNotice.length} onContinue={continueToRoundTwo} /> : null;
@@ -144,7 +148,6 @@ export function VoteScreen({
   if (isLoadingSnapshot) {
     return (
       <SafeAreaView style={[styles.root, { backgroundColor: colors.background }]}>
-        <AppHeader title="Bình chọn · Vòng 1" onPressBrand={onBack} colors={colors} />
         <VoteSkeleton label="Đang tải phòng bình chọn" colors={colors} />
       </SafeAreaView>
     );
@@ -153,12 +156,22 @@ export function VoteScreen({
   if (snapshotError && pool.length === 0) {
     return (
       <SafeAreaView style={[styles.root, { backgroundColor: colors.background }]}>
-        <AppHeader title="Bình chọn · Vòng 1" onPressBrand={onBack} colors={colors} />
+        <AppHeader variant="back" title="Vòng 1" centeredTitle hideDivider onPressBack={onBack} colors={colors} />
         <View style={styles.loadingContainer}>
           <StatusNotice title="Không thể tải dữ liệu phòng" message={`Lỗi: ${snapshotError}. Vui lòng kiểm tra lại kết nối mạng.`} tone="error" actionLabel="Thử lại tải phòng" onAction={() => void fetchSnapshot()} colors={colors} />
         </View>
       </SafeAreaView>
     );
+  }
+
+  // Round 1 found no winner: the dialog covers the whole screen and the app moves on to round 2, so nothing of round 1
+  // is drawn behind it, only the plain background.
+  if (roundTwoNotice) {
+    return <SafeAreaView style={[styles.root, { backgroundColor: colors.background }]}>
+      {submissionState === 'error' && errorMessage ? <ToastNotice title="Chưa gửi được phiếu" message={errorMessage} tone="error" /> : null}
+      {waitingError ? <ToastNotice title={waitingError} tone="error" /> : null}
+      {roundTwoDialog}
+    </SafeAreaView>;
   }
 
   if (viewMode === 'flashcard' && !shouldShowScenarioPicker) {
@@ -167,7 +180,6 @@ export function VoteScreen({
       <SafeAreaView style={[styles.root, { backgroundColor: colors.background }]}>
         {submissionState === 'error' && errorMessage ? <ToastNotice title="Chưa gửi được phiếu" message={errorMessage} tone="error" /> : null}
         {waitingError ? <ToastNotice title={waitingError} tone="error" /> : null}
-        {roundTwoDialog}
         {sent ? (
           <>
             <RoundWaitingView
@@ -216,8 +228,7 @@ export function VoteScreen({
 
   return (
     <SafeAreaView style={[styles.root, { backgroundColor: colors.background }]}>
-      <AppHeader title="Bình chọn · Vòng 1" onPressBrand={onBack} colors={colors} />
-      {roundTwoDialog}
+      <AppHeader variant="back" title="Bình chọn · Vòng 1" centeredTitle hideDivider onPressBack={onBack} colors={colors} />
       <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.content}>
         <VoteScenarioAndStatusBanner
           showScenarioPicker={shouldShowScenarioPicker}
@@ -314,7 +325,7 @@ export function VoteScreen({
 
 const styles = StyleSheet.create({
   root: { flex: 1 },
-  content: { padding: 16, gap: 16, maxWidth: 600, width: '100%', alignSelf: 'center' },
+  content: { padding: CONTAINER_GUTTER, gap: 16, ...CONTAINER_STYLE },
   loadingContainer: { flex: 1, justifyContent: 'center', alignItems: 'center', padding: 24, gap: 16 },
   loadingText: { fontSize: 14, fontWeight: '600', textAlign: 'center' },
   viewModeRow: { flexDirection: 'row', gap: 10, justifyContent: 'center' },
