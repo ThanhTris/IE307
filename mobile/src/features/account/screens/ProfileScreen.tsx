@@ -1,46 +1,98 @@
-import { useState } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
-import { useAppFonts } from '../../../bootstrap/AppFontProvider';
-import { AppButton, ApiFeatureFrame, SheetDialog } from '../../../shared/ui';
+import { useEffect, useState } from 'react';
+import { Pressable, StyleSheet, Text, View } from 'react-native';
+import type { ReadResult, SessionUser } from '../../../data/api/contracts';
+import type { AccountService } from '../../../data/auth';
+import type { AccountProfile } from '../../../data/auth/types';
+import { ApiFeatureFrame, AppButton, AppHeader, SheetDialog } from '../../../shared/ui';
 import { useShellTheme } from '../../../shared/lib/useShellTheme';
+import { radii, spacing, typography } from '../../../shared/theme/tokens';
+import { useAccountAction } from '../hooks/useAccountAction';
+import { accountErrorMessage } from '../services/accountMessages';
 
 type Props = {
-  displayName: string;
+  user: SessionUser;
+  account?: AccountService;
   onNavigate: (path: string) => void;
   onHome: () => void;
+  onLogout: () => Promise<boolean>;
 };
 
-/** Figma 232:349 "Cá nhân · Khách". Accounts are P1, so both account actions explain that guests can keep playing. */
-export function ProfileScreen({ displayName, onNavigate, onHome }: Props) {
+export function ProfileScreen({ user, account, onNavigate, onHome, onLogout }: Props) {
   const { colors } = useShellTheme();
-  const { textStyle } = useAppFonts();
-  const [accountPanel, setAccountPanel] = useState<'Đăng nhập' | 'Tạo tài khoản'>();
-  const initial = (displayName.trim() || 'Khách').slice(0, 1).toUpperCase();
-  return (
-    <ApiFeatureFrame active="profile" title="Cá nhân" onNavigate={onNavigate} onHome={onHome}>
-      <Text accessibilityRole="header" style={[styles.title, { color: colors.text }, textStyle(700)]}>Cá nhân</Text>
-      <View style={[styles.card, { backgroundColor: colors.warm }]}>
-        <View style={[styles.avatar, { backgroundColor: colors.surface, borderColor: colors.line }]}>
-          <Text style={[styles.avatarText, { color: colors.text }, textStyle(500)]}>{initial}</Text>
-        </View>
-        <Text accessibilityRole="header" style={[styles.cardTitle, { color: colors.text }, textStyle(700)]}>Đăng nhập</Text>
-        <Text style={[styles.cardBody, { color: colors.muted }, textStyle(400)]}>Giữ bạn bè và lịch sử khi đổi máy.</Text>
+  const [confirmLogout, setConfirmLogout] = useState(false);
+  const [profile, setProfile] = useState<ReadResult<AccountProfile>>();
+  const [profileRequest, setProfileRequest] = useState(0);
+  const { pending, error, run } = useAccountAction();
+  const guest = user.isGuest;
+
+  useEffect(() => {
+    if (guest || !account) return;
+    let active = true;
+    void account.getProfile().then(result => { if (active) setProfile(result); });
+    return () => { active = false; };
+  }, [guest, account, profileRequest, user.id]);
+
+  const header = <AppHeader onPressBrand={onHome} onInbox={() => onNavigate('/inbox')} showFriends={false} showProfile={false}
+    allowTitleWrap hideDivider colors={{ ...colors, surface: colors.background }} />;
+
+  return <ApiFeatureFrame active="profile" title="Cá nhân" onNavigate={onNavigate} onHome={onHome} topBar={header}>
+    <Text accessibilityRole="header" style={[typography.titleLarge, { color: colors.text }]}>Cá nhân</Text>
+    <View style={[styles.card, { backgroundColor: colors.warm }]}>
+      <View style={[styles.avatar, { backgroundColor: colors.surface, borderColor: colors.line }]}
+        accessibilityElementsHidden importantForAccessibility="no-hide-descendants">
+        <Text style={[typography.titleLarge, { color: colors.text }]}>{user.displayName.trim().slice(0, 1).toUpperCase()}</Text>
       </View>
-      <AppButton label="Đăng nhập" onPress={() => setAccountPanel('Đăng nhập')} colors={colors} textStyle={textStyle(600)} />
-      <AppButton label="Tạo tài khoản" variant="secondary" onPress={() => setAccountPanel('Tạo tài khoản')} colors={colors} textStyle={textStyle(600)} />
-      <SheetDialog visible={!!accountPanel} title={accountPanel ?? 'Tài khoản'} onClose={() => setAccountPanel(undefined)} colors={colors}>
-        <Text style={[styles.cardBody, { color: colors.text }, textStyle(400)]}>Tài khoản sẽ có trong bản cập nhật tới. Bạn vẫn dùng đầy đủ tính năng với tư cách khách.</Text>
-        <AppButton label="Đã hiểu" onPress={() => setAccountPanel(undefined)} colors={colors} textStyle={textStyle(600)} />
-      </SheetDialog>
-    </ApiFeatureFrame>
-  );
+      <Text accessibilityRole="header" style={[typography.titleMedium, styles.center, { color: colors.text }]}>
+        {guest ? 'Đăng nhập' : user.displayName}
+      </Text>
+      {guest ? <Text style={[typography.body, styles.center, { color: colors.muted }]}>Giữ bạn bè và lịch sử khi đổi máy.</Text> : null}
+      {!guest && account && !profile ? <Text accessibilityLiveRegion="polite" style={[typography.caption, { color: colors.muted }]}>Đang tải email…</Text> : null}
+      {!guest && profile?.ok ? <Text style={[typography.body, styles.center, { color: colors.muted }]}>{profile.data.email}</Text> : null}
+      {!guest && profile?.ok === false ? <>
+        <Text style={[typography.caption, styles.center, { color: colors.muted }]}>{accountErrorMessage(profile.error)}</Text>
+        <AppButton label="Tải lại email" variant="secondary" colors={colors} onPress={() => {
+          setProfile(undefined);
+          setProfileRequest(value => value + 1);
+        }} />
+      </> : null}
+    </View>
+    {guest ? <>
+      <AppButton label="Đăng nhập" onPress={() => onNavigate('/account/sign-in')} colors={colors} />
+      <AppButton label="Liên kết email" variant="secondary" onPress={() => onNavigate('/account/link')} colors={colors} />
+      <Text style={[typography.caption, { color: colors.muted }]}>Bạn vẫn có thể tạo hoặc tham gia phòng với tư cách khách.</Text>
+    </> : <>
+      <Text accessibilityRole="header" style={[typography.titleMedium, { color: colors.text }]}>Tài khoản</Text>
+      <View style={[styles.rows, { backgroundColor: colors.surface, borderColor: colors.line }]}>
+        <Pressable accessibilityRole="button" onPress={() => onNavigate('/account/edit-profile')}
+          style={[styles.row, { borderBottomWidth: StyleSheet.hairlineWidth, borderColor: colors.line }]}>
+          <Text style={[typography.bodyBold, styles.rowLabel, { color: colors.text }]}>Sửa hồ sơ</Text>
+          <Text accessible={false} style={[typography.titleMedium, { color: colors.text }]}>›</Text>
+        </Pressable>
+        <Pressable accessibilityRole="button" onPress={() => onNavigate('/account/change-password')} style={styles.row}>
+          <Text style={[typography.bodyBold, styles.rowLabel, { color: colors.text }]}>Đổi mật khẩu</Text>
+          <Text accessible={false} style={[typography.titleMedium, { color: colors.text }]}>›</Text>
+        </Pressable>
+      </View>
+      <AppButton label="Đăng xuất" variant="secondary" onPress={() => setConfirmLogout(true)} colors={colors} />
+    </>}
+    <SheetDialog visible={confirmLogout} title="Đăng xuất?" onClose={() => { if (!pending) setConfirmLogout(false); }} colors={colors}>
+      <Text style={[typography.body, { color: colors.text }]}>Bạn có thể đăng nhập lại bằng email và mật khẩu.</Text>
+      {error ? <Text accessibilityRole="alert" style={[typography.body, { color: colors.danger }]}>{accountErrorMessage(error)}</Text> : null}
+      <AppButton label={pending ?? 'Đăng xuất'} variant="danger" loading={!!pending} colors={colors} onPress={() => {
+        void run('Đang đăng xuất…', async () => await onLogout()
+          ? { ok: true, data: undefined }
+          : { ok: false, error: { messageKey: 'UNKNOWN_ERROR' } });
+      }} />
+      <AppButton label="Ở lại" variant="secondary" disabled={!!pending} onPress={() => setConfirmLogout(false)} colors={colors} />
+    </SheetDialog>
+  </ApiFeatureFrame>;
 }
 
 const styles = StyleSheet.create({
-  title: { fontSize: 28, lineHeight: 36 },
-  card: { alignItems: 'center', borderRadius: 20, paddingVertical: 28, paddingHorizontal: 20, gap: 10 },
-  avatar: { width: 72, height: 72, borderRadius: 36, borderWidth: 1, alignItems: 'center', justifyContent: 'center' },
-  avatarText: { fontSize: 30, lineHeight: 36 },
-  cardTitle: { fontSize: 20, lineHeight: 28, textAlign: 'center' },
-  cardBody: { fontSize: 14, lineHeight: 21, textAlign: 'center' },
+  card: { alignItems: 'center', borderRadius: radii.xl, paddingVertical: 28, paddingHorizontal: spacing.xl, gap: spacing.md },
+  avatar: { width: 80, height: 80, borderRadius: 40, borderWidth: 1, alignItems: 'center', justifyContent: 'center' },
+  center: { textAlign: 'center' },
+  rows: { borderRadius: radii.lg, borderWidth: 1 },
+  row: { minHeight: 56, paddingVertical: spacing.md, paddingHorizontal: spacing.lg, flexDirection: 'row', alignItems: 'center', gap: spacing.md },
+  rowLabel: { flex: 1 },
 });
