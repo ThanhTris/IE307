@@ -21,6 +21,8 @@ test('QA ports are isolated from app ports and allow the planned alternate pair'
   assert.throws(() => validatePorts(54321, 54372), /QA_APP_PORT_FORBIDDEN/);
   assert.throws(() => validatePorts(54371, 54371), /QA_PORTS_INVALID/);
   assert.throws(() => validatePorts(80, 54372), /QA_PORTS_INVALID/);
+  assert.deepEqual(validatePorts(54361, 54362, 54364), { api: 54361, db: 54362, mail: 54364 });
+  assert.throws(() => validatePorts(54361, 54362, 54362), /QA_MAIL_PORT_INVALID/);
 });
 
 test('CLI requires explicit run id and rejects unknown flags', () => {

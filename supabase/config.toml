@@ -27,7 +27,7 @@ enabled = true
 [studio]
 enabled = false
 
-[inbucket]
+[local_smtp]
 enabled = true
 port = 54324
 
@@ -66,6 +66,7 @@ content_path = "./supabase/templates/account-code.html"
 # GOTRUE_RATE_LIMIT_HEADER=X-Forwarded-For from the trusted Kong proxy.
 anonymous_users = 30
 token_refresh = 150
+email_sent = 20
 
 [edge_runtime]
 enabled = false

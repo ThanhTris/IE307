@@ -28,7 +28,7 @@ const allowedSourceFiles = [
   'supabase/seed/catalogue/gm18.2/coverage.json',
   'scripts/validate_dish_v4_schema.py', 'tests/fixtures/dish-catalogue-v1/qa-v4-synthetic.json', 'scripts/ci-requirements.txt',
   'docs/architecture/DISH_SESSION_API_CONTRACT_B.md', 'docs/architecture/schemas/dish-session-v4b.schema.json',
-  'supabase/config.toml', 'supabase/seed/catalogue/dishes.json', 'supabase/seed/catalogue/manifest.json',
+  'supabase/config.toml', 'supabase/templates/account-code.html', 'supabase/seed/catalogue/dishes.json', 'supabase/seed/catalogue/manifest.json',
   'supabase/tests/fixtures/gm03-dish-catalogue-synthetic.json',
 ];
 const migrationDir = resolve(root, 'supabase', 'migrations');
@@ -51,12 +51,14 @@ export function validateRunId(value) {
   return value;
 }
 
-export function validatePorts(api, db) {
+export function validatePorts(api, db, mail) {
   if (!Number.isInteger(api) || !Number.isInteger(db) || api < 1024 || api > 65535 || db < 1024 || db > 65535 || api === db) {
     throw new Error('QA_PORTS_INVALID');
   }
   if ([54321, 54322].includes(api) || [54321, 54322].includes(db)) throw new Error('QA_APP_PORT_FORBIDDEN');
-  return { api, db };
+  if (mail !== undefined && (!Number.isInteger(mail) || mail < 1024 || mail > 65535
+    || [54321, 54322, 54324, api, db].includes(mail))) throw new Error('QA_MAIL_PORT_INVALID');
+  return mail === undefined ? { api, db } : { api, db, mail };
 }
 
 export function makeNames(runId) {
@@ -182,8 +184,9 @@ function replaceSectionPort(config, sectionName, port) {
   const next = config.indexOf('\n[', start + 1);
   const end = next < 0 ? config.length : next + 1;
   const section = config.slice(start, end);
-  if (!/^port\s*=\s*\d+\s*$/m.test(section)) throw new Error(`QA_CONFIG_PORT_MISSING_${sectionName}`);
-  return config.slice(0, start) + section.replace(/^port\s*=\s*\d+\s*$/m, `port = ${port}`) + config.slice(end);
+  const portLine = /^port[ \t]*=[ \t]*\d+[ \t]*(?=\r?$)/m;
+  if (!portLine.test(section)) throw new Error(`QA_CONFIG_PORT_MISSING_${sectionName}`);
+  return config.slice(0, start) + section.replace(portLine, `port = ${port}`) + config.slice(end);
 }
 
 async function listMigrations() {
@@ -304,6 +307,13 @@ async function assertActualLoopbackBindings(state) {
   assertOwnedResource(database, { name: state.containerName, projectId: state.projectId, workdir: state.workdir });
   assertLoopbackPublishedPort(api, '8000', state.ports.api);
   assertLoopbackPublishedPort(database, '5432', state.ports.db);
+  if (state.ports.mail !== undefined) {
+    const mail = await inspectDocker('container', `supabase_inbucket_${state.projectId}`)
+      ?? await inspectDocker('container', `supabase_mailpit_${state.projectId}`);
+    if (!mail) throw new Error('QA_MAIL_CONTAINER_MISSING');
+    assertOwnedResource(mail, { name: mail.Name.replace(/^\//, ''), projectId: state.projectId, workdir: state.workdir });
+    assertLoopbackPublishedPort(mail, '8025', state.ports.mail);
+  }
 }
 
 function sqlLiteral(value) { return `'${String(value).replaceAll("'", "''")}'`; }
@@ -362,7 +372,15 @@ async function prepareWorkdir(state, migrations, ports) {
   let config = sourceConfig.replace(/^project_id\s*=\s*"[^"]+"/m, `project_id = "${state.projectId}"`);
   config = replaceSectionPort(config, 'api', ports.api);
   config = replaceSectionPort(config, 'db', ports.db);
+  if (ports.mail === undefined) {
+    config = config.replace(/^(\[local_smtp\]\s*\r?\n)enabled = true/m, '$1enabled = false')
+      .replace(/^(\[auth\.email\]\s*\r?\n)enable_signup = true/m, '$1enable_signup = false');
+  } else {
+    config = replaceSectionPort(config, 'local_smtp', ports.mail);
+  }
   await mkdir(resolve(state.workdir, 'supabase', 'migrations'), { recursive: true });
+  await mkdir(resolve(state.workdir, 'supabase', 'templates'), { recursive: true });
+  await copyFile(resolve(root, 'supabase/templates/account-code.html'), resolve(state.workdir, 'supabase/templates/account-code.html'));
   await writeFile(resolve(state.workdir, 'supabase', 'config.toml'), config, 'utf8');
   for (const migration of migrations) await copyFile(resolve(migrationDir, migration.file), resolve(state.workdir, 'supabase', 'migrations', migration.file));
   state.workdir = state.workdir.replaceAll('\\', '/');
@@ -681,7 +699,7 @@ async function loadOwnedState(runId) {
     || state.networkName !== names.networkName || state.containerName !== names.containerName || state.volumeName !== names.volumeName) {
     throw new Error('QA_STATE_OWNERSHIP_MISMATCH');
   }
-  validatePorts(state.ports?.api, state.ports?.db);
+  validatePorts(state.ports?.api, state.ports?.db, state.ports?.mail);
   return state;
 }
 
@@ -805,10 +823,11 @@ export function parseArgs(argv) {
     if (arg === '--run-id' && rest[i + 1]) options.runId = validateRunId(rest[++i]);
     else if (arg === '--api-port' && rest[i + 1]) options.apiPort = Number(rest[++i]);
     else if (arg === '--db-port' && rest[i + 1]) options.dbPort = Number(rest[++i]);
+    else if (operation === 'start' && arg === '--mail-port' && rest[i + 1]) options.mailPort = Number(rest[++i]);
     else throw new Error('QA_ARGUMENT_INVALID');
   }
   if (!options.runId) throw new Error('QA_RUN_ID_REQUIRED');
-  options.ports = validatePorts(options.apiPort, options.dbPort);
+  options.ports = validatePorts(options.apiPort, options.dbPort, options.mailPort);
   return options;
 }
 

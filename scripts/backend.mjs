@@ -7,7 +7,7 @@ const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 export const projectId = 'gi-cung-duoc-local';
 const cliScript = resolve(root, 'node_modules/supabase/dist/supabase.js');
 // Realtime stays on (ADR-026): the app receives inbox notifications through it.
-const excluded = 'storage-api,imgproxy,mailpit,postgres-meta,studio,edge-runtime,logflare,vector,supavisor';
+const excluded = 'storage-api,imgproxy,postgres-meta,studio,edge-runtime,logflare,vector,supavisor';
 
 export function redact(text) {
   return String(text)
