@@ -9,12 +9,19 @@ export interface SessionConfig {
   /** Required: clear ALL private cache/draft/outbox for the previous identity. */
   clearPrivateData: () => Promise<void>;
   onTokenChange?: (token: string | null) => void;
+  onAccountSessionChange?: (user: SessionUser | null, previousUser: SessionUser | null) => void;
   now?: () => number;
   sleep?: (ms: number) => Promise<void>;
   random?: () => number;
 }
 
 export type SessionStatus = 'empty' | 'active' | 'lost' | 'blocked';
+
+interface AccountOperationContext {
+  assertCurrent: () => void;
+  requireSession: () => Promise<StoredSession>;
+  adopt: (session: StoredSession, mode: 'sign-in' | 'link' | 'profile') => Promise<void>;
+}
 
 /** Serialized token rotation + immediate logout invalidation; no implicit signup. */
 export class SessionManager implements SessionApi {
@@ -120,7 +127,7 @@ export class SessionManager implements SessionApi {
       candidate = await this.refreshStored(stored, generation);
       user = await this.retry(() => this.config.auth.verify(candidate.accessToken), generation);
     }
-    if (user.id !== stored.user.id || !user.isGuest) throw new AuthFailure({ messageKey: 'AUTH_REQUIRED' });
+    if (user.id !== stored.user.id) throw new AuthFailure({ messageKey: 'AUTH_REQUIRED' });
     await this.commit({ ...candidate, user }, generation);
     return this.current!;
   }
@@ -152,6 +159,7 @@ export class SessionManager implements SessionApi {
           throw error;
         }
         this.check(generation);
+        if (session.user.isGuest !== true) throw new AuthFailure({ messageKey: 'MALFORMED_RESPONSE' });
         try { await this.commit(session, generation); }
         catch (error) {
           // A guest whose secure persistence failed must never become active.
@@ -195,12 +203,63 @@ export class SessionManager implements SessionApi {
         if (!stored || !isStoredSession(stored)) throw new AuthFailure({ messageKey: 'AUTH_REQUIRED' });
         const refreshed = await this.refreshStored(stored, generation);
         const user = await this.retry(() => this.config.auth.verify(refreshed.accessToken), generation);
-        if (user.id !== stored.user.id || !user.isGuest) throw new AuthFailure({ messageKey: 'AUTH_REQUIRED' });
+        if (user.id !== stored.user.id) throw new AuthFailure({ messageKey: 'AUTH_REQUIRED' });
         await this.commit({ ...refreshed, user }, generation);
         return { ok: true, data: { ...user } };
       } catch (error) {
         return { ok: false, error: await this.failure(error, generation) };
       }
+    });
+  }
+
+  /** Account writes are serialized with rotation/logout. Credential errors do not revoke an active guest. */
+  runAccountOperation<T>(work: (context: AccountOperationContext) => Promise<T>): Promise<ReadResult<T>> {
+    let generation = this.generation;
+    return this.exclusive(async () => {
+      const assertCurrent = () => this.check(generation);
+      const notify = (user: SessionUser | null, previousUser: SessionUser | null) => {
+        try { this.config.onAccountSessionChange?.(user, previousUser); } catch { /* Observer only. */ }
+      };
+      try {
+        assertCurrent();
+        if (this.status === 'blocked') throw new AuthFailure({ messageKey: 'UNKNOWN_ERROR' });
+        const data = await work({
+          assertCurrent,
+          requireSession: async () => {
+            assertCurrent();
+            if (!this.current || this.status !== 'active') throw new AuthFailure({ messageKey: 'AUTH_REQUIRED' });
+            return Date.parse(this.current.expiresAt) > this.now() + 30000
+              ? this.current : this.restore(generation);
+          },
+          adopt: async (session, mode) => {
+            assertCurrent();
+            const previous = this.current ?? await this.config.storage.load();
+            assertCurrent();
+            if (session.user.isGuest || (mode === 'link' && (!previous?.user.isGuest || previous.user.id !== session.user.id))
+              || (mode === 'profile' && (previous?.user.id !== session.user.id || previous.user.isGuest))
+              || (mode === 'sign-in' && previous && !previous.user.isGuest)) {
+              throw new AuthFailure({ messageKey: 'VERSION_CONFLICT' });
+            }
+            if (mode !== 'profile') generation = ++this.generation;
+            try {
+              if (mode === 'sign-in') await this.config.clearPrivateData();
+              await this.commit(session, generation);
+            } catch (error) {
+              // In-flight logout owns cleanup when its generation has already superseded ours.
+              if (this.status === 'blocked') {
+                if (this.generation === generation + 1) {
+                  try { await this.config.storage.clear(); } catch { /* Status remains blocked. */ }
+                }
+                notify(null, previous?.user ?? null);
+              }
+              throw error;
+            }
+            notify(session.user, previous?.user ?? null);
+          },
+        });
+        assertCurrent();
+        return { ok: true, data };
+      } catch (error) { return { ok: false, error: authError(error) }; }
     });
   }
 

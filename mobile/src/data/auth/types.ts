@@ -21,6 +21,18 @@ export interface AuthPort {
   logout(accessToken: string): Promise<void>;
 }
 
+export type AccountCodeType = 'signup' | 'email_change' | 'recovery';
+
+export interface AccountCredentials {
+  email: string;
+  password: string;
+}
+
+export interface AccountProfile {
+  user: SessionUser;
+  email: string;
+}
+
 export interface SessionApi extends Pick<ApiClient, 'createGuestSession' | 'restoreSession' | 'logout'> {
   getAccessToken(): Promise<ReadResult<string>>;
   refreshSession(): Promise<ReadResult<SessionUser>>;
@@ -33,7 +45,7 @@ export class AuthFailure extends Error {
   constructor(error: ApiError, retryAfterMs?: number) {
     super(error.messageKey); // Raw server/network errors can contain credentials.
     this.name = 'AuthFailure';
-    this.error = { messageKey: error.messageKey };
+    this.error = { messageKey: error.messageKey, ...(error.details ? { details: error.details } : {}) };
     this.retryAfterMs = retryAfterMs;
   }
 }

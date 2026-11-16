@@ -2,6 +2,7 @@ import { SessionManager } from '../../src/data/auth/session';
 import { AuthFailure, type AuthPort, type SessionStorage, type StoredSession } from '../../src/data/auth/types';
 import { createSecureSessionStorage } from '../../src/data/auth/storage';
 import { ApiClientImpl } from '../../src/data/api/client';
+import { createAccountService } from '../../src/data/auth/account';
 
 jest.mock('expo-secure-store', () => ({ WHEN_UNLOCKED_THIS_DEVICE_ONLY: 'device-only' }));
 
@@ -32,6 +33,67 @@ function deferred<T>() {
   const promise = new Promise<T>(accept => { resolve = accept; });
   return { promise, resolve };
 }
+
+const accountSession = { ...initial, accessToken: 'fixture-email-access', user: { ...user, isGuest: false } };
+
+function accountSetup() {
+  const s = setup(initial);
+  const transport = {
+    signIn: jest.fn(async () => accountSession),
+    signUp: jest.fn(async () => undefined),
+    sendCode: jest.fn(async () => undefined),
+    verifyCode: jest.fn(async () => accountSession),
+    linkEmail: jest.fn(async () => user),
+    accountProfile: jest.fn(async () => ({ user: accountSession.user, email: 'tester@example.test' })),
+    saveProfile: jest.fn(async () => accountSession.user),
+    updatePassword: jest.fn(async () => accountSession.user),
+    logout: s.auth.logout,
+  };
+  return { ...s, transport, account: createAccountService(transport, s.session) };
+}
+
+test('email linking preserves guest UUID and advances the identity epoch', async () => {
+  const s = accountSetup();
+  await s.session.restoreSession();
+  const before = s.session.getGeneration();
+  const proof = new AbortController().signal;
+  expect(await s.account.verifyCode('tester@example.test', '012345', 'email_change', proof)).toMatchObject({ ok: true });
+  expect(s.session.getGeneration()).toBeGreaterThan(before);
+  expect(s.clearPrivateData).not.toHaveBeenCalled();
+  expect(await s.storage.load()).toMatchObject({ user: { id: user.id, isGuest: false } });
+  expect(await s.account.setPassword('Fixture!123', proof)).toMatchObject({ ok: true });
+});
+
+test('link mismatch never adopts another user and logout supersedes an in-flight sign-in', async () => {
+  const s = accountSetup();
+  await s.session.restoreSession();
+  s.transport.verifyCode.mockResolvedValueOnce({ ...accountSession, user: { ...accountSession.user, id: 'foreign-user' } });
+  expect(await s.account.verifyCode('tester@example.test', '012345', 'email_change', new AbortController().signal))
+    .toMatchObject({ ok: false, error: { messageKey: 'MALFORMED_RESPONSE' } });
+  expect(await s.storage.load()).toMatchObject({ user });
+  const started = deferred<void>();
+  const signInResponse = deferred<StoredSession>();
+  s.transport.signIn.mockImplementationOnce(() => { started.resolve(); return signInResponse.promise; });
+  const signIn = s.account.signIn({ email: 'tester@example.test', password: 'Fixture!123' });
+  await started.promise;
+  const logout = s.session.logout();
+  signInResponse.resolve(accountSession);
+  expect(await signIn).toMatchObject({ ok: false, error: { messageKey: 'AUTH_REQUIRED' } });
+  await logout;
+  expect(await s.storage.load()).toBeNull();
+});
+
+test('recovery token only authorizes a password change and never replaces the guest session', async () => {
+  const s = accountSetup();
+  await s.session.restoreSession();
+  const signal = new AbortController().signal;
+  await s.account.verifyCode('tester@example.test', '012345', 'recovery', signal);
+  expect(await s.account.setPassword('Fixture!123', new AbortController().signal)).toMatchObject({ ok: false });
+  expect(await s.account.setPassword('Fixture!123', signal)).toMatchObject({ ok: true });
+  expect(s.transport.updatePassword).toHaveBeenCalledWith(accountSession.accessToken, 'Fixture!123');
+  expect(s.transport.logout).toHaveBeenCalledWith(accountSession.accessToken);
+  expect(await s.storage.load()).toEqual(initial);
+});
 
 test('guest is persisted before becoming active; returned user cannot mutate stored identity', async () => {
   const s = setup();

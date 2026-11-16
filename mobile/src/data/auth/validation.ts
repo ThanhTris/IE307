@@ -12,5 +12,22 @@ export function isStoredSession(value: unknown): value is StoredSession {
   return typeof row.accessToken === 'string' && row.accessToken.length > 0
     && typeof row.refreshToken === 'string' && row.refreshToken.length > 0
     && typeof row.expiresAt === 'string' && Number.isFinite(Date.parse(row.expiresAt))
-    && isSessionUser(row.user) && row.user.isGuest && validDisplayName(row.user.displayName);
+    && isSessionUser(row.user) && validDisplayName(row.user.displayName);
+}
+
+export function normalizeEmail(value: string): string {
+  return value.trim().toLowerCase();
+}
+
+export function validEmail(value: string): boolean {
+  return value.length <= 254 && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
+}
+
+export function validNewPassword(value: string): boolean {
+  const characters = [...value];
+  const bytes = characters.reduce((total, character) => {
+    const point = character.codePointAt(0)!;
+    return total + (point < 0x80 ? 1 : point < 0x800 ? 2 : point < 0x10000 ? 3 : 4);
+  }, 0);
+  return characters.length >= 8 && bytes <= 72;
 }

@@ -95,3 +95,28 @@ test('actual timeout aborts request and reports TIMEOUT', async () => {
   const transport = new AuthHttpTransport({ baseUrl: 'http://localhost:54321', publicKey: 'sb_publishable_fixture', timeoutMs: 10, fetchFn });
   await expect(transport.verify('fixture-access')).rejects.toMatchObject({ error: { messageKey: 'TIMEOUT' } });
 });
+
+const permanent = { ...user, is_anonymous: false, email: 'tester@example.test' };
+
+test('email code is submitted to GoTrue with an explicit verification intent', async () => {
+  const { transport, fetchFn } = setup(new Response(JSON.stringify({ ...wire, user: permanent })));
+  await expect(transport.verifyCode(' TESTER@example.test ', '012345', 'email_change')).resolves.toMatchObject({ user: { isGuest: false } });
+  expect(fetchFn).toHaveBeenCalledWith(expect.stringContaining('/auth/v1/verify'), expect.objectContaining({
+    body: JSON.stringify({ email: permanent.email, token: '012345', type: 'email_change' }),
+  }));
+});
+
+test('email signup requires a confirmation acknowledgement and refuses auto-confirmed tokens', async () => {
+  const input = { email: permanent.email, displayName: 'Trí', password: 'Fixture!123' };
+  await expect(setup(new Response(JSON.stringify(permanent))).transport.signUp(input)).resolves.toBeUndefined();
+  await expect(setup(new Response(JSON.stringify({ ...wire, user: permanent }))).transport.signUp(input))
+    .rejects.toMatchObject({ error: { messageKey: 'MALFORMED_RESPONSE' } });
+});
+
+test.each([403, 200])('OTP error over HTTP %i retains only the known error category', async status => {
+  const error = { error_code: 'otp_expired', message: 'fixture-secret' };
+  const { transport } = setup(new Response(JSON.stringify(status === 200 ? { ok: false, error } : error), { status }));
+  await expect(transport.verifyCode(permanent.email, '012345', 'recovery')).rejects.toMatchObject({
+    error: { details: { reason: 'otp_expired' } },
+  });
+});
