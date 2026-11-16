@@ -269,7 +269,10 @@ export function assertLoopbackPublishedPort(container, containerPort, hostPort) 
 
 async function readCliStatus(workdir) {
   const result = await run(process.execPath, [cli, 'status', '--output', 'json', '--workdir', workdir], { label: 'QA_STATUS_FAILED', timeoutMs: 60_000 });
-  try { return JSON.parse(result.stdout); }
+  try {
+    const status = JSON.parse(result.stdout);
+    return { ...status, ANON_KEY: status.ANON_KEY ?? status.PUBLISHABLE_KEY, SERVICE_ROLE_KEY: status.SERVICE_ROLE_KEY ?? status.SECRET_KEY };
+  }
   catch { throw new Error('QA_STATUS_JSON_INVALID'); }
 }
 
