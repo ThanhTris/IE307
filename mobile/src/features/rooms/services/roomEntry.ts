@@ -1,7 +1,8 @@
 import type { ApiClient, ErrorCode, RoomContext } from '../../../data/api/contracts';
+import type { ActiveRoomReader } from './activeRoom';
 
 // Same DTOs as GM-07; GM-25 injects the real client without rewriting screens.
-export type RoomEntryRepository = Pick<ApiClient, 'restoreSession' | 'listFriends' | 'getDiscoveryContext' | 'createRoom' | 'joinRoom' | 'getRoomSnapshot'>;
+export type RoomEntryRepository = Pick<ApiClient, 'restoreSession' | 'listFriends' | 'getDiscoveryContext' | 'createRoom' | 'joinRoom' | 'getRoomSnapshot'> & Partial<ActiveRoomReader>;
 export type RoomEntryReceipt = { roomId: string; code: string; version: number; role: 'host' | 'member' };
 export type CameraAction = () => Promise<{ status: 'unavailable' | 'denied' } | { status: 'scanned'; code: string }>;
 export type RequestIdFactory = () => string;

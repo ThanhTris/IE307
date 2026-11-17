@@ -1,0 +1,224 @@
+{
+  "fixtureOnly": true,
+  "runId": "gm44-active-room-v2",
+  "baseline": "a7c2201b997d93cf8f0405421eab2e7e9edf9d19",
+  "migration": "0060_gm44_active_room.sql",
+  "schemaVersion": "0.31.5",
+  "contractVersion": "dish-session-v4/roadmap-v2/GM-07.B-supplement",
+  "result": "Pass",
+  "suiteAssertionCount": 246,
+  "schemaEnvelopesValidated": 1219,
+  "taskAssertionCount": 19,
+  "cases": [
+    {
+      "case": "GM-44 no eligible membership",
+      "result": "Pass",
+      "expected": null,
+      "actual": null
+    },
+    {
+      "case": "GM-44 latest joined lobby and exact projection",
+      "result": "Pass",
+      "expected": {
+        "roomId": "5171c76d-8288-4c95-a95c-ed1601a1c0b4",
+        "code": "R87V29",
+        "state": "LOBBY",
+        "version": 3
+      },
+      "actual": {
+        "code": "R87V29",
+        "state": "LOBBY",
+        "roomId": "5171c76d-8288-4c95-a95c-ed1601a1c0b4",
+        "version": 3
+      }
+    },
+    {
+      "case": "GM-44 read leaves version unchanged",
+      "result": "Pass",
+      "expected": {
+        "roomId": "5171c76d-8288-4c95-a95c-ed1601a1c0b4",
+        "code": "R87V29",
+        "state": "LOBBY",
+        "version": 3
+      },
+      "actual": {
+        "code": "R87V29",
+        "state": "LOBBY",
+        "roomId": "5171c76d-8288-4c95-a95c-ed1601a1c0b4",
+        "version": 3
+      }
+    },
+    {
+      "case": "GM-44 outsider sees no room",
+      "result": "Pass",
+      "expected": null,
+      "actual": null
+    },
+    {
+      "case": "GM-44 stable tie by room ID",
+      "result": "Pass",
+      "expected": "5171c76d-8288-4c95-a95c-ed1601a1c0b4",
+      "actual": "5171c76d-8288-4c95-a95c-ed1601a1c0b4"
+    },
+    {
+      "case": "GM-44 kicked member finds the other eligible room",
+      "result": "Pass",
+      "expected": "a35ebacc-9171-4c14-bcce-96b833837196",
+      "actual": "a35ebacc-9171-4c14-bcce-96b833837196"
+    },
+    {
+      "case": "GM-44 left and kicked memberships excluded",
+      "result": "Pass",
+      "expected": null,
+      "actual": null
+    },
+    {
+      "case": "GM-44 live round one",
+      "result": "Pass",
+      "expected": {
+        "roomId": "2c2e6d4c-b3a7-47d3-a934-fa84e34f3bf3",
+        "code": "Z8P9TC",
+        "state": "ROUND_1",
+        "version": 4
+      },
+      "actual": {
+        "code": "Z8P9TC",
+        "state": "ROUND_1",
+        "roomId": "2c2e6d4c-b3a7-47d3-a934-fa84e34f3bf3",
+        "version": 4
+      }
+    },
+    {
+      "case": "GM-44 first waiting state",
+      "result": "Pass",
+      "expected": {
+        "roomId": "2c2e6d4c-b3a7-47d3-a934-fa84e34f3bf3",
+        "code": "Z8P9TC",
+        "state": "WAITING_1",
+        "version": 6
+      },
+      "actual": {
+        "code": "Z8P9TC",
+        "state": "WAITING_1",
+        "roomId": "2c2e6d4c-b3a7-47d3-a934-fa84e34f3bf3",
+        "version": 6
+      }
+    },
+    {
+      "case": "GM-44 rejoin keeps room unchanged",
+      "result": "Pass",
+      "expected": {
+        "roomId": "2c2e6d4c-b3a7-47d3-a934-fa84e34f3bf3",
+        "code": "Z8P9TC",
+        "state": "WAITING_1",
+        "version": 6
+      },
+      "actual": {
+        "roomId": "2c2e6d4c-b3a7-47d3-a934-fa84e34f3bf3",
+        "code": "Z8P9TC",
+        "state": "WAITING_1",
+        "version": 6
+      }
+    },
+    {
+      "case": "GM-44 round two summary",
+      "result": "Pass",
+      "expected": {
+        "roomId": "2c2e6d4c-b3a7-47d3-a934-fa84e34f3bf3",
+        "code": "Z8P9TC",
+        "state": "ROUND_2",
+        "version": 8
+      },
+      "actual": {
+        "code": "Z8P9TC",
+        "state": "ROUND_2",
+        "roomId": "2c2e6d4c-b3a7-47d3-a934-fa84e34f3bf3",
+        "version": 8
+      }
+    },
+    {
+      "case": "GM-44 R2 cannot rejoin",
+      "result": "Pass",
+      "expected": {
+        "status": 409,
+        "code": "ROOM_LOCKED"
+      },
+      "actual": {
+        "status": 409,
+        "code": "ROOM_LOCKED",
+        "details": {}
+      }
+    },
+    {
+      "case": "GM-44 R2 waiting summary",
+      "result": "Pass",
+      "expected": "WAITING_2",
+      "actual": "WAITING_2"
+    },
+    {
+      "case": "GM-44 terminal rooms excluded",
+      "result": "Pass",
+      "expected": null,
+      "actual": null
+    },
+    {
+      "case": "GM-44 expired rooms excluded",
+      "result": "Pass",
+      "expected": null,
+      "actual": null
+    },
+    {
+      "case": "GM-44 no account override",
+      "result": "Pass",
+      "expected": {
+        "status": 400,
+        "code": "INVALID_INPUT"
+      },
+      "actual": {
+        "status": 400,
+        "code": "INVALID_INPUT",
+        "details": {}
+      }
+    },
+    {
+      "case": "GM-44 supplement contract only",
+      "result": "Pass",
+      "expected": {
+        "status": 400,
+        "code": "UNSUPPORTED_CONTRACT_VERSION"
+      },
+      "actual": {
+        "status": 400,
+        "code": "UNSUPPORTED_CONTRACT_VERSION",
+        "details": {}
+      }
+    },
+    {
+      "case": "GM-44 uses read budget",
+      "result": "Pass",
+      "expected": {
+        "status": 429,
+        "code": "RATE_LIMITED"
+      },
+      "actual": {
+        "status": 429,
+        "code": "RATE_LIMITED",
+        "details": {}
+      }
+    },
+    {
+      "case": "GM-44 authenticated RPC and private predecessor",
+      "result": "Pass",
+      "expected": [
+        true,
+        false,
+        false
+      ],
+      "actual": [
+        true,
+        false,
+        false
+      ]
+    }
+  ]
+}

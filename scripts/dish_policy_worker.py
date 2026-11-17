@@ -233,6 +233,8 @@ def verify(db):
         ('0.31.3', '0058_gm42_history_participants.sql', [
             ('public.dish_session', 'public.dish_session_before_gm42'),
             ('gm20_canonical_private.save_history', 'gm20_canonical_private.save_history_before_gm42')]),
+        ('0.31.5', '0060_gm44_active_room.sql', [
+            ('public.dish_session', 'public.dish_session_before_gm44')]),
     ]
     if has_canonical:
         for version, filename, changes in upgrades:

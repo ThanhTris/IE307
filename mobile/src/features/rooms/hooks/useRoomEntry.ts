@@ -16,7 +16,8 @@ export function useRead<T>(load: () => Promise<ReadResult<T>>, enabled = true, r
     }).catch(() => { if (current) setState({ source: load, attempt, refreshKey, loading: false, error: 'NETWORK_ERROR' }); });
     return () => { current = false; };
   }, [load, attempt, enabled, refreshKey]);
-  return { ...state, retry: () => setAttempt(value => value + 1) };
+  const retry = useCallback(() => setAttempt(value => value + 1), []);
+  return { ...state, retry };
 }
 
 export function useRoomSubmission<T>(onSuccess: (data: T) => void, createRequestId: RequestIdFactory = newPreviewRequestId) {

@@ -1,5 +1,5 @@
-import { useEffect, useMemo, useState } from 'react';
-import { useLocalSearchParams, useRouter } from 'expo-router';
+import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useFocusEffect, useLocalSearchParams, useRouter } from 'expo-router';
 import { ReturnToRoomCard } from '../../features/rooms/components/ReturnToRoomCard';
 import { resumeHref } from '../../features/home/services/resumeRoom';
 import { JoinRoomScreen } from '../../features/rooms/screens/JoinRoomScreen';
@@ -17,6 +17,8 @@ export default function JoinRoomRoute() {
   const router = useRouter();
   const rawParams = useLocalSearchParams<Record<string, string | string[] | undefined>>();
   const live = useRoomRepository();
+  const [roomRevision, setRoomRevision] = useState(0);
+  useFocusEffect(useCallback(() => { setRoomRevision(value => value + 1); }, []));
 
   // Validate incoming search params from Expo router: if suspicious payload is detected, reject and block
   const isSuspicious = isSuspiciousSearchParams(rawParams as Record<string, unknown>) || rawParams.error === 'SUSPICIOUS_PAYLOAD';
@@ -97,7 +99,7 @@ export default function JoinRoomRoute() {
       initialCode={activeCode}
       linkError={effectiveError ?? undefined}
       onBack={() => (router.canGoBack() ? router.back() : router.replace('/'))}
-      returnToRoom={<ReturnToRoomCard repository={live.repository} userId={live.user?.id} onReturn={room => router.replace(resumeHref(room))} />}
+      returnToRoom={<ReturnToRoomCard repository={live.repository} userId={live.user?.id} revision={roomRevision} onReturn={room => router.replace(resumeHref(room))} />}
       onEntered={room => {
         void (async () => {
           // Coming back to a room that already started (round 1) goes to its own screen, not to the preferences.

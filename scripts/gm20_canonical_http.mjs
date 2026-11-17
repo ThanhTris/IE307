@@ -188,6 +188,65 @@ async function send(u,r,choice,id){const s=await snapshot(u,r.id);const request=
 async function waiting(u,r,id){const s=await snapshot(u,r.id);const request={...versionArgs(r.id,s),requestId:id||requestId('waiting')};const response=await api(u,'waiting',request);expectOk(response,'enter waiting after ACK');return {request,response};}
 async function allWait(r){r.waitingReceipts??=[];for(const u of r.people)r.waitingReceipts.push(await waiting(u,r));return snapshot(r.people[0],r.id);}
 async function result(u,r){return expectOk(await api(u,'result',{roomId:r.id}),'persisted canonical result');}
+if (sql("select exists(select 1 from public.schema_versions where contract_id='dish-session-v4/roadmap-v2/GM-44.1')")==='t') {
+ const host=await guest('Discovery host'), member=await guest('Discovery member'), stranger=await guest('Discovery stranger');
+ const active=async user=>expectOk(await api(user,'activeRoom'),'activeRoom');
+ const view=s=>({roomId:s.roomId,code:s.code,state:s.state,version:s.version});
+ pass('GM-44 no eligible membership',null,await active(member));
+ const older=await create(host);
+ await join(member,older.code,'Discovery member');
+ const newer=await create(host);
+ await join(member,newer.code,'Discovery member');
+ const latest=await snapshot(member,newer.roomId);
+ pass('GM-44 latest joined lobby and exact projection',view(latest),await active(member));
+ pass('GM-44 read leaves version unchanged',view(latest),await active({...member}));
+ pass('GM-44 outsider sees no room',null,await active(stranger));
+ sql(`begin;select set_config('dish_v4.writer','on',true);
+   update public.members set joined_at=statement_timestamp()-interval '5 minutes',version=version+1
+   where user_id='${member.id}' and room_id in ('${older.roomId}','${newer.roomId}');commit;`);
+ pass('GM-44 stable tie by room ID',[older.roomId,newer.roomId].sort()[0],(await active(member)).roomId);
+ expectOk(await legacyRpc(host,'remove_room_member',{
+  requestId:requestId('kick'),room_ref:newer.roomId,member_ref:member.id,expected_version:latest.version
+ }),'GM-44 kick newer membership');
+ pass('GM-44 kicked member finds the other eligible room',older.roomId,(await active(member)).roomId);
+ const beforeLeave=await snapshot(member,older.roomId);
+ expectOk(await api(member,'leave',{requestId:requestId('leave'),roomId:older.roomId,expectedVersion:beforeLeave.version}),'GM-44 member leaves');
+ pass('GM-44 left and kicked memberships excluded',null,await active(member));
+ const played=await room([host,member]);
+ pass('GM-44 live round one',view(await snapshot(member,played.id)),await active(member));
+ await send(host,played,()=> 'OK');
+ await waiting(host,played);
+ const waitingOne=await snapshot(member,played.id);
+ pass('GM-44 first waiting state',view(waitingOne),await active(member));
+ expectOk(await api(member,'join',{requestId:requestId('rejoin'),code:waitingOne.code,displayName:'Discovery member'}),'GM-44 R1 member can rejoin');
+ pass('GM-44 rejoin keeps room unchanged',view(waitingOne),view(await snapshot(member,played.id)));
+ await send(member,played,()=> 'OK');
+ await waiting(member,played);
+ pass('GM-44 round two summary',view(await snapshot(member,played.id)),await active(member));
+ expectFail(await api(member,'join',{requestId:requestId('locked'),code:waitingOne.code,displayName:'Discovery member'}),'ROOM_LOCKED',409,'GM-44 R2 cannot rejoin');
+ await send(host,played,()=> 'KEEP');
+ await waiting(host,played);
+ pass('GM-44 R2 waiting summary','WAITING_2',(await active(member)).state);
+ await send(member,played,()=> 'KEEP');
+ await waiting(member,played);
+ pass('GM-44 terminal rooms excluded',null,await active(member));
+ const stale=await create(host);
+ await join(member,stale.code,'Discovery member');
+ sql(`begin;select set_config('dish_v4.writer','on',true);
+   update public.rooms set created_at=clock_timestamp()-interval '5 minutes',
+    expires_at=clock_timestamp()-interval '1 second',version=version+1 where id='${stale.roomId}';commit;`);
+ pass('GM-44 expired rooms excluded',null,await active(member));
+ expectFail(await api(member,'activeRoom',{userId:stranger.id},{requestValid:false}),'INVALID_INPUT',400,'GM-44 no account override');
+ expectFail(await api(member,'activeRoom',{contractVersion:'legacy'},{requestValid:false}),'UNSUPPORTED_CONTRACT_VERSION',400,'GM-44 supplement contract only');
+ sql(`update gm19_private.rate_windows set hits=120,expires_at=clock_timestamp()+interval '1 minute'
+   where user_id='${member.id}' and operation='dish_v4_activeRoom'`);
+ expectFail(await api(member,'activeRoom'),'RATE_LIMITED',429,'GM-44 uses read budget');
+ pass('GM-44 authenticated RPC and private predecessor',[true,false,false],
+  JSON.parse(sql(`select json_build_array(
+    has_function_privilege('authenticated','public.dish_session(text,jsonb)','EXECUTE'),
+    has_function_privilege('anon','public.dish_session(text,jsonb)','EXECUTE'),
+    has_function_privilege('authenticated','public.dish_session_before_gm44(text,jsonb)','EXECUTE'))`)));
+}
 const canonicalNotificationIdentities=new Map();
 function canonicalNotificationState(r,terminal){
  const query=`select json_build_object(
