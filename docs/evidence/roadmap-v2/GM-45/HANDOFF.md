@@ -12,6 +12,19 @@ RLS chặn sự kiện cuối của người bị kick. Vì vậy consumer có l
 
 ## Chạy lại
 
+Mỗi lần chạy dùng run-id mới vì runner giữ hồ sơ của lần đã cleanup. Ví dụ trên PowerShell:
+
+```powershell
+$qaRun = 'gm45-review-' + (Get-Date -Format 'yyyyMMddHHmmss')
+npm run qa:start -- --run-id $qaRun --api-port 54375 --db-port 54376
+$env:GM03_QA_WORKDIR = (Resolve-Path ".work/qa/$qaRun").Path
+$env:GM03_QA_MANIFEST = (Resolve-Path ".work/qa/$qaRun/manifest.json").Path
+node scripts/gm45_realtime_check.mjs
+npm run qa:stop -- --run-id $qaRun
+```
+
+Các bước dưới đây mô tả run đã nghiệm thu. Thay `gm45-room-realtime` bằng run-id mới khi thực hiện lại.
+
 1. `npm ci` ở root và mobile, dùng lockfile hiện hành.
 2. `npm run qa:start -- --run-id gm45-room-realtime --api-port 54375 --db-port 54376`.
 3. Đặt GM03_QA_MANIFEST và GM03_QA_WORKDIR trỏ vào manifest/workdir tương ứng trong `.work/qa/gm45-room-realtime`. Chạy `node scripts/gm45_realtime_check.mjs`. Runner kiểm ownership, JWT/REST, hai subscription, outsider/kick và worker. Report nằm trong `.work/gm45-realtime/results.json`, không chứa credentials.
