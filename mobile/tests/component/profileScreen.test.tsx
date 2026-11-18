@@ -27,6 +27,7 @@ test('logout sheet offers Stay and Logout without a redundant Close button', asy
   await render(<ProfileScreen user={{ ...guest, isGuest: false }} onNavigate={jest.fn()} onHome={jest.fn()} onLogout={logout} />);
   await fireEvent.press(screen.getByRole('button', { name: 'Đăng xuất' }));
   expect(screen.getByText('Đăng xuất?')).toBeOnTheScreen();
+  expect(screen.getByText('Bạn có thể tiếp tục sử dụng ứng dụng với tài khoản khách')).toBeOnTheScreen();
   expect(screen.queryByRole('button', { name: 'Đóng' })).toBeNull();
   await fireEvent.press(screen.getByRole('button', { name: 'Ở lại' }));
   expect(screen.queryByText('Đăng xuất?')).toBeNull();

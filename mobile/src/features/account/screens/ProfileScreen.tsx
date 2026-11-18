@@ -77,7 +77,7 @@ export function ProfileScreen({ user, account, onNavigate, onHome, onLogout }: P
     </>}
     <SheetDialog visible={confirmLogout} title="Đăng xuất?" showClose={false}
       onClose={() => { if (!pending) setConfirmLogout(false); }} colors={colors}>
-      <Text style={[typography.body, { color: colors.text }]}>Bạn có thể đăng nhập lại bằng email và mật khẩu.</Text>
+      <Text style={[typography.body, { color: colors.text }]}>Bạn có thể tiếp tục sử dụng ứng dụng với tài khoản khách</Text>
       {error ? <Text accessibilityRole="alert" style={[typography.body, { color: colors.danger }]}>{accountErrorMessage(error)}</Text> : null}
       <AppButton label={pending ?? 'Đăng xuất'} variant="danger" loading={!!pending} colors={colors} onPress={() => {
         void run('Đang đăng xuất…', async () => await onLogout()
