@@ -17,7 +17,7 @@ const appearanceOptions = Object.entries(appearances).map(([id, label]) => ({ id
 const textSizeOptions = Object.entries(textSizes).map(([id, label]) => ({ id, label }));
 type Panel = 'appearance' | 'textSize' | 'delete';
 
-export function ProfileSettings({ history }: { history: PersonalHistorySettings }) {
+export function ProfileSettings({ history }: { history?: PersonalHistorySettings }) {
   const { colors } = useShellTheme();
   const preferences = useAppPreferences();
   const [panel, setPanel] = useState<Panel>();
@@ -30,6 +30,7 @@ export function ProfileSettings({ history }: { history: PersonalHistorySettings 
   const busy = Boolean(pending);
 
   useEffect(() => {
+    if (!history) return;
     let active = true;
     void history.readConsent().then(result => {
       if (!active) return;
@@ -62,13 +63,14 @@ export function ProfileSettings({ history }: { history: PersonalHistorySettings 
   }
 
   function settingRow(label: string, value: string | undefined, next: Panel) {
+    const hasDivider = next === 'appearance' || (next === 'textSize' && Boolean(history));
     return <Pressable accessibilityRole="button" accessibilityLabel={label} accessibilityHint={value}
       disabled={busy || (next !== 'delete' && !preferences.ready)} onPress={() => {
         clearError();
         setHistoryDeleted(false);
         setPanel(next);
       }} style={({ pressed }) => [
-        styles.row, next !== 'delete' && styles.divider, { borderColor: colors.line, opacity: pressed ? 0.7 : 1 },
+        styles.row, hasDivider && styles.divider, { borderColor: colors.line, opacity: pressed ? 0.7 : 1 },
       ]}>
       <Text style={[typography.body, styles.label, { color: colors.text }]}>{label}</Text>
       {value ? <Text style={[typography.caption, { color: colors.muted }]}>{value}</Text> : null}
@@ -80,14 +82,16 @@ export function ProfileSettings({ history }: { history: PersonalHistorySettings 
     <View style={styles.section}>
       <Text accessibilityRole="header" style={[typography.titleMedium, { color: colors.text }]}>Cài đặt</Text>
       <View style={[styles.rows, { backgroundColor: colors.surface, borderColor: colors.line }]}>
-        {switchRow('Thông báo', preferences.notifications, !preferences.ready, next => { void updatePreferences({ notifications: next }); },
-          'Hiện thông báo trong ứng dụng.')}
-        {switchRow('Lưu lịch sử bữa ăn', consent ?? false, consent === undefined || busy, next => {
-          void run('Đang lưu…', () => history.updateConsent({ scope: 'personal', consent: next }), () => setConsent(next));
-        }, consent ? 'Tắt mục này sẽ xóa lịch sử bữa ăn cá nhân.' : undefined)}
+        {history ? <>
+          {switchRow('Thông báo', preferences.notifications, !preferences.ready, next => { void updatePreferences({ notifications: next }); },
+            'Hiện thông báo trong ứng dụng.')}
+          {switchRow('Lưu lịch sử bữa ăn', consent ?? false, consent === undefined || busy, next => {
+            void run('Đang lưu…', () => history.updateConsent({ scope: 'personal', consent: next }), () => setConsent(next));
+          }, consent ? 'Tắt mục này sẽ xóa lịch sử bữa ăn cá nhân.' : undefined)}
+        </> : null}
         {settingRow('Giao diện', appearances[preferences.appearance], 'appearance')}
         {settingRow('Cỡ chữ', textSizes[preferences.textSize], 'textSize')}
-        {settingRow('Xóa lịch sử', undefined, 'delete')}
+        {history ? settingRow('Xóa lịch sử', undefined, 'delete') : null}
       </View>
       {loadError ? <AppButton label="Tải lại cài đặt lịch sử" variant="quiet" colors={colors}
         onPress={() => { setLoadError(false); setReload(value => value + 1); }} /> : null}
@@ -102,7 +106,7 @@ export function ProfileSettings({ history }: { history: PersonalHistorySettings 
         : <PreferenceChoice layout="stack" options={textSizeOptions} selectedId={preferences.textSize}
           onSelect={id => { setPanel(undefined); void updatePreferences({ textSize: id as TextSizeChoice }); }} colors={colors} />}
     </SheetDialog>
-    <SheetDialog visible={panel === 'delete'} title="Xóa lịch sử?" presentation="dialog" showClose={false} onClose={closePanel} colors={colors}>
+    {history ? <SheetDialog visible={panel === 'delete'} title="Xóa lịch sử?" presentation="dialog" showClose={false} onClose={closePanel} colors={colors}>
       <Text style={[typography.body, { color: colors.muted }]}>Bạn có chắc muốn xóa các bữa đã lưu trong lịch sử cá nhân?</Text>
       {error ? <ToastNotice title="Chưa xóa hết lịch sử" message={accountErrorMessage(error)} tone="error" /> : null}
       <View style={styles.actions}>
@@ -113,7 +117,7 @@ export function ProfileSettings({ history }: { history: PersonalHistorySettings 
             setHistoryDeleted(true);
           }); }} />
       </View>
-    </SheetDialog>
+    </SheetDialog> : null}
   </>;
 }
 

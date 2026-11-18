@@ -41,6 +41,23 @@ test('logout sheet offers Stay and Logout without a redundant Close button', asy
   expect(logout).not.toHaveBeenCalled();
 });
 
+test('guest can change and save appearance and font size without account settings', async () => {
+  await render(<AppPreferencesProvider>
+    <ProfileScreen user={guest} onNavigate={jest.fn()} onHome={jest.fn()} onLogout={jest.fn()} />
+  </AppPreferencesProvider>);
+  await fireEvent.press(screen.getByRole('button', { name: 'Giao diện' }));
+  await fireEvent.press(screen.getByRole('radio', { name: 'Tối' }));
+  await fireEvent.press(screen.getByRole('button', { name: 'Cỡ chữ' }));
+  await fireEvent.press(screen.getByRole('radio', { name: 'Lớn' }));
+  expect(screen.getByText('Cài đặt')).toHaveStyle({ fontSize: 23 });
+  expect(screen.getByText('Cài đặt')).not.toHaveStyle({ color: lightColors.text });
+  expect(SecureStore.setItemAsync).toHaveBeenLastCalledWith(expect.any(String),
+    expect.stringContaining('"appearance":"dark","textSize":"large"'));
+  expect(screen.queryByLabelText('Thông báo')).toBeNull();
+  expect(screen.queryByLabelText('Lưu lịch sử bữa ăn')).toBeNull();
+  expect(screen.queryByRole('button', { name: 'Xóa lịch sử' })).toBeNull();
+});
+
 test('profile skips the no-session screen during logout and redirects after cleanup', async () => {
   let finishLogout!: (ok: boolean) => void;
   const logout = jest.fn(() => new Promise<boolean>(resolve => { finishLogout = resolve; }));

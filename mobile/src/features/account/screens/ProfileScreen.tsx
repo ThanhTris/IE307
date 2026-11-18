@@ -64,6 +64,7 @@ export function ProfileScreen({ user, account, historySettings, onNavigate, onHo
       <AppButton label="Đăng nhập" onPress={() => onNavigate('/account/sign-in')} colors={colors} />
       <AppButton label="Liên kết email" variant="secondary" onPress={() => onNavigate('/account/link')} colors={colors} />
       <Text style={[typography.caption, { color: colors.muted }]}>Bạn vẫn có thể tạo hoặc tham gia phòng với tư cách khách.</Text>
+      <ProfileSettings />
     </> : <>
       <Text accessibilityRole="header" style={[typography.titleMedium, { color: colors.text }]}>Tài khoản</Text>
       <View style={[styles.rows, { backgroundColor: colors.surface, borderColor: colors.line }]}>
