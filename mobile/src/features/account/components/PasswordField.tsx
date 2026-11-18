@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Pressable, StyleSheet } from 'react-native';
+import { Platform, Pressable, StyleSheet } from 'react-native';
 import { Eye, EyeOff } from 'lucide-react-native';
 import { FormField } from '../../../shared/ui';
 import { useShellTheme } from '../../../shared/lib/useShellTheme';
@@ -19,7 +19,8 @@ export function PasswordField({ label, value, onChange, disabled, error, isNew =
   const shown = visible && value !== '';
   return <FormField label={label} value={value} onChangeText={onChange} placeholder={label} error={error}
     secureTextEntry={!shown} editable={!disabled} autoCapitalize="none" autoCorrect={false}
-    autoComplete={isNew ? 'new-password' : 'current-password'} colors={colors} inputStyle={{ minHeight: 54, backgroundColor: dark ? colors.soft : '#FFFFFF' }}
+    autoComplete={isNew ? 'new-password' : 'current-password'} colors={colors}
+    inputStyle={[styles.input, { backgroundColor: dark ? colors.soft : '#FFFFFF' }, Platform.OS === 'android' && styles.androidInput]}
     trailingAction={<Pressable accessibilityRole="button" accessibilityLabel={`${shown ? 'Ẩn' : 'Hiện'} ${label.toLowerCase()}`}
       disabled={disabled || !value} onPress={() => setVisible(!shown)} style={styles.toggle}>
       {shown ? <EyeOff size={22} color={colors.muted} />
@@ -28,5 +29,8 @@ export function PasswordField({ label, value, onChange, disabled, error, isNew =
 }
 
 const styles = StyleSheet.create({
+  input: { minHeight: 54 },
+  // Let Android lay out the native password mask without the body text's line-height span.
+  androidInput: { fontFamily: 'sans-serif', lineHeight: undefined, textAlignVertical: 'center' },
   toggle: { width: 48, height: 48, justifyContent: 'center', alignItems: 'center' },
 });
