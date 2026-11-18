@@ -5,6 +5,7 @@ import EmailBadge from '../../../../assets/brand/account/email-badge.svg';
 import RecoveryBadge from '../../../../assets/brand/account/recovery-badge.svg';
 import RecoveryLock from '../../../../assets/brand/account/recovery-lock.svg';
 import type { AccountService } from '../../../data/auth';
+import type { ApiError } from '../../../data/api/contracts';
 import { normalizeEmail, validDisplayName, validEmail, validNewPassword } from '../../../data/auth/validation';
 import { AppButton, FormField } from '../../../shared/ui';
 import { useShellTheme } from '../../../shared/lib/useShellTheme';
@@ -12,9 +13,11 @@ import { spacing, typography } from '../../../shared/theme/tokens';
 import { AccountFormFrame } from '../components/AccountFormFrame';
 import { PasswordField } from '../components/PasswordField';
 import { useAccountAction } from '../hooks/useAccountAction';
+import { accountErrorMessage } from '../services/accountMessages';
 
 export type AccountAccessFlow = 'sign-in' | 'sign-up' | 'link' | 'recovery';
 type Stage = 'details' | 'code' | 'password' | 'done';
+type SignupErrors = Partial<Record<'name' | 'email' | 'password' | 'confirmation', string>>;
 const titles = { 'sign-in': 'Đăng nhập', 'sign-up': 'Đăng ký', link: 'Liên kết email', recovery: 'Quên mật khẩu' };
 
 export function AccountAccessScreen({ flow, account, isGuest, onBack, onNavigate, onComplete }: {
@@ -33,6 +36,7 @@ export function AccountAccessScreen({ flow, account, isGuest, onBack, onNavigate
   const [confirmation, setConfirmation] = useState('');
   const [code, setCode] = useState('');
   const [validation, setValidation] = useState('');
+  const [signupErrors, setSignupErrors] = useState<SignupErrors>({});
   const [notice, setNotice] = useState('');
   const proof = useRef<AbortController | null>(null);
   const action = useAccountAction();
@@ -57,6 +61,10 @@ export function AccountAccessScreen({ flow, account, isGuest, onBack, onNavigate
 
   function resetPasswords() { setPassword(''); setConfirmation(''); }
 
+  function clearSignupError(field: keyof SignupErrors) {
+    setSignupErrors(current => current[field] ? { ...current, [field]: undefined } : current);
+  }
+
   function navigate(next: AccountAccessFlow) {
     resetPasswords();
     setCode('');
@@ -65,6 +73,7 @@ export function AccountAccessScreen({ flow, account, isGuest, onBack, onNavigate
 
   function goTo(next: Stage) {
     setValidation('');
+    setSignupErrors({});
     setNotice('');
     clearError();
     resetPasswords();
@@ -79,18 +88,40 @@ export function AccountAccessScreen({ flow, account, isGuest, onBack, onNavigate
 
   function submitDetails() {
     const address = normalizeEmail(email);
+    if (signingUp) {
+      const invalid: SignupErrors = {
+        name: !name.trim() ? 'Nhập tên hiển thị.' : !validDisplayName(name) ? 'Tên hiển thị cần từ 1 đến 24 ký tự hợp lệ.' : undefined,
+        email: !address ? 'Nhập địa chỉ email.' : !validEmail(address) ? 'Nhập địa chỉ email hợp lệ.' : undefined,
+        password: !password ? 'Nhập mật khẩu.' : !validNewPassword(password) ? 'Mật khẩu cần ít nhất 8 ký tự và tối đa 72 byte.' : undefined,
+        confirmation: !confirmation ? 'Nhập lại mật khẩu.' : password !== confirmation ? 'Hai mật khẩu chưa khớp.' : undefined,
+      };
+      setSignupErrors(invalid);
+      clearError();
+      if (Object.values(invalid).some(Boolean)) return;
+      setEmail(address);
+      void run('Đang gửi mã…', () => account.signUp({ email: address, password, displayName: name.trim() }),
+        () => goTo('code'), showSignupError);
+      return;
+    }
     if (!validEmail(address)) return setValidation('Nhập địa chỉ email hợp lệ.');
-    if (signingUp && !validDisplayName(name)) return setValidation('Tên hiển thị cần từ 1 đến 24 ký tự.');
     if (signingIn && !password) return setValidation('Nhập mật khẩu của bạn.');
-    if (signingUp && !validNewPassword(password)) return setValidation('Mật khẩu cần ít nhất 8 ký tự và tối đa 72 byte.');
-    if (signingUp && password !== confirmation) return setValidation('Hai mật khẩu chưa khớp.');
     setValidation('');
     setEmail(address);
     if (signingIn) return void run('Đang đăng nhập…', () => account.signIn({ email: address, password }), onComplete, resetPasswords);
     const request = linking ? () => account.linkEmail(address)
-      : recovery ? () => account.sendCode(address, 'recovery')
-        : () => account.signUp({ email: address, password, displayName: name.trim() });
+      : () => account.sendCode(address, 'recovery');
     void run('Đang gửi mã…', request, () => goTo('code'), resetPasswords);
+  }
+
+  function showSignupError(error: ApiError) {
+    const reason = error.details?.reason;
+    if (reason === 'weak_password') {
+      setSignupErrors({ password: accountErrorMessage(error) });
+      clearError();
+    } else if (reason === 'email_exists' || reason === 'user_already_exists') {
+      setSignupErrors({ email: accountErrorMessage(error) });
+      clearError();
+    } else resetPasswords();
   }
 
   function resend() {
@@ -136,12 +167,18 @@ export function AccountAccessScreen({ flow, account, isGuest, onBack, onNavigate
           ? 'Xác minh email rồi đặt mật khẩu để giữ hồ sơ, bạn bè và lịch sử của phiên khách này.'
           : 'Đăng nhập sẽ chuyển sang dữ liệu của tài khoản đó. Để giữ dữ liệu phiên khách, hãy liên kết email trong Cá nhân.'}
       </Text> : null}
-      {signingUp ? <FormField label="Tên hiển thị" value={name} onChangeText={setName} editable={!busy}
+      {signingUp ? <FormField label="Tên hiển thị" value={name} onChangeText={value => { setName(value); clearSignupError('name'); }}
+        error={signupErrors.name} editable={!busy}
         autoCapitalize="words" colors={colors} inputStyle={inputStyle} /> : null}
-      <FormField label="Email" value={email} onChangeText={setEmail} editable={!busy} keyboardType="email-address"
+      <FormField label="Email" value={email} onChangeText={value => { setEmail(value); clearSignupError('email'); }}
+        error={signingUp ? signupErrors.email : undefined} editable={!busy} keyboardType="email-address"
         autoCapitalize="none" autoCorrect={false} autoComplete="email" placeholder="ten@example.com" colors={colors} inputStyle={inputStyle} />
-      {signingIn || signingUp ? <PasswordField label="Mật khẩu" value={password} onChange={setPassword} disabled={busy} isNew={signingUp} /> : null}
-      {signingUp ? <PasswordField label="Nhập lại mật khẩu" value={confirmation} onChange={setConfirmation} disabled={busy} isNew /> : null}
+      {signingIn || signingUp ? <PasswordField label="Mật khẩu" value={password}
+        onChange={value => { setPassword(value); clearSignupError('password'); }}
+        error={signingUp ? signupErrors.password : undefined} disabled={busy} isNew={signingUp} /> : null}
+      {signingUp ? <PasswordField label="Nhập lại mật khẩu" value={confirmation}
+        onChange={value => { setConfirmation(value); clearSignupError('confirmation'); }}
+        error={signupErrors.confirmation} disabled={busy} isNew /> : null}
       {signingIn ? <AppButton variant="quiet" label="Quên mật khẩu?" disabled={busy} colors={colors} onPress={() => navigate('recovery')} /> : null}
       <AppButton label={pending ?? detailLabel} loading={busy} onPress={submitDetails} colors={colors} style={styles.primary} />
       {signingIn && error?.details?.reason === 'email_not_confirmed' ?

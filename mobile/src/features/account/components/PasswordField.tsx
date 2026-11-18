@@ -5,18 +5,19 @@ import { FormField } from '../../../shared/ui';
 import { useShellTheme } from '../../../shared/lib/useShellTheme';
 import ShowPassword from '../../../../assets/brand/account/show-password.svg';
 
-export function PasswordField({ label, value, onChange, disabled, isNew = false }: {
+export function PasswordField({ label, value, onChange, disabled, error, isNew = false }: {
   label: string;
   value: string;
   onChange: (value: string) => void;
   disabled: boolean;
+  error?: string;
   isNew?: boolean;
 }) {
   const { colors, dark } = useShellTheme();
   const [visible, setVisible] = useState(false);
   if (!value && visible) setVisible(false);
   const shown = visible && value !== '';
-  return <FormField label={label} value={value} onChangeText={onChange} placeholder={label}
+  return <FormField label={label} value={value} onChangeText={onChange} placeholder={label} error={error}
     secureTextEntry={!shown} editable={!disabled} autoCapitalize="none" autoCorrect={false}
     autoComplete={isNew ? 'new-password' : 'current-password'} colors={colors} inputStyle={{ minHeight: 54, backgroundColor: dark ? colors.soft : '#FFFFFF' }}
     trailingAction={<Pressable accessibilityRole="button" accessibilityLabel={`${shown ? 'Ẩn' : 'Hiện'} ${label.toLowerCase()}`}
