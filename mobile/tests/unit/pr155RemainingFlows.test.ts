@@ -318,6 +318,9 @@ describe('PR155 complete consumer paths after fff8b88', () => {
 
   it('restores account consent from the API when the setup gateway is reopened', async () => {
     const h = await harness();
+    const identity = h.repo.getCurrentUser();
+    if (!identity) throw new Error('Expected a restored test identity');
+    jest.spyOn(h.repo, 'getCurrentUser').mockReturnValue({ ...identity, isGuest: false });
     await h.repo.updateHistoryConsent('personal', true, 'review-account-personal-consent');
     await h.repo.updateHistoryConsent('group', false, 'review-account-group-consent');
 

@@ -272,7 +272,7 @@ describe('GM-25 Figma UI Parity Suite (Issue #86)', () => {
       expect(onOpenSetup).toHaveBeenCalledTimes(1);
     });
 
-    it('liveDishSetupGateway creates room via canonical dish_session v4 dispatch', async () => {
+    it('liveDishSetupGateway creates a guest room via canonical dispatch without reading friends', async () => {
       const client = createMockApiClient();
       const roomId = '5d35a05a-8678-5380-beb1-fe2cdc587151';
       const hostUserId = 'cff99380-b3c8-5dd8-9e91-5eeda3aee1d3';
@@ -341,8 +341,8 @@ describe('GM-25 Figma UI Parity Suite (Issue #86)', () => {
       const gateway = createLiveDishSetupGateway(repo);
       const read = await gateway.read();
       expect(read.connected).toBe(true);
-      expect(read.friends).toHaveLength(1);
-      expect(read.friends[0]?.label).toBe('Linh');
+      expect(read.friends).toEqual([]);
+      expect(client.listFriends).not.toHaveBeenCalled();
 
       const reply = await gateway.write({
         kind: 'settings',
