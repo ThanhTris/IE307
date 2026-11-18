@@ -1,0 +1,11 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "GM-45.1 room version signal",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["room_id", "version"],
+  "properties": {
+    "room_id": { "type": "string", "format": "uuid" },
+    "version": { "type": "integer", "minimum": 1, "maximum": 9007199254740991 }
+  }
+}

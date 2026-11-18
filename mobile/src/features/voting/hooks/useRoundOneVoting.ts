@@ -13,7 +13,7 @@ import {
   type VoteScreenScenario,
 } from '../fixtures';
 import { WAITING_DEADLINE_SECONDS, isHostEarlyFinishAllowed } from '../services/votingRules';
-import { startVotingSnapshotPolling } from '../services/snapshotPolling';
+import { useRoomUpdates } from '../../rooms/hooks/useRoomUpdates';
 import {
   createDurableRequestId,
   mapSnapshotPoolToPoolDishes,
@@ -410,11 +410,16 @@ export function useRoundOneVoting({
   }, [activeDeadline, isWaitingForMembers, repository, computeRemainingFromDeadline]);
 
   // A member who has not submitted must still observe another member's deadline.
-  useEffect(() => {
-    if (!repository || submissionState === 'pending') return;
-    return startVotingSnapshotPolling(fetchSnapshot,
-      () => hasNavigatedRoundTwoRef.current || Boolean(navigatedOutcomeRef.current));
-  }, [repository, fetchSnapshot, submissionState]);
+  useRoomUpdates({
+    roomId, userId: identityId, enabled: !!repository, readEpoch: submissionState,
+    isCurrent: () => !hasNavigatedRoundTwoRef.current && !navigatedOutcomeRef.current,
+    read: guard => submissionState === 'pending' ? Promise.resolve(null) : fetchSnapshot(guard),
+    onError: error => {
+      setSnapshotError(error.messageKey);
+      setIsLoadingSnapshot(false);
+      setLocalPool([]);
+    },
+  });
 
   const attemptEnterWaiting = useCallback(async (allowConflictRetry = true) => {
     if (!repository) return;

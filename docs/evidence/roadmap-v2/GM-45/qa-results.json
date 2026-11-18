@@ -1,0 +1,174 @@
+{
+  "result": "Pass",
+  "fixtureOnly": true,
+  "caseCount": 17,
+  "cases": [
+    {
+      "case": "v4 worker heartbeat verified",
+      "result": "Pass",
+      "expected": "t",
+      "actual": "t"
+    },
+    {
+      "case": "member REST signal projection",
+      "result": "Pass",
+      "expected": [
+        {
+          "room_id": "d7c71050-fb8c-411e-a8b8-ce3827dafea2",
+          "version": 3
+        }
+      ],
+      "actual": [
+        {
+          "room_id": "d7c71050-fb8c-411e-a8b8-ce3827dafea2",
+          "version": 3
+        }
+      ]
+    },
+    {
+      "case": "outsider REST rows filtered",
+      "result": "Pass",
+      "expected": [],
+      "actual": []
+    },
+    {
+      "case": "host gets same transaction version",
+      "result": "Pass",
+      "expected": true,
+      "actual": true
+    },
+    {
+      "case": "second client gets version and can refetch",
+      "result": "Pass",
+      "expected": true,
+      "actual": true
+    },
+    {
+      "case": "ACK replay unchanged",
+      "result": "Pass",
+      "expected": {
+        "version": 4,
+        "accepted": true,
+        "settings": {
+          "mealSlot": "lunch",
+          "desiredAt": "2026-11-18T02:06:39.123Z",
+          "dishCount": 10
+        },
+        "poolVersion": 1
+      },
+      "actual": {
+        "version": 4,
+        "accepted": true,
+        "settings": {
+          "mealSlot": "lunch",
+          "desiredAt": "2026-11-18T02:06:39.123Z",
+          "dishCount": 10
+        },
+        "poolVersion": 1
+      }
+    },
+    {
+      "case": "no new signal version on ACK replay",
+      "result": "Pass",
+      "expected": 4,
+      "actual": 4
+    },
+    {
+      "case": "rollback neither persists nor emits signal",
+      "result": "Pass",
+      "expected": [
+        4,
+        3
+      ],
+      "actual": [
+        4,
+        3
+      ]
+    },
+    {
+      "case": "reconnect catch-up reads latest snapshot",
+      "result": "Pass",
+      "expected": 5,
+      "actual": 5
+    },
+    {
+      "case": "reconnected client receives next transition",
+      "result": "Pass",
+      "expected": true,
+      "actual": true
+    },
+    {
+      "case": "worker advances R1 to R2",
+      "result": "Pass",
+      "expected": 2,
+      "actual": 2
+    },
+    {
+      "case": "worker transition pushes committed version",
+      "result": "Pass",
+      "expected": true,
+      "actual": true
+    },
+    {
+      "case": "outsider gets no events",
+      "result": "Pass",
+      "expected": [],
+      "actual": []
+    },
+    {
+      "case": "kicked member loses REST signal visibility",
+      "result": "Pass",
+      "expected": [],
+      "actual": []
+    },
+    {
+      "case": "kicked subscription cannot receive final removal signal",
+      "result": "Pass",
+      "expected": [],
+      "actual": []
+    },
+    {
+      "case": "SQL privilege boundary",
+      "result": "Pass",
+      "expected": [
+        true,
+        false,
+        false,
+        false
+      ],
+      "actual": [
+        true,
+        false,
+        false,
+        false
+      ]
+    },
+    {
+      "case": "room table not published, signals published",
+      "result": "Pass",
+      "expected": [
+        false,
+        true
+      ],
+      "actual": [
+        false,
+        true
+      ]
+    }
+  ],
+  "credentialsInEvidence": false,
+  "baseline": "0b349001291a0152eef71d01ddaae0c8d6b490c8",
+  "migration": "0061_gm45_room_realtime.sql",
+  "schemaVersion": "0.31.6",
+  "contractVersion": "dish-session-v4/roadmap-v2/GM-45.1",
+  "runId": "gm45-room-realtime",
+  "sourceSha256": {
+    "supabase/migrations/0061_gm45_room_realtime.sql": "bbfe02642fe7e8e5cebd2505f7cfdf9f2a2a4cada99755cbefbc72bccb5f6aae",
+    "scripts/gm45_realtime_check.mjs": "9d6023d58a5fb3097dd3b4203eee24af347b54bbf466e508d47672ebcdbfcdd2",
+    "scripts/dish_policy_worker.py": "e6b069b7c9fdcd65c1e2fdd4de4691d35a993cb4dd7a357e9ecc354b30e13355",
+    "mobile/src/features/rooms/services/roomRealtime.ts": "3b9902921c6494273deb22022b0069699204333bf919a9572fe547715c0a355a",
+    "mobile/src/features/rooms/services/roomSnapshotSync.ts": "073c11bcaa70ced19bcb42b0398144cac98b7ab91238df633993a5ffc877add7",
+    "mobile/src/features/rooms/hooks/useRoomUpdates.ts": "cd70b05de4a9df32020d86db98037c57a9313b1bdebec2388efa31f5f8c8ff52"
+  },
+  "hashNormalization": "UTF-8 text with LF line endings"
+}
