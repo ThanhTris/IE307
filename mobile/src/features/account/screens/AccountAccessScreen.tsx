@@ -37,6 +37,7 @@ export function AccountAccessScreen({ flow, account, isGuest, onBack, onNavigate
   const [code, setCode] = useState('');
   const [validation, setValidation] = useState('');
   const [signupErrors, setSignupErrors] = useState<SignupErrors>({});
+  const [codeError, setCodeError] = useState<string>();
   const [notice, setNotice] = useState('');
   const proof = useRef<AbortController | null>(null);
   const action = useAccountAction();
@@ -74,6 +75,7 @@ export function AccountAccessScreen({ flow, account, isGuest, onBack, onNavigate
   function goTo(next: Stage) {
     setValidation('');
     setSignupErrors({});
+    setCodeError(undefined);
     setNotice('');
     clearError();
     resetPasswords();
@@ -133,13 +135,13 @@ export function AccountAccessScreen({ flow, account, isGuest, onBack, onNavigate
       : () => account.sendCode(address, recovery ? 'recovery' : 'signup');
     void run('Đang gửi mã…', request, () => {
       goTo('code');
-      setNotice('Nếu email đủ điều kiện, mã mới sẽ được gửi.');
+      setNotice('Kiểm tra hộp thư để lấy mã mới.');
     });
   }
 
   function verify() {
-    if (!/^\d{6}$/.test(code)) return setValidation('Nhập đủ 6 chữ số.');
-    setValidation('');
+    if (!/^\d{6}$/.test(code)) return setCodeError('Nhập đủ 6 chữ số');
+    setCodeError(undefined);
     const controller = proof.current ??= new AbortController();
     void run('Đang xác minh…', () => account.verifyCode(email, code,
       linking ? 'email_change' : recovery ? 'recovery' : 'signup', controller.signal),
@@ -195,9 +197,10 @@ export function AccountAccessScreen({ flow, account, isGuest, onBack, onNavigate
           <Mail size={34} color="#043B22" style={styles.badgeIcon} />
         </View>
         <Text accessibilityRole="header" style={[typography.titleMedium, { color: colors.text }]}>Kiểm tra hộp thư</Text>
-        <Text style={[typography.body, styles.center, { color: colors.muted }]}>Nếu địa chỉ đủ điều kiện, mã 6 chữ số sẽ được gửi tới {email}.</Text>
+        <Text style={[typography.body, styles.center, { color: colors.muted }]}>Nhập mã 6 chữ số trong email gửi tới {email}.</Text>
       </View>
-      <FormField label="Mã xác minh" value={code} onChangeText={text => setCode(text.replace(/\D/g, ''))} maxLength={6}
+      <FormField label="Mã xác minh" value={code} error={codeError} maxLength={6}
+        onChangeText={text => { setCode(text.replace(/\D/g, '')); setCodeError(undefined); }}
         editable={!busy} keyboardType="number-pad" autoComplete="one-time-code" colors={colors} inputStyle={inputStyle} />
       {notice ? <Text accessibilityLiveRegion="polite" style={[typography.body, { color: colors.muted }]}>{notice}</Text> : null}
       <AppButton label={pending ?? 'Xác minh mã'} loading={busy} colors={colors} onPress={verify} />
