@@ -109,11 +109,12 @@ test('sign-in shows credential rejection as a toast without marking either field
   });
   await render(<AccountAccessScreen flow="sign-in" account={{ signIn } as unknown as AccountService}
     isGuest={false} onBack={jest.fn()} onNavigate={jest.fn()} onComplete={jest.fn()} />);
-  await fireEvent.changeText(screen.getByLabelText('Email'), 'other@example.test');
+  await fireEvent.changeText(screen.getByLabelText('Email'), 'Other@Example.test');
   await fireEvent.changeText(screen.getByLabelText('Mật khẩu'), 'Fixture!123');
   await fireEvent.press(screen.getByRole('button', { name: 'Đăng nhập' }));
   expect(screen.getByText('Email hoặc mật khẩu chưa đúng.')).toBeOnTheScreen();
-  expect(screen.getByLabelText('Email')).toHaveProp('value', 'other@example.test');
+  expect(signIn).toHaveBeenCalledWith({ email: 'other@example.test', password: 'Fixture!123' });
+  expect(screen.getByLabelText('Email')).toHaveProp('value', 'Other@Example.test');
   expect(screen.getByLabelText('Mật khẩu')).toHaveProp('value', '');
   expect(screen.getByLabelText('Email')).not.toHaveStyle({ borderColor: lightColors.danger });
   expect(screen.getByLabelText('Mật khẩu')).not.toHaveStyle({ borderColor: lightColors.danger });
