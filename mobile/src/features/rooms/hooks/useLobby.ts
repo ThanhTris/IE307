@@ -50,6 +50,7 @@ export function useLobby({
   const activeRoomId = roomId ?? '';
   const loadKey = `${currentUserId ?? ''}:${activeRoomId}:${realRevision}`;
   const scopeRef = useRef(loadKey);
+  const backgroundLoadRevision = useRef(0);
   useLayoutEffect(() => { scopeRef.current = loadKey; }, [loadKey]);
   const loading = loadedKey !== loadKey;
   const loadState: 'loading' | 'error' | 'ready' = loading ? 'loading' : loadError ? 'error' : 'ready';
@@ -85,27 +86,30 @@ export function useLobby({
 
   useEffect(() => {
     let active = true;
-    if (!activeRoomId) {
-      void Promise.resolve().then(() => {
-        if (!active) return;
-        setLoadedKey(loadKey);
-        setSnapshot(null);
-        setLoadError('ROOM_NOT_FOUND');
-      });
-      return;
-    }
-    void api.getRoomSnapshot(activeRoomId).then(result => {
-      if (!active) return;
+    const revision = backgroundLoadRevision.current;
+    // The initial read can seed the lobby until background sync resolves this load.
+    const isCurrent = () => active && scopeRef.current === loadKey
+      && backgroundLoadRevision.current === revision;
+
+    const initialRead = activeRoomId
+      ? api.getRoomSnapshot(activeRoomId)
+      : Promise.resolve({ ok: false, error: { messageKey: 'ROOM_NOT_FOUND' } } as const);
+    void initialRead.then(result => {
+      if (!isCurrent()) return;
       setLoadedKey(loadKey);
       if (result.ok) {
         setSnapshot(previous => previous?.roomId === result.data.roomId && previous.version > result.data.version ? previous : result.data);
         setLoadError('');
-        void checkEligibility(result.data, () => active);
+        void checkEligibility(result.data, isCurrent);
       } else {
         setSnapshot(null);
         setLoadError(result.error.messageKey);
       }
-    }).catch(() => { if (active) { setLoadedKey(loadKey); setLoadError('NETWORK_ERROR'); } });
+    }).catch(() => {
+      if (!isCurrent()) return;
+      setLoadedKey(loadKey);
+      setLoadError('NETWORK_ERROR');
+    });
     return () => { active = false; };
   }, [api, activeRoomId, loadKey, checkEligibility]);
 
@@ -124,6 +128,13 @@ export function useLobby({
     }
   };
 
+  const applyBackgroundLoadError = (messageKey: string) => {
+    ++backgroundLoadRevision.current;
+    setSnapshot(null);
+    setLoadError(messageKey);
+    setLoadedKey(loadKey);
+  };
+
   useRoomUpdates({
     roomId: activeRoomId, userId: currentUserId, enabled: !!activeRoomId, readEpoch: loadKey,
     isCurrent: () => true,
@@ -133,24 +144,19 @@ export function useLobby({
       if (!shouldApply()) return null;
       if (!result.ok) {
         if (['NOT_MEMBER', 'AUTH_REQUIRED', 'ROOM_EXPIRED', 'ROOM_TERMINAL'].includes(result.error.messageKey)) {
-          setSnapshot(null);
-          setLoadError(result.error.messageKey);
-          setLoadedKey(loadKey);
+          applyBackgroundLoadError(result.error.messageKey);
         }
         return null;
       }
       const next = result.data;
+      ++backgroundLoadRevision.current;
       setSnapshot(previous => previous?.roomId === next.roomId && previous.version > next.version ? previous : next);
       setLoadedKey(loadKey);
       setLoadError('');
       void checkEligibility(next, shouldApply);
       return next;
     },
-    onError: error => {
-      setSnapshot(null);
-      setLoadError(error.messageKey);
-      setLoadedKey(loadKey);
-    },
+    onError: error => applyBackgroundLoadError(error.messageKey),
   });
 
   const getRequestId = (action: string, version: number, targetId?: string) => {
