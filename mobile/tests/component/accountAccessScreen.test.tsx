@@ -103,6 +103,18 @@ test('linking highlights an invalid email without calling Auth', async () => {
   expect(linkEmail).not.toHaveBeenCalled();
 });
 
+test('sign-in puts the generic credential rejection beneath email', async () => {
+  const signIn = jest.fn().mockResolvedValue({
+    ok: false, error: { messageKey: 'AUTH_REQUIRED', details: { reason: 'invalid_credentials' } },
+  });
+  await render(<AccountAccessScreen flow="sign-in" account={{ signIn } as unknown as AccountService}
+    isGuest={false} onBack={jest.fn()} onNavigate={jest.fn()} onComplete={jest.fn()} />);
+  await fireEvent.changeText(screen.getByLabelText('Email'), 'other@example.test');
+  await fireEvent.changeText(screen.getByLabelText('Mật khẩu'), 'Fixture!123');
+  await fireEvent.press(screen.getByRole('button', { name: 'Đăng nhập' }));
+  expectFieldError('Email', 'Email hoặc mật khẩu chưa đúng.');
+});
+
 test('recovery highlights the new password and confirmation independently', async () => {
   const sendCode = jest.fn().mockResolvedValue({ ok: true, data: undefined });
   const verifyCode = jest.fn().mockResolvedValue({ ok: true, data: undefined });
@@ -120,4 +132,23 @@ test('recovery highlights the new password and confirmation independently', asyn
   expectFieldError('Mật khẩu mới', 'Mật khẩu cần ít nhất 8 ký tự');
   expectFieldError('Nhập lại mật khẩu mới', 'Hai mật khẩu chưa khớp.');
   expect(setPassword).not.toHaveBeenCalled();
+});
+
+test('recovery from change password keeps a different email on the details screen', async () => {
+  const sendCode = jest.fn();
+  const sendAccountRecoveryCode = jest.fn()
+    .mockResolvedValueOnce({ ok: false, error: { messageKey: 'INVALID_INPUT', details: { reason: 'recovery_email_mismatch' } } })
+    .mockResolvedValueOnce({ ok: true, data: undefined });
+  const account = { sendCode, sendAccountRecoveryCode } as unknown as AccountService;
+  await render(<AccountAccessScreen flow="recovery" account={account} recoveryForCurrentAccount
+    isGuest={false} onBack={jest.fn()} onNavigate={jest.fn()} onComplete={jest.fn()} />);
+  await fireEvent.changeText(screen.getByLabelText('Email'), 'another@example.test');
+  await fireEvent.press(screen.getByRole('button', { name: 'Gửi mã xác minh' }));
+  expectFieldError('Email', 'Nhập email của tài khoản đang đăng nhập.');
+  expect(screen.queryByLabelText('Mã xác minh')).toBeNull();
+  await fireEvent.changeText(screen.getByLabelText('Email'), 'tester@example.test');
+  await fireEvent.press(screen.getByRole('button', { name: 'Gửi mã xác minh' }));
+  expect(screen.getByLabelText('Mã xác minh')).toBeOnTheScreen();
+  expect(sendAccountRecoveryCode.mock.calls).toEqual([['another@example.test'], ['tester@example.test']]);
+  expect(sendCode).not.toHaveBeenCalled();
 });

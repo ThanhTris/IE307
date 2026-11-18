@@ -20,6 +20,18 @@ export function createAccountService(auth: AccountTransport, session: SessionMan
     }),
     signUp: (input: AccountCredentials & { displayName: string }) => run(() => auth.signUp(input)),
     sendCode: (email: string, type: 'signup' | 'recovery') => run(() => auth.sendCode(email, type)),
+    sendAccountRecoveryCode: (email: string) => run(async ({ requireSession, assertCurrent }) => {
+      const current = await requireSession();
+      if (current.user.isGuest) throw new AuthFailure({ messageKey: 'AUTH_REQUIRED' });
+      const profile = await auth.accountProfile(current.accessToken);
+      requireIdentity(current.user.id, profile.user.id);
+      assertCurrent();
+      const address = normalizeEmail(email);
+      if (address !== normalizeEmail(profile.email)) {
+        throw new AuthFailure({ messageKey: 'INVALID_INPUT', details: { reason: 'recovery_email_mismatch' } });
+      }
+      await auth.sendCode(address, 'recovery');
+    }),
     linkEmail: (email: string) => run(async ({ requireSession }) => {
       const current = await requireSession();
       if (!current.user.isGuest) throw new AuthFailure({ messageKey: 'VERSION_CONFLICT' });

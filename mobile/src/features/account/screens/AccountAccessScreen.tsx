@@ -20,10 +20,11 @@ type Stage = 'details' | 'code' | 'password' | 'done';
 type FieldErrors = Partial<Record<'name' | 'email' | 'password' | 'confirmation', string>>;
 const titles = { 'sign-in': 'Đăng nhập', 'sign-up': 'Đăng ký', link: 'Liên kết email', recovery: 'Quên mật khẩu' };
 
-export function AccountAccessScreen({ flow, account, isGuest, onBack, onNavigate, onComplete }: {
+export function AccountAccessScreen({ flow, account, isGuest, recoveryForCurrentAccount = false, onBack, onNavigate, onComplete }: {
   flow: AccountAccessFlow;
   account: AccountService;
   isGuest: boolean;
+  recoveryForCurrentAccount?: boolean;
   onBack: () => void;
   onNavigate: (flow: AccountAccessFlow) => void;
   onComplete: () => void;
@@ -92,6 +93,17 @@ export function AccountAccessScreen({ flow, account, isGuest, onBack, onNavigate
     else goTo('details');
   }
 
+  function sendRecoveryCode(address: string) {
+    return recoveryForCurrentAccount ? account.sendAccountRecoveryCode(address) : account.sendCode(address, 'recovery');
+  }
+
+  function showRequestError(error: ApiError) {
+    resetPasswords();
+    if (error.details?.reason !== 'recovery_email_mismatch') return;
+    goTo('details');
+    setFieldErrors({ email: 'Nhập email của tài khoản đang đăng nhập.' });
+  }
+
   function submitDetails() {
     const address = normalizeEmail(email);
     const invalid: FieldErrors = {
@@ -110,10 +122,15 @@ export function AccountAccessScreen({ flow, account, isGuest, onBack, onNavigate
     setEmail(address);
     if (signingUp) return void run('Đang gửi mã…', () => account.signUp({ email: address, password, displayName: name.trim() }),
       () => goTo('code'), showSignupError);
-    if (signingIn) return void run('Đang đăng nhập…', () => account.signIn({ email: address, password }), onComplete, resetPasswords);
-    const request = linking ? () => account.linkEmail(address)
-      : () => account.sendCode(address, 'recovery');
-    void run('Đang gửi mã…', request, () => goTo('code'), resetPasswords);
+    if (signingIn) return void run('Đang đăng nhập…', () => account.signIn({ email: address, password }), onComplete, failure => {
+      resetPasswords();
+      if (failure.details?.reason === 'invalid_credentials') {
+        setFieldErrors({ email: accountErrorMessage(failure) });
+        clearError();
+      }
+    });
+    const request = linking ? () => account.linkEmail(address) : () => sendRecoveryCode(address);
+    void run('Đang gửi mã…', request, () => goTo('code'), showRequestError);
   }
 
   function showSignupError(error: ApiError) {
@@ -134,12 +151,12 @@ export function AccountAccessScreen({ flow, account, isGuest, onBack, onNavigate
     const address = normalizeEmail(email);
     if (!validEmail(address)) return setValidation('Nhập địa chỉ email hợp lệ.');
     const request = linking ? () => account.linkEmail(address)
-      : () => account.sendCode(address, recovery ? 'recovery' : 'signup');
+      : recovery ? () => sendRecoveryCode(address) : () => account.sendCode(address, 'signup');
     void run('Đang gửi mã…', request, () => {
       goTo('code');
       setNotice('Kiểm tra hộp thư để lấy mã mới.');
       noticeTimer.current = setTimeout(() => setNotice(''), 5000);
-    });
+    }, showRequestError);
   }
 
   function verify() {
@@ -179,7 +196,8 @@ export function AccountAccessScreen({ flow, account, isGuest, onBack, onNavigate
     {validation ? <Text accessibilityRole="alert" style={[typography.body, { color: colors.danger }]}>{validation}</Text> : null}
     {stage === 'details' ? <>
       {recovery || linking || (signingIn && isGuest) ? <Text style={[typography.body, { color: colors.text }]}>
-        {recovery ? 'Nhập email để nhận mã đặt lại mật khẩu.' : linking
+        {recovery ? recoveryForCurrentAccount ? 'Nhập email của tài khoản đang đăng nhập để nhận mã đặt lại mật khẩu.'
+          : 'Nhập email để nhận mã đặt lại mật khẩu.' : linking
           ? 'Xác minh email rồi đặt mật khẩu để giữ hồ sơ, bạn bè và lịch sử của phiên khách này.'
           : 'Đăng nhập sẽ chuyển sang dữ liệu của tài khoản đó. Để giữ dữ liệu phiên khách, hãy liên kết email trong Cá nhân.'}
       </Text> : null}

@@ -64,6 +64,21 @@ test('email linking preserves guest UUID and advances the identity epoch', async
   expect(await s.account.setPassword('Fixture!123', proof)).toMatchObject({ ok: true });
 });
 
+test('account recovery only sends to the authenticated account email', async () => {
+  const s = accountSetup();
+  await s.session.restoreSession();
+  expect(await s.account.sendAccountRecoveryCode('tester@example.test')).toMatchObject({ ok: false });
+  expect(s.transport.sendCode).not.toHaveBeenCalled();
+  expect(await s.account.signIn({ email: 'tester@example.test', password: 'Fixture!123' })).toMatchObject({ ok: true });
+  expect(await s.account.sendAccountRecoveryCode('different@example.test')).toMatchObject({
+    ok: false, error: { details: { reason: 'recovery_email_mismatch' } },
+  });
+  expect(s.transport.sendCode).not.toHaveBeenCalled();
+  expect(await s.account.sendAccountRecoveryCode(' Tester@EXAMPLE.TEST ')).toMatchObject({ ok: true });
+  expect(s.transport.sendCode).toHaveBeenCalledTimes(1);
+  expect(s.transport.sendCode).toHaveBeenCalledWith('tester@example.test', 'recovery');
+});
+
 test('link mismatch never adopts another user and logout supersedes an in-flight sign-in', async () => {
   const s = accountSetup();
   await s.session.restoreSession();

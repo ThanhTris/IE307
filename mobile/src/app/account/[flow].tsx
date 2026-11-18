@@ -7,7 +7,7 @@ import { AccountFormFrame } from '../../features/account/components/AccountFormF
 import { useShellTheme } from '../../shared/lib/useShellTheme';
 
 export default function AccountRoute() {
-  const { flow } = useLocalSearchParams<{ flow: string }>();
+  const { flow, source } = useLocalSearchParams<{ flow: string; source?: string }>();
   const router = useRouter();
   const live = useRoomRepository();
   const { colors } = useShellTheme();
@@ -30,11 +30,15 @@ export default function AccountRoute() {
   if (flow === 'edit-profile' || flow === 'change-password') {
     if (!user || user.isGuest) return <Redirect href={user ? '/profile' : '/welcome'} />;
     return <AccountEditScreen key={`${user.id}:${flow}`} kind={flow} user={user} account={live.account}
-      onBack={back} onRecovery={() => navigate('recovery')} />;
+      onBack={back} onRecovery={() => router.push({
+        pathname: '/account/[flow]', params: { flow: 'recovery', source: 'change-password' },
+      })} />;
   }
   if (flow !== 'sign-in' && flow !== 'sign-up' && flow !== 'link' && flow !== 'recovery') return <Redirect href="/" />;
   if (flow === 'link' && !user) return <Redirect href="/welcome" />;
   if (flow === 'sign-up' && user?.isGuest) return <Redirect href={{ pathname: '/account/[flow]', params: { flow: 'link' } }} />;
-  return <AccountAccessScreen key={flow} flow={flow} account={live.account} isGuest={user?.isGuest === true}
+  const recoveryForCurrentAccount = flow === 'recovery' && source === 'change-password';
+  return <AccountAccessScreen key={recoveryForCurrentAccount ? 'recovery:' + user?.id : flow}
+    flow={flow} account={live.account} isGuest={user?.isGuest === true} recoveryForCurrentAccount={recoveryForCurrentAccount}
     onBack={back} onNavigate={navigate} onComplete={() => router.dismissTo(flow === 'link' ? '/profile' : '/')} />;
 }
