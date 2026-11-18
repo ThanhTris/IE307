@@ -6,6 +6,9 @@
 @recoveryCode = <code-from-Mailpit>
 @recoveryToken = <access-token-from-recovery-verification>
 @newPassword = <different-fixture-password>
+@ownerToken = <verified-test-account-token>
+@friendToken = <second-verified-test-account-token>
+@ownerFriendCode = <code-from-get-my-social-identity>
 
 ### Register. GoTrue returns a user and sends a verification code.
 POST {{baseUrl}}/auth/v1/signup
@@ -54,3 +57,27 @@ Content-Type: application/json
 POST {{baseUrl}}/auth/v1/logout?scope=local
 apikey: {{anonKey}}
 Authorization: Bearer {{recoveryToken}}
+
+### Rename the profile using the owner's session; expect the new user_metadata in the ACK.
+PUT {{baseUrl}}/auth/v1/user
+apikey: {{anonKey}}
+Authorization: Bearer {{ownerToken}}
+Content-Type: application/json
+
+{"data":{"display_name":"Tên QA đã cập nhật"}}
+
+### A second account with an existing friendship must see the updated name on reload.
+POST {{baseUrl}}/rest/v1/rpc/list_friends
+apikey: {{anonKey}}
+Authorization: Bearer {{friendToken}}
+Content-Type: application/json
+
+{}
+
+### The same code must resolve the new name and report the existing friendship.
+POST {{baseUrl}}/rest/v1/rpc/find_partner_by_code
+apikey: {{anonKey}}
+Authorization: Bearer {{friendToken}}
+Content-Type: application/json
+
+{"friend_code":"{{ownerFriendCode}}"}

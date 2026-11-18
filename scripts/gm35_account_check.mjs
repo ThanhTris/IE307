@@ -117,3 +117,42 @@ assert.equal((await signIn(changedPassword)).status, 400, 'Previous password mus
 const recovered = expectStatus(await signIn(recoveredPassword), 200, 'Sign in after recovery');
 assert.ok(recovered.user?.id === signup.id && recovered.access_token);
 pass('Generic recovery reply, single-use OTP, password reset and local logout');
+
+const ownerToken = recovered.access_token;
+const friendToken = linked.access_token;
+async function rpc(name, bearer, body = {}) {
+  return expectStatus(await request(`/rest/v1/rpc/${name}`, 'POST', body, bearer), 200, name);
+}
+const ownerIdentity = await rpc('get_my_social_identity', ownerToken);
+assert.equal(ownerIdentity.id, signup.id);
+assert.match(ownerIdentity.friendCode, /^[A-HJ-NP-Z2-9]{10}$/);
+const invitation = await rpc('invite_partner', friendToken, { requestId: randomUUID(), friend_code: ownerIdentity.friendCode });
+assert.ok(invitation.ok && invitation.data?.id, 'Friend invitation must be created.');
+const accepted = await rpc('accept_partner', ownerToken, { requestId: randomUUID(), invitation_id: invitation.data.id });
+assert.equal(accepted.ok, true, 'Owner accepts invitation.');
+
+async function readFriend() {
+  const friends = await rpc('list_friends', friendToken);
+  const row = friends.find(friend => friend.friendUserId === signup.id);
+  assert.ok(row, 'The second identity sees the existing friendship.');
+  return row;
+}
+async function lookupFriend() {
+  const lookup = await rpc('find_partner_by_code', friendToken, { friend_code: ownerIdentity.friendCode });
+  assert.ok(lookup.ok && lookup.data, 'Friend code lookup resolves the owner.');
+  return lookup.data;
+}
+const originalFriend = await readFriend();
+const originalLookup = await lookupFriend();
+assert.equal(originalFriend.displayName, ownerIdentity.displayName);
+
+const displayName = 'Tên QA đã cập nhật';
+const savedProfile = expectStatus(await auth('user', 'PUT', { data: { display_name: displayName } }, ownerToken), 200, 'Save display name');
+assert.equal(savedProfile.id, signup.id);
+assert.equal(savedProfile.user_metadata?.display_name, displayName);
+const readProfile = expectStatus(await auth('user', 'GET', undefined, ownerToken), 200, 'Read own display name');
+assert.equal(readProfile.user_metadata?.display_name, displayName);
+assert.deepEqual(await rpc('get_my_social_identity', ownerToken), { ...ownerIdentity, displayName });
+assert.deepEqual(await readFriend(), { ...originalFriend, displayName });
+assert.deepEqual(await lookupFriend(), { ...originalLookup, displayName });
+pass('Display-name ACK is visible to both accounts and keeps UUID, friend code, avatar seed and friendship');
