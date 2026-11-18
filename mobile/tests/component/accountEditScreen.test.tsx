@@ -2,6 +2,7 @@ import { act, fireEvent, render, screen } from '@testing-library/react-native';
 import { AccountEditScreen } from '../../src/features/account/screens/AccountEditScreen';
 import type { AccountService } from '../../src/data/auth';
 import type { ReadResult } from '../../src/data/api/contracts';
+import { lightColors } from '../../src/shared/theme/tokens';
 
 const user = { id: 'fixture-member', displayName: 'Minh', isGuest: false, createdAt: '2026-11-16T00:00:00Z' };
 const failed = { ok: false, error: { messageKey: 'NETWORK_ERROR' } } as const;
@@ -12,7 +13,13 @@ function setup(kind: 'edit-profile' | 'change-password') {
   const account = { saveProfile: jest.fn(() => request), changePassword: jest.fn(() => request) };
   const tree = <AccountEditScreen kind={kind} user={user} account={account as unknown as AccountService}
     onBack={jest.fn()} onRecovery={jest.fn()} />;
-  return { render: () => render(tree), account, finish: async () => act(async () => { resolve(failed); }) };
+  return { render: () => render(tree), account, finish: async (result: ReadResult<void> = failed) => act(async () => { resolve(result); }) };
+}
+
+function expectFieldError(label: string, message: string) {
+  const input = screen.getByLabelText(label);
+  expect(input).toHaveProp('accessibilityHint', message);
+  expect(input).toHaveStyle({ borderColor: lightColors.danger });
 }
 
 test('G04 blocks repeated saves while pending and keeps the submitted name after network failure', async () => {
@@ -41,5 +48,45 @@ test('G05 clears every password after failed provider ACK and leaves the retry a
   expect(screen.getByLabelText('Mật khẩu mới')).toHaveProp('value', '');
   expect(screen.getByLabelText('Nhập lại mật khẩu mới')).toHaveProp('value', '');
   expect(screen.getByRole('button', { name: 'Lưu mật khẩu mới' })).toBeEnabled();
-  expect(screen.queryByText('Đã đổi mật khẩu')).toBeNull();
+  expect(screen.queryByText('Đã đổi mật khẩu thành công')).toBeNull();
+});
+
+test('a missing display name is highlighted without submitting the form', async () => {
+  const fixture = setup('edit-profile');
+  await fixture.render();
+  await fireEvent.changeText(screen.getByLabelText('Tên hiển thị'), '  ');
+  await fireEvent.press(screen.getByRole('button', { name: 'Lưu thay đổi' }));
+  expectFieldError('Tên hiển thị', 'Nhập tên hiển thị.');
+  expect(fixture.account.saveProfile).not.toHaveBeenCalled();
+});
+
+test('password validation identifies each field and provider credential errors target the current password', async () => {
+  const fixture = setup('change-password');
+  await fixture.render();
+  await fireEvent.changeText(screen.getByLabelText('Mật khẩu mới'), 'short');
+  await fireEvent.changeText(screen.getByLabelText('Nhập lại mật khẩu mới'), 'different');
+  await fireEvent.press(screen.getByRole('button', { name: 'Lưu mật khẩu mới' }));
+  expectFieldError('Mật khẩu hiện tại', 'Nhập mật khẩu hiện tại.');
+  expectFieldError('Mật khẩu mới', 'Mật khẩu cần ít nhất 8 ký tự');
+  expectFieldError('Nhập lại mật khẩu mới', 'Hai mật khẩu mới chưa khớp.');
+  expect(fixture.account.changePassword).not.toHaveBeenCalled();
+
+  await fireEvent.changeText(screen.getByLabelText('Mật khẩu hiện tại'), 'Fixture-before!');
+  await fireEvent.changeText(screen.getByLabelText('Mật khẩu mới'), 'Fixture-after!');
+  await fireEvent.changeText(screen.getByLabelText('Nhập lại mật khẩu mới'), 'Fixture-after!');
+  await fireEvent.press(screen.getByRole('button', { name: 'Lưu mật khẩu mới' }));
+  await fixture.finish({ ok: false, error: { messageKey: 'AUTH_REQUIRED', details: { reason: 'invalid_credentials' } } });
+  expectFieldError('Mật khẩu hiện tại', 'Mật khẩu hiện tại chưa đúng.');
+  expect(screen.getByLabelText('Mật khẩu mới')).toHaveProp('value', '');
+});
+
+test('successful password change confirms completion', async () => {
+  const fixture = setup('change-password');
+  await fixture.render();
+  await fireEvent.changeText(screen.getByLabelText('Mật khẩu hiện tại'), 'Fixture-before!');
+  await fireEvent.changeText(screen.getByLabelText('Mật khẩu mới'), 'Fixture-after!');
+  await fireEvent.changeText(screen.getByLabelText('Nhập lại mật khẩu mới'), 'Fixture-after!');
+  await fireEvent.press(screen.getByRole('button', { name: 'Lưu mật khẩu mới' }));
+  await fixture.finish({ ok: true, data: undefined });
+  expect(screen.getByText('Đã đổi mật khẩu thành công')).toBeOnTheScreen();
 });

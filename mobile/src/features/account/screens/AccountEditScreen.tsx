@@ -3,7 +3,7 @@ import { StyleSheet, Text, View } from 'react-native';
 import ProfileBadge from '../../../../assets/brand/account/profile-badge.svg';
 import type { SessionUser } from '../../../data/api/contracts';
 import type { AccountService } from '../../../data/auth';
-import { validDisplayName, validNewPassword } from '../../../data/auth/validation';
+import { validDisplayName } from '../../../data/auth/validation';
 import { AppButton, FormField } from '../../../shared/ui';
 import { ToastNotice } from '../../../shared/ui/feedback/Toast';
 import { useShellTheme } from '../../../shared/lib/useShellTheme';
@@ -11,6 +11,9 @@ import { radii, spacing, typography } from '../../../shared/theme/tokens';
 import { AccountFormFrame } from '../components/AccountFormFrame';
 import { PasswordField } from '../components/PasswordField';
 import { useAccountAction } from '../hooks/useAccountAction';
+import { accountErrorMessage, newPasswordError } from '../services/accountMessages';
+
+type FieldErrors = Partial<Record<'name' | 'currentPassword' | 'password' | 'confirmation', string>>;
 
 export function AccountEditScreen({ kind, user, account, onBack, onRecovery }: {
   kind: 'edit-profile' | 'change-password';
@@ -24,7 +27,7 @@ export function AccountEditScreen({ kind, user, account, onBack, onRecovery }: {
   const [currentPassword, setCurrentPassword] = useState('');
   const [password, setPassword] = useState('');
   const [confirmation, setConfirmation] = useState('');
-  const [validation, setValidation] = useState('');
+  const [fieldErrors, setFieldErrors] = useState<FieldErrors>({});
   const [saved, setSaved] = useState(false);
   const { pending, error, run, clearError } = useAccountAction();
   const editingProfile = kind === 'edit-profile';
@@ -37,31 +40,51 @@ export function AccountEditScreen({ kind, user, account, onBack, onRecovery }: {
     setConfirmation('');
   }
 
+  function clearFieldError(field: keyof FieldErrors) {
+    setFieldErrors(current => current[field] ? { ...current, [field]: undefined } : current);
+  }
+
   function submit() {
     setSaved(false);
     clearError();
-    setValidation('');
     if (editingProfile) {
-      if (!validDisplayName(displayName)) return setValidation('Tên hiển thị cần từ 1 đến 24 ký tự.');
+      const name = !displayName.trim() ? 'Nhập tên hiển thị.'
+        : !validDisplayName(displayName) ? 'Tên hiển thị cần từ 1 đến 24 ký tự hợp lệ.' : undefined;
+      setFieldErrors({ name });
+      if (name) return;
       void run('Đang lưu hồ sơ…', () => account.saveProfile(displayName), () => {
         setDisplayName(displayName.trim());
         setSaved(true);
       });
       return;
     }
-    if (!currentPassword) return setValidation('Nhập mật khẩu hiện tại.');
-    if (!validNewPassword(password)) return setValidation('Mật khẩu mới cần ít nhất 8 ký tự và tối đa 72 byte.');
-    if (password === currentPassword) return setValidation('Chọn mật khẩu khác với mật khẩu hiện tại.');
-    if (password !== confirmation) return setValidation('Hai mật khẩu mới chưa khớp.');
+    const invalid: FieldErrors = {
+      currentPassword: !currentPassword ? 'Nhập mật khẩu hiện tại.' : undefined,
+      password: !password ? 'Nhập mật khẩu mới.' : newPasswordError(password)
+        ?? (password === currentPassword ? 'Chọn mật khẩu khác với mật khẩu hiện tại.' : undefined),
+      confirmation: !confirmation ? 'Nhập lại mật khẩu mới.'
+        : password !== confirmation ? 'Hai mật khẩu mới chưa khớp.' : undefined,
+    };
+    setFieldErrors(invalid);
+    if (Object.values(invalid).some(Boolean)) return;
     void run('Đang cập nhật mật khẩu…', () => account.changePassword(currentPassword, password), () => {
       clearPasswords();
       setSaved(true);
-    }, clearPasswords);
+    }, failure => {
+      clearPasswords();
+      const reason = failure.details?.reason;
+      if (reason === 'current_password_invalid' || reason === 'invalid_credentials') {
+        setFieldErrors({ currentPassword: 'Mật khẩu hiện tại chưa đúng.' });
+        clearError();
+      } else if (reason === 'weak_password' || reason === 'same_password') {
+        setFieldErrors({ password: accountErrorMessage(failure) });
+        clearError();
+      }
+    });
   }
 
   return <AccountFormFrame title={title} onBack={onBack} error={error} busy={busy}>
-    {saved ? <ToastNotice tone="success" title={editingProfile ? 'Đã lưu hồ sơ' : 'Đã đổi mật khẩu'} /> : null}
-    {validation ? <Text accessibilityRole="alert" style={[typography.body, { color: colors.danger }]}>{validation}</Text> : null}
+    {saved ? <ToastNotice tone="success" title={editingProfile ? 'Đã lưu hồ sơ' : 'Đã đổi mật khẩu thành công'} /> : null}
     {editingProfile ? <>
       <View style={[styles.avatarCard, { borderColor: colors.line, backgroundColor: dark ? colors.surface : '#FFFFFF' }]}>
         <View style={styles.avatar} accessibilityElementsHidden importantForAccessibility="no-hide-descendants">
@@ -71,13 +94,17 @@ export function AccountEditScreen({ kind, user, account, onBack, onRecovery }: {
         <Text style={[typography.bodyBold, { color: colors.text }]}>Ảnh đại diện</Text>
         <Text style={[typography.caption, { color: colors.muted }]}>Hiển thị chữ cái đầu trong tên của bạn.</Text>
       </View>
-      <FormField label="Tên hiển thị" value={displayName} onChangeText={setDisplayName} editable={!busy}
+      <FormField label="Tên hiển thị" value={displayName} error={fieldErrors.name} editable={!busy}
+        onChangeText={value => { setDisplayName(value); clearFieldError('name'); }}
         autoCapitalize="words" helperText="Tên này xuất hiện với bạn bè và trong phòng ăn mới."
         colors={colors} inputStyle={{ minHeight: 54, backgroundColor: dark ? colors.soft : '#FFFFFF' }} />
     </> : <>
-      <PasswordField label="Mật khẩu hiện tại" value={currentPassword} onChange={setCurrentPassword} disabled={busy} />
-      <PasswordField label="Mật khẩu mới" value={password} onChange={setPassword} disabled={busy} isNew />
-      <PasswordField label="Nhập lại mật khẩu mới" value={confirmation} onChange={setConfirmation} disabled={busy} isNew />
+      <PasswordField label="Mật khẩu hiện tại" value={currentPassword} error={fieldErrors.currentPassword}
+        onChange={value => { setCurrentPassword(value); clearFieldError('currentPassword'); }} disabled={busy} />
+      <PasswordField label="Mật khẩu mới" value={password} error={fieldErrors.password}
+        onChange={value => { setPassword(value); clearFieldError('password'); }} disabled={busy} isNew />
+      <PasswordField label="Nhập lại mật khẩu mới" value={confirmation} error={fieldErrors.confirmation}
+        onChange={value => { setConfirmation(value); clearFieldError('confirmation'); }} disabled={busy} isNew />
     </>}
     <AppButton label={pending ?? (editingProfile ? 'Lưu thay đổi' : 'Lưu mật khẩu mới')} loading={busy} onPress={submit} colors={colors} />
     {!editingProfile ? <AppButton label="Quên mật khẩu hiện tại?" variant="quiet" onPress={() => { clearPasswords(); onRecovery(); }} disabled={busy} colors={colors} /> : null}
