@@ -31,8 +31,20 @@ Ngày 2026-11-19, người kiểm thử xác nhận đã hoàn thành lượt ki
 - Expo export Android đã tạo đồ thị Metro. Bước ghi bytecode Hermes thất bại do quyền ghi thư mục tạm của sandbox. Kết quả Expo Go thủ công nằm ở bảng trên.
 - Python regression toàn repo chạy 628 ca và thất bại. Kết quả có lỗi quyền ghi thư mục tạm, HTTP 403/429 và lỗi `TIME` ở fixture dữ liệu. Kết quả này chưa xác nhận regression toàn repo.
 
-## Trạng thái trước review
+## Trạng thái trước review #182
 
 Kiểm `task_readiness.py --task GM-35 --gate merge --base-ref origin/main --verify-outputs` ngày 2026-11-19 trên `origin/main` `5a69b56`. Sau khi đồng bộ hồ sơ GM-34, checker báo `BLOCKED_ON_BASE`. Project #2 ghi GM-16 và GM-28 đã Done nhưng checker thấy hai artifact khác nội dung trên nhánh đích. GM-35 mở rộng vòng đời phiên trong `mobile/src/data/auth/session.ts` và dùng chung read/write để xóa lịch sử cá nhân trong `mobile/src/features/history/services/historyRepository.ts`. Reviewer cần xác nhận ownership và cách tiếp nhận hai thay đổi này trước khi chạy lại gate. Kết quả đọc Project chỉ ghi bằng chứng ở thời điểm chạy.
 
-Trước review chính thức, bổ sung log và ảnh AVD nối backend QA local thật cho các ca còn thiếu ở trên. Xác nhận Expo Go được lưu độc lập với nghiệm thu AVD và quyết định của reviewer.
+## Kiểm lại sau review #182
+
+Revision app `9eb698a` trên `main` `5a69b56`. Code chuyển phiên nằm trong `f53db06` và phần thu gọn artifact trong `9eb698a`. Migration và ca HTTP hai tài khoản nằm trong `b0c8d59`.
+
+| Ca kiểm | Kết quả |
+| --- | --- |
+| Request của phiên khách trong lúc đổi tài khoản | Kiểm thử dừng `clearPrivateData` và gửi lưu consent trong khi repository vẫn trả phiên khách. Trước sửa, transport nhận request cũ với token thành viên rồi UI nhận `AUTH_REQUIRED`. Sau sửa, request cũ trả `AUTH_REQUIRED` trước transport. Request tiếp theo gửi đúng một lần với phiên thành viên. |
+| Đổi tên với hai tài khoản | QA `gm35-review-profile-1119` chạy CLI 2.120.0, `qa:verify` đạt với 48 migration, ownership và heartbeat worker đã xác minh. `node scripts/gm35_account_check.mjs gm35-review-profile-1119` đạt cả 5 nhóm ca. Sau ACK đổi tên, GoTrue và hồ sơ xã hội của chính chủ trả tên mới. Tài khoản thứ hai đọc tên mới qua `list_friends` và `find_partner_by_code`. UUID, mã bạn bè, avatar seed và quan hệ giữ nguyên. Phiên QA đã được dọn. |
+| Hồi quy mobile | 201/201 ca trong 9 suite với `--testTimeout=30000`, TypeScript, lint tệp đã sửa, kiểm kiến trúc và Expo `58.0.25` theo lockfile đạt. G04 gửi lại đúng tên sau lỗi và nhận ACK, G05 bấm lần hai khi pending chỉ gọi service một lần và xóa cả ba ô sau lỗi. Hai ca UI dùng provider kiểm thử. |
+| Export Android | Expo `58.0.25` export Android thành công với 3.926 module và xuất bundle Hermes `.hbc`. Kết quả xác nhận bước đóng gói JS. |
+| Runner và tài liệu | 20/20 ca `npm test` ở repo gốc đạt. `validate_repository.py` và `task_readiness.py --check-docs` đạt. Python regression toàn repo chạy 628 ca trên Python 3.15 cục bộ, kết thúc với 167 thất bại, 39 lỗi và 6 bỏ qua. Log có lỗi thiếu `jsonschema` và `tzdata`. Các workflow CI dùng Python 3.12. |
+| Merge gate | `python scripts/task_readiness.py --task GM-35 --gate merge --base-ref origin/main --verify-outputs` đọc Project #2 và trả `BLOCKED_ON_BASE`. Artifact GM-28 `historyRepository.ts` và GM-07 `client.ts` khớp `origin/main`. Mục còn chặn là GM-16 `mobile/src/data/auth/session.ts`. Ranh giới producer/adapter và đề xuất bàn giao chờ Trí xác nhận trong [HANDOFF](HANDOFF.md#ranh-giới-artifact-cần-trí-xác-nhận). |
+| AVD sau sửa | Máy có ADB nhưng danh sách thiết bị rỗng và chưa có Android Emulator/AVD có thể chạy. Thiếu log/ảnh 412dp và kết quả 320/360dp, chữ 200%, TalkBack, bàn phím và Back. Bằng chứng còn thiếu được liệt kê trong [FIGMA_PARITY](FIGMA_PARITY.md#bằng-chứng-avd-sau-review-182). |

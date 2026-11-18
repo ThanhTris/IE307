@@ -22,7 +22,7 @@ function expectFieldError(label: string, message: string) {
   expect(input).toHaveStyle({ borderColor: lightColors.danger });
 }
 
-test('G04 blocks repeated saves while pending and keeps the submitted name after network failure', async () => {
+test('G04 keeps the submitted name after network failure and retries it successfully', async () => {
   const fixture = setup('edit-profile');
   await fixture.render();
   await fireEvent.changeText(screen.getByLabelText('Tên hiển thị'), 'Minh mới');
@@ -33,16 +33,24 @@ test('G04 blocks repeated saves while pending and keeps the submitted name after
   expect(screen.getByDisplayValue('Minh mới')).toBeOnTheScreen();
   expect(screen.getByRole('button', { name: 'Lưu thay đổi' })).toBeEnabled();
   expect(fixture.account.saveProfile).toHaveBeenCalledTimes(1);
+
+  fixture.account.saveProfile.mockResolvedValueOnce({ ok: true, data: undefined });
+  await fireEvent.press(screen.getByRole('button', { name: 'Lưu thay đổi' }));
+  expect(fixture.account.saveProfile).toHaveBeenNthCalledWith(2, 'Minh mới');
+  expect(screen.getByText('Đã lưu hồ sơ')).toBeOnTheScreen();
 });
 
-test('G05 clears every password after failed provider ACK and leaves the retry action available', async () => {
+test('G05 blocks a second submit while pending and clears every password after provider failure', async () => {
   const fixture = setup('change-password');
   await fixture.render();
   await fireEvent.changeText(screen.getByLabelText('Mật khẩu hiện tại'), 'Fixture-before!');
   await fireEvent.changeText(screen.getByLabelText('Mật khẩu mới'), 'Fixture-after!');
   await fireEvent.changeText(screen.getByLabelText('Nhập lại mật khẩu mới'), 'Fixture-after!');
   await fireEvent.press(screen.getByRole('button', { name: 'Lưu mật khẩu mới' }));
-  expect(screen.getByRole('button', { name: 'Đang cập nhật mật khẩu…' })).toBeDisabled();
+  const pending = screen.getByRole('button', { name: 'Đang cập nhật mật khẩu…' });
+  expect(pending).toBeDisabled();
+  await fireEvent.press(pending);
+  expect(fixture.account.changePassword).toHaveBeenCalledTimes(1);
   await fixture.finish();
   expect(screen.getByLabelText('Mật khẩu hiện tại')).toHaveProp('value', '');
   expect(screen.getByLabelText('Mật khẩu mới')).toHaveProp('value', '');

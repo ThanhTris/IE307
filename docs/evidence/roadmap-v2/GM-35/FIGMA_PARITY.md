@@ -19,4 +19,13 @@
 - Thẻ Figma dùng avatar mẫu. Hồ sơ hiển thị chữ cái từ tên thật của phiên. Storage local đang tắt. Công tắc Hiện nút chọn món trong mẫu trợ năng nằm ngoài phần cài đặt được giao trong lần sửa này.
 - Theo phản hồi khi thử, khách vẫn thấy Bạn bè và Lịch sử ở footer nhưng mở đến màn mời đăng nhập. Hộp thư, push và Kèo nhanh dành cho tài khoản đã đăng nhập. Đây là hành vi bổ sung được yêu cầu sau lượt đối chiếu ban đầu.
 
-Để nộp bằng chứng visual cho review, ghi SHA, phiên Android/Expo Go, thiết bị/AVD, viewport và đầu vào thử. Đính kèm ảnh app cùng kích thước với frame Figma ở 412dp, gồm trạng thái bình thường và G04/G05 pending, lỗi, thử lại. Ghi riêng ca 320/360dp, chữ 200%, TalkBack, bàn phím, Back và vùng an toàn. Các khác biệt còn lại chờ Trí quyết định trong review.
+## Bằng chứng AVD sau review #182
+
+Lượt review lại xác định ADB hoạt động nhưng `adb devices -l` trả danh sách rỗng. Workspace và các vị trí cài đặt SDK trên máy chưa có Android Emulator/AVD có thể chạy. Vì vậy chưa có Android/Expo runtime, viewport hay ảnh để đối chiếu nhánh sửa. Giữ kết quả Expo Go thủ công ngày 2026-11-19 ở đầu tài liệu. [Thiết lập AVD cho Expo Go](https://docs.expo.dev/get-started/set-up-your-environment/?device=simulated&mode=expo-go&platform=android).
+
+| Hạng mục trên AVD nối QA thật | Bằng chứng cần ghi |
+| --- | --- |
+| Đăng nhập, xác minh đăng ký và recovery | Ghi SHA app, phiên Android/API, phiên Expo Go/SDK và mã lần chạy QA. Dùng thư Mailpit để xác minh và đặt lại mật khẩu, rồi đăng nhập bằng mật khẩu mới. Chụp các màn ở 412dp. |
+| G04 pending, lỗi, thử lại | Ghi đầu vào tên mới và lỗi có kiểm soát trên đường tới QA. Chụp pending, lỗi vẫn giữ tên và lần thử lại có ACK. Đối chiếu các frame G04 ở 412dp. |
+| G05 pending và lỗi | Bấm lưu lần hai khi lần đầu còn pending, kiểm một lần gửi. Khi lần đầu lỗi, chụp cả ba ô đã xóa và nút lưu hoạt động lại. Đối chiếu các frame G05 ở 412dp, giữ mật khẩu ngoài ảnh và log. |
+| 320/360dp, chữ 200%, TalkBack, bàn phím, Back | Ghi kết quả thực tế theo từng cấu hình. Kiểm trường và nút còn tới được khi cuộn, nhãn/lỗi được đọc, nút Back khi bàn phím mở và khi đang gửi, nội dung tránh thanh hệ thống. |
