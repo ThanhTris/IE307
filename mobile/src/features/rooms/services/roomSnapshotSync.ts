@@ -11,6 +11,7 @@ export function startRoomSnapshotSync(options: {
 }) {
   let active = true;
   let live = false;
+  let connectionEpoch = 0;
   let busy = false;
   let dirty = false;
   let target = 0;
@@ -19,18 +20,26 @@ export function startRoomSnapshotSync(options: {
   let attempt = 0;
   let timer: ReturnType<typeof setTimeout> | undefined;
   let stopSubscription = () => {};
-  const stop = () => { active = false; clearTimeout(timer); stopSubscription(); };
+  const clearRetry = () => { clearTimeout(timer); timer = undefined; };
+  const stop = () => {
+    if (!active) return;
+    active = false;
+    clearRetry();
+    stopSubscription();
+  };
   const current = () => active && options.isCurrent();
   const schedule = () => {
-    clearTimeout(timer);
-    if (current()) timer = setTimeout(() => { void refresh(); }, delays[attempt]);
+    if (current() && timer === undefined) {
+      timer = setTimeout(() => { timer = undefined; void refresh(); }, delays[attempt]);
+    }
   };
   async function refresh() {
     if (!current()) return;
     if (busy) { dirty = true; return; }
-    clearTimeout(timer);
+    clearRetry();
     busy = true;
     dirty = false;
+    const readEpoch = connectionEpoch;
     let succeeded = false;
     try {
       const snapshot = await options.read(current);
@@ -44,8 +53,10 @@ export function startRoomSnapshotSync(options: {
       busy = false;
       if (!current()) stop();
       else {
-        attempt = succeeded ? 0 : Math.min(attempt + 1, delays.length - 1);
-        if (dirty) void refresh();
+        if (readEpoch === connectionEpoch) {
+          attempt = live && succeeded ? 0 : Math.min(attempt + 1, delays.length - 1);
+        }
+        if (live && dirty) void refresh();
         else if (!live || !succeeded) schedule();
       }
     }
@@ -54,14 +65,27 @@ export function startRoomSnapshotSync(options: {
     if (!current()) { stop(); return; }
     if (signal.version <= Math.max(target, applied)) return;
     target = signal.version;
+    if (!live) return; // REST probe versions do not bypass the fallback cadence.
     if (busy) dirty = true;
     else void refresh();
   }, status => {
     if (!current()) { stop(); return; }
-    live = status === 'live';
-    clearTimeout(timer);
-    if (live) void refresh(); // Read after channel registration to close the subscribe/read race.
-    else schedule();
+    if (status === 'live') {
+      if (live) return;
+      live = true;
+      ++connectionEpoch;
+      attempt = 0;
+      clearRetry();
+      void refresh(); // Read after channel registration to close the subscribe/read race.
+    } else {
+      if (live) {
+        live = false;
+        ++connectionEpoch;
+        attempt = 0;
+        clearRetry();
+      }
+      schedule();
+    }
   }, error => {
     if (!current()) return;
     options.onError(error);

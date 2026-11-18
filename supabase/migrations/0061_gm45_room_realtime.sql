@@ -38,6 +38,10 @@ insert into public.room_version_signals(room_id,version)
 do $$
 begin
  if exists(select 1 from pg_publication where pubname='supabase_realtime') then
+  -- Postgres Changes does not apply RLS to DELETE events. Exclude them at
+  -- publication so retention can cascade without publishing room IDs.
+  -- The app's inbox subscriber only listens for INSERT.
+  alter publication supabase_realtime set (publish='insert, update');
   alter publication supabase_realtime add table public.room_version_signals;
  end if;
 end $$;

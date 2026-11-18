@@ -1,4 +1,4 @@
-import type { ApiError } from '../../../data/api/contracts';
+import type { ApiError, ReadResult } from '../../../data/api/contracts';
 import { mapErrorHelper } from '../../../data/api/client/helpers';
 import { HEARTBEAT_MS, RECONNECT_DELAYS_MS, realtimeSocketUrl, type WebSocketLike } from '../../inbox/services/inboxRealtime';
 
@@ -7,7 +7,7 @@ export type RoomRealtimeStatus = 'connecting' | 'live' | 'down';
 export interface RoomRealtimeConfig {
   baseUrl: string;
   apiKey: string;
-  getAccessToken(): Promise<string | undefined>;
+  getAccessToken(): Promise<ReadResult<string>>;
   createSocket?: (url: string) => WebSocketLike;
   fetchFn?: typeof fetch;
 }
@@ -65,15 +65,20 @@ export function createRoomSubscription(config: RoomRealtimeConfig): RoomSubscrip
       ++epoch;
       clear();
       onStatus('down');
-      if (reconnect) return;
+      if (!active || reconnect !== undefined) return;
       const delay = RECONNECT_DELAYS_MS[Math.min(retryAttempt++, RECONNECT_DELAYS_MS.length - 1)]!;
       reconnect = setTimeout(() => { reconnect = undefined; void connect(); }, delay);
     };
-    const probe = async (generation: number): Promise<boolean> => {
+    const probe = async (generation: number): Promise<string | undefined> => {
       try {
-        const token = await config.getAccessToken();
-        if (!current(generation)) return false;
-        if (!token) { fatal({ messageKey: 'AUTH_REQUIRED' }); return false; }
+        const access = await config.getAccessToken();
+        if (!current(generation)) return;
+        if (!access.ok) {
+          if (access.error.messageKey === 'AUTH_REQUIRED') fatal(access.error);
+          else down();
+          return;
+        }
+        const token = access.data;
         const controller = new AbortController();
         probeController = controller;
         const timeout = setTimeout(() => controller.abort(), 10_000);
@@ -86,28 +91,27 @@ export function createRoomSubscription(config: RoomRealtimeConfig): RoomSubscrip
           );
           body = await response.json();
         } finally { clearTimeout(timeout); }
-        if (!current(generation)) return false;
-        if (response.status === 404) { fatal({ messageKey: 'CONTRACT_MISMATCH' }); return false; }
+        if (!current(generation)) return;
+        if (response.status === 404) { fatal({ messageKey: 'CONTRACT_MISMATCH' }); return; }
         if (!response.ok) {
           const error = mapErrorHelper({ status: response.status, body });
           if (response.status === 401 || response.status === 403) fatal(error);
           else down();
-          return false;
+          return;
         }
         if (!Array.isArray(body) || body.length > 1 || (body.length === 1 && !isRoomSignal(body[0], roomId))) {
-          fatal({ messageKey: 'MALFORMED_RESPONSE' }); return false;
+          fatal({ messageKey: 'MALFORMED_RESPONSE' }); return;
         }
-        if (body.length === 0) { fatal({ messageKey: 'NOT_MEMBER' }); return false; }
+        if (body.length === 0) { fatal({ messageKey: 'NOT_MEMBER' }); return; }
         onSignal(body[0] as RoomSignal);
-        return true;
+        return token;
       } catch {
         if (current(generation)) down();
-        return false;
       }
     };
     const checkLease = (generation: number) => {
       lease = setTimeout(() => {
-        void probe(generation).then(ok => { if (ok && current(generation)) checkLease(generation); });
+        void probe(generation).then(token => { if (token && current(generation)) checkLease(generation); });
       }, 30_000);
     };
     const beat = (generation: number) => {
@@ -124,10 +128,8 @@ export function createRoomSubscription(config: RoomRealtimeConfig): RoomSubscrip
       clear();
       const generation = ++epoch;
       onStatus('connecting');
-      if (!await probe(generation) || !current(generation)) return;
-      const token = await config.getAccessToken().catch(() => undefined);
-      if (!current(generation)) return;
-      if (!token) { fatal({ messageKey: 'AUTH_REQUIRED' }); return; }
+      const token = await probe(generation);
+      if (!token || !current(generation)) return;
       try {
         socket = (config.createSocket ?? (url => new WebSocket(url) as unknown as WebSocketLike))(realtimeSocketUrl(config.baseUrl, config.apiKey));
       } catch { down(); return; }
@@ -137,7 +139,9 @@ export function createRoomSubscription(config: RoomRealtimeConfig): RoomSubscrip
         if (!current(generation)) return;
         send({ topic, event: 'phx_join', join_ref: '1', payload: {
           config: { broadcast: { self: false }, presence: { key: '' }, private: false,
-            postgres_changes: [{ event: '*', schema: 'public', table: 'room_version_signals', filter: 'room_id=eq.' + roomId }] },
+            postgres_changes: ['INSERT', 'UPDATE'].map(event => ({
+              event, schema: 'public', table: 'room_version_signals', filter: 'room_id=eq.' + roomId,
+            })) },
           access_token: token,
         } });
         beat(generation);

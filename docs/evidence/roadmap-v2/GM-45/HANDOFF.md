@@ -4,9 +4,11 @@ Baseline `0b34900`, contract `GM-45.1`, migration `0061_gm45_room_realtime.sql`,
 
 ## Backend và consumer
 
-Migration tạo `public.room_version_signals(room_id, version)`, RLS theo `gm17_private.is_member` và publication Supabase Realtime. Trigger INSERT/UPDATE version của phòng v4 cập nhật bảng tín hiệu trong cùng transaction, gồm đường worker. Bảng có một dòng mỗi phòng, được xóa theo FK khi phòng bị xóa.
+Migration tạo `public.room_version_signals(room_id, version)`, RLS theo `gm17_private.is_member` và publication Supabase Realtime. Trigger cập nhật version của phòng v4 trong cùng transaction, gồm đường worker. Khi retention xóa phòng, FK dọn dòng version tương ứng. Publication chỉ phát INSERT và UPDATE để DELETE không đưa ID phòng ra ngoài chính sách RLS. Inbox dùng INSERT trong cùng publication. [Supabase Postgres Changes](https://supabase.com/docs/guides/realtime/postgres-changes#receiving-old-records)
 
-App subscribe bằng JWT hiện hành, xác nhận quyền và capability qua SELECT hai trường, rồi đọc snapshot sau khi channel đăng ký xong. RoomUpdatesContext được nối mặc định trong RoomRepositoryProvider. Lobby và hai hook voting dùng chung coordinator, mỗi subscription có một request snapshot đang chạy. Event trùng/cũ bị bỏ, event mới được gộp, reconnect/foreground đọc bù. Snapshot lỗi hoặc disconnect retry 2,5/5/10/30 giây. Khi channel khỏe, snapshot chỉ đọc khi cần đồng bộ.
+App subscribe INSERT và UPDATE bằng JWT hiện hành, xác nhận quyền và capability qua SELECT hai trường, rồi đọc snapshot sau khi channel đăng ký xong. RoomUpdatesContext được nối mặc định trong RoomRepositoryProvider. Lobby và hai hook voting dùng chung bộ đồng bộ, mỗi subscription có một request snapshot đang chạy. Event trùng hoặc cũ bị bỏ, event mới được gộp, reconnect và foreground đọc bù.
+
+Khi mất Realtime, nhịp snapshot là 2,5 → 5 → 10 → 30 giây ngay cả khi REST trả về bình thường. Khi channel kết nối lại, app đọc bù và đặt lại nhịp. Lỗi mạng, timeout hoặc rate limit từ Auth giữ cả retry socket và fallback snapshot. Nếu Auth xác nhận mất phiên thì dừng cả hai.
 
 RLS chặn sự kiện cuối của người bị kick. Vì vậy consumer có lease SELECT hai trường mỗi 30 giây để phát hiện mất membership/expiry và thu hồi subscription. Đây là kiểm quyền riêng, không tải snapshot mỗi chu kỳ. Missing table trả CONTRACT_MISMATCH, row bị RLS lọc trả NOT_MEMBER. Epoch của identity, phòng, lifecycle và submit ngăn response cũ ghi đè state. Unmount/background/mất quyền/đã chuyển kết quả dọn socket/timer.
 
@@ -36,4 +38,4 @@ Mobile chạy `npm --prefix mobile run check`. Kiểm riêng với `npm --prefix
 
 ## Triển khai và khôi phục
 
-Áp 0061 trước cập nhật app. Kiểm ledger, definition trigger, RLS/grants, publication và worker trên target thực tế. Nếu cần hạ app, dùng bản app trước GM-45. Khi cần gỡ backend, migration nối tiếp phải gỡ publication/trigger rồi bảng/schema riêng của GM-45 sau khi consumer đã hạ.
+Áp 0061 trước cập nhật app. Kiểm ledger, definition trigger, RLS/grants, publication và worker trên target thực tế. Lưu cấu hình publication trước khi áp vì cờ publish áp dụng cho toàn bộ bảng trong publication này. Nếu cần hạ app, dùng bản app trước GM-45. Khi cần gỡ backend sau khi consumer đã hạ, dùng migration nối tiếp gỡ bảng tín hiệu khỏi publication, gỡ trigger rồi xóa bảng/schema riêng của GM-45.

@@ -219,11 +219,13 @@ function ConfiguredRoomRepositoryProvider({
       const userId = snapshot.user?.id;
       const auth = repository.getSessionApi();
       const generation = auth?.getGeneration();
-      if (!auth || !userId || snapshot.status !== 'active') return undefined;
+      if (!auth || !userId || snapshot.status !== 'active') return { ok: false, error: { messageKey: 'AUTH_REQUIRED' } };
       const token = await auth.getAccessToken();
-      if (!token.ok || auth.getGeneration() !== generation
-          || repository.getCurrentUser()?.id !== userId || repository.getSessionStatus() !== 'active') return undefined;
-      return token.data;
+      if (auth.getGeneration() !== generation
+          || repository.getCurrentUser()?.id !== userId || repository.getSessionStatus() !== 'active') {
+        return { ok: false, error: { messageKey: 'AUTH_REQUIRED' } };
+      }
+      return token;
     },
   }), [baseUrl, publicKey, repository, snapshot.user?.id, snapshot.status]);
 

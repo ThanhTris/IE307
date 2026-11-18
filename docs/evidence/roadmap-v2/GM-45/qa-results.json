@@ -1,7 +1,7 @@
 {
   "result": "Pass",
   "fixtureOnly": true,
-  "caseCount": 17,
+  "caseCount": 22,
   "cases": [
     {
       "case": "v4 worker heartbeat verified",
@@ -14,13 +14,13 @@
       "result": "Pass",
       "expected": [
         {
-          "room_id": "d7c71050-fb8c-411e-a8b8-ce3827dafea2",
+          "room_id": "164a4393-c69e-4411-9f90-0cf4dcbad8e6",
           "version": 3
         }
       ],
       "actual": [
         {
-          "room_id": "d7c71050-fb8c-411e-a8b8-ce3827dafea2",
+          "room_id": "164a4393-c69e-4411-9f90-0cf4dcbad8e6",
           "version": 3
         }
       ]
@@ -51,7 +51,7 @@
         "accepted": true,
         "settings": {
           "mealSlot": "lunch",
-          "desiredAt": "2026-11-18T02:06:39.123Z",
+          "desiredAt": "2026-11-18T02:47:25.565Z",
           "dishCount": 10
         },
         "poolVersion": 1
@@ -61,7 +61,7 @@
         "accepted": true,
         "settings": {
           "mealSlot": "lunch",
-          "desiredAt": "2026-11-18T02:06:39.123Z",
+          "desiredAt": "2026-11-18T02:47:25.565Z",
           "dishCount": 10
         },
         "poolVersion": 1
@@ -78,11 +78,11 @@
       "result": "Pass",
       "expected": [
         4,
-        3
+        1
       ],
       "actual": [
         4,
-        3
+        1
       ]
     },
     {
@@ -128,6 +128,60 @@
       "actual": []
     },
     {
+      "case": "retention deletes expired room and cascades its signal",
+      "result": "Pass",
+      "expected": [
+        false,
+        false
+      ],
+      "actual": [
+        false,
+        false
+      ]
+    },
+    {
+      "case": "outsider wildcard channel is live after cleanup",
+      "result": "Pass",
+      "expected": true,
+      "actual": true
+    },
+    {
+      "case": "kicked wildcard channel is live after cleanup",
+      "result": "Pass",
+      "expected": true,
+      "actual": true
+    },
+    {
+      "case": "room cleanup publishes no DELETE to unauthorized wildcard channels",
+      "result": "Pass",
+      "expected": [
+        0,
+        0,
+        0
+      ],
+      "actual": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "case": "publication permits only INSERT and UPDATE",
+      "result": "Pass",
+      "expected": [
+        true,
+        true,
+        false,
+        false
+      ],
+      "actual": [
+        true,
+        true,
+        false,
+        false
+      ]
+    },
+    {
       "case": "SQL privilege boundary",
       "result": "Pass",
       "expected": [
@@ -161,14 +215,15 @@
   "migration": "0061_gm45_room_realtime.sql",
   "schemaVersion": "0.31.6",
   "contractVersion": "dish-session-v4/roadmap-v2/GM-45.1",
-  "runId": "gm45-room-realtime",
+  "hashNormalization": "UTF-8 text with LF line endings",
+  "runId": "gm45-review-fixes",
   "sourceSha256": {
-    "supabase/migrations/0061_gm45_room_realtime.sql": "bbfe02642fe7e8e5cebd2505f7cfdf9f2a2a4cada99755cbefbc72bccb5f6aae",
-    "scripts/gm45_realtime_check.mjs": "9d6023d58a5fb3097dd3b4203eee24af347b54bbf466e508d47672ebcdbfcdd2",
+    "supabase/migrations/0061_gm45_room_realtime.sql": "b36015cae1c5493f410dd08d90fa16ea79a86670efd52e686575f47cbad47cf4",
+    "scripts/gm45_realtime_check.mjs": "59d47d09562e615dabdacd6280e1575128da0244334251cbbd5ae7288416f3b0",
     "scripts/dish_policy_worker.py": "e6b069b7c9fdcd65c1e2fdd4de4691d35a993cb4dd7a357e9ecc354b30e13355",
-    "mobile/src/features/rooms/services/roomRealtime.ts": "3b9902921c6494273deb22022b0069699204333bf919a9572fe547715c0a355a",
-    "mobile/src/features/rooms/services/roomSnapshotSync.ts": "073c11bcaa70ced19bcb42b0398144cac98b7ab91238df633993a5ffc877add7",
-    "mobile/src/features/rooms/hooks/useRoomUpdates.ts": "cd70b05de4a9df32020d86db98037c57a9313b1bdebec2388efa31f5f8c8ff52"
-  },
-  "hashNormalization": "UTF-8 text with LF line endings"
+    "mobile/src/features/rooms/services/roomRealtime.ts": "3c27f7b00f33254a7fbb0d01153b036c01c83a87b437bdf0f1c7b5e42422e70c",
+    "mobile/src/features/rooms/services/roomSnapshotSync.ts": "f3bbde1aba516362485d262f837d85f9114da5404dfd271a0aca1c105a774521",
+    "mobile/src/features/rooms/hooks/useRoomUpdates.ts": "cd70b05de4a9df32020d86db98037c57a9313b1bdebec2388efa31f5f8c8ff52",
+    "mobile/src/bootstrap/RoomRepositoryProvider.tsx": "787681d003cb3b069da51cdc1fa6f012e49966891f95f2d404d9eed11091696c"
+  }
 }

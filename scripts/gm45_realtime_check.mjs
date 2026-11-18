@@ -121,13 +121,15 @@ async function signalRows(user) {
 async function listen(user, watchedRoomId = roomId) {
  const socket = new WebSocket(base.replace(/^http/,'ws')+'/realtime/v1/websocket?apikey='+encodeURIComponent(key)+'&vsn=1.0.0');
  const rows = [];
+ const deletions = [];
  const topic = 'realtime:gm45-' + user.id + '-' + watchedRoomId;
  let ref = 1;
  let ready = false;
  const send = message => socket.send(JSON.stringify({...message,ref:String(ref++)}));
  socket.addEventListener('open',()=>send({topic,event:'phx_join',join_ref:'1',payload:{
   config:{broadcast:{self:false},presence:{key:''},private:false,
-   postgres_changes:[{event:'*',schema:'public',table:'room_version_signals',filter:'room_id=eq.'+watchedRoomId}]},
+   postgres_changes:[{event:'*',schema:'public',table:'room_version_signals',
+    ...(watchedRoomId ? {filter:'room_id=eq.'+watchedRoomId} : {})}]},
   access_token:user.token,
  }}));
  socket.addEventListener('message',event=>{
@@ -139,6 +141,7 @@ async function listen(user, watchedRoomId = roomId) {
   if(message.event==='postgres_changes') {
    const data=message.payload.data;
    assert.equal(data.table,'room_version_signals');
+   if (data.type === 'DELETE') { deletions.push(data.old_record); return; }
    assert.deepEqual(Object.keys(data.record).sort(),['room_id','version'],'Realtime contains no ballot or room payload');
    rows.push(data.record);
   }
@@ -148,12 +151,13 @@ async function listen(user, watchedRoomId = roomId) {
  subscriptions.push(close);
  for(let n=0;n<150&&!ready;n++)await pause(100);
  assert.equal(ready,true,'Realtime channel must register');
- return {rows,close};
+ return {rows,deletions,close};
 }
 const subscriptions=[];
-async function delivered(channel,version,name) {
- for(let n=0;n<150&&!channel.rows.some(row=>row.version===version);n++)await pause(100);
- pass(name,true,channel.rows.some(row=>row.room_id===roomId&&row.version===version));
+async function delivered(channel,version,name,watchedRoomId=roomId) {
+ const received = () => channel.rows.some(row=>row.room_id===watchedRoomId&&row.version===version);
+ for(let n=0;n<150&&!received();n++)await pause(100);
+ pass(name,true,received());
 }
 try {
  const a=await listen(host), b=await listen(member), x=await listen(outsider);
@@ -200,6 +204,36 @@ try {
  pass('kicked member loses REST signal visibility',[],await kickedRows.json());
  await pause(1000);
  pass('kicked subscription cannot receive final removal signal',[],kickedChannel.rows);
+ // Unfiltered subscribers test the server publication itself, not the stock app's event/filter selection.
+ const control=await create(outsider);
+ await join(member,control.code,'GM45 member');
+ const outsiderAll=await listen(outsider,null), kickedAll=await listen(member,null);
+ sql(`begin;
+ select pg_advisory_xact_lock(170017);
+ select set_config('dish_v4.writer','on',true);
+ update public.rooms
+ set created_at=statement_timestamp()-interval '3 days',
+     expires_at=statement_timestamp()-interval '2 days',
+     version=version+1
+ where id='${kicked.roomId}';
+ select gm17_private.cleanup();
+ commit;`);
+ pass('retention deletes expired room and cascades its signal',[false,false],JSON.parse(sql(`select json_build_array(
+  exists(select 1 from public.rooms where id='${kicked.roomId}'),
+  exists(select 1 from public.room_version_signals where room_id='${kicked.roomId}'))`)));
+ // A committed visible update after cleanup proves both wildcard channels processed subsequent WAL.
+ const controlBefore=await snapshot(outsider,control.roomId);
+ expectOk(await api(outsider,'updateSettings',{
+  ...request,roomId:control.roomId,requestId:requestId('post-cleanup'),expectedVersion:controlBefore.version,
+  settings:{...controlBefore.settings,desiredAt:new Date(Date.now()+600000).toISOString()},
+ }),'control update after retention');
+ const controlAfter=await snapshot(outsider,control.roomId);
+ await delivered(outsiderAll,controlAfter.version,'outsider wildcard channel is live after cleanup',control.roomId);
+ await delivered(kickedAll,controlAfter.version,'kicked wildcard channel is live after cleanup',control.roomId);
+ pass('room cleanup publishes no DELETE to unauthorized wildcard channels',[0,0,0],
+  [outsiderAll.deletions.length,kickedAll.deletions.length,kickedChannel.deletions.length]);
+ pass('publication permits only INSERT and UPDATE',[true,true,false,false],JSON.parse(sql(
+  "select json_build_array(pubinsert,pubupdate,pubdelete,pubtruncate) from pg_publication where pubname='supabase_realtime'")));
  pass('SQL privilege boundary',[true,false,false,false],JSON.parse(sql("select json_build_array(has_table_privilege('authenticated','public.room_version_signals','SELECT'),has_table_privilege('anon','public.room_version_signals','SELECT'),has_table_privilege('authenticated','public.room_version_signals','INSERT'),has_table_privilege('service_role','public.room_version_signals','SELECT'))")));
  pass('room table not published, signals published',[false,true],JSON.parse(sql("select json_build_array(exists(select 1 from pg_publication_tables where pubname='supabase_realtime' and tablename='rooms'),exists(select 1 from pg_publication_tables where pubname='supabase_realtime' and tablename='room_version_signals'))")));
  await mkdir(reportDirectory,{recursive:true});

@@ -11,3 +11,5 @@ Phạm vi thay nguồn đồng bộ dữ liệu trên các màn hiện hành. Th
 | Foreground đọc bù | Đưa app xuống background, host ACK/waiting R2 rồi foreground. App tiếp tục đúng phòng và nhận kết quả sau worker timeout. [Foreground](artifacts/foreground-catchup.png) · [Kết quả](artifacts/worker-result.png) |
 
 Các fixture synthetic dùng catalogue draft QA. UI hiển thị trạng thái không có ảnh cho món chưa có artwork.
+
+Bản sửa sau review chạy lại trên cùng cấu hình AVD và QA mới. Khi tắt Realtime, giờ phòng mới xuất hiện qua REST và máy chỉ đọc bốn snapshot trong 52,8 giây. Sau khi bật lại, máy tự vào Vòng 1 khi host bắt đầu. [Ảnh fallback](artifacts/review-fallback.png) · [Ảnh Vòng 1](artifacts/review-reconnected-round-one.png)
