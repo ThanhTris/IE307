@@ -34,7 +34,7 @@ export interface AccountProfile {
 }
 
 export interface SessionApi extends Pick<ApiClient, 'createGuestSession' | 'restoreSession' | 'logout'> {
-  getAccessToken(): Promise<ReadResult<string>>;
+  getAccessToken(generation?: number): Promise<ReadResult<string>>;
   refreshSession(): Promise<ReadResult<SessionUser>>;
   getGeneration(): number;
 }

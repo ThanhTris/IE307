@@ -179,8 +179,7 @@ export class SessionManager implements SessionApi {
       catch (error) { return { ok: false, error: await this.failure(error, generation) }; }
     });
   }
-  async getAccessToken(): Promise<ReadResult<string>> {
-    const generation = this.generation;
+  async getAccessToken(generation = this.generation): Promise<ReadResult<string>> {
     return this.exclusive(async () => {
       try {
         this.check(generation);
@@ -244,6 +243,9 @@ export class SessionManager implements SessionApi {
             try {
               if (mode === 'sign-in') await this.config.clearPrivateData();
               await this.commit(session, generation);
+              assertCurrent();
+              // The epoch during cleanup belongs to neither the outgoing nor the incoming session.
+              if (mode !== 'profile') generation = ++this.generation;
             } catch (error) {
               // In-flight logout owns cleanup when its generation has already superseded ours.
               if (this.status === 'blocked') {

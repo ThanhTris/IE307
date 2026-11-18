@@ -3,13 +3,14 @@ import { AuthFailure, type AuthPort, type SessionStorage, type StoredSession } f
 import { createSecureSessionStorage } from '../../src/data/auth/storage';
 import { ApiClientImpl } from '../../src/data/api/client';
 import { createAccountService } from '../../src/data/auth/account';
+import { LiveRoomRepository } from '../../src/features/rooms/services/roomRepository';
 
 jest.mock('expo-secure-store', () => ({ WHEN_UNLOCKED_THIS_DEVICE_ONLY: 'device-only' }));
 
 const now = Date.parse('2026-10-11T10:00:00Z');
 const user = { id: '00000000-0000-4000-8000-000000000001', displayName: 'Trí', isGuest: true, createdAt: '2026-10-11T09:00:00Z' };
 const initial: StoredSession = { accessToken: 'fixture-access', refreshToken: 'fixture-refresh', expiresAt: new Date(now + 3600000).toISOString(), user };
-function setup(saved: StoredSession | null = null) {
+function setup(saved: StoredSession | null = null, onAccountSessionChange?: (user: StoredSession['user'] | null) => void) {
   let record = saved ? structuredClone(saved) : null;
   const storage = {
     load: jest.fn(async () => record ? structuredClone(record) : null),
@@ -25,7 +26,7 @@ function setup(saved: StoredSession | null = null) {
   const clearPrivateData = jest.fn(async () => undefined);
   const onTokenChange = jest.fn();
   const sleep = jest.fn(async (_ms: number) => undefined);
-  const session = new SessionManager({ auth, storage, clearPrivateData, onTokenChange, sleep, now: () => now, random: () => 0 });
+  const session = new SessionManager({ auth, storage, clearPrivateData, onTokenChange, onAccountSessionChange, sleep, now: () => now, random: () => 0 });
   return { session, auth, storage, clearPrivateData, onTokenChange, sleep };
 }
 function deferred<T>() {
@@ -36,8 +37,8 @@ function deferred<T>() {
 
 const accountSession = { ...initial, accessToken: 'fixture-email-access', user: { ...user, isGuest: false } };
 
-function accountSetup() {
-  const s = setup(initial);
+function accountSetup(onAccountSessionChange?: (user: StoredSession['user'] | null) => void) {
+  const s = setup(initial, onAccountSessionChange);
   const transport = {
     signIn: jest.fn(async () => accountSession),
     signUp: jest.fn(async () => undefined),
@@ -51,6 +52,35 @@ function accountSetup() {
   };
   return { ...s, transport, account: createAccountService(transport, s.session) };
 }
+
+test('consent started while guest cleanup is paused never uses the incoming account token', async () => {
+  const s = accountSetup(next => repository.publishAccountSession(next));
+  const invoke = jest.fn().mockResolvedValue({ ok: true });
+  const client = new ApiClientImpl({ authSession: s.session, transport: { invoke } });
+  const repository = new LiveRoomRepository({ client, session: s.session, sessionStorage: s.storage });
+  await repository.restoreSession();
+
+  const cleanupStarted = deferred<void>();
+  const cleanup = deferred<undefined>();
+  s.clearPrivateData.mockImplementationOnce(() => { cleanupStarted.resolve(); return cleanup.promise; });
+  const member = { ...accountSession, user: { ...accountSession.user, id: '00000000-0000-4000-8000-000000000002' } };
+  s.transport.signIn.mockResolvedValueOnce(member);
+  const switching = s.account.signIn({ email: 'tester@example.test', password: 'Fixture!123' });
+  await cleanupStarted.promise;
+  expect(repository.getCurrentUser()).toEqual(user);
+  const stale = repository.updateHistoryConsent('personal', true, 'old-consent');
+  expect(invoke).not.toHaveBeenCalled();
+  cleanup.resolve(undefined);
+
+  expect(await switching).toMatchObject({ ok: true });
+  expect(await stale).toMatchObject({ ok: false, error: { messageKey: 'AUTH_REQUIRED' } });
+  expect(repository.getCurrentUser()).toEqual(member.user);
+  expect(invoke).not.toHaveBeenCalled();
+  expect(await repository.updateHistoryConsent('personal', true, 'new-consent')).toMatchObject({ ok: true });
+  expect(invoke).toHaveBeenCalledTimes(1);
+  expect(invoke).toHaveBeenCalledWith('update_history_consent', expect.objectContaining({ requestId: 'new-consent' }),
+    expect.objectContaining({ token: member.accessToken }));
+});
 
 test('email linking preserves guest UUID and advances the identity epoch', async () => {
   const s = accountSetup();
