@@ -9,7 +9,7 @@ import { useShellTheme } from '../../../shared/lib/useShellTheme';
 import { radii, spacing, typography } from '../../../shared/theme/tokens';
 import { useAccountAction } from '../hooks/useAccountAction';
 import { accountErrorMessage } from '../services/accountMessages';
-import type { PersonalHistorySettings } from '../../history/services/historyRepository';
+import type { PersonalHistorySettings } from '../services/profileHistorySettings';
 import { ProfileSettings } from '../components/ProfileSettings';
 
 type Props = {

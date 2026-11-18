@@ -7,7 +7,7 @@ import { radii, spacing, typography } from '../../../shared/theme/tokens';
 import { AppButton, SheetDialog } from '../../../shared/ui';
 import { PreferenceChoice } from '../../../shared/ui/forms/PreferenceChoice';
 import { ToastNotice } from '../../../shared/ui/feedback/Toast';
-import type { PersonalHistorySettings } from '../../history/services/historyRepository';
+import type { PersonalHistorySettings } from '../services/profileHistorySettings';
 import { useAccountAction } from '../hooks/useAccountAction';
 import { accountErrorMessage } from '../services/accountMessages';
 

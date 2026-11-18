@@ -173,7 +173,7 @@ export class ApiClientImpl implements ApiClient {
     const generation = this.authSession?.getGeneration();
     let token = this.token ?? undefined;
     if (this.authSession) {
-      const result = await this.authSession.getAccessToken(generation);
+      const result = await this.authSession.getAccessToken();
       if (!result.ok) throw { body: result.error };
       token = result.data;
       if (generation !== this.authSession.getGeneration()) throw { body: { messageKey: 'AUTH_REQUIRED' } };

@@ -179,7 +179,8 @@ export class SessionManager implements SessionApi {
       catch (error) { return { ok: false, error: await this.failure(error, generation) }; }
     });
   }
-  async getAccessToken(generation = this.generation): Promise<ReadResult<string>> {
+  async getAccessToken(): Promise<ReadResult<string>> {
+    const generation = this.generation;
     return this.exclusive(async () => {
       try {
         this.check(generation);

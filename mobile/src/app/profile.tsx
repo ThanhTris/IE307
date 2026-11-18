@@ -2,6 +2,7 @@ import { useMemo, useState } from 'react';
 import { Redirect, useRouter, type Href } from 'expo-router';
 import { useRoomRepository } from '../bootstrap/RoomRepositoryProvider';
 import { ProfileScreen } from '../features/account';
+import { createProfileHistorySettings } from '../features/account/services/profileHistorySettings';
 import { RequireActiveSession } from '../features/auth/components/RequireActiveSession';
 import { createHistoryRepository } from '../features/history/services/historyRepository';
 import { getDurableOutbox } from '../data/local/outbox';
@@ -11,7 +12,8 @@ export default function ProfileRoute() {
   const live = useRoomRepository();
   const [loggingOut, setLoggingOut] = useState(false);
   const historySettings = useMemo(() => live.user && !live.user.isGuest
-    ? createHistoryRepository(live.repository, undefined, getDurableOutbox()) : undefined,
+    ? createProfileHistorySettings(live.repository, createHistoryRepository(live.repository, undefined, getDurableOutbox()))
+    : undefined,
   [live.repository, live.user]);
   const home = () => router.replace('/');
 

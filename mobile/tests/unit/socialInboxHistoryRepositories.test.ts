@@ -11,6 +11,7 @@ import { createRoomRepository, LiveRoomRepository, type RoomRepository } from '.
 import { createSocialRepository } from '../../src/features/friends/services/socialRepository';
 import { createInboxRepository } from '../../src/features/inbox/services/inboxRepository';
 import { createHistoryRepository, clearPrivateHistoryCache, historyIdOf, type DurableHistoryStore, type HistoryCache, type HistorySnapshot } from '../../src/features/history/services/historyRepository';
+import { createProfileHistorySettings } from '../../src/features/account/services/profileHistorySettings';
 import type { CanonicalHistoryItem } from '../../src/features/history/services/historyTypes';
 
 function uuidFrom(value: string): string {
@@ -472,11 +473,42 @@ describe('Social, inbox, and history live adapters', () => {
     } as unknown as RoomRepository;
     const history = createHistoryRepository(repository, cacheMock(), durableHistoryMock());
 
-    expect(await history.deletePersonal()).toMatchObject({ ok: true });
+    const settings = createProfileHistorySettings(repository, history);
+    expect(await settings.deletePersonal()).toMatchObject({ ok: true });
     expect(client.deleteHistory).toHaveBeenCalledTimes(1);
     expect(client.deleteHistory).toHaveBeenCalledWith(uuidFrom('history-delete-personal'), expect.any(String));
     expect(client.updateHistoryConsent).not.toHaveBeenCalled();
     expect(history.cached()?.items.map(historyIdOf)).toEqual([uuidFrom('history-keep-group')]);
+  });
+
+  test('profile bulk deletion stops after the current call if the account epoch changes', async () => {
+    let generation = 1;
+    const deleteItem = jest.fn(async () => {
+      generation += 1;
+      return { ok: true as const, data: undefined };
+    });
+    const repository = {
+      getCurrentUser: () => ({ ...user, isGuest: false }),
+      getSessionApi: () => ({ getGeneration: () => generation }),
+      getSessionStatus: () => 'active',
+    } as unknown as RoomRepository;
+    const history = {
+      readConsent: jest.fn(),
+      updateConsent: jest.fn(),
+      fetch: jest.fn().mockResolvedValue({ ok: true, data: { items: [
+        historyItem('first-personal', 'personal', '2026-10-17T12:00:00Z'),
+        historyItem('second-personal', 'personal', '2026-10-16T12:00:00Z'),
+      ] } }),
+      delete: deleteItem,
+      cached: jest.fn(),
+      cachedDurable: jest.fn(),
+      invalidate: jest.fn(),
+    } satisfies ReturnType<typeof createHistoryRepository>;
+    const settings = createProfileHistorySettings(repository, history);
+
+    expect(await settings.deletePersonal()).toEqual({ ok: false, error: { messageKey: 'AUTH_REQUIRED' } });
+    expect(deleteItem).toHaveBeenCalledTimes(1);
+    expect(deleteItem).toHaveBeenCalledWith(uuidFrom('history-first-personal'));
   });
 
   test('history adapter created before restore follows the active identity and isolates A to B', async () => {
