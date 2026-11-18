@@ -1876,6 +1876,39 @@
         "expected": "Inbox và sender trả metadata v4 đầy đủ từ dữ liệu kết quả đã lưu.",
         "cases": "DECIDED, NO_CONSENSUS, retry, outsider, wrapper, sender và legacy."
       }
+    },
+    {
+      "new_id": "GM-44",
+      "previous_ids": [],
+      "title": "BE + App: Tìm phòng đang tham gia",
+      "track": "BE",
+      "stage": "implementation",
+      "outputs": [
+        "supabase/migrations/0060_gm44_active_room.sql",
+        "supabase/tests/http/GM-44.http",
+        "docs/evidence/roadmap-v2/GM-44/CHECKS.md",
+        "docs/evidence/roadmap-v2/GM-44/HANDOFF.md",
+        "docs/evidence/roadmap-v2/GM-44/FIGMA_PARITY.md"
+      ],
+      "inputs": [
+        {
+          "task": "GM-19",
+          "artifact": "supabase/migrations/0019_room_lifecycle.sql",
+          "gate": "start"
+        },
+        {
+          "task": "GM-25",
+          "artifact": "mobile/src/features/rooms/services/roomRepository.ts",
+          "gate": "start"
+        }
+      ],
+      "verification": {
+        "mode": "api",
+        "tool": "SQL + REST/JWT và Android AVD nối QA cô lập.",
+        "entrypoint": "GM-44 HTTP suite; Home, Join và Continue trên app.",
+        "expected": "Tìm phòng active qua server và giữ quyền quay lại theo ADR-027.",
+        "cases": "Đổi máy/tài khoản, nhiều phòng, tie, leave/kick, expiry, terminal, R1/R2 và lỗi API."
+      }
     }
   ]
 }

@@ -79,7 +79,7 @@ class Gm07bContractTests(unittest.TestCase):
         fixtures = self.request_fixtures()
         expected_commands = set(self.base_schema["$defs"]["command"]["enum"])
         self.assertEqual({command for command, _ in fixtures}, expected_commands)
-        self.assertEqual(set(self.supp_schema["$defs"]["command"]["enum"]), expected_commands | {"setReady"})
+        self.assertEqual(set(self.supp_schema["$defs"]["command"]["enum"]), expected_commands | {"setReady", "activeRoom"})
         for command, fields in fixtures:
             for version, own, other in (
                 (baseline, self.base_validator, self.supp_validator),
@@ -110,6 +110,15 @@ class Gm07bContractTests(unittest.TestCase):
             bad = copy.deepcopy(request)
             bad["payload"]["ready"] = value
             self.assertFalse(self.supp_validator.is_valid(bad))
+
+    def test_active_room_requires_supplement_and_accepts_no_request_fields(self):
+        request = {"command": "activeRoom", "payload": {
+            "contractVersion": "dish-session-v4/roadmap-v2/GM-07.B-supplement"}}
+        self.supp_validator.validate(request)
+        self.assertFalse(self.base_validator.is_valid(request))
+        self.assertFalse(self.supp_validator.is_valid({"command": "activeRoom", "payload": {}}))
+        request["payload"]["roomId"] = MODULE.ROOM_ID
+        self.assertFalse(self.supp_validator.is_valid(request))
 
     def test_shortage_range_is_supplement_only(self):
         command, fields = next((c, p) for c, p in self.request_fixtures() if c == "create")

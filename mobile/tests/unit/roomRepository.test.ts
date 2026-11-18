@@ -17,8 +17,26 @@ import type {
 import { SessionManager } from '../../src/data/auth/session';
 import type { AuthPort, SessionApi, SessionStorage, StoredSession } from '../../src/data/auth/types';
 import type { SessionStatus } from '../../src/features/rooms/services/sessionState';
+import { createActiveRoomReader } from '../../src/features/rooms/services/activeRoom';
 
 describe('LiveRoomRepository (GM-25)', () => {
+  test('active room uses a read payload and distinguishes null, unsupported, and malformed responses', async () => {
+    const callRpc = jest.fn()
+      .mockResolvedValueOnce({ ok: true, data: null })
+      .mockResolvedValueOnce({ ok: true })
+      .mockResolvedValueOnce({ ok: false, error: { messageKey: 'INVALID_INPUT' } })
+      .mockRejectedValueOnce({ status: 429, body: { ok: false, error: { messageKey: 'RATE_LIMITED' } } });
+    const repo = createActiveRoomReader(callRpc);
+    await expect(repo.getActiveRoom()).resolves.toEqual({ ok: true, data: null });
+    await expect(repo.getActiveRoom()).resolves.toEqual({ ok: false, error: { messageKey: 'MALFORMED_RESPONSE' } });
+    await expect(repo.getActiveRoom()).resolves.toEqual({ ok: false, error: { messageKey: 'CONTRACT_MISMATCH' } });
+    await expect(repo.getActiveRoom()).resolves.toMatchObject({ ok: false, error: { messageKey: 'RATE_LIMITED' } });
+    expect(callRpc).toHaveBeenNthCalledWith(1, 'dish_session', {
+      command: 'activeRoom',
+      payload: { contractVersion: 'dish-session-v4/roadmap-v2/GM-07.B-supplement' },
+    });
+  });
+
   const mockUser: SessionUser = {
     id: 'usr_test_001',
     displayName: 'Minh Trang',

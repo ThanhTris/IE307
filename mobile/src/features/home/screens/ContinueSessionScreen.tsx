@@ -1,18 +1,20 @@
 import { Text, View, StyleSheet } from 'react-native';
-import type { RoomSnapshot } from '../../../data/api/contracts';
+import type { ErrorCode, RoomSnapshot } from '../../../data/api/contracts';
 import { useAppFonts } from '../../../bootstrap/AppFontProvider';
 import { useShellTheme } from '../../../shared/lib/useShellTheme';
 import { AppButton, StatusNotice } from '../../../shared/ui';
 import type { RoomEntryReceipt, RoomEntryRepository } from '../../rooms/services/roomEntry';
 import { errorCopy } from '../../rooms/services/roomEntry';
+import { activeRoomBackendCopy } from '../../rooms/hooks/useActiveRoom';
 import { HomeFlowFrame } from '../components/HomeFlowFrame';
 import { useHomeRoom } from '../hooks/useHomeRoom';
 
 const roomStage = (room: RoomSnapshot) => room.state === 'LOBBY' ? 'Đang ở phòng chờ' : room.state === 'ROUND_2' ? 'Vòng 2 · Đang chọn món' : 'Vòng 1 · Đang chọn món';
 
-export function ContinueSessionScreen({ repository, receipt, userId, enabled = true, isInitializing = false, onContinue, onHome }: {
+export function ContinueSessionScreen({ repository, receipt, lookup, userId, enabled = true, isInitializing = false, onContinue, onHome }: {
   repository: RoomEntryRepository; receipt?: Pick<RoomEntryReceipt, 'roomId'> & Partial<RoomEntryReceipt> | null; userId?: string;
   enabled?: boolean; isInitializing?: boolean; onContinue: (room: RoomSnapshot) => void; onHome: () => void;
+  lookup?: { loading: boolean; error?: ErrorCode; retry(): void };
 }) {
   const { colors, dark } = useShellTheme();
   const { textStyle } = useAppFonts();
@@ -20,10 +22,11 @@ export function ContinueSessionScreen({ repository, receipt, userId, enabled = t
   const host = room.data?.members.find(member => member.userId === room.data?.hostUserId);
   return <HomeFlowFrame title="Tiếp tục phiên" onHome={onHome}>
     <Text accessibilityRole="header" style={[styles.title, { color: colors.text }, textStyle(700)]}>{room.active ? 'Bạn có phiên đang diễn ra' : 'Kiểm tra phiên của bạn'}</Text>
-    {!receipt ? <StatusNotice title="Không có phòng để tiếp tục" message="Về trang chủ để tạo hoặc tham gia phòng." colors={colors} /> : null}
+    {!receipt && !lookup?.error && !lookup?.loading && !isInitializing && enabled && userId ? <StatusNotice title="Không có phòng để tiếp tục" message="Về trang chủ để tạo hoặc tham gia phòng." colors={colors} /> : null}
     {isInitializing ? <StatusNotice title="Đang khôi phục phiên…" colors={colors} /> : null}
-    {receipt && !isInitializing && (!enabled || !userId) ? <StatusNotice title="Cần khôi phục danh tính" message="Về trang chủ và khôi phục phiên trước khi kiểm tra phòng đã lưu." colors={colors} /> : null}
-    {room.loading ? <StatusNotice title="Đang kiểm tra phòng…" colors={colors} /> : null}
+    {!isInitializing && (!enabled || !userId) ? <StatusNotice title="Cần khôi phục danh tính" message="Về trang chủ và khôi phục phiên trước khi tìm phòng." colors={colors} /> : null}
+    {lookup?.loading || room.loading ? <StatusNotice title="Đang kiểm tra phòng…" colors={colors} /> : null}
+    {lookup?.error ? <StatusNotice title="Chưa kiểm tra được phòng" message={lookup.error === 'CONTRACT_MISMATCH' ? activeRoomBackendCopy : errorCopy[lookup.error]} actionLabel="Kiểm tra lại phòng" onAction={lookup.retry} tone="error" colors={colors} /> : null}
     {room.error ? <StatusNotice title={room.unavailable ? 'Không thể tiếp tục phòng này' : 'Chưa kiểm tra được phòng'} message={errorCopy[room.error]} actionLabel={room.unavailable ? undefined : 'Kiểm tra lại phòng'} onAction={room.unavailable ? undefined : room.retry} tone={room.unavailable ? undefined : 'error'} colors={colors} /> : null}
     {room.data && !room.active && (room.data.state === 'ROUND_2' || room.data.state === 'WAITING_2') ? <StatusNotice title="Phòng đã sang vòng 2" message="Không thể vào lại nữa. Bạn sẽ nhận kết quả khi phòng chốt." colors={colors} /> : null}
     {room.data && !room.active && room.data.state !== 'ROUND_2' && room.data.state !== 'WAITING_2' ? <StatusNotice title={room.data.state === 'EXPIRED' ? 'Phòng đã hết hạn' : 'Phòng đã kết thúc'} message="Về trang chủ để bắt đầu một phòng khác." colors={colors} /> : null}

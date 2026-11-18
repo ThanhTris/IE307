@@ -1,0 +1,37 @@
+@baseUrl = http://127.0.0.1:54371
+@anonKey = <owned-QA-public-key>
+@memberToken = <JWT-for-member-with-an-active-room>
+@outsiderToken = <JWT-for-account-without-an-active-room>
+@contract = dish-session-v4/roadmap-v2/GM-07.B-supplement
+
+### Active lobby or voting room, using only the signed-in identity
+POST {{baseUrl}}/rest/v1/rpc/dish_session
+apikey: {{anonKey}}
+Authorization: Bearer {{memberToken}}
+Content-Type: application/json
+
+{"command":"activeRoom","payload":{"contractVersion":"{{contract}}"}}
+
+> {%
+  client.test('only the active room summary', function () {
+    client.assert(response.status === 200 && response.body.ok === true);
+    const room = response.body.data;
+    client.assert(Object.keys(room).sort().join(',') === 'code,roomId,state,version');
+    client.assert(['LOBBY', 'ROUND_1', 'WAITING_1', 'ROUND_2', 'WAITING_2'].includes(room.state));
+    client.assert(Number.isSafeInteger(room.version) && room.version > 0);
+  });
+%}
+
+### A different account cannot discover the member's room
+POST {{baseUrl}}/rest/v1/rpc/dish_session
+apikey: {{anonKey}}
+Authorization: Bearer {{outsiderToken}}
+Content-Type: application/json
+
+{"command":"activeRoom","payload":{"contractVersion":"{{contract}}"}}
+
+> {%
+  client.test('no active room for caller', function () {
+    client.assert(response.status === 200 && response.body.ok === true && response.body.data === null);
+  });
+%}

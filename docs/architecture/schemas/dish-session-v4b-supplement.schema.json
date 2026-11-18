@@ -48,7 +48,8 @@
         "result",
         "history",
         "deleteHistory",
-        "setReady"
+        "setReady",
+        "activeRoom"
       ]
     },
     "mealSlot": {
@@ -516,6 +517,22 @@
       },
       "additionalProperties": false,
       "allOf": [
+        {
+          "if": {
+            "properties": {
+              "command": {
+                "const": "activeRoom"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "payload": {
+                "$ref": "#/$defs/defaultPreferencesRequest"
+              }
+            }
+          }
+        },
         {
           "if": {
             "properties": {
@@ -1886,6 +1903,35 @@
       },
       "additionalProperties": false
     },
+    "activeRoomView": {
+      "oneOf": [
+        {
+          "type": "null"
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["roomId", "code", "state", "version"],
+          "properties": {
+            "roomId": {
+              "$ref": "#/$defs/uuid"
+            },
+            "code": {
+              "type": "string",
+              "pattern": "^[ABCDEFGHJKLMNPQRSTUVWXYZ23456789]{6}$"
+            },
+            "state": {
+              "enum": ["LOBBY", "ROUND_1", "WAITING_1", "ROUND_2", "WAITING_2"]
+            },
+            "version": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 9007199254740991
+            }
+          }
+        }
+      ]
+    },
     "successEnvelope": {
       "type": "object",
       "required": [
@@ -1911,6 +1957,9 @@
         },
         "data": {
           "oneOf": [
+            {
+              "$ref": "#/$defs/activeRoomView"
+            },
             {
               "$ref": "#/$defs/snapshot"
             },
