@@ -30,6 +30,27 @@ Lần lượt thử đăng ký và mã sai, đăng nhập sau xác minh, recover
 
 ## Cấu hình GoTrue ở môi trường dùng chung
 
-Khi bàn giao backend, áp dụng cấu hình Email Auth trên Supabase của môi trường đích. Bật đăng ký email và yêu cầu xác minh email, đặt độ dài mã là 6 và mật khẩu tối thiểu 8 theo cấu hình QA. Cấu hình SMTP của môi trường đó và dùng [mẫu OTP](../../../../supabase/templates/account-code.html) cho Confirmation và Recovery. Mẫu Email Change phục vụ luồng liên kết email hiện có. Mailpit chỉ dùng trong QA local.
+Sau khi áp dụng cấu hình, Supabase hosted sẽ gửi mail xác minh và đặt lại mật khẩu từ **Gì Cũng Được <uit.gicungduoc@gmail.com>** qua `smtp.gmail.com:587` (STARTTLS). Script cấu hình máy chủ gửi mail, yêu cầu xác minh email và cài [mẫu OTP 6 số](../../../../supabase/templates/account-code.html) cho Confirmation và Recovery. Mailpit dùng cho QA local.
+
+Chạy lệnh sau từ thư mục gốc để xem các giá trị cấu hình công khai.
+
+```powershell
+node scripts/gm35_configure_email.mjs
+```
+
+Để áp dụng cho dự án đích, tạo Google App Password trên tài khoản Gmail đã bật xác minh hai bước. Dùng token Management API có quyền cập nhật Auth config của dự án Supabase và nhập thông tin xác thực trên máy quản trị bằng PowerShell. [Hướng dẫn Google App Password](https://support.google.com/accounts/answer/185833).
+
+```powershell
+$env:SUPABASE_PROJECT_REF = Read-Host 'Supabase project ref'
+$env:SUPABASE_ACCESS_TOKEN = [System.Net.NetworkCredential]::new('', (Read-Host 'Supabase Management API token' -AsSecureString)).Password
+$env:GM35_GMAIL_APP_PASSWORD = [System.Net.NetworkCredential]::new('', (Read-Host 'Google App Password' -AsSecureString)).Password
+try {
+  node scripts/gm35_configure_email.mjs --apply
+} finally {
+  Remove-Item Env:GM35_GMAIL_APP_PASSWORD, Env:SUPABASE_ACCESS_TOKEN
+}
+```
+
+Script áp dụng cấu hình qua [Supabase Management API](https://supabase.com/docs/reference/api/v1-update-auth-service-config). Sau khi Supabase chấp nhận cấu hình, dùng một hộp thư thử nghiệm để đăng ký và yêu cầu đặt lại mật khẩu. Kiểm tra cả hai thư có đúng địa chỉ gửi và mã dài 6 chữ số.
 
 App gọi trực tiếp `signup`, `verify`, `token?grant_type=password`, `recover` và `user` dưới `/auth/v1`. Xác minh email dùng loại `signup`. Recovery dùng loại `recovery` và chỉ dùng token tạm để đặt mật khẩu. Gọi `logout?scope=local` để thu hồi phiên tạm đó. Request mẫu có trong [GM-35.http](../../../../supabase/tests/http/GM-35.http).
