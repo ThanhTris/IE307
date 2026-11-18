@@ -1,4 +1,10 @@
 import type { ApiError } from '../../../data/api/contracts';
+import { validNewPassword } from '../../../data/auth/validation';
+
+export function newPasswordError(value: string): string | undefined {
+  if ([...value].length < 8) return 'Mật khẩu cần ít nhất 8 ký tự';
+  if (!validNewPassword(value)) return 'Mật khẩu quá dài.';
+}
 
 export function accountErrorMessage(error: ApiError): string {
   switch (error.details?.reason) {

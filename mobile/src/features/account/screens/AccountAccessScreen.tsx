@@ -6,18 +6,18 @@ import RecoveryBadge from '../../../../assets/brand/account/recovery-badge.svg';
 import RecoveryLock from '../../../../assets/brand/account/recovery-lock.svg';
 import type { AccountService } from '../../../data/auth';
 import type { ApiError } from '../../../data/api/contracts';
-import { normalizeEmail, validDisplayName, validEmail, validNewPassword } from '../../../data/auth/validation';
+import { normalizeEmail, validDisplayName, validEmail } from '../../../data/auth/validation';
 import { AppButton, FormField } from '../../../shared/ui';
 import { useShellTheme } from '../../../shared/lib/useShellTheme';
 import { spacing, typography } from '../../../shared/theme/tokens';
 import { AccountFormFrame } from '../components/AccountFormFrame';
 import { PasswordField } from '../components/PasswordField';
 import { useAccountAction } from '../hooks/useAccountAction';
-import { accountErrorMessage } from '../services/accountMessages';
+import { accountErrorMessage, newPasswordError } from '../services/accountMessages';
 
 export type AccountAccessFlow = 'sign-in' | 'sign-up' | 'link' | 'recovery';
 type Stage = 'details' | 'code' | 'password' | 'done';
-type SignupErrors = Partial<Record<'name' | 'email' | 'password' | 'confirmation', string>>;
+type FieldErrors = Partial<Record<'name' | 'email' | 'password' | 'confirmation', string>>;
 const titles = { 'sign-in': 'Đăng nhập', 'sign-up': 'Đăng ký', link: 'Liên kết email', recovery: 'Quên mật khẩu' };
 
 export function AccountAccessScreen({ flow, account, isGuest, onBack, onNavigate, onComplete }: {
@@ -36,9 +36,10 @@ export function AccountAccessScreen({ flow, account, isGuest, onBack, onNavigate
   const [confirmation, setConfirmation] = useState('');
   const [code, setCode] = useState('');
   const [validation, setValidation] = useState('');
-  const [signupErrors, setSignupErrors] = useState<SignupErrors>({});
+  const [fieldErrors, setFieldErrors] = useState<FieldErrors>({});
   const [codeError, setCodeError] = useState<string>();
   const [notice, setNotice] = useState('');
+  const noticeTimer = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
   const proof = useRef<AbortController | null>(null);
   const action = useAccountAction();
   const { pending, error, clearError, run } = action;
@@ -51,6 +52,8 @@ export function AccountAccessScreen({ flow, account, isGuest, onBack, onNavigate
   const hasAccountConflict = error?.details?.reason === 'email_exists' || error?.details?.reason === 'user_already_exists';
   const inputStyle = { minHeight: 54, backgroundColor: dark ? colors.soft : '#FFFFFF' };
 
+  useEffect(() => () => clearTimeout(noticeTimer.current), []);
+
   useEffect(() => () => {
     const active = proof.current;
     if (active) {
@@ -62,8 +65,8 @@ export function AccountAccessScreen({ flow, account, isGuest, onBack, onNavigate
 
   function resetPasswords() { setPassword(''); setConfirmation(''); }
 
-  function clearSignupError(field: keyof SignupErrors) {
-    setSignupErrors(current => current[field] ? { ...current, [field]: undefined } : current);
+  function clearFieldError(field: keyof FieldErrors) {
+    setFieldErrors(current => current[field] ? { ...current, [field]: undefined } : current);
   }
 
   function navigate(next: AccountAccessFlow) {
@@ -74,9 +77,10 @@ export function AccountAccessScreen({ flow, account, isGuest, onBack, onNavigate
 
   function goTo(next: Stage) {
     setValidation('');
-    setSignupErrors({});
+    setFieldErrors({});
     setCodeError(undefined);
     setNotice('');
+    clearTimeout(noticeTimer.current);
     clearError();
     resetPasswords();
     setCode('');
@@ -90,25 +94,22 @@ export function AccountAccessScreen({ flow, account, isGuest, onBack, onNavigate
 
   function submitDetails() {
     const address = normalizeEmail(email);
+    const invalid: FieldErrors = {
+      email: !address ? 'Nhập địa chỉ email.' : !validEmail(address) ? 'Nhập địa chỉ email hợp lệ.' : undefined,
+    };
     if (signingUp) {
-      const invalid: SignupErrors = {
-        name: !name.trim() ? 'Nhập tên hiển thị.' : !validDisplayName(name) ? 'Tên hiển thị cần từ 1 đến 24 ký tự hợp lệ.' : undefined,
-        email: !address ? 'Nhập địa chỉ email.' : !validEmail(address) ? 'Nhập địa chỉ email hợp lệ.' : undefined,
-        password: !password ? 'Nhập mật khẩu.' : !validNewPassword(password) ? 'Mật khẩu cần ít nhất 8 ký tự và tối đa 72 byte.' : undefined,
-        confirmation: !confirmation ? 'Nhập lại mật khẩu.' : password !== confirmation ? 'Hai mật khẩu chưa khớp.' : undefined,
-      };
-      setSignupErrors(invalid);
-      clearError();
-      if (Object.values(invalid).some(Boolean)) return;
-      setEmail(address);
-      void run('Đang gửi mã…', () => account.signUp({ email: address, password, displayName: name.trim() }),
-        () => goTo('code'), showSignupError);
-      return;
+      invalid.name = !name.trim() ? 'Nhập tên hiển thị.' : !validDisplayName(name) ? 'Tên hiển thị cần từ 1 đến 24 ký tự hợp lệ.' : undefined;
+      invalid.password = password ? newPasswordError(password) : 'Nhập mật khẩu.';
+      invalid.confirmation = !confirmation ? 'Nhập lại mật khẩu.' : password !== confirmation ? 'Hai mật khẩu chưa khớp.' : undefined;
     }
-    if (!validEmail(address)) return setValidation('Nhập địa chỉ email hợp lệ.');
-    if (signingIn && !password) return setValidation('Nhập mật khẩu của bạn.');
+    if (signingIn && !password) invalid.password = 'Nhập mật khẩu của bạn.';
+    setFieldErrors(invalid);
+    clearError();
     setValidation('');
+    if (Object.values(invalid).some(Boolean)) return;
     setEmail(address);
+    if (signingUp) return void run('Đang gửi mã…', () => account.signUp({ email: address, password, displayName: name.trim() }),
+      () => goTo('code'), showSignupError);
     if (signingIn) return void run('Đang đăng nhập…', () => account.signIn({ email: address, password }), onComplete, resetPasswords);
     const request = linking ? () => account.linkEmail(address)
       : () => account.sendCode(address, 'recovery');
@@ -118,10 +119,10 @@ export function AccountAccessScreen({ flow, account, isGuest, onBack, onNavigate
   function showSignupError(error: ApiError) {
     const reason = error.details?.reason;
     if (reason === 'weak_password') {
-      setSignupErrors({ password: accountErrorMessage(error) });
+      setFieldErrors({ password: accountErrorMessage(error) });
       clearError();
     } else if (reason === 'email_exists' || reason === 'user_already_exists') {
-      setSignupErrors({ email: accountErrorMessage(error) });
+      setFieldErrors({ email: accountErrorMessage(error) });
       clearError();
     } else resetPasswords();
   }
@@ -129,6 +130,7 @@ export function AccountAccessScreen({ flow, account, isGuest, onBack, onNavigate
   function resend() {
     setValidation('');
     setNotice('');
+    clearTimeout(noticeTimer.current);
     const address = normalizeEmail(email);
     if (!validEmail(address)) return setValidation('Nhập địa chỉ email hợp lệ.');
     const request = linking ? () => account.linkEmail(address)
@@ -136,6 +138,7 @@ export function AccountAccessScreen({ flow, account, isGuest, onBack, onNavigate
     void run('Đang gửi mã…', request, () => {
       goTo('code');
       setNotice('Kiểm tra hộp thư để lấy mã mới.');
+      noticeTimer.current = setTimeout(() => setNotice(''), 5000);
     });
   }
 
@@ -149,12 +152,23 @@ export function AccountAccessScreen({ flow, account, isGuest, onBack, onNavigate
   }
 
   function savePassword() {
-    if (!validNewPassword(password)) return setValidation('Mật khẩu cần ít nhất 8 ký tự và tối đa 72 byte.');
-    if (password !== confirmation) return setValidation('Hai mật khẩu chưa khớp.');
-    if (!proof.current) return setValidation('Mã xác minh đã hết hạn. Hãy bắt đầu lại.');
+    const invalid: FieldErrors = {
+      password: password ? newPasswordError(password) : 'Nhập mật khẩu mới.',
+      confirmation: !confirmation ? 'Nhập lại mật khẩu mới.' : password !== confirmation ? 'Hai mật khẩu chưa khớp.' : undefined,
+    };
+    setFieldErrors(invalid);
+    clearError();
     setValidation('');
+    if (Object.values(invalid).some(Boolean)) return;
+    if (!proof.current) return setValidation('Mã xác minh đã hết hạn. Hãy bắt đầu lại.');
     const { signal } = proof.current;
-    void run('Đang lưu mật khẩu…', () => account.setPassword(password, signal), () => goTo('done'), resetPasswords);
+    void run('Đang lưu mật khẩu…', () => account.setPassword(password, signal), () => goTo('done'), error => {
+      resetPasswords();
+      if (error.details?.reason === 'weak_password' || error.details?.reason === 'same_password') {
+        setFieldErrors({ password: accountErrorMessage(error) });
+        clearError();
+      }
+    });
   }
 
   const title = stage === 'code' ? recovery ? 'Mã đặt lại mật khẩu' : 'Xác minh email'
@@ -169,18 +183,18 @@ export function AccountAccessScreen({ flow, account, isGuest, onBack, onNavigate
           ? 'Xác minh email rồi đặt mật khẩu để giữ hồ sơ, bạn bè và lịch sử của phiên khách này.'
           : 'Đăng nhập sẽ chuyển sang dữ liệu của tài khoản đó. Để giữ dữ liệu phiên khách, hãy liên kết email trong Cá nhân.'}
       </Text> : null}
-      {signingUp ? <FormField label="Tên hiển thị" value={name} onChangeText={value => { setName(value); clearSignupError('name'); }}
-        error={signupErrors.name} editable={!busy}
+      {signingUp ? <FormField label="Tên hiển thị" value={name} onChangeText={value => { setName(value); clearFieldError('name'); }}
+        error={fieldErrors.name} editable={!busy}
         autoCapitalize="words" colors={colors} inputStyle={inputStyle} /> : null}
-      <FormField label="Email" value={email} onChangeText={value => { setEmail(value); clearSignupError('email'); }}
-        error={signingUp ? signupErrors.email : undefined} editable={!busy} keyboardType="email-address"
+      <FormField label="Email" value={email} onChangeText={value => { setEmail(value); clearFieldError('email'); }}
+        error={fieldErrors.email} editable={!busy} keyboardType="email-address"
         autoCapitalize="none" autoCorrect={false} autoComplete="email" placeholder="ten@example.com" colors={colors} inputStyle={inputStyle} />
       {signingIn || signingUp ? <PasswordField label="Mật khẩu" value={password}
-        onChange={value => { setPassword(value); clearSignupError('password'); }}
-        error={signingUp ? signupErrors.password : undefined} disabled={busy} isNew={signingUp} /> : null}
+        onChange={value => { setPassword(value); clearFieldError('password'); }}
+        error={fieldErrors.password} disabled={busy} isNew={signingUp} /> : null}
       {signingUp ? <PasswordField label="Nhập lại mật khẩu" value={confirmation}
-        onChange={value => { setConfirmation(value); clearSignupError('confirmation'); }}
-        error={signupErrors.confirmation} disabled={busy} isNew /> : null}
+        onChange={value => { setConfirmation(value); clearFieldError('confirmation'); }}
+        error={fieldErrors.confirmation} disabled={busy} isNew /> : null}
       {signingIn ? <AppButton variant="quiet" label="Quên mật khẩu?" disabled={busy} colors={colors} onPress={() => navigate('recovery')} /> : null}
       <AppButton label={pending ?? detailLabel} loading={busy} onPress={submitDetails} colors={colors} style={styles.primary} />
       {signingIn && error?.details?.reason === 'email_not_confirmed' ?
@@ -209,8 +223,10 @@ export function AccountAccessScreen({ flow, account, isGuest, onBack, onNavigate
     {stage === 'password' ? <>
       <View accessibilityElementsHidden importantForAccessibility="no-hide-descendants"><RecoveryLock /></View>
       <Text style={[typography.body, { color: colors.muted }]}>Chọn mật khẩu mới có ít nhất 8 ký tự.</Text>
-      <PasswordField label="Mật khẩu mới" value={password} onChange={setPassword} disabled={busy} isNew />
-      <PasswordField label="Nhập lại mật khẩu mới" value={confirmation} onChange={setConfirmation} disabled={busy} isNew />
+      <PasswordField label="Mật khẩu mới" value={password} onChange={value => { setPassword(value); clearFieldError('password'); }}
+        error={fieldErrors.password} disabled={busy} isNew />
+      <PasswordField label="Nhập lại mật khẩu mới" value={confirmation} onChange={value => { setConfirmation(value); clearFieldError('confirmation'); }}
+        error={fieldErrors.confirmation} disabled={busy} isNew />
       <AppButton label={pending ?? 'Lưu mật khẩu'} loading={busy} onPress={savePassword} colors={colors} />
     </> : null}
     {stage === 'done' ? <>

@@ -1,8 +1,10 @@
-import { fireEvent, render, screen } from '@testing-library/react-native';
+import { act, fireEvent, render, screen } from '@testing-library/react-native';
 import type { AccountService } from '../../src/data/auth';
 import type { ReadResult } from '../../src/data/api/contracts';
 import { AccountAccessScreen } from '../../src/features/account/screens/AccountAccessScreen';
 import { lightColors } from '../../src/shared/theme/tokens';
+
+afterEach(() => jest.useRealTimers());
 
 async function renderSignup() {
   const signUp = jest.fn<Promise<ReadResult<void>>, [Parameters<AccountService['signUp']>[0]]>()
@@ -51,7 +53,8 @@ test('signup shows invalid email and mismatched password under their own fields'
   expect(signUp).not.toHaveBeenCalled();
 });
 
-test('email confirmation puts an incomplete code under the input and uses direct resend copy', async () => {
+test('email confirmation puts an incomplete code under the input and clears the resend notice after five seconds', async () => {
+  jest.useFakeTimers();
   const { signUp, sendCode, verifyCode } = await renderSignup();
   await fireEvent.changeText(screen.getByLabelText('Tên hiển thị'), 'Tuấn');
   await fireEvent.changeText(screen.getByLabelText('Email'), 'tuan@example.test');
@@ -71,4 +74,50 @@ test('email confirmation puts an incomplete code under the input and uses direct
   expect(screen.getByText('Kiểm tra hộp thư để lấy mã mới.')).toBeOnTheScreen();
   expect(screen.queryByText(/Nếu .* đủ điều kiện/)).toBeNull();
   expect(screen.queryByText('Nhập đủ 6 chữ số')).toBeNull();
+  await act(async () => jest.advanceTimersByTime(4999));
+  expect(screen.getByText('Kiểm tra hộp thư để lấy mã mới.')).toBeOnTheScreen();
+  await act(async () => jest.advanceTimersByTime(1));
+  expect(screen.queryByText('Kiểm tra hộp thư để lấy mã mới.')).toBeNull();
+});
+
+test('sign-in highlights missing and malformed credentials without calling Auth', async () => {
+  const signIn = jest.fn();
+  await render(<AccountAccessScreen flow="sign-in" account={{ signIn } as unknown as AccountService}
+    isGuest={false} onBack={jest.fn()} onNavigate={jest.fn()} onComplete={jest.fn()} />);
+  await fireEvent.press(screen.getByRole('button', { name: 'Đăng nhập' }));
+  expectFieldError('Email', 'Nhập địa chỉ email.');
+  expectFieldError('Mật khẩu', 'Nhập mật khẩu của bạn.');
+  await fireEvent.changeText(screen.getByLabelText('Email'), 'sai-email');
+  await fireEvent.press(screen.getByRole('button', { name: 'Đăng nhập' }));
+  expectFieldError('Email', 'Nhập địa chỉ email hợp lệ.');
+  expect(signIn).not.toHaveBeenCalled();
+});
+
+test('linking highlights an invalid email without calling Auth', async () => {
+  const linkEmail = jest.fn();
+  await render(<AccountAccessScreen flow="link" account={{ linkEmail } as unknown as AccountService}
+    isGuest onBack={jest.fn()} onNavigate={jest.fn()} onComplete={jest.fn()} />);
+  await fireEvent.changeText(screen.getByLabelText('Email'), 'sai-email');
+  await fireEvent.press(screen.getByRole('button', { name: 'Gửi mã xác minh' }));
+  expectFieldError('Email', 'Nhập địa chỉ email hợp lệ.');
+  expect(linkEmail).not.toHaveBeenCalled();
+});
+
+test('recovery highlights the new password and confirmation independently', async () => {
+  const sendCode = jest.fn().mockResolvedValue({ ok: true, data: undefined });
+  const verifyCode = jest.fn().mockResolvedValue({ ok: true, data: undefined });
+  const setPassword = jest.fn();
+  const account = { sendCode, verifyCode, setPassword, discardPasswordProof: jest.fn() } as unknown as AccountService;
+  await render(<AccountAccessScreen flow="recovery" account={account}
+    isGuest={false} onBack={jest.fn()} onNavigate={jest.fn()} onComplete={jest.fn()} />);
+  await fireEvent.changeText(screen.getByLabelText('Email'), 'tuan@example.test');
+  await fireEvent.press(screen.getByRole('button', { name: 'Gửi mã xác minh' }));
+  await fireEvent.changeText(screen.getByLabelText('Mã xác minh'), '123456');
+  await fireEvent.press(screen.getByRole('button', { name: 'Xác minh mã' }));
+  await fireEvent.changeText(screen.getByLabelText('Mật khẩu mới'), 'short');
+  await fireEvent.changeText(screen.getByLabelText('Nhập lại mật khẩu mới'), 'different');
+  await fireEvent.press(screen.getByRole('button', { name: 'Lưu mật khẩu' }));
+  expectFieldError('Mật khẩu mới', 'Mật khẩu cần ít nhất 8 ký tự');
+  expectFieldError('Nhập lại mật khẩu mới', 'Hai mật khẩu chưa khớp.');
+  expect(setPassword).not.toHaveBeenCalled();
 });
