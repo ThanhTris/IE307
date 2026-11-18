@@ -26,7 +26,7 @@ export function InboxBadgeProvider({ children }: PropsWithChildren) {
   const notifications = useNotifications();
   const pathname = usePathname();
   const { roomId } = useGlobalSearchParams<{ roomId?: string }>();
-  const userId = roomSession.user?.id;
+  const userId = roomSession.user?.isGuest ? undefined : roomSession.user?.id;
   const repository = useMemo(() => createInboxRepository(roomSession.repository), [roomSession.repository]);
   const [unread, setUnread] = useState(0);
   const [revision, setRevision] = useState(0);

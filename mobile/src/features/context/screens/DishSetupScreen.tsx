@@ -32,7 +32,7 @@ export function DishSetupScreen({ draft, onChange, onBack, onContinue, onSchedul
     {heading('Ngân sách mỗi người')}
     <View style={styles.grid}>{budgetOptions.map(item => <SetupChoice key={item.id ?? 'none'} label={item.label} icon={item.icon} selected={draft.budget === item.id} disabled={disabled} onPress={() => onChange({ budget: item.id })} />)}</View>
     <SetupCheckboxRow label="Ưu tiên món khác 3 bữa gần đây" checked={hasRecentHistory === true && draft.avoidRecent} disabled={disabled || hasRecentHistory !== true} helper={hasRecentHistory === true ? 'Tránh 3 món đã chốt gần nhất của bạn.' : hasRecentHistory === false ? 'Cần bật Lưu lịch sử và có ít nhất một bữa đã chốt.' : 'Chưa có dữ liệu lịch sử được cấp quyền.'} onPress={() => onChange({ avoidRecent: !draft.avoidRecent })} />
-    {heading('Rủ bạn ăn cùng')}<SetupInvitees ids={draft.inviteeIds} friends={friends} onEdit={onFriends} disabled={disabled} />{extra}
+    {onFriends ? <>{heading('Rủ bạn ăn cùng')}<SetupInvitees ids={draft.inviteeIds} friends={friends} onEdit={onFriends} disabled={disabled} /></> : null}{extra}
   </DishSetupFrame>;
 }
 const styles = StyleSheet.create({ grid: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 }, heading: { fontSize: 17, lineHeight: 24 } });

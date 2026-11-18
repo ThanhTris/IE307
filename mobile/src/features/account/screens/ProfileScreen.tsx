@@ -32,20 +32,19 @@ export function ProfileScreen({ user, account, onNavigate, onHome, onLogout }: P
     return () => { active = false; };
   }, [guest, account, profileRequest, user.id]);
 
-  const header = <AppHeader onPressBrand={onHome} onInbox={() => onNavigate('/inbox')} showFriends={false} showProfile={false}
+  const header = <AppHeader onPressBrand={onHome} onInbox={() => onNavigate('/inbox')} showInbox={!guest} showFriends={false} showProfile={false}
     allowTitleWrap hideDivider colors={{ ...colors, surface: colors.background }} />;
 
   return <ApiFeatureFrame active="profile" title="Cá nhân" onNavigate={onNavigate} onHome={onHome} topBar={header}>
-    <Text accessibilityRole="header" style={[typography.titleLarge, { color: colors.text }]}>Cá nhân</Text>
+    <Text accessibilityRole="header" style={[typography.titleLarge, { color: colors.text }]}>{guest ? 'Khách' : 'Cá nhân'}</Text>
     <View style={[styles.card, { backgroundColor: colors.warm }]}>
       <View style={[styles.avatar, { backgroundColor: colors.surface, borderColor: colors.line }]}
         accessibilityElementsHidden importantForAccessibility="no-hide-descendants">
         <Text style={[typography.titleLarge, { color: colors.text }]}>{user.displayName.trim().slice(0, 1).toUpperCase()}</Text>
       </View>
       <Text accessibilityRole="header" style={[typography.titleMedium, styles.center, { color: colors.text }]}>
-        {guest ? 'Đăng nhập' : user.displayName}
+        {user.displayName}
       </Text>
-      {guest ? <Text style={[typography.body, styles.center, { color: colors.muted }]}>Giữ bạn bè và lịch sử khi đổi máy.</Text> : null}
       {!guest && account && !profile ? <Text accessibilityLiveRegion="polite" style={[typography.caption, { color: colors.muted }]}>Đang tải email…</Text> : null}
       {!guest && profile?.ok ? <Text style={[typography.body, styles.center, { color: colors.muted }]}>{profile.data.email}</Text> : null}
       {!guest && profile?.ok === false ? <>
@@ -57,6 +56,7 @@ export function ProfileScreen({ user, account, onNavigate, onHome, onLogout }: P
       </> : null}
     </View>
     {guest ? <>
+      <Text style={[typography.body, styles.center, { color: colors.muted }]}>Giữ bạn bè và lịch sử khi đổi máy.</Text>
       <AppButton label="Đăng nhập" onPress={() => onNavigate('/account/sign-in')} colors={colors} />
       <AppButton label="Liên kết email" variant="secondary" onPress={() => onNavigate('/account/link')} colors={colors} />
       <Text style={[typography.caption, { color: colors.muted }]}>Bạn vẫn có thể tạo hoặc tham gia phòng với tư cách khách.</Text>

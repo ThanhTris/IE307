@@ -1,5 +1,5 @@
 import { useCallback, useMemo } from 'react';
-import { useLocalSearchParams, useRouter, type Href } from 'expo-router';
+import { Redirect, useLocalSearchParams, useRouter, type Href } from 'expo-router';
 import { useRoomRepository } from '../bootstrap/RoomRepositoryProvider';
 import { RequireActiveSession } from '../features/auth/components/RequireActiveSession';
 import { createInboxRepository } from '../features/inbox/services/inboxRepository';
@@ -28,6 +28,7 @@ export default function InboxRoute() {
   [identityId, live.repository, sessionGeneration]);
   const validReturnTo = returnTo === 'friends' ? '/friends' : returnTo === 'history' ? '/history' : undefined;
   const back = () => validReturnTo ? router.replace(validReturnTo as Href) : router.canGoBack() ? router.back() : home();
+  if (live.status === 'active' && live.user?.isGuest) return <Redirect href="/profile" />;
   return <RequireActiveSession onHome={home}>
     <InboxScreen
       key={live.user?.id ?? 'unknown'}
