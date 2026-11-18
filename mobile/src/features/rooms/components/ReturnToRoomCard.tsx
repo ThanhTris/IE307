@@ -1,11 +1,10 @@
-import { useEffect, useState } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import type { RoomSnapshot } from '../../../data/api/contracts';
 import { useShellTheme } from '../../../shared/lib/useShellTheme';
-import { AppIcon } from '../../../shared/ui';
+import { AppIcon, StatusNotice } from '../../../shared/ui';
 import { useHomeRoom } from '../../home/hooks/useHomeRoom';
-import type { RoomEntryRepository } from '../services/roomEntry';
-import { clearLastRoom, readLastRoom } from '../services/lastRoomStore';
+import { activeRoomBackendCopy, useActiveRoom } from '../hooks/useActiveRoom';
+import { errorCopy, type RoomEntryRepository } from '../services/roomEntry';
 
 /**
  * "Quay lại phòng": a highlighted card for this account's last room while it can still be entered (lobby or round 1).
@@ -15,24 +14,15 @@ export function ReturnToRoomCard({ repository, userId, enabled = true, revision 
   repository: RoomEntryRepository; userId?: string; enabled?: boolean; revision?: number; onReturn: (room: RoomSnapshot) => void;
 }) {
   const { colors } = useShellTheme();
-  const [roomId, setRoomId] = useState<string | undefined>();
-  useEffect(() => {
-    let active = true;
-    if (!userId) return;
-    void readLastRoom(userId).then(value => { if (active) setRoomId(value); });
-    return () => { active = false; };
-  }, [userId, revision]);
-  const room = useHomeRoom(repository, roomId ? { roomId } : null, userId, enabled, revision);
+  const lookup = useActiveRoom(repository, userId, enabled, revision);
+  const room = useHomeRoom(repository, lookup.data, userId, enabled, revision);
   const state = room.data?.state;
   const secondRound = state === 'ROUND_2' || state === 'WAITING_2';
-  const gone = !!userId && !!roomId && (room.unavailable || (!!room.data && !room.active && !secondRound));
-  useEffect(() => {
-    if (!gone || !userId) return;
-    void clearLastRoom(userId);
-    const reset = setTimeout(() => setRoomId(undefined), 0);
-    return () => clearTimeout(reset);
-  }, [gone, userId]);
-  if (!roomId || gone || !room.data) return null;
+  const error = lookup.error ?? room.error;
+  if (error) return <StatusNotice title="Chưa kiểm tra được phòng"
+    message={error === 'CONTRACT_MISMATCH' ? activeRoomBackendCopy : errorCopy[error]}
+    actionLabel="Kiểm tra lại phòng" onAction={lookup.retry} tone="error" colors={colors} />;
+  if (!room.data) return null;
   if (secondRound) {
     return <View accessibilityRole="summary" style={[styles.card, { backgroundColor: colors.surface, borderColor: colors.line }]}>
       <View style={[styles.badge, { backgroundColor: colors.warm }]}><AppIcon name="hourglass" size={22} color={colors.muted} /></View>

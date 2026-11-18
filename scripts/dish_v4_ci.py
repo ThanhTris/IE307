@@ -179,8 +179,6 @@ def setup(*, migration_dir=None):
     supabase_dir = workdir / 'supabase'
     supabase_dir.mkdir()
     config = (ROOT / 'supabase/config.toml').read_text(encoding='utf-8')
-    config = config.replace('[local_smtp]\nenabled = true', '[local_smtp]\nenabled = false')
-    config = config.replace('[auth.email]\nenable_signup = true', '[auth.email]\nenable_signup = false')
     config, project_count = re.subn(r'^project_id\s*=\s*"gi-cung-duoc-local"\s*$', f'project_id = "{project}"', config, count=1, flags=re.M)
     config, api_count = re.subn(r'(?m)(\[api\][\s\S]*?^port\s*=\s*)54321\s*$', r'\g<1>54361', config, count=1)
     config, db_count = re.subn(r'(?m)(\[db\][\s\S]*?^port\s*=\s*)54322\s*$', r'\g<1>54362', config, count=1)
@@ -189,7 +187,6 @@ def setup(*, migration_dir=None):
         raise RuntimeError('Could not derive the QA config from the checked-in Supabase baseline')
     (supabase_dir / 'config.toml').write_text(config, encoding='utf-8')
     shutil.copytree(source_migrations, supabase_dir / 'migrations')
-    shutil.copytree(ROOT / 'supabase' / 'templates', supabase_dir / 'templates')
     output = os.environ.get('GITHUB_OUTPUT')
     if output:
         with open(output, 'a', encoding='utf-8') as stream:

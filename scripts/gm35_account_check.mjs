@@ -17,7 +17,6 @@ const [state, manifest, credentials] = await Promise.all([read('state.json'), re
 assert.equal(state.ownerUuid, manifest.ownerUuid);
 assert.equal(credentials.apiUrl, `http://127.0.0.1:${state.ports.api}`);
 assert.ok(Number.isInteger(state.ports.mail), 'Start QA with --mail-port.');
-assert.ok(manifest.migrationLedger.some(item => item.version === '0060'), 'GM-35 migration missing from the verified ledger.');
 const mail = `http://127.0.0.1:${state.ports.mail}`;
 const suffix = randomUUID().slice(0, 12);
 const email = `gm35-${suffix}@example.com`;
@@ -84,15 +83,6 @@ const linked = expectStatus(await auth('verify', 'POST', {
 assert.ok(linked.user?.id === guest.user.id && linked.user.is_anonymous === false);
 expectStatus(await auth('user', 'PUT', { password: originalPassword }, linked.access_token), 200, 'Set linked account password');
 pass('Email conflict and guest conversion with unchanged user ID');
-
-const profile = expectStatus(await auth('user', 'PUT', { data: { display_name: 'GM35 QA updated' } }, confirmed.access_token), 200, 'Save profile');
-assert.equal(profile.user_metadata?.display_name, 'GM35 QA updated');
-const ownProfileQuery = `/rest/v1/profiles?select=user_id,display_name&user_id=eq.${signup.id}`;
-const own = expectStatus(await request(ownProfileQuery, 'GET', undefined, confirmed.access_token), 200, 'Read own profile');
-assert.ok(own.length === 1 && own[0].display_name === 'GM35 QA updated', 'Display name projected to public.profiles.');
-const foreign = expectStatus(await request(ownProfileQuery, 'GET', undefined, linked.access_token), 200, 'Read foreign profile');
-assert.deepEqual(foreign, [], 'Foreign session must see no row via direct REST.');
-pass('Profile ACK, SQL projection and own-row RLS');
 
 expectStatus(await auth('user', 'PUT', { password: changedPassword, current_password: originalPassword }, confirmed.access_token), 200, 'Change password');
 const oldPassword = await auth('token?grant_type=password', 'POST', { email, password: originalPassword });

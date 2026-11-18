@@ -28,7 +28,8 @@ const allowedSourceFiles = [
   'supabase/seed/catalogue/gm18.2/coverage.json',
   'scripts/validate_dish_v4_schema.py', 'tests/fixtures/dish-catalogue-v1/qa-v4-synthetic.json', 'scripts/ci-requirements.txt',
   'docs/architecture/DISH_SESSION_API_CONTRACT_B.md', 'docs/architecture/schemas/dish-session-v4b.schema.json',
-  'supabase/config.toml', 'supabase/templates/account-code.html', 'supabase/seed/catalogue/dishes.json', 'supabase/seed/catalogue/manifest.json',
+  'supabase/config.toml', 'supabase/qa/gm35/email.toml', 'supabase/templates/account-code.html',
+  'supabase/seed/catalogue/dishes.json', 'supabase/seed/catalogue/manifest.json',
   'supabase/tests/fixtures/gm03-dish-catalogue-synthetic.json',
 ];
 const migrationDir = resolve(root, 'supabase', 'migrations');
@@ -375,15 +376,17 @@ async function prepareWorkdir(state, migrations, ports) {
   let config = sourceConfig.replace(/^project_id\s*=\s*"[^"]+"/m, `project_id = "${state.projectId}"`);
   config = replaceSectionPort(config, 'api', ports.api);
   config = replaceSectionPort(config, 'db', ports.db);
-  if (ports.mail === undefined) {
-    config = config.replace(/^(\[local_smtp\]\s*\r?\n)enabled = true/m, '$1enabled = false')
-      .replace(/^(\[auth\.email\]\s*\r?\n)enable_signup = true/m, '$1enable_signup = false');
-  } else {
-    config = replaceSectionPort(config, 'local_smtp', ports.mail);
-  }
   await mkdir(resolve(state.workdir, 'supabase', 'migrations'), { recursive: true });
-  await mkdir(resolve(state.workdir, 'supabase', 'templates'), { recursive: true });
-  await copyFile(resolve(root, 'supabase/templates/account-code.html'), resolve(state.workdir, 'supabase/templates/account-code.html'));
+  if (ports.mail !== undefined) {
+    const emailConfig = await readFile(resolve(root, 'supabase/qa/gm35/email.toml'), 'utf8');
+    config = replaceSectionPort(config, 'local_smtp', ports.mail)
+      .replace(/^(\[local_smtp\]\r?\n)enabled = false/m, '$1enabled = true')
+      .replace(/^\[auth\]\r?$/m, '[auth]\nminimum_password_length = 8')
+      .replace(/^\[auth\.email\]\r?\nenable_signup = false/m, () => emailConfig.trimEnd())
+      .replace(/^\[auth\.rate_limit\]\r?$/m, '[auth.rate_limit]\nemail_sent = 20');
+    await mkdir(resolve(state.workdir, 'supabase', 'templates'), { recursive: true });
+    await copyFile(resolve(root, 'supabase/templates/account-code.html'), resolve(state.workdir, 'supabase/templates/account-code.html'));
+  }
   await writeFile(resolve(state.workdir, 'supabase', 'config.toml'), config, 'utf8');
   for (const migration of migrations) await copyFile(resolve(migrationDir, migration.file), resolve(state.workdir, 'supabase', 'migrations', migration.file));
   state.workdir = state.workdir.replaceAll('\\', '/');

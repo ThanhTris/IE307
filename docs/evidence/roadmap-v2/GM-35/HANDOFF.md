@@ -6,12 +6,14 @@ Nhánh `codex/gm-35-account-profile-recovery` từ `main` `a7c2201`. UI theo `ui
 
 - `/welcome` mở đăng nhập hoặc đăng ký bằng email. Đăng ký và gửi lại xác minh dẫn đến ô nhập mã sáu chữ số.
 - `/profile` với khách mở đăng nhập hoặc liên kết email. Liên kết gồm xác minh email trước rồi đặt mật khẩu trên cùng user ID. Email trùng giữ nguyên phiên khách. Đăng nhập một tài khoản có sẵn chuyển sang user ID và dữ liệu của tài khoản đó. Lịch sử của phiên khách vẫn thuộc user ID cũ.
-- `/profile` với tài khoản hiển thị thông tin từ GoTrue và mở Sửa hồ sơ, Đổi mật khẩu, hoặc xác nhận Đăng xuất. Hồ sơ dùng trường `user_metadata.display_name`. Migration `0060` phản chiếu tên hợp lệ vào `public.profiles` cho các luồng xã hội. API phòng và lịch sử giữ ACL theo user ID hiện hành.
+- `/profile` với tài khoản hiển thị thông tin từ GoTrue và mở Sửa hồ sơ, Đổi mật khẩu, hoặc xác nhận Đăng xuất. Hồ sơ dùng trường `user_metadata.display_name`. Đồng bộ tên sang `public.profiles` thuộc BE hồ sơ. API phòng và lịch sử giữ ACL theo user ID hiện hành.
 - Từ Đăng nhập chọn **Quên mật khẩu?** để nhận mã qua email. Phiên do recovery cấp chỉ tồn tại trong bộ nhớ và chỉ dùng để đổi mật khẩu. Sau đó người dùng quay về Đăng nhập.
 
 ## Dựng QA cho bước xác nhận Expo
 
 Từ thư mục gốc, dùng Node và Supabase CLI theo lockfile của repo. Lệnh dựng QA yêu cầu Docker và Python theo runner GM-03. Chọn cổng còn trống cho ba dịch vụ.
+
+Bộ cấu hình [email QA](../../../../supabase/qa/gm35/email.toml) chỉ áp dụng cho phiên mới có `--mail-port`. GM-35 dùng GoTrue cho đăng ký, xác minh, đăng nhập và recovery, không có migration riêng cho các luồng này. Số `0060` thuộc GM-44 trên `main`. Tạo run ID mới nếu phiên thử cũ có trigger hồ sơ tạm.
 
 ```powershell
 npm ci

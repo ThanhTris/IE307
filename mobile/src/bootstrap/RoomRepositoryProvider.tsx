@@ -9,6 +9,7 @@ import { clearPrivateHistoryCache } from '../features/history/services/historyRe
 import { clearVoteSession } from '../features/voting/services/voteSessionState';
 import { createNativePushService } from '../features/inbox/services/nativePush';
 import { clearPushRegistrationSecrets, getActivePushDriver, getPushDeviceId } from '../features/inbox/services/expoPushDriver';
+import { createActiveRoomReader } from '../features/rooms/services/activeRoom';
 import {
   LiveRoomRepository,
   createDurableRequestId,
@@ -91,7 +92,8 @@ function ConfiguredRoomRepositoryProvider({
       },
     });
     const liveRepository = new LiveRoomRepository({ client, session, sessionStorage: storage, requestIdGenerator: createDurableRequestId });
-    return { repository: liveRepository, account };
+    const repository = Object.assign(liveRepository, createActiveRoomReader(client.callRpc.bind(client)));
+    return { repository, account };
   }, [customRepository, baseUrl, publicKey]);
 
   const subscribe = useCallback((listener: () => void) => repository.subscribeSession(listener), [repository]);
