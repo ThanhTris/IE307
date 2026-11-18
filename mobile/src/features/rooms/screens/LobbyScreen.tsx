@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState, type ReactNode } from 'react';
-import { BackHandler, Pressable, ScrollView, Share, StyleSheet, Text, View } from 'react-native';
+import { BackHandler, Pressable, ScrollView, Share, StyleSheet, View } from 'react-native';
+import { Text } from '../../../shared/ui/forms/ScaledText';
 import * as Clipboard from 'expo-clipboard';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import Svg, { Path } from 'react-native-svg';

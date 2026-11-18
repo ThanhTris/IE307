@@ -1,4 +1,5 @@
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { Pressable, StyleSheet, View } from 'react-native';
+import { Text } from './ScaledText';
 import { radii, spacing, typography } from '../../theme/tokens';
 import type { ComponentThemeProps } from '../types';
 
@@ -9,15 +10,17 @@ export function PreferenceChoice({
   selectedId,
   onSelect,
   disabled = false,
+  layout = 'wrap',
   colors,
 }: ComponentThemeProps & {
   options: PreferenceChoiceOption[];
   selectedId?: string;
   onSelect: (id: string) => void;
   disabled?: boolean;
+  layout?: 'wrap' | 'stack';
 }) {
   return (
-    <View accessibilityRole="radiogroup" style={styles.preferenceChoice}>
+    <View accessibilityRole="radiogroup" style={layout === 'stack' ? styles.stack : styles.preferenceChoice}>
       {options.map(option => {
         const selected = option.id === selectedId;
         const unavailable = disabled || option.unknown === true;
@@ -31,6 +34,7 @@ export function PreferenceChoice({
             onPress={() => onSelect(option.id)}
             style={({ pressed }) => [
               styles.preferenceOption,
+              layout === 'stack' && styles.stackedOption,
               {
                 backgroundColor: selected ? colors?.warm : colors?.surface,
                 borderColor: selected ? colors?.primary : colors?.line,
@@ -61,6 +65,8 @@ export function PreferenceChoice({
 
 const styles = StyleSheet.create({
   preferenceChoice: { flexDirection: 'row', flexWrap: 'wrap', gap: spacing.sm },
+  stack: { gap: spacing.md },
+  stackedOption: { justifyContent: 'space-between', borderRadius: radii.md, minHeight: 56 },
   preferenceOption: {
     minHeight: 48,
     minWidth: 72,

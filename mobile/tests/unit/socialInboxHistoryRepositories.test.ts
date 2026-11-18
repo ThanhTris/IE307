@@ -456,6 +456,29 @@ describe('Social, inbox, and history live adapters', () => {
     expect(defaultCachedRepo.cached()).toBeUndefined();
   });
 
+  test('profile bulk deletion only deletes personal history and preserves consent', async () => {
+    const personal = historyItem('delete-personal', 'personal', '2026-10-17T12:00:00Z');
+    const group = historyItem('keep-group', 'group', '2026-10-16T12:00:00Z');
+    const client = {
+      callRpc: jest.fn().mockResolvedValue(historyEnvelope([personal, group])),
+      updateHistoryConsent: jest.fn(),
+      deleteHistory: jest.fn().mockResolvedValue({ ok: true, data: undefined }),
+    } as unknown as ApiClient;
+    const repository = {
+      getCurrentUser: () => ({ ...user, isGuest: false }),
+      getApiClient: () => client,
+      getSessionApi: () => undefined,
+      getSessionStatus: () => 'active',
+    } as unknown as RoomRepository;
+    const history = createHistoryRepository(repository, cacheMock(), durableHistoryMock());
+
+    expect(await history.deletePersonal()).toMatchObject({ ok: true });
+    expect(client.deleteHistory).toHaveBeenCalledTimes(1);
+    expect(client.deleteHistory).toHaveBeenCalledWith(uuidFrom('history-delete-personal'), expect.any(String));
+    expect(client.updateHistoryConsent).not.toHaveBeenCalled();
+    expect(history.cached()?.items.map(historyIdOf)).toEqual([uuidFrom('history-keep-group')]);
+  });
+
   test('history adapter created before restore follows the active identity and isolates A to B', async () => {
     let activeUser: SessionUser | null = null;
     const rowA = historyItem('A-history', 'personal', '2026-10-17T12:00:00Z');

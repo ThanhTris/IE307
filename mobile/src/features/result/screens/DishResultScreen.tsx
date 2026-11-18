@@ -1,5 +1,6 @@
 import type { ReactNode } from 'react';
-import { StyleSheet, Text, type ImageSourcePropType } from 'react-native';
+import { StyleSheet, type ImageSourcePropType } from 'react-native';
+import { Text } from '../../../shared/ui/forms/ScaledText';
 import { useAppFonts } from '../../../bootstrap/AppFontProvider';
 import { useShellTheme } from '../../../shared/lib/useShellTheme';
 import { ResultPodium } from '../../../shared/ui';

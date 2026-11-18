@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { Pressable, StyleSheet, View } from 'react-native';
+import { Text } from '../../../shared/ui/forms/ScaledText';
 import type { ReadResult, SessionUser } from '../../../data/api/contracts';
 import type { AccountService } from '../../../data/auth';
 import type { AccountProfile } from '../../../data/auth/types';
@@ -8,16 +9,19 @@ import { useShellTheme } from '../../../shared/lib/useShellTheme';
 import { radii, spacing, typography } from '../../../shared/theme/tokens';
 import { useAccountAction } from '../hooks/useAccountAction';
 import { accountErrorMessage } from '../services/accountMessages';
+import type { PersonalHistorySettings } from '../../history/services/historyRepository';
+import { ProfileSettings } from '../components/ProfileSettings';
 
 type Props = {
   user: SessionUser;
   account?: AccountService;
+  historySettings?: PersonalHistorySettings;
   onNavigate: (path: string) => void;
   onHome: () => void;
   onLogout: () => Promise<boolean>;
 };
 
-export function ProfileScreen({ user, account, onNavigate, onHome, onLogout }: Props) {
+export function ProfileScreen({ user, account, historySettings, onNavigate, onHome, onLogout }: Props) {
   const { colors } = useShellTheme();
   const [confirmLogout, setConfirmLogout] = useState(false);
   const [profile, setProfile] = useState<ReadResult<AccountProfile>>();
@@ -73,6 +77,7 @@ export function ProfileScreen({ user, account, onNavigate, onHome, onLogout }: P
           <Text accessible={false} style={[typography.titleMedium, { color: colors.text }]}>›</Text>
         </Pressable>
       </View>
+      {historySettings ? <ProfileSettings history={historySettings} /> : null}
       <AppButton label="Đăng xuất" variant="secondary" onPress={() => setConfirmLogout(true)} colors={colors} />
     </>}
     <SheetDialog visible={confirmLogout} title="Đăng xuất?" showClose={false}

@@ -3,12 +3,12 @@ import {
   Pressable,
   ScrollView,
   StyleSheet,
-  Text,
   View,
   type ImageSourcePropType,
   type ImageStyle,
   type TextStyle,
 } from 'react-native';
+import { Text } from '../forms/ScaledText';
 import { radii, spacing, typography } from '../../theme/tokens';
 import { AppIcon } from '../icons/AppIcon';
 import type { ComponentThemeProps } from '../types';

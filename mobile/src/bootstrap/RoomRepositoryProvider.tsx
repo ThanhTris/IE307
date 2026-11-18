@@ -1,6 +1,7 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useState, useSyncExternalStore, type PropsWithChildren } from 'react';
 import { router, type Href } from 'expo-router';
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
+import { Text } from '../shared/ui/forms/ScaledText';
 import * as SecureStore from 'expo-secure-store';
 import { createAuthenticatedApiClient, createSecureSessionStorage, type AccountService } from '../data/auth';
 import type { SessionIssue, SessionSnapshot, SessionStatus } from '../features/rooms/services/sessionState';

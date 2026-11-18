@@ -1,4 +1,5 @@
-import { Image, Pressable, StyleSheet, Text, View, type ImageStyle } from 'react-native';
+import { Image, Pressable, StyleSheet, View, type ImageStyle } from 'react-native';
+import { Text } from '../../../shared/ui/forms/ScaledText';
 import type { PoolDish } from '../../../data/api';
 import type { Palette } from '../../../shared/ui';
 import type { FinalChoice } from '../hooks/useRoundTwoVoting';

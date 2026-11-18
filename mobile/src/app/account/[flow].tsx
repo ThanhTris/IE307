@@ -1,5 +1,5 @@
 import { Redirect, useLocalSearchParams, useRouter } from 'expo-router';
-import { Text } from 'react-native';
+import { Text } from '../../shared/ui/forms/ScaledText';
 import { useRoomRepository } from '../../bootstrap/RoomRepositoryProvider';
 import { AccountAccessScreen, AccountEditScreen, type AccountAccessFlow } from '../../features/account';
 import { AppButton } from '../../shared/ui';

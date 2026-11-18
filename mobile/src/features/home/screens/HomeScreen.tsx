@@ -1,6 +1,7 @@
 import { useCallback, useRef, useState } from 'react';
 import { ReturnToRoomCard } from '../../rooms/components/ReturnToRoomCard';
-import { Pressable, ScrollView, StyleSheet, Text, View, useWindowDimensions } from 'react-native';
+import { Pressable, ScrollView, StyleSheet, View, useWindowDimensions } from 'react-native';
+import { Text } from '../../../shared/ui/forms/ScaledText';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useAppFonts } from '../../../bootstrap/AppFontProvider';
 import type { RoomSnapshot, SessionUser } from '../../../data/api/contracts';

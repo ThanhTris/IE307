@@ -1,5 +1,6 @@
 import { useState, type ReactNode } from 'react';
-import { Text, View } from 'react-native';
+import { View } from 'react-native';
+import { Text } from '../../../shared/ui/forms/ScaledText';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRoomRepository } from '../../../bootstrap/RoomRepositoryProvider';
 import { AppButton, AppHeader, StatusNotice } from '../../../shared/ui';

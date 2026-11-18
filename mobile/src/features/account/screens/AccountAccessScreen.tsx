@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
+import { Text } from '../../../shared/ui/forms/ScaledText';
 import { Mail } from 'lucide-react-native';
 import EmailBadge from '../../../../assets/brand/account/email-badge.svg';
 import RecoveryBadge from '../../../../assets/brand/account/recovery-badge.svg';

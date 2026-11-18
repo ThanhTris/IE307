@@ -1,4 +1,5 @@
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
+import { Text } from '../../../shared/ui/forms/ScaledText';
 import { AppButton, AppHeader, AppIcon } from '../../../shared/ui';
 import { ApiFeatureFrame } from '../../../shared/ui/layout/ApiFeatureFrame';
 import { useShellTheme } from '../../../shared/lib/useShellTheme';

@@ -1,11 +1,18 @@
 import { act, fireEvent, render, screen } from '@testing-library/react-native';
 import { Redirect } from 'expo-router';
+import * as SecureStore from 'expo-secure-store';
 import ProfileRoute from '../../src/app/profile';
 import { useRoomRepository } from '../../src/bootstrap/RoomRepositoryProvider';
 import { ProfileScreen } from '../../src/features/account/screens/ProfileScreen';
+import { ProfileSettings } from '../../src/features/account/components/ProfileSettings';
+import { AppPreferencesProvider } from '../../src/shared/lib/AppPreferences';
+import { lightColors } from '../../src/shared/theme/tokens';
 
 jest.mock('expo-router', () => ({ Redirect: jest.fn(() => null), useRouter: () => ({}) }));
 jest.mock('../../src/bootstrap/RoomRepositoryProvider', () => ({ useRoomRepository: jest.fn() }));
+jest.mock('expo-secure-store', () => ({
+  getItemAsync: jest.fn().mockResolvedValue(null), setItemAsync: jest.fn().mockResolvedValue(undefined),
+}));
 
 const guest = { id: 'fixture-guest', displayName: 'Minh', isGuest: true, createdAt: '2026-11-16T00:00:00Z' };
 
@@ -40,7 +47,11 @@ test('profile skips the no-session screen during logout and redirects after clea
   const useSession = jest.mocked(useRoomRepository);
   type SessionContext = ReturnType<typeof useRoomRepository>;
   const active: SessionContext = {
-    repository: {} as SessionContext['repository'], status: 'active', issue: 'none', mode: 'real',
+    repository: {
+      getSessionApi: () => undefined,
+      getCurrentUser: () => ({ ...guest, isGuest: false }),
+      getApiClient: () => ({ getHistoryConsent: async () => ({ ok: true, data: { personal: false, group: false } }) }),
+    } as unknown as SessionContext['repository'], status: 'active', issue: 'none', mode: 'real',
     user: { ...guest, isGuest: false }, isInitializing: false, logout, restoreSession: jest.fn(), ensureSession: jest.fn(),
   };
   useSession.mockReturnValue(active);
@@ -58,4 +69,35 @@ test('profile skips the no-session screen during logout and redirects after clea
   await act(async () => { finishLogout(true); });
   expect(jest.mocked(Redirect).mock.lastCall?.[0]).toMatchObject({ href: '/welcome' });
   expect(screen.queryByText('Chưa có phiên')).toBeNull();
+});
+
+test('profile settings save real preferences, update personal consent and confirm history deletion', async () => {
+  const history = {
+    readConsent: jest.fn().mockResolvedValue({ ok: true, data: { personal: false, group: true } }),
+    updateConsent: jest.fn().mockResolvedValue({ ok: true, data: undefined }),
+    deletePersonal: jest.fn().mockResolvedValue({ ok: true, data: undefined }),
+  };
+  await render(<AppPreferencesProvider><ProfileSettings history={history} /></AppPreferencesProvider>);
+
+  await fireEvent.press(screen.getByRole('button', { name: 'Cỡ chữ' }));
+  await fireEvent.press(screen.getByRole('radio', { name: 'Lớn' }));
+  expect(screen.getByText('Cài đặt')).toHaveStyle({ fontSize: 23 });
+  await fireEvent.press(screen.getByRole('button', { name: 'Giao diện' }));
+  await fireEvent.press(screen.getByRole('radio', { name: 'Tối' }));
+  expect(screen.getByText('Cài đặt')).not.toHaveStyle({ color: lightColors.text });
+  await fireEvent(screen.getByLabelText('Thông báo'), 'valueChange', false);
+  expect(screen.getByLabelText('Thông báo')).toHaveProp('value', false);
+  expect(SecureStore.setItemAsync).toHaveBeenLastCalledWith(expect.any(String),
+    expect.stringContaining('"notifications":false'));
+
+  await fireEvent(screen.getByLabelText('Lưu lịch sử bữa ăn'), 'valueChange', true);
+  expect(history.updateConsent).toHaveBeenCalledWith({ scope: 'personal', consent: true });
+  expect(screen.getByLabelText('Lưu lịch sử bữa ăn')).toHaveProp('value', true);
+  await fireEvent.press(screen.getByRole('button', { name: 'Xóa lịch sử' }));
+  await fireEvent.press(screen.getByRole('button', { name: 'Hủy' }));
+  expect(history.deletePersonal).not.toHaveBeenCalled();
+  await fireEvent.press(screen.getByRole('button', { name: 'Xóa lịch sử' }));
+  await fireEvent.press(screen.getByRole('button', { name: 'Xóa' }));
+  expect(history.deletePersonal).toHaveBeenCalledTimes(1);
+  expect(screen.getByText('Đã xóa lịch sử cá nhân')).toBeOnTheScreen();
 });

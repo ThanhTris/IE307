@@ -32,6 +32,10 @@ export interface HistoryRepository {
   delete(historyId: string): Promise<WriteResult<void>>;
   invalidate(): void;
 }
+
+export interface PersonalHistorySettings extends Pick<HistoryRepository, 'readConsent' | 'updateConsent'> {
+  deletePersonal(): Promise<WriteResult<void>>;
+}
 export interface DurableHistoryStore {
   cacheSnapshot<T>(snapshot: { identityId: string; roomId: string; contractVersion: string; value: T }): Promise<void>;
   readSnapshotCache<T>(identityId: string, roomId: string, contractVersion: string): Promise<{ value: T } | undefined>;
@@ -107,7 +111,7 @@ export function createHistoryRepository(
   roomRepository: RoomRepository,
   cache: HistoryCache = privateHistoryCache,
   durableCacheOverride?: DurableHistoryStore,
-): HistoryRepository {
+): HistoryRepository & PersonalHistorySettings {
   const durableCache = withDurableTimeouts(durableCacheOverride ?? noDurableHistoryStore);
   let generation = 0;
   const cacheQueueByIdentity = (identityId: string, operation: () => Promise<void>) =>
@@ -169,7 +173,7 @@ export function createHistoryRepository(
   };
   const authError = <T>(): ReadResult<T> => ({ ok: false, error: { messageKey: 'AUTH_REQUIRED' } });
 
-  return {
+  const history: HistoryRepository & PersonalHistorySettings = {
     cached: () => {
       const identity = currentIdentity();
       if (!identity) return undefined;
@@ -263,12 +267,27 @@ export function createHistoryRepository(
       }
       return result;
     },
+    async deletePersonal() {
+      const identity = currentIdentity();
+      const denied = { ok: false, error: { messageKey: 'AUTH_REQUIRED' } } as const;
+      if (!identity || roomRepository.getCurrentUser()?.isGuest) return denied;
+      const response = await history.fetch();
+      if (!response.ok) return response;
+      for (const item of response.data.items) {
+        if (item.scope !== 'personal') continue;
+        if (!sameAuthenticatedSession(identity)) return denied;
+        const result = await history.delete(historyIdOf(item));
+        if (!result.ok) return result;
+      }
+      return sameAuthenticatedSession(identity) ? { ok: true, data: undefined } : denied;
+    },
     invalidate() {
       const identity = currentIdentity();
       if (!identity) return;
       void invalidateUser(identity.userId, true);
     },
   };
+  return history;
 }
 
 function isExpired(item: HistoryRow): boolean {

@@ -1,5 +1,6 @@
 import { useState } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
+import { Text } from '../../../shared/ui/forms/ScaledText';
 import ProfileBadge from '../../../../assets/brand/account/profile-badge.svg';
 import type { SessionUser } from '../../../data/api/contracts';
 import type { AccountService } from '../../../data/auth';

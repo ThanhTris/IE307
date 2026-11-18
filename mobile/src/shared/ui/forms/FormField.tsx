@@ -1,13 +1,12 @@
 import {
   StyleSheet,
-  Text,
-  TextInput,
   View,
   type KeyboardTypeOptions,
   type StyleProp,
   type TextInputProps,
   type TextStyle,
 } from 'react-native';
+import { Text, TextInput } from './ScaledText';
 import type { ReactNode } from 'react';
 import { radii, spacing, typography } from '../../theme/tokens';
 import type { ComponentThemeProps } from '../types';
