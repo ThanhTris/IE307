@@ -13,7 +13,7 @@ Nhánh `codex/gm-35-account-profile-recovery` từ `main` `a7c2201`. UI theo `ui
 
 Từ thư mục gốc, dùng Node và Supabase CLI theo lockfile của repo. Lệnh dựng QA yêu cầu Docker và Python theo runner GM-03. Chọn cổng còn trống cho ba dịch vụ.
 
-Bộ cấu hình [email QA](../../../../supabase/qa/gm35/email.toml) chỉ áp dụng cho phiên mới có `--mail-port`. GM-35 dùng GoTrue cho đăng ký, xác minh, đăng nhập và recovery, không có migration riêng cho các luồng này. Số `0060` thuộc GM-44 trên `main`. Tạo run ID mới nếu phiên thử cũ có trigger hồ sơ tạm.
+Bộ cấu hình [email QA](../../../../supabase/qa/gm35/email.toml) áp dụng cho phiên mới có `--mail-port` hoặc `--gmail-smtp`. GM-35 dùng GoTrue cho đăng ký, xác minh, đăng nhập và recovery, không có migration riêng cho các luồng này. Số `0060` thuộc GM-44 trên `main`. Dùng run ID mới cho mỗi lần dựng QA.
 
 ```powershell
 npm ci
@@ -28,29 +28,33 @@ Trên máy Windows đã thử, Docker không đáp ứng kiểm tra bind loopbac
 
 Lần lượt thử đăng ký và mã sai, đăng nhập sau xác minh, recovery và đăng nhập bằng mật khẩu mới, khách liên kết email mới và email đã dùng, lưu tên khi mạng lỗi, đổi mật khẩu khi mạng lỗi và đăng xuất. Sau khi quan sát G04/G05 lúc mất mạng, bật lại kết nối và thử lưu lại. Chụp các màn ở 412dp và kiểm 320/360dp, font scale 200%, TalkBack, bàn phím, Back và safe area. Người yêu cầu thực hiện và xác nhận bước Expo. Trí là reviewer GM-35.
 
-## Cấu hình GoTrue ở môi trường dùng chung
+## Kiểm thử nhận mã thật qua Gmail SMTP
 
-Sau khi áp dụng cấu hình, Supabase hosted sẽ gửi mail xác minh và đặt lại mật khẩu từ **Gì Cũng Được <uit.gicungduoc@gmail.com>** qua `smtp.gmail.com:587` (STARTTLS). Script cấu hình máy chủ gửi mail, yêu cầu xác minh email và cài [mẫu OTP 6 số](../../../../supabase/templates/account-code.html) cho Confirmation và Recovery. Mailpit dùng cho QA local.
+Trong chế độ `--gmail-smtp`, GoTrue chạy local gửi mã 6 số từ **Gì Cũng Được <uit.gicungduoc@gmail.com>** qua `smtp.gmail.com:587` (STARTTLS). Chế độ này dùng được khi chưa tạo dự án Supabase Cloud. Dùng `--mail-port` cho bài kiểm tự động đọc thư từ Mailpit và `--gmail-smtp` khi cần nhận mã trong hộp thư thật. Mỗi phiên QA chọn một chế độ.
 
-Chạy lệnh sau từ thư mục gốc để xem các giá trị cấu hình công khai.
-
-```powershell
-node scripts/gm35_configure_email.mjs
-```
-
-Để áp dụng cho dự án đích, tạo Google App Password trên tài khoản Gmail đã bật xác minh hai bước. Dùng token Management API có quyền cập nhật Auth config của dự án Supabase và nhập thông tin xác thực trên máy quản trị bằng PowerShell. [Hướng dẫn Google App Password](https://support.google.com/accounts/answer/185833).
+Bật xác minh hai bước trên Gmail gửi, tạo Google App Password và nhập vào lời nhắc PowerShell. Chạy các lệnh sau từ thư mục gốc khi Docker Desktop đang hoạt động. [Hướng dẫn Google App Password](https://support.google.com/accounts/answer/185833).
 
 ```powershell
-$env:SUPABASE_PROJECT_REF = Read-Host 'Supabase project ref'
-$env:SUPABASE_ACCESS_TOKEN = [System.Net.NetworkCredential]::new('', (Read-Host 'Supabase Management API token' -AsSecureString)).Password
+$gm35Run = "gm35-gmail-$(Get-Date -Format 'MMdd-HHmmss')"
 $env:GM35_GMAIL_APP_PASSWORD = [System.Net.NetworkCredential]::new('', (Read-Host 'Google App Password' -AsSecureString)).Password
 try {
-  node scripts/gm35_configure_email.mjs --apply
+  npm run qa:start -- --run-id $gm35Run --api-port 54391 --db-port 54392 --gmail-smtp
 } finally {
-  Remove-Item Env:GM35_GMAIL_APP_PASSWORD, Env:SUPABASE_ACCESS_TOKEN
+  Remove-Item Env:GM35_GMAIL_APP_PASSWORD
 }
 ```
 
-Script áp dụng cấu hình qua [Supabase Management API](https://supabase.com/docs/reference/api/v1-update-auth-service-config). Sau khi Supabase chấp nhận cấu hình, dùng một hộp thư thử nghiệm để đăng ký và yêu cầu đặt lại mật khẩu. Kiểm tra cả hai thư có đúng địa chỉ gửi và mã dài 6 chữ số.
+Khi runner báo `READY`, chạy `npm run qa:verify -- --run-id $gm35Run`. Lấy `anonKey` từ `.work/qa/$gm35Run/credentials.private.json` cho `EXPO_PUBLIC_SUPABASE_PUBLISHABLE_KEY` trong `mobile/.env.local` và đặt `EXPO_PUBLIC_SUPABASE_URL=http://127.0.0.1:54391`.
+
+Với AVD hoặc điện thoại Android qua USB, kiểm tra `adb devices` nhận thiết bị, rồi chuyển tiếp cả cổng API và Metro. Sau đó nhấn `a` trong cửa sổ Expo để mở app.
+
+```powershell
+adb reverse tcp:54391 tcp:54391
+adb reverse tcp:8081 tcp:8081
+Set-Location mobile
+npx expo start --go --localhost --port 8081
+```
+
+Dùng hộp thư thử nghiệm của bạn để đăng ký, xác minh bằng mã trong thư và đăng nhập. Tiếp tục yêu cầu đặt lại mật khẩu, nhập mã trong thư thứ hai, lưu mật khẩu mới và đăng nhập lại. Với cả hai thư, đối chiếu địa chỉ gửi và mã 6 số. Khi kiểm xong, chạy `npm run qa:stop -- --run-id $gm35Run` để dọn phiên QA.
 
 App gọi trực tiếp `signup`, `verify`, `token?grant_type=password`, `recover` và `user` dưới `/auth/v1`. Xác minh email dùng loại `signup`. Recovery dùng loại `recovery` và chỉ dùng token tạm để đặt mật khẩu. Gọi `logout?scope=local` để thu hồi phiên tạm đó. Request mẫu có trong [GM-35.http](../../../../supabase/tests/http/GM-35.http).

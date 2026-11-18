@@ -34,6 +34,16 @@ test('CLI requires explicit run id and rejects unknown flags', () => {
   assert.throws(() => parseArgs(['status', '--run-id', 'demo', '--all']), /QA_ARGUMENT_INVALID/);
 });
 
+test('Gmail SMTP is a start-only alternative to the Mailpit port', () => {
+  const start = ['start', '--run-id', 'demo-1'];
+  const gmail = parseArgs([...start, '--gmail-smtp']);
+  assert.equal(gmail.gmailSmtp, true);
+  assert.deepEqual(gmail.ports, DEFAULT_QA_PORTS);
+  assert.equal(parseArgs([...start, '--mail-port', '54364']).ports.mail, 54364);
+  assert.throws(() => parseArgs([...start, '--gmail-smtp', '--mail-port', '54364']), /QA_EMAIL_MODES_MUTUALLY_EXCLUSIVE/);
+  assert.throws(() => parseArgs(['verify', '--run-id', 'demo-1', '--gmail-smtp']), /QA_ARGUMENT_INVALID/);
+});
+
 test('resource ownership checks require exact project, name, and workdir labels', () => {
   const container = { Name: '/supabase_db_gm03qa-run-1', Config: { Labels: {
     'com.supabase.cli.project': 'gm03qa-run-1', 'com.supabase.cli.workdir': 'C:/work/.work/qa/run-1',

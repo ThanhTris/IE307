@@ -28,12 +28,15 @@ const allowedSourceFiles = [
   'supabase/seed/catalogue/gm18.2/coverage.json',
   'scripts/validate_dish_v4_schema.py', 'tests/fixtures/dish-catalogue-v1/qa-v4-synthetic.json', 'scripts/ci-requirements.txt',
   'docs/architecture/DISH_SESSION_API_CONTRACT_B.md', 'docs/architecture/schemas/dish-session-v4b.schema.json',
-  'supabase/config.toml', 'supabase/qa/gm35/email.toml', 'supabase/templates/account-code.html',
+  'supabase/config.toml', 'supabase/qa/gm35/email.toml', 'supabase/qa/gm35/gmail-smtp.toml',
+  'supabase/templates/account-code.html',
   'supabase/seed/catalogue/dishes.json', 'supabase/seed/catalogue/manifest.json',
   'supabase/tests/fixtures/gm03-dish-catalogue-synthetic.json',
 ];
 const migrationDir = resolve(root, 'supabase', 'migrations');
-const pythonEnv = { ...process.env, PYTHONUTF8: '1', PYTHONIOENCODING: 'utf-8' };
+const { GM35_GMAIL_APP_PASSWORD, ...qaEnv } = process.env;
+const gmailPassword = GM35_GMAIL_APP_PASSWORD?.replace(/\s+/g, '');
+const pythonEnv = { ...qaEnv, PYTHONUTF8: '1', PYTHONIOENCODING: 'utf-8' };
 const WORKER_STARTUP_TIMEOUT_MS = 180_000;
 let commandAbortController;
 let cleanupInProgress = false;
@@ -98,13 +101,16 @@ export function canonicalJson(value) {
 
 function sha256(value) { return createHash('sha256').update(value).digest('hex'); }
 function safeRelative(path) { return relative(root, path).split(sep).join('/'); }
-function safeOutput(value) { return redact(String(value ?? '')).trim(); }
+function safeOutput(value) {
+  const output = String(value ?? '');
+  return redact(gmailPassword ? output.replaceAll(gmailPassword, '[REDACTED]') : output).trim();
+}
 
 async function run(file, args, options = {}) {
   try {
     const result = await execFileAsync(file, args, {
       cwd: options.cwd ?? root,
-      env: options.env ?? process.env,
+      env: options.env ?? qaEnv,
       encoding: 'utf8',
       timeout: options.timeoutMs ?? 120_000,
       maxBuffer: options.maxBuffer ?? 32 * 1024 * 1024,
@@ -371,18 +377,21 @@ async function assertNoProjectResources(projectId) {
   if (containers.stdout.trim() || volumes.stdout.trim()) throw new Error('QA_PROJECT_RESOURCES_ALREADY_EXIST');
 }
 
-async function prepareWorkdir(state, migrations, ports) {
+async function prepareWorkdir(state, migrations, ports, gmailSmtp) {
   const sourceConfig = await readFile(resolve(root, 'supabase', 'config.toml'), 'utf8');
   let config = sourceConfig.replace(/^project_id\s*=\s*"[^"]+"/m, `project_id = "${state.projectId}"`);
   config = replaceSectionPort(config, 'api', ports.api);
   config = replaceSectionPort(config, 'db', ports.db);
   await mkdir(resolve(state.workdir, 'supabase', 'migrations'), { recursive: true });
-  if (ports.mail !== undefined) {
+  if (ports.mail !== undefined || gmailSmtp) {
     const emailConfig = await readFile(resolve(root, 'supabase/qa/gm35/email.toml'), 'utf8');
-    config = replaceSectionPort(config, 'local_smtp', ports.mail)
-      .replace(/^(\[local_smtp\]\r?\n)enabled = false/m, '$1enabled = true')
-      .replace(/^\[auth\]\r?$/m, '[auth]\nminimum_password_length = 8')
-      .replace(/^\[auth\.email\]\r?\nenable_signup = false/m, () => emailConfig.trimEnd())
+    const smtpConfig = gmailSmtp ? await readFile(resolve(root, 'supabase/qa/gm35/gmail-smtp.toml'), 'utf8') : '';
+    if (ports.mail !== undefined) {
+      config = replaceSectionPort(config, 'local_smtp', ports.mail)
+        .replace(/^(\[local_smtp\]\r?\n)enabled = false/m, '$1enabled = true');
+    }
+    config = config.replace(/^\[auth\]\r?$/m, '[auth]\nminimum_password_length = 8')
+      .replace(/^\[auth\.email\]\r?\nenable_signup = false/m, () => [emailConfig, smtpConfig].join('\n').trimEnd())
       .replace(/^\[auth\.rate_limit\]\r?$/m, '[auth.rate_limit]\nemail_sent = 20');
     await mkdir(resolve(state.workdir, 'supabase', 'templates'), { recursive: true });
     await copyFile(resolve(root, 'supabase/templates/account-code.html'), resolve(state.workdir, 'supabase/templates/account-code.html'));
@@ -653,15 +662,17 @@ async function cleanupRunSteps(state) {
   return { stopped: true, runId: state.runId, cleaned: state.cleanup.completed };
 }
 
-async function doStart(runId, ports) {
+async function doStart(runId, ports, gmailSmtp) {
+  if (gmailSmtp && !gmailPassword) throw new Error('QA_GMAIL_APP_PASSWORD_REQUIRED: set GM35_GMAIL_APP_PASSWORD');
   const state = await setupStartState(runId, ports);
   try {
     const migrations = await listMigrations();
-    await prepareWorkdir(state, migrations, ports);
+    await prepareWorkdir(state, migrations, ports, gmailSmtp);
     state.phase = 'prepared'; await saveJson(state.stateFile, state);
     await createOwnedNetwork(state);
     state.phase = 'network-created'; await saveJson(state.stateFile, state);
-    await run(process.execPath, [cli, 'start', '--workdir', state.workdir, '--network-id', state.networkId], { label: 'QA_SUPABASE_START_FAILED', timeoutMs: 900_000, print: true });
+    const startEnv = gmailSmtp ? { ...qaEnv, GM35_GMAIL_APP_PASSWORD: gmailPassword } : qaEnv;
+    await run(process.execPath, [cli, 'start', '--workdir', state.workdir, '--network-id', state.networkId], { label: 'QA_SUPABASE_START_FAILED', timeoutMs: 900_000, print: true, env: startEnv });
     await assertActualLoopbackBindings(state);
     const status = await readCliStatus(state.workdir);
     const endpoints = assertLocalServiceStatus(status, ports);
@@ -770,7 +781,7 @@ async function doTest(runId) {
   const { state, manifest } = await loadAndVerify(runId);
   await assertWorkerRunning(state);
   await waitForWorkerHeartbeat(state);
-  const env = { ...process.env, GM03_QA_WORKDIR: state.workdir, GM03_QA_MANIFEST: state.manifestFile };
+  const env = { ...qaEnv, GM03_QA_WORKDIR: state.workdir, GM03_QA_MANIFEST: state.manifestFile };
   const reportPath = resolve(state.workdir, 'test-report.json');
   const report = {
     result: 'Not run', runId, sourceRevision: manifest.sourceRevision, contractVersion: manifest.contractVersion,
@@ -822,7 +833,7 @@ async function doWorkerStop(runId) {
 export function parseArgs(argv) {
   const [operation, ...rest] = argv;
   const valid = ['start', 'status', 'verify', 'test', 'worker-start', 'worker-stop', 'stop'];
-  if (!valid.includes(operation)) throw new Error('Usage: npm run qa:<start|status|verify|test|worker-start|worker-stop|stop> -- --run-id <safe-id> [--api-port 54361 --db-port 54362]');
+  if (!valid.includes(operation)) throw new Error('Usage: npm run qa:<start|status|verify|test|worker-start|worker-stop|stop> -- --run-id <safe-id> [--api-port 54361 --db-port 54362] [--mail-port <port> | --gmail-smtp]');
   const options = { operation, runId: null, apiPort: DEFAULT_QA_PORTS.api, dbPort: DEFAULT_QA_PORTS.db };
   for (let i = 0; i < rest.length; i += 1) {
     const arg = rest[i];
@@ -830,16 +841,18 @@ export function parseArgs(argv) {
     else if (arg === '--api-port' && rest[i + 1]) options.apiPort = Number(rest[++i]);
     else if (arg === '--db-port' && rest[i + 1]) options.dbPort = Number(rest[++i]);
     else if (operation === 'start' && arg === '--mail-port' && rest[i + 1]) options.mailPort = Number(rest[++i]);
+    else if (operation === 'start' && arg === '--gmail-smtp') options.gmailSmtp = true;
     else throw new Error('QA_ARGUMENT_INVALID');
   }
   if (!options.runId) throw new Error('QA_RUN_ID_REQUIRED');
+  if (options.gmailSmtp && options.mailPort !== undefined) throw new Error('QA_EMAIL_MODES_MUTUALLY_EXCLUSIVE');
   options.ports = validatePorts(options.apiPort, options.dbPort, options.mailPort);
   return options;
 }
 
 export async function main(argv = process.argv.slice(2)) {
   const options = parseArgs(argv);
-  if (options.operation === 'start') await doStart(options.runId, options.ports);
+  if (options.operation === 'start') await doStart(options.runId, options.ports, options.gmailSmtp);
   else if (options.operation === 'status') await doStatus(options.runId);
   else if (options.operation === 'verify') await doVerify(options.runId);
   else if (options.operation === 'test') await doTest(options.runId);
