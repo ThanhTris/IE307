@@ -103,7 +103,7 @@ test('linking highlights an invalid email without calling Auth', async () => {
   expect(linkEmail).not.toHaveBeenCalled();
 });
 
-test('sign-in puts the generic credential rejection beneath email', async () => {
+test('sign-in shows credential rejection as a toast without marking either field', async () => {
   const signIn = jest.fn().mockResolvedValue({
     ok: false, error: { messageKey: 'AUTH_REQUIRED', details: { reason: 'invalid_credentials' } },
   });
@@ -112,7 +112,11 @@ test('sign-in puts the generic credential rejection beneath email', async () => 
   await fireEvent.changeText(screen.getByLabelText('Email'), 'other@example.test');
   await fireEvent.changeText(screen.getByLabelText('Mật khẩu'), 'Fixture!123');
   await fireEvent.press(screen.getByRole('button', { name: 'Đăng nhập' }));
-  expectFieldError('Email', 'Email hoặc mật khẩu chưa đúng.');
+  expect(screen.getByText('Email hoặc mật khẩu chưa đúng.')).toBeOnTheScreen();
+  expect(screen.getByLabelText('Email')).toHaveProp('value', 'other@example.test');
+  expect(screen.getByLabelText('Mật khẩu')).toHaveProp('value', '');
+  expect(screen.getByLabelText('Email')).not.toHaveStyle({ borderColor: lightColors.danger });
+  expect(screen.getByLabelText('Mật khẩu')).not.toHaveStyle({ borderColor: lightColors.danger });
 });
 
 test('recovery highlights the new password and confirmation independently', async () => {

@@ -122,13 +122,7 @@ export function AccountAccessScreen({ flow, account, isGuest, recoveryForCurrent
     setEmail(address);
     if (signingUp) return void run('Đang gửi mã…', () => account.signUp({ email: address, password, displayName: name.trim() }),
       () => goTo('code'), showSignupError);
-    if (signingIn) return void run('Đang đăng nhập…', () => account.signIn({ email: address, password }), onComplete, failure => {
-      resetPasswords();
-      if (failure.details?.reason === 'invalid_credentials') {
-        setFieldErrors({ email: accountErrorMessage(failure) });
-        clearError();
-      }
-    });
+    if (signingIn) return void run('Đang đăng nhập…', () => account.signIn({ email: address, password }), onComplete, resetPasswords);
     const request = linking ? () => account.linkEmail(address) : () => sendRecoveryCode(address);
     void run('Đang gửi mã…', request, () => goTo('code'), showRequestError);
   }
