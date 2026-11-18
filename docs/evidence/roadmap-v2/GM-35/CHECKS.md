@@ -8,12 +8,12 @@ Phạm vi lần này gồm mã nguồn, kiểm thử tự động và đối chi
 | G04 | Đổi tên, gửi khi offline. Nút pending bị khóa. Form giữ tên để thử lại. | `mobile/tests/component/accountEditScreen.test.tsx` |
 | G05 | Nhập ba ô mật khẩu, gửi khi provider lỗi. Nút pending bị khóa. Cả ba ô được xóa khi lỗi. | `mobile/tests/component/accountEditScreen.test.tsx` |
 | Cá nhân khách | Nhấn Đăng nhập hoặc Liên kết email. Mỗi thao tác mở đúng route sản phẩm. | `mobile/tests/component/profileScreen.test.tsx` |
-| GoTrue, Mailpit, SQL và REST | Xác minh mã, conflict email, link giữ UUID, dữ liệu profile được đồng bộ và ACL không trả hồ sơ người khác, đổi và đặt lại mật khẩu. | `node scripts/gm35_account_check.mjs <qa-run-id>` trên QA đã xác minh ledger |
+| GoTrue và Mailpit | Đăng nhập bị chặn trước khi xác minh. OTP sai hoặc dùng lại bị từ chối. Email đã dùng báo conflict khi liên kết. Recovery trả cùng ACK cho email tồn tại và email lạ. Mật khẩu cũ bị từ chối sau khi đặt mật khẩu mới. | `node scripts/gm35_account_check.mjs <qa-run-id>` trên QA đã xác minh ledger |
 | Expo Android và visual parity | 412dp, 320/360dp, chữ 200%, TalkBack, bàn phím, Back, safe area, login/verify/profile/password/logout và lỗi mạng. | Chờ người dùng chạy và xác nhận theo [HANDOFF](HANDOFF.md) và [FIGMA_PARITY](FIGMA_PARITY.md). |
 
 ## Kết quả trên workspace
 
 - Pass: 79/79 kiểm thử chuyên biệt cho Auth transport, session, Cá nhân, G04 và G05. TypeScript, ESLint trên `src`/`tests`, kiểm kiến trúc và 19/19 test runner backend đều đạt.
-- Pass ở bước khởi tạo SQL: CLI 2.120.0 áp dụng tới migration `0060_gm35_profile_display_name.sql` trên database QA riêng. GoTrue `v2.197.0` và Mailpit khởi động. Runner đóng phiên QA vì kiểm tra port trả `QA_HOST_BINDING_NOT_LOOPBACK`. Chuỗi HTTP end-to-end và xác minh worker chưa chạy được trên máy này.
+- Pass trên QA `gm35-auth-be-1118`: CLI 2.120.0 áp dụng `0060_gm44_active_room.sql` và runner lên READY với worker. Kiểm ownership và ledger trước khi gọi GoTrue. Đã chạy đạt bốn nhóm ca HTTP cho đăng ký, OTP, đăng nhập, liên kết email, đổi và đặt lại mật khẩu. Trigger đồng bộ tên hồ sơ của phiên thử cũ không còn trong chuỗi migration của nhánh.
 - Expo export Android đã tạo đồ thị Metro. Bước ghi bytecode Hermes thất bại do quyền ghi thư mục tạm của sandbox. Kiểm giao diện trên Expo thuộc bước xác nhận của người dùng.
 - Python regression toàn repo chạy 628 ca và thất bại. Kết quả có lỗi quyền ghi thư mục tạm, HTTP 403/429 và lỗi `TIME` ở fixture dữ liệu. Kết quả này chưa xác nhận regression toàn repo.

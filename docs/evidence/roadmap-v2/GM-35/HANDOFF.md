@@ -27,3 +27,9 @@ Trên máy Windows đã thử, Docker không đáp ứng kiểm tra bind loopbac
 Đọc giá trị `anonKey` của cấu hình QA riêng trong `.work/qa/gm35-expo/credentials.private.json` để đặt `EXPO_PUBLIC_SUPABASE_PUBLISHABLE_KEY`. App chỉ dùng khóa `anon` hoặc publishable. Với Android AVD, chuyển tiếp cổng bằng `adb reverse tcp:54381 tcp:54381`, đặt `EXPO_PUBLIC_SUPABASE_URL=http://127.0.0.1:54381` trong `mobile/.env.local`, rồi chạy `npm ci` và `npm run start:go` từ `mobile`. Hộp thư QA mở tại `http://127.0.0.1:54384`. Dùng địa chỉ thử nghiệm mới cho ca đăng ký/liên kết.
 
 Lần lượt thử đăng ký và mã sai, đăng nhập sau xác minh, recovery và đăng nhập bằng mật khẩu mới, khách liên kết email mới và email đã dùng, lưu tên khi mạng lỗi, đổi mật khẩu khi mạng lỗi và đăng xuất. Sau khi quan sát G04/G05 lúc mất mạng, bật lại kết nối và thử lưu lại. Chụp các màn ở 412dp và kiểm 320/360dp, font scale 200%, TalkBack, bàn phím, Back và safe area. Người yêu cầu thực hiện và xác nhận bước Expo. Trí là reviewer GM-35.
+
+## Cấu hình GoTrue ở môi trường dùng chung
+
+Khi bàn giao backend, áp dụng cấu hình Email Auth trên Supabase của môi trường đích. Bật đăng ký email và yêu cầu xác minh email, đặt độ dài mã là 6 và mật khẩu tối thiểu 8 theo cấu hình QA. Cấu hình SMTP của môi trường đó và dùng [mẫu OTP](../../../../supabase/templates/account-code.html) cho Confirmation và Recovery. Mẫu Email Change phục vụ luồng liên kết email hiện có. Mailpit chỉ dùng trong QA local.
+
+App gọi trực tiếp `signup`, `verify`, `token?grant_type=password`, `recover` và `user` dưới `/auth/v1`. Xác minh email dùng loại `signup`. Recovery dùng loại `recovery` và chỉ dùng token tạm để đặt mật khẩu. Gọi `logout?scope=local` để thu hồi phiên tạm đó. Request mẫu có trong [GM-35.http](../../../../supabase/tests/http/GM-35.http).
