@@ -1,0 +1,62 @@
+{
+  "runId": "gm45-review-fixes",
+  "supabaseRealtimeStopped": true,
+  "restAvailable": true,
+  "observedSeconds": 52.8,
+  "snapshotCalls": 4,
+  "settingsVisibleInLobby": true,
+  "observations": [
+    {
+      "seconds": 6.4,
+      "snapshotCalls": 1
+    },
+    {
+      "seconds": 10.0,
+      "snapshotCalls": 2
+    },
+    {
+      "seconds": 13.4,
+      "snapshotCalls": 2
+    },
+    {
+      "seconds": 16.7,
+      "snapshotCalls": 2
+    },
+    {
+      "seconds": 20.1,
+      "snapshotCalls": 3
+    },
+    {
+      "seconds": 23.5,
+      "snapshotCalls": 3
+    },
+    {
+      "seconds": 26.7,
+      "snapshotCalls": 3
+    },
+    {
+      "seconds": 30.3,
+      "snapshotCalls": 3
+    },
+    {
+      "seconds": 33.9,
+      "snapshotCalls": 3
+    },
+    {
+      "seconds": 37.3,
+      "snapshotCalls": 3
+    },
+    {
+      "seconds": 40.7,
+      "snapshotCalls": 3
+    },
+    {
+      "seconds": 44.0,
+      "snapshotCalls": 3
+    },
+    {
+      "seconds": 47.5,
+      "snapshotCalls": 3
+    }
+  ]
+}

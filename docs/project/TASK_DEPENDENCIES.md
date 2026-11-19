@@ -2,7 +2,7 @@
 
 Sinh từ task bằng `python scripts/task_readiness.py --write-docs`; không sửa tay. `--check-docs` kiểm độ mới. Đây là metadata/gate chẩn đoán local, không phải trạng thái GitHub. Gate thực tế đọc Done live trên Project theo ADR-011; xem docs/project/PROJECT_READINESS.md.
 
-43 task sau GM-00: 37 P0 (gồm GM-01), 3 P1, 3 P2. Mã roadmap-v2 tăng theo lộ trình; mọi dependency có số nhỏ hơn task. Owner/reviewer là đề xuất; không kế thừa approval khi đổi scope.
+44 task sau GM-00: 37 P0 (gồm GM-01), 4 P1, 3 P2. Mã roadmap-v2 tăng theo lộ trình; mọi dependency có số nhỏ hơn task. Owner/reviewer là đề xuất; không kế thừa approval khi đổi scope.
 
 ## Hai gate khác nhau
 
@@ -69,6 +69,7 @@ READY_TO_CLAIM: đủ start deps, chưa nhận việc (bao gồm task Needs Upda
 | [GM-42](../../tasks/backlog/GM-42.md) | BLOCKED | [GM-20](../../tasks/backlog/GM-20.md), [GM-21](../../tasks/backlog/GM-21.md) | BLOCKED | [GM-20](../../tasks/backlog/GM-20.md), [GM-21](../../tasks/backlog/GM-21.md) |
 | [GM-43](../../tasks/backlog/GM-43.md) | BLOCKED | [GM-20](../../tasks/backlog/GM-20.md), [GM-23](../../tasks/backlog/GM-23.md) | BLOCKED | [GM-20](../../tasks/backlog/GM-20.md), [GM-23](../../tasks/backlog/GM-23.md) |
 | [GM-44](../../tasks/backlog/GM-44.md) | BLOCKED | [GM-19](../../tasks/backlog/GM-19.md), [GM-25](../../tasks/backlog/GM-25.md) | BLOCKED | [GM-19](../../tasks/backlog/GM-19.md), [GM-25](../../tasks/backlog/GM-25.md) |
+| [GM-45](../../tasks/backlog/GM-45.md) | BLOCKED | [GM-19](../../tasks/backlog/GM-19.md), [GM-25](../../tasks/backlog/GM-25.md), [GM-26](../../tasks/backlog/GM-26.md) | BLOCKED | [GM-19](../../tasks/backlog/GM-19.md), [GM-25](../../tasks/backlog/GM-25.md), [GM-26](../../tasks/backlog/GM-26.md) |
 
 ## Lớp mở khóa bắt đầu
 
@@ -89,7 +90,7 @@ Lớp topo không là barrier cả nhóm hay deadline. Chỉ chờ dependency c�
 | 10 | [GM-21](../../tasks/backlog/GM-21.md), [GM-23](../../tasks/backlog/GM-23.md) | GM-21: Tâm; GM-23: Trí |
 | 11 | [GM-25](../../tasks/backlog/GM-25.md), [GM-32](../../tasks/backlog/GM-32.md), [GM-42](../../tasks/backlog/GM-42.md), [GM-43](../../tasks/backlog/GM-43.md) | GM-25: Trang; GM-32: Vinh; GM-42: Trí; GM-43: Trí |
 | 12 | [GM-26](../../tasks/backlog/GM-26.md), [GM-28](../../tasks/backlog/GM-28.md), [GM-44](../../tasks/backlog/GM-44.md) | GM-26: Trang; GM-28: Trung; GM-44: Trí |
-| 13 | [GM-27](../../tasks/backlog/GM-27.md), [GM-29](../../tasks/backlog/GM-29.md), [GM-31](../../tasks/backlog/GM-31.md) | GM-27: Trang; GM-29: Trung; GM-31: Trung |
+| 13 | [GM-27](../../tasks/backlog/GM-27.md), [GM-29](../../tasks/backlog/GM-29.md), [GM-31](../../tasks/backlog/GM-31.md), [GM-45](../../tasks/backlog/GM-45.md) | GM-27: Trang; GM-29: Trung; GM-31: Trung; GM-45: Trí |
 | 14 | [GM-30](../../tasks/backlog/GM-30.md) | GM-30: Trang |
 | 15 | [GM-33](../../tasks/backlog/GM-33.md) | GM-33: Vinh |
 | 16 | [GM-34](../../tasks/backlog/GM-34.md) | GM-34: Trí |
@@ -114,7 +115,7 @@ Lớp topo không là barrier cả nhóm hay deadline. Chỉ chờ dependency c�
 | 10 | [GM-21](../../tasks/backlog/GM-21.md), [GM-23](../../tasks/backlog/GM-23.md) | GM-21: Tâm; GM-23: Trí |
 | 11 | [GM-25](../../tasks/backlog/GM-25.md), [GM-42](../../tasks/backlog/GM-42.md), [GM-43](../../tasks/backlog/GM-43.md) | GM-25: Trang; GM-42: Trí; GM-43: Trí |
 | 12 | [GM-26](../../tasks/backlog/GM-26.md), [GM-28](../../tasks/backlog/GM-28.md), [GM-44](../../tasks/backlog/GM-44.md) | GM-26: Trang; GM-28: Trung; GM-44: Trí |
-| 13 | [GM-27](../../tasks/backlog/GM-27.md), [GM-29](../../tasks/backlog/GM-29.md), [GM-31](../../tasks/backlog/GM-31.md) | GM-27: Trang; GM-29: Trung; GM-31: Trung |
+| 13 | [GM-27](../../tasks/backlog/GM-27.md), [GM-29](../../tasks/backlog/GM-29.md), [GM-31](../../tasks/backlog/GM-31.md), [GM-45](../../tasks/backlog/GM-45.md) | GM-27: Trang; GM-29: Trung; GM-31: Trung; GM-45: Trí |
 | 14 | [GM-30](../../tasks/backlog/GM-30.md), [GM-32](../../tasks/backlog/GM-32.md) | GM-30: Trang; GM-32: Vinh |
 | 15 | [GM-33](../../tasks/backlog/GM-33.md) | GM-33: Vinh |
 | 16 | [GM-34](../../tasks/backlog/GM-34.md) | GM-34: Trí |
