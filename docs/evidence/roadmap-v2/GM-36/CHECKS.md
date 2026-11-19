@@ -11,9 +11,13 @@ and HANDOFF in `5a69b56`. [Release](../GM-34/RELEASE.md)
 | Strict TypeScript, Node, Python feature checks | Pass | 48 Node tests, 12 Python tests. Includes ambiguous prices at high confidence, null/source/unit, auth and quota boundaries, and cleanup ownership guards. |
 | Python regression, repository and index validation | Pass | 703 Python tests, 6 skipped. Repository and task index checks passed. |
 | Dish-only and legacy import boundary | Pass offline | Both importers reject the standalone draft before DB access. Dish-only requires provenance and preserves nullable fields and typed units without venue/offering/hours/coverage. OCR does not infer taxonomy. |
-| HTTP, GoTrue and draft schema | See CI for the PR revision | The GM-36 workflow runs 15 HTTP scenarios in an owned GM-03 QA environment and publishes HTTP results with source hashes, the synthetic draft and both importer assertions. Auth/HTTP execute for real. Recognition uses a test double. |
+| HTTP, GoTrue and draft schema | **15/15 Pass** | [CI at `709defe`](https://github.com/ThanhTris/IE307/actions/runs/44497479002). GoTrue Auth and HTTP ran on disposable QA with a test recognizer. [HTTP assertions](readiness-2026-11-19/results.json), [draft](readiness-2026-11-19/actual-draft.json) and [schema/import assertions](readiness-2026-11-19/contract-results.json). Both importers rejected the draft. Guest cleanup and QA stop passed. |
 | Real recognizer, rights, privacy, quota/cost and accuracy | Not run | Provider and permitted-menu pilot await reviewer decision. [Provider dossier](PROVIDER_REVIEW.md) |
 | Edge deployment and device | Not run | Independent draft pipeline runs through a Node-hosted Web handler. GM-36 has no Android consumer in this scope. |
+
+The reported CI run tested `709defe40390cc42e2da812885acff6c8a360509`. Its HTTP source hashes
+match this documentation update. The first Linux run found a cleanup CLI argument
+mismatch. The test runner now passes the verified manifest and guest namespace.
 
 The prior macOS run stopped during disposable QA startup with
 `QA_HOST_BINDING_NOT_LOOPBACK`. Its reports remain in the

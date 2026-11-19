@@ -14,7 +14,7 @@ Nhánh `codex/gm-36-menu-ocr` → `main`, đã đồng bộ với `5bbee5d`.
 ## Kiểm thử và bàn giao
 
 - [x] Strict TypeScript, 48 test Node, 12 test Python feature, suite Python 703 ca với 6 skip, validator repo, task indexes và diff.
-- [ ] Xác minh workflow GM-36 trên head cập nhật. Workflow chạy HTTP với GoTrue thật, recognizer giả lập và schema/import guard.
+- [x] 15/15 ca HTTP, GoTrue, schema, từ chối import trực tiếp ở cả hai importer và cleanup đều đạt trên `709defe`. Recognizer giả lập. [GitHub Actions](https://github.com/ThanhTris/IE307/actions/runs/44497479002)
 - [ ] Provider thật, pilot menu có quyền và kiểm thiết bị theo phạm vi nghiệm thu được duyệt.
 
 Bằng chứng và cách chạy nằm trong CHECKS.md, HANDOFF.md và PROVIDER_REVIEW.md tại `docs/evidence/roadmap-v2/GM-36/`. Entrypoint mặc định tắt.

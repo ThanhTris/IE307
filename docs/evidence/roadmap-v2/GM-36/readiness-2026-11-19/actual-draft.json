@@ -1,0 +1,77 @@
+{
+  "contractVersion": "food-v1/roadmap-v2/GM-36.1",
+  "foodContractVersion": "1.1.0",
+  "providerMode": "test-double",
+  "reviewStatus": "draft",
+  "publishable": false,
+  "sourceRef": "00000000-0036-4000-8000-000000000036",
+  "sourceRightsVerified": false,
+  "venueId": null,
+  "coverageId": null,
+  "scheduleId": null,
+  "items": [
+    {
+      "name": "Phở bò",
+      "priceMin": 35000,
+      "priceMax": 45000,
+      "currency": "VND",
+      "unit": "portion",
+      "sourceRef": "00000000-0036-4000-8000-000000000036",
+      "fieldSources": {
+        "menu": "00000000-0036-4000-8000-000000000036",
+        "price": "00000000-0036-4000-8000-000000000036"
+      },
+      "confidence": {
+        "name": 0.98,
+        "price": 0.96
+      },
+      "issues": [
+        "HUMAN_REVIEW_REQUIRED"
+      ],
+      "reviewStatus": "draft"
+    },
+    {
+      "name": null,
+      "priceMin": null,
+      "priceMax": null,
+      "currency": null,
+      "unit": null,
+      "sourceRef": "00000000-0036-4000-8000-000000000036",
+      "fieldSources": {
+        "menu": "00000000-0036-4000-8000-000000000036",
+        "price": null
+      },
+      "confidence": {
+        "name": 0.4,
+        "price": 0.5
+      },
+      "issues": [
+        "HUMAN_REVIEW_REQUIRED",
+        "NAME_UNKNOWN_OR_LOW_CONFIDENCE",
+        "PRICE_LOW_CONFIDENCE"
+      ],
+      "reviewStatus": "draft"
+    },
+    {
+      "name": "Trà đá",
+      "priceMin": null,
+      "priceMax": null,
+      "currency": null,
+      "unit": null,
+      "sourceRef": "00000000-0036-4000-8000-000000000036",
+      "fieldSources": {
+        "menu": "00000000-0036-4000-8000-000000000036",
+        "price": null
+      },
+      "confidence": {
+        "name": 0.95,
+        "price": 0.99
+      },
+      "issues": [
+        "HUMAN_REVIEW_REQUIRED",
+        "UNIT_UNKNOWN"
+      ],
+      "reviewStatus": "draft"
+    }
+  ]
+}

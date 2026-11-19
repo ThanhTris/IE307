@@ -2,7 +2,10 @@
 
 Updated 2026-11-19. Owner Tâm (@HoaiTam), reviewer Trí (@ThanhTris).
 PR #123 tracks the independent pipeline on main `5bbee5d`. See [CHECKS](CHECKS.md)
-for current gate results and tested revisions. Earlier execution records retain their original dates.
+for current gate results. [CI at `709defe`](https://github.com/ThanhTris/IE307/actions/runs/44497479002)
+passed 15 HTTP scenarios with GoTrue and a test recognizer. The schema and both
+importer guards passed on the returned draft. Guest cleanup and owned QA stop passed.
+The CI report records the tested source hashes.
 
 ## Received inputs and blockers
 
