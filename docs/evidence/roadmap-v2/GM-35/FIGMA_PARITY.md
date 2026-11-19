@@ -23,6 +23,8 @@
 
 Lượt review lại xác định ADB hoạt động nhưng `adb devices -l` trả danh sách rỗng. Workspace và các vị trí cài đặt SDK trên máy chưa có Android Emulator/AVD có thể chạy. Vì vậy chưa có Android/Expo runtime, viewport hay ảnh để đối chiếu nhánh sửa. Giữ kết quả Expo Go thủ công ngày 2026-11-19 ở đầu tài liệu. [Thiết lập AVD cho Expo Go](https://docs.expo.dev/get-started/set-up-your-environment/?device=simulated&mode=expo-go&platform=android).
 
+Sau khi nhận GM-45, revision app `8329d49` đã chạy hồi quy tự động và QA GoTrue/REST. Kiểm tra thiết bị lại cho thấy SDK local chỉ có `platform-tools`, `adb devices -l` vẫn rỗng. Vì vậy các ca AVD trong bảng tiếp tục chờ môi trường có Android Emulator và system image. Bằng chứng của GM-45 trên AVD thuộc revision và luồng phòng của GM-45. Xem [CHECKS](CHECKS.md) để biết kết quả của revision GM-35 sau khi ghép.
+
 | Hạng mục trên AVD nối QA thật | Bằng chứng cần ghi |
 | --- | --- |
 | Đăng nhập, xác minh đăng ký và recovery | Ghi SHA app, phiên Android/API, phiên Expo Go/SDK và mã lần chạy QA. Dùng thư Mailpit để xác minh và đặt lại mật khẩu, rồi đăng nhập bằng mật khẩu mới. Chụp các màn ở 412dp. |

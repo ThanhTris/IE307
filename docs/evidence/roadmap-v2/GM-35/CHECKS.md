@@ -48,3 +48,20 @@ Revision app `9eb698a` trên `main` `5a69b56`. Code chuyển phiên nằm trong 
 | Runner và tài liệu | 20/20 ca `npm test` ở repo gốc đạt. `validate_repository.py` và `task_readiness.py --check-docs` đạt. Python regression toàn repo chạy 628 ca trên Python 3.15 cục bộ, kết thúc với 167 thất bại, 39 lỗi và 6 bỏ qua. Log có lỗi thiếu `jsonschema` và `tzdata`. Các workflow CI dùng Python 3.12. |
 | Merge gate | `python scripts/task_readiness.py --task GM-35 --gate merge --base-ref origin/main --verify-outputs` đọc Project #2 và trả `BLOCKED_ON_BASE`. Artifact GM-28 `historyRepository.ts` và GM-07 `client.ts` khớp `origin/main`. Mục còn chặn là GM-16 `mobile/src/data/auth/session.ts`. Ranh giới producer/adapter và đề xuất bàn giao chờ Trí xác nhận trong [HANDOFF](HANDOFF.md#ranh-giới-artifact-cần-trí-xác-nhận). |
 | AVD sau sửa | Máy có ADB nhưng danh sách thiết bị rỗng và chưa có Android Emulator/AVD có thể chạy. Thiếu log/ảnh 412dp và kết quả 320/360dp, chữ 200%, TalkBack, bàn phím và Back. Bằng chứng còn thiếu được liệt kê trong [FIGMA_PARITY](FIGMA_PARITY.md#bằng-chứng-avd-sau-review-182). |
+
+## Kiểm lại sau khi nhận GM-45
+
+Revision app và migration `8329d49` ghép với `origin/main` `5bbee5d`. QA sạch `gm35-gm45-review-1119` dùng Supabase CLI `2.120.0`, Auth/REST `127.0.0.1:54451` và Mailpit `127.0.0.1:54454`. `qa:verify` đạt với 49 migration, ownership hợp lệ và worker có heartbeat. Manifest đã đối chiếu với database có đủ:
+
+| Migration | Schema | Contract |
+| --- | --- | --- |
+| `0061_gm45_room_realtime.sql` | `0.31.6` | `dish-session-v4/roadmap-v2/GM-45.1` |
+| `0062_gm35_profile_display_name.sql` | `0.31.7` | `roadmap-v2/GM-35/profile-display-name` |
+
+- `node scripts/gm35_account_check.mjs gm35-gm45-review-1119` đạt 5/5 nhóm Auth/Mailpit. Sau ACK đổi tên, chính chủ đọc tên mới qua GoTrue và hồ sơ xã hội. Tài khoản thứ hai thấy tên mới qua `list_friends` và `find_partner_by_code`. UUID, mã bạn bè, avatar seed và quan hệ giữ nguyên.
+- `node scripts/gm45_realtime_check.mjs` đạt 22/22 ca trên cùng QA. Hai thành viên nhận đúng version qua WebSocket, client reconnect bắt kịp version mới và worker phát tín hiệu chuyển vòng. Outsider/cựu thành viên bị lọc. Retention dọn bản ghi và publication giữ INSERT/UPDATE. Phiên QA được dọn sau khi hai bộ kiểm hoàn tất.
+- Mobile đạt 168/168 ca trong 9 suite cho Auth/session, G04/G05, hồ sơ, lịch sử, Realtime, lobby và voting. Ca consent trong lúc dọn cache xác nhận không gửi request cũ. TypeScript, kiểm kiến trúc, Expo SDK/lockfile, 20/20 ca runner và kiểm tài liệu đạt.
+- Expo `58.0.25` export Android thành công với 3.929 module và bundle Hermes `.hbc` trên revision đã ghép.
+- Python 3.12 với dependencies của CI chạy 691 ca, có 3 lỗi và 7 ca bỏ qua. Khi chạy lại 3 ca lỗi với thư mục tạm mặc định, hai ca export fixture/báo cáo đạt. Ca `test_gm40_manifest...test_foreign_checkout_and_symlink_rejected` vẫn dừng ở thao tác tạo symlink trên Windows vì thiếu quyền (`WinError 1314`).
+- Merge gate với `--verify-outputs` trên `origin/main` `5bbee5d` trả `BLOCKED_ON_BASE` duy nhất ở `mobile/src/data/auth/session.ts` của GM-16. [HANDOFF](HANDOFF.md#ranh-giới-artifact-cần-trí-xác-nhận) ghi lệnh lấy patch producer, các guard cần bàn giao kèm và phần do GM-35 sở hữu. Chờ Trí xác nhận ranh giới producer.
+- AVD trên revision `8329d49` còn thiếu. Đối chiếu lại SDK local chỉ có `platform-tools` và danh sách ADB rỗng. Xem [FIGMA_PARITY](FIGMA_PARITY.md#bằng-chứng-avd-sau-review-182) cho các ca cần ghi khi có máy ảo.
