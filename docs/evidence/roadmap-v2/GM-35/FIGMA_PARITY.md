@@ -19,11 +19,9 @@
 - Thẻ Figma dùng avatar mẫu. Hồ sơ hiển thị chữ cái từ tên thật của phiên. Storage local đang tắt. Công tắc Hiện nút chọn món trong mẫu trợ năng nằm ngoài phần cài đặt được giao trong lần sửa này.
 - Theo phản hồi khi thử, khách vẫn thấy Bạn bè và Lịch sử ở footer nhưng mở đến màn mời đăng nhập. Hộp thư, push và Kèo nhanh dành cho tài khoản đã đăng nhập. Đây là hành vi bổ sung được yêu cầu sau lượt đối chiếu ban đầu.
 
-## Bằng chứng AVD sau review #182
+## Bàn giao lượt AVD cho Trí
 
-Lượt review lại xác định ADB hoạt động nhưng `adb devices -l` trả danh sách rỗng. Workspace và các vị trí cài đặt SDK trên máy chưa có Android Emulator/AVD có thể chạy. Vì vậy chưa có Android/Expo runtime, viewport hay ảnh để đối chiếu nhánh sửa. Giữ kết quả Expo Go thủ công ngày 2026-11-19 ở đầu tài liệu. [Thiết lập AVD cho Expo Go](https://docs.expo.dev/get-started/set-up-your-environment/?device=simulated&mode=expo-go&platform=android).
-
-Sau khi nhận GM-45, revision app `8329d49` đã chạy hồi quy tự động và QA GoTrue/REST. Kiểm tra thiết bị lại cho thấy SDK local chỉ có `platform-tools`, `adb devices -l` vẫn rỗng. Vì vậy các ca AVD trong bảng tiếp tục chờ môi trường có Android Emulator và system image. Bằng chứng của GM-45 trên AVD thuộc revision và luồng phòng của GM-45. Xem [CHECKS](CHECKS.md) để biết kết quả của revision GM-35 sau khi ghép.
+Trí thực hiện và ghi bằng chứng AVD nối Auth, REST và worker QA local trên revision cuối của PR #182. Các ca trong bảng đang chờ lượt kiểm này. Xem [cách dựng QA](HANDOFF.md#kiểm-thử-trên-expo-go-với-mã-mailpit) và [kết quả đã ghi của GM-35](CHECKS.md).
 
 | Hạng mục trên AVD nối QA thật | Bằng chứng cần ghi |
 | --- | --- |

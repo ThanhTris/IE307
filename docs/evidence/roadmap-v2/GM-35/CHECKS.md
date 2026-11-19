@@ -46,8 +46,8 @@ Revision app `9eb698a` trên `main` `5a69b56`. Code chuyển phiên nằm trong 
 | Hồi quy mobile | 201/201 ca trong 9 suite với `--testTimeout=30000`, TypeScript, lint tệp đã sửa, kiểm kiến trúc và Expo `58.0.25` theo lockfile đạt. G04 gửi lại đúng tên sau lỗi và nhận ACK, G05 bấm lần hai khi pending chỉ gọi service một lần và xóa cả ba ô sau lỗi. Hai ca UI dùng provider kiểm thử. |
 | Export Android | Expo `58.0.25` export Android thành công với 3.926 module và xuất bundle Hermes `.hbc`. Kết quả xác nhận bước đóng gói JS. |
 | Runner và tài liệu | 20/20 ca `npm test` ở repo gốc đạt. `validate_repository.py` và `task_readiness.py --check-docs` đạt. Python regression toàn repo chạy 628 ca trên Python 3.15 cục bộ, kết thúc với 167 thất bại, 39 lỗi và 6 bỏ qua. Log có lỗi thiếu `jsonschema` và `tzdata`. Các workflow CI dùng Python 3.12. |
-| Merge gate | `python scripts/task_readiness.py --task GM-35 --gate merge --base-ref origin/main --verify-outputs` đọc Project #2 và trả `BLOCKED_ON_BASE`. Artifact GM-28 `historyRepository.ts` và GM-07 `client.ts` khớp `origin/main`. Mục còn chặn là GM-16 `mobile/src/data/auth/session.ts`. Ranh giới producer/adapter và đề xuất bàn giao chờ Trí xác nhận trong [HANDOFF](HANDOFF.md#ranh-giới-artifact-cần-trí-xác-nhận). |
-| AVD sau sửa | Máy có ADB nhưng danh sách thiết bị rỗng và chưa có Android Emulator/AVD có thể chạy. Thiếu log/ảnh 412dp và kết quả 320/360dp, chữ 200%, TalkBack, bàn phím và Back. Bằng chứng còn thiếu được liệt kê trong [FIGMA_PARITY](FIGMA_PARITY.md#bằng-chứng-avd-sau-review-182). |
+| Merge gate | `python scripts/task_readiness.py --task GM-35 --gate merge --base-ref origin/main --verify-outputs` đọc Project #2 và trả `BLOCKED_ON_BASE`. Artifact GM-28 `historyRepository.ts` và GM-07 `client.ts` khớp `origin/main`. Mục còn chặn là GM-16 `mobile/src/data/auth/session.ts`. Xem ranh giới producer trong [HANDOFF](HANDOFF.md#bàn-giao-producer-gm-16). |
+| AVD sau sửa | Tại lượt này, danh sách ADB rỗng và chưa có AVD có thể chạy. Xem phần [bàn giao lượt AVD](FIGMA_PARITY.md#bàn-giao-lượt-avd-cho-trí) cho ma trận kiểm hiện hành. |
 
 ## Kiểm lại sau khi nhận GM-45
 
@@ -63,8 +63,7 @@ Revision app và migration `8329d49` ghép với `origin/main` `5bbee5d`. QA s�
 - Mobile đạt 168/168 ca trong 9 suite cho Auth/session, G04/G05, hồ sơ, lịch sử, Realtime, lobby và voting. Ca consent trong lúc dọn cache xác nhận không gửi request cũ. TypeScript, kiểm kiến trúc, Expo SDK/lockfile, 20/20 ca runner và kiểm tài liệu đạt.
 - Expo `58.0.25` export Android thành công với 3.929 module và bundle Hermes `.hbc` trên revision đã ghép.
 - Python 3.12 với dependencies của CI chạy 691 ca, có 3 lỗi và 7 ca bỏ qua. Khi chạy lại 3 ca lỗi với thư mục tạm mặc định, hai ca export fixture/báo cáo đạt. Ca `test_gm40_manifest...test_foreign_checkout_and_symlink_rejected` vẫn dừng ở thao tác tạo symlink trên Windows vì thiếu quyền (`WinError 1314`).
-- Merge gate với `--verify-outputs` trên `origin/main` `5bbee5d` trả `BLOCKED_ON_BASE` duy nhất ở `mobile/src/data/auth/session.ts` của GM-16. [HANDOFF](HANDOFF.md#ranh-giới-artifact-cần-trí-xác-nhận) ghi lệnh lấy patch producer, các guard cần bàn giao kèm và phần do GM-35 sở hữu. Chờ Trí xác nhận ranh giới producer.
-- AVD trên revision `8329d49` còn thiếu. Đối chiếu lại SDK local chỉ có `platform-tools` và danh sách ADB rỗng. Xem [FIGMA_PARITY](FIGMA_PARITY.md#bằng-chứng-avd-sau-review-182) cho các ca cần ghi khi có máy ảo.
+- Merge gate với `--verify-outputs` trên `origin/main` `5bbee5d` trả `BLOCKED_ON_BASE` duy nhất ở `mobile/src/data/auth/session.ts` của GM-16.
 
 ## Lượt kiểm trên máy Android API 37
 
@@ -73,3 +72,8 @@ Ngày 19/11/2026, checkout `1561d901fa6d15f76091445e005b2cc097f52e91`. QA `gm35-
 Realtime đạt 22/22 khi chạy lại. Lượt đầu fail ở assertion sau khi kick vì kênh nhận các version 1–3 đã tạo trước thao tác kick; ca REST xác nhận người bị kick không đọc được dòng tín hiệu. Log của cả hai lượt được giữ riêng để truy vết độ ổn định của runner.
 
 `Medium_Phone_API_37.0` boot với Expo Go 58.0.5. Các ca tương tác trong app, G04/G05, ảnh đối chiếu và trợ năng vẫn **Not run** tại lần ghi này vì Metro QA trên cổng 8082 chưa khởi động. Merge gate với base `5bbee5d` vẫn `BLOCKED_ON_BASE` ở artifact GM-16 `mobile/src/data/auth/session.ts`. Log và ma trận local nằm trong `review-results/gm35-avd-092834100/`.
+
+## Bàn giao các mục còn chặn merge
+
+- **GM-16.** [Patch producer](GM16_PRODUCER.patch) tách `session.ts` và hai guard Auth từ baseline `5bbee5d`. `git apply --check` đạt trên baseline. Checkout thử của producer đạt 69/69 ca `authSession` và `authTransport`, cùng TypeScript. Ca hồi quy đổi phiên trên nhánh GM-35 cũng đạt khi chạy riêng. Trí chốt ranh giới để tiếp nhận vào `main`. Sau bàn giao, chạy lại ca đổi phiên và merge gate trên revision đã đồng bộ. [HANDOFF](HANDOFF.md#bàn-giao-producer-gm-16)
+- **AVD.** Trí sẽ chạy và ghi bằng chứng trên revision cuối, gồm các luồng tài khoản, G04/G05, ảnh Figma/app ở 412dp và cấu hình trợ năng. Trạng thái chờ lượt AVD. [FIGMA_PARITY](FIGMA_PARITY.md#bàn-giao-lượt-avd-cho-trí)

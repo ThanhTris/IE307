@@ -21,24 +21,28 @@
 
 Code tài khoản dùng GoTrue `auth/v1`. Migration [`0062_gm35_profile_display_name.sql`](../../../../supabase/migrations/0062_gm35_profile_display_name.sql) đăng ký schema `0.31.7`, sau `0061`/`0.31.6` của GM-45 trên `main` `5bbee5d`. Runner GM-35 kiểm migration và đăng ký schema trên phiên QA đã xác minh. Trigger nhận tên hợp lệ khi metadata thay đổi, dùng UUID của dòng Auth và chỉ cập nhật tên cùng version của hồ sơ. UUID, mã bạn bè, avatar seed và quan hệ bạn bè giữ nguyên. Các hồ sơ đã lệch tên từ bản thử cũ cần một lần đổi sang tên hợp lệ mới hoặc kế hoạch đối soát riêng nếu cần xử lý hàng loạt. Supabase hosted và kiểm gửi Gmail thật thuộc bước triển khai sau.
 
-## Ranh giới artifact cần Trí xác nhận
+## Bàn giao producer GM-16
+
+Trí xác nhận ranh giới producer và quyết định đưa patch lên `main`. [GM16_PRODUCER.patch](GM16_PRODUCER.patch) tách đúng ba file quản lý phiên và kiểm dữ liệu Auth từ baseline `5bbee5d`. Code của consumer GM-35 đã có trên PR #182.
 
 | Producer | Đề xuất bàn giao |
 | --- | --- |
 | GM-16 · [`session.ts`](../../../../mobile/src/data/auth/session.ts) | Producer bàn giao `runAccountOperation`, callback công bố phiên và thứ tự serialize đổi phiên, xoay token, logout. Epoch tiến khi bắt đầu thay danh tính và khi phiên mới đã lưu an toàn. Lấy token kiểm epoch đã chụp trước hàng đợi và client kiểm lại ngay trước transport. Phần này cần review cùng kiểm thử `clearPrivateData` tạm dừng. GM-35 giữ thao tác đăng nhập, xác minh, recovery và màn hình tiêu thụ API phiên. |
 | GM-28 · [`historyRepository.ts`](../../../../mobile/src/features/history/services/historyRepository.ts) | Artifact đã khớp `origin/main` `5bbee5d`. GM-35 giữ luồng xóa nhiều mục cá nhân trong adapter, tái sử dụng `fetch`, `delete`, `readConsent` và `updateConsent`. |
 
-Patch nguồn để GM-16 review độc lập. Lấy diff của artifact trên baseline đã ghép và revision vẫn giữ ca hồi quy đổi phiên:
+Sau khi chốt phạm vi, có thể kiểm và áp patch trên nhánh producer tách từ `5bbee5d`. Sao chép patch vào một thư mục ngoài checkout producer và dùng đường dẫn tuyệt đối.
 
 ```powershell
-git diff 5bbee5d ae1c392 -- mobile/src/data/auth/session.ts
+$patch = 'C:\path\GM16_PRODUCER.patch'
+git apply --check $patch
+git apply $patch
 ```
 
 - Lớp phiên GM-16 sở hữu `runAccountOperation` và `onAccountSessionChange`, lưu token trước khi công bố danh tính, tăng epoch trước khi dọn cache và sau khi lưu phiên đích. Logout và refresh dùng cùng hàng đợi. Restore/refresh tiếp tục kiểm UUID và hỗ trợ phiên email đã xác minh.
-- Khi đưa phần quản lý phiên lên producer riêng, nhận cùng hai guard tối thiểu của auth nền. `isStoredSession` trong `validation.ts` chấp nhận session hợp lệ của cả khách và tài khoản. `userDto` trong `transport.ts` chấp nhận cả hai loại cho verify/refresh. `createGuestSession` vẫn yêu cầu `isGuest === true`. Hai guard có thể đối chiếu theo diff `5bbee5d..ae1c392` của các file tương ứng.
+- Patch nhận cùng hai guard của Auth nền. `isStoredSession` trong `validation.ts` và `userDto` trong `transport.ts` nhận phiên hợp lệ của cả khách và tài khoản khi restore/refresh. Đường tạo khách kiểm `isGuest === true` tại cả transport và session manager. Restore/refresh giữ đối chiếu UUID.
 - GM-35 giữ OTP, recovery proof, credential validation, luồng GoTrue riêng cho tài khoản, màn hình và callback wiring của app. Giữ ca `consent started while guest cleanup is paused` trong [kiểm thử tích hợp client/repository](../../../../mobile/tests/unit/authSession.test.ts). Ca này kiểm request cũ dừng trước transport và request mới đi đúng một lần với token phiên đích.
 
-Trí xác nhận ranh giới và PR/commit bàn giao của GM-16 trước khi tiếp nhận. Sau khi lấy revision producer trên `main`, chạy `python scripts/task_readiness.py --task GM-35 --gate merge --base-ref origin/main --verify-outputs` và chạy lại ca đổi phiên. Xem [CHECKS](CHECKS.md).
+Sau khi patch GM-16 được bàn giao lên `main`, GM-35 cần fetch và đồng bộ revision producer vào PR #182. Đối chiếu `session.ts` với artifact trên `origin/main`, chạy lại ca đổi phiên và `python scripts/task_readiness.py --task GM-35 --gate merge --base-ref origin/main --verify-outputs`. Xem [CHECKS](CHECKS.md).
 
 ## Kiểm thử trên Expo Go với mã Mailpit
 
@@ -76,6 +80,8 @@ npx expo start --go --localhost --port 8081
 
 Dùng email thử nghiệm để đăng ký và nhập mã trong thư **Xác minh email**. Đăng nhập rồi đăng xuất, chọn **Quên mật khẩu?** và nhập mã trong thư **Đặt lại mật khẩu**. Sau đó lưu mật khẩu mới và đăng nhập lại. Khi kiểm xong, chạy `npm run qa:stop -- --run-id $gm35Run` để dọn phiên QA.
 
-Khi tái lập trên AVD, dùng bảng ca theo [CHECKS](CHECKS.md). Kiểm riêng email trùng khi liên kết, gửi lại mã, hồ sơ G04 giữ tên khi lỗi, G05 xóa ba ô mật khẩu khi lỗi, tùy chọn của Khách và hành vi cài đặt của tài khoản. Đối chiếu 412dp và các biến thể trợ năng theo [FIGMA_PARITY](FIGMA_PARITY.md).
+## Bàn giao lượt AVD cho Trí
+
+Trí thực hiện lượt AVD trên revision cuối của PR #182, nối Auth, REST và worker của QA local đã xác minh. Dùng Mailpit để lấy OTP đăng ký và recovery. Với G04, tạo lỗi server có kiểm soát, kiểm tên vẫn giữ, rồi khôi phục kết nối và lưu lại đến khi thấy ACK thành công. Với G05, tạo khoảng chờ trước khi server trả lỗi, thử bấm lưu lần hai, rồi kiểm cả ba ô trống và nút lưu dùng lại được. Ghi SHA, Android/Expo, run ID QA, ảnh đối chiếu Figma 412dp và kết quả 320/360dp, chữ 200%, TalkBack, bàn phím và Back. [Bảng ca AVD](FIGMA_PARITY.md#bàn-giao-lượt-avd-cho-trí)
 
 App gọi trực tiếp `signup`, `verify`, `token?grant_type=password`, `recover` và `user` dưới `/auth/v1`. Xác minh email dùng loại `signup`. Recovery dùng loại `recovery` và chỉ dùng token tạm để đặt mật khẩu. Gọi `logout?scope=local` để thu hồi phiên tạm đó. Request mẫu có trong [GM-35.http](../../../../supabase/tests/http/GM-35.http).
