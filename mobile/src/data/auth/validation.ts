@@ -12,5 +12,5 @@ export function isStoredSession(value: unknown): value is StoredSession {
   return typeof row.accessToken === 'string' && row.accessToken.length > 0
     && typeof row.refreshToken === 'string' && row.refreshToken.length > 0
     && typeof row.expiresAt === 'string' && Number.isFinite(Date.parse(row.expiresAt))
-    && isSessionUser(row.user) && row.user.isGuest && validDisplayName(row.user.displayName);
+    && isSessionUser(row.user) && validDisplayName(row.user.displayName);
 }
