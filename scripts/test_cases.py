@@ -496,12 +496,17 @@ def title_matches(template: str, full: str) -> bool:
 
 
 def import_results(suite: Suite, jest: dict | None, unit: dict | None, run: str, commit: str, build: str, date: str) -> list:
+    """Turn automated outcomes into per-case results for the `ci` environment.
+
+    A case is recorded only when every explicit automation link is a Jest/unittest test that ran,
+    and Jest tests whose title carries the case tag (TC-XXX-NNN) are added as extra verdicts."""
     results = []
     for case in suite.cases:
         if 'ci' not in case['env']:
             continue
+        explicit = [e for e in case['automation'] if e != 'manual']
         verdicts = []
-        for entry in case['automation']:
+        for entry in explicit:
             path, _, title = entry.partition('::')
             if jest is not None and path in jest and title:
                 matched = [s for t, s in jest[path] if title_matches(title, t)]
@@ -509,10 +514,19 @@ def import_results(suite: Suite, jest: dict | None, unit: dict | None, run: str,
                     verdicts.append('Pass' if all(s == 'passed' for s in matched) else 'Fail' if any(s == 'failed' for s in matched) else 'N/A')
             elif unit is not None and path in unit and title in unit[path]:
                 verdicts.append(unit[path][title])
-        expected = [e for e in case['automation'] if '::' in e and (e.partition('::')[0].startswith(('mobile/', 'tests/')))]
-        if verdicts and len(verdicts) == len(expected) and len(expected) == len(case['automation']):
-            status = 'Fail' if 'Fail' in verdicts else 'Pass' if 'Pass' in verdicts else 'N/A'
-            results.append({'case': case['id'], 'env': 'ci', 'status': status, 'actual': f'{len(verdicts)} automated test(s) {status.lower()}'})
+        importable = all('::' in e and e.partition('::')[0].startswith(('mobile/', 'tests/')) for e in explicit)
+        if explicit and not (importable and len(verdicts) == len(explicit)):
+            continue
+        tagged = []
+        if jest is not None:
+            for rows in jest.values():
+                tagged += [s for t, s in rows if case['id'] in t]
+        tag_verdicts = ['Pass' if s == 'passed' else 'Fail' if s == 'failed' else 'N/A' for s in tagged]
+        every = verdicts + tag_verdicts
+        if not every:
+            continue
+        status = 'Fail' if 'Fail' in every else 'Pass' if 'Pass' in every else 'N/A'
+        results.append({'case': case['id'], 'env': 'ci', 'status': status, 'actual': f'{len(every)} automated test(s) {status.lower()}'})
     return results
 
 

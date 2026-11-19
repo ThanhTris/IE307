@@ -229,6 +229,18 @@ class ImportTests(unittest.TestCase):
         rows = tc.import_results(tc.Suite(fx.root), None, outcomes, 'run', 'abc', '', '2026-11-20')
         self.assertEqual(rows[0]['status'], 'Pass')
 
+    def test_jest_tests_carrying_the_case_tag_are_recorded_for_the_case(self):
+        fx = Fixture([case(automation=['manual'], level='component')])
+        self.addCleanup(fx.cleanup)
+        data = {'testResults': [{'name': str(fx.root / 'mobile/tests/component/x.test.tsx'),
+                                 'assertionResults': [{'fullName': 'TC-AUTH-001 guest enters', 'status': 'passed'},
+                                                      {'fullName': 'unrelated', 'status': 'failed'}]}]}
+        rows = tc.import_results(tc.Suite(fx.root), tc.jest_outcomes(data, fx.root), None, 'run', 'abc', '', '2026-11-20')
+        self.assertEqual([(r['case'], r['status']) for r in rows], [('TC-AUTH-001', 'Pass')])
+        data['testResults'][0]['assertionResults'][0]['status'] = 'failed'
+        rows = tc.import_results(tc.Suite(fx.root), tc.jest_outcomes(data, fx.root), None, 'run', 'abc', '', '2026-11-20')
+        self.assertEqual(rows[0]['status'], 'Fail')
+
     def test_import_records_only_the_ci_environment(self):
         fx = Fixture([case(env=['ci', 'avd'])])
         self.addCleanup(fx.cleanup)
