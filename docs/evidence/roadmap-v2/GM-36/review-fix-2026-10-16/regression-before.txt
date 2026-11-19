@@ -65,13 +65,13 @@ test at tests/gm36-menu-ocr.test.mjs:23:3
 ✖ abbreviated range cannot confirm an implied thousand scale: 35-45k (1.474542ms)
   AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
   + actual - expected
-  
+
   + [
   +   35,
   +   45000
   + ]
   - null
-  
+
       at TestContext.<anonymous> (file:///Users/hoaitam/Desktop/Learn/23521394/HK1-Nam-4/IE307/ThanhTris-IE307/tests/gm36-menu-ocr.test.mjs:23:87)
       at Test.runInAsyncScope (node:async_hooks:226:14)
       at Test.run (node:internal/test_runner/test:1201:25)
@@ -91,9 +91,9 @@ test at tests/gm36-menu-ocr.test.mjs:23:3
 test at tests/gm36-menu-ocr.test.mjs:24:3
 ✖ high confidence cannot confirm ambiguous range or its price source: 35-45k (1.287791ms)
   AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
-  
+
   35 !== null
-  
+
       at TestContext.<anonymous> (file:///Users/hoaitam/Desktop/Learn/23521394/HK1-Nam-4/IE307/ThanhTris-IE307/tests/gm36-menu-ocr.test.mjs:28:71)
       at Test.runInAsyncScope (node:async_hooks:226:14)
       at Test.run (node:internal/test_runner/test:1201:25)
@@ -114,13 +114,13 @@ test at tests/gm36-menu-ocr.test.mjs:23:3
 ✖ abbreviated range cannot confirm an implied thousand scale: 35-45.000 đ (0.140625ms)
   AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
   + actual - expected
-  
+
   + [
   +   35,
   +   45000
   + ]
   - null
-  
+
       at TestContext.<anonymous> (file:///Users/hoaitam/Desktop/Learn/23521394/HK1-Nam-4/IE307/ThanhTris-IE307/tests/gm36-menu-ocr.test.mjs:23:87)
       at Test.runInAsyncScope (node:async_hooks:226:14)
       at Test.run (node:internal/test_runner/test:1201:25)
@@ -140,9 +140,9 @@ test at tests/gm36-menu-ocr.test.mjs:23:3
 test at tests/gm36-menu-ocr.test.mjs:24:3
 ✖ high confidence cannot confirm ambiguous range or its price source: 35-45.000 đ (0.327417ms)
   AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
-  
+
   35 !== null
-  
+
       at TestContext.<anonymous> (file:///Users/hoaitam/Desktop/Learn/23521394/HK1-Nam-4/IE307/ThanhTris-IE307/tests/gm36-menu-ocr.test.mjs:28:71)
       at Test.runInAsyncScope (node:async_hooks:226:14)
       at Test.run (node:internal/test_runner/test:1201:25)
@@ -163,13 +163,13 @@ test at tests/gm36-menu-ocr.test.mjs:23:3
 ✖ abbreviated range cannot confirm an implied thousand scale: 35-45000 đ (0.105542ms)
   AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
   + actual - expected
-  
+
   + [
   +   35,
   +   45000
   + ]
   - null
-  
+
       at TestContext.<anonymous> (file:///Users/hoaitam/Desktop/Learn/23521394/HK1-Nam-4/IE307/ThanhTris-IE307/tests/gm36-menu-ocr.test.mjs:23:87)
       at Test.runInAsyncScope (node:async_hooks:226:14)
       at Test.run (node:internal/test_runner/test:1201:25)
@@ -189,9 +189,9 @@ test at tests/gm36-menu-ocr.test.mjs:23:3
 test at tests/gm36-menu-ocr.test.mjs:24:3
 ✖ high confidence cannot confirm ambiguous range or its price source: 35-45000 đ (0.190875ms)
   AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
-  
+
   35 !== null
-  
+
       at TestContext.<anonymous> (file:///Users/hoaitam/Desktop/Learn/23521394/HK1-Nam-4/IE307/ThanhTris-IE307/tests/gm36-menu-ocr.test.mjs:28:71)
       at Test.runInAsyncScope (node:async_hooks:226:14)
       at Test.run (node:internal/test_runner/test:1201:25)
@@ -212,13 +212,13 @@ test at tests/gm36-menu-ocr.test.mjs:23:3
 ✖ abbreviated range cannot confirm an implied thousand scale: 35-45 000 đ (0.087542ms)
   AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
   + actual - expected
-  
+
   + [
   +   35,
   +   45000
   + ]
   - null
-  
+
       at TestContext.<anonymous> (file:///Users/hoaitam/Desktop/Learn/23521394/HK1-Nam-4/IE307/ThanhTris-IE307/tests/gm36-menu-ocr.test.mjs:23:87)
       at Test.runInAsyncScope (node:async_hooks:226:14)
       at Test.run (node:internal/test_runner/test:1201:25)
@@ -238,9 +238,9 @@ test at tests/gm36-menu-ocr.test.mjs:23:3
 test at tests/gm36-menu-ocr.test.mjs:24:3
 ✖ high confidence cannot confirm ambiguous range or its price source: 35-45 000 đ (0.215708ms)
   AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
-  
+
   35 !== null
-  
+
       at TestContext.<anonymous> (file:///Users/hoaitam/Desktop/Learn/23521394/HK1-Nam-4/IE307/ThanhTris-IE307/tests/gm36-menu-ocr.test.mjs:28:71)
       at Test.runInAsyncScope (node:async_hooks:226:14)
       at Test.run (node:internal/test_runner/test:1201:25)

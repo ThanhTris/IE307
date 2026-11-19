@@ -20,3 +20,7 @@ The prior macOS run stopped during disposable QA startup with
 [18 November record](continuation-2026-11-18/MANIFEST.json). The entrypoint stays
 disabled. The handler returns drafts only and never activates a catalogue or
 publishes data. Earlier October reports apply to their recorded revisions.
+
+Historical red-run output had whitespace on blank lines. The Git diff
+normalizes those lines. Original bytes are available at the prior PR head
+`0608d3e`.
