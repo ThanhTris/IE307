@@ -2,7 +2,7 @@
 
 Sinh từ task bằng `python scripts/task_readiness.py --write-docs`; không sửa tay. `--check-docs` kiểm độ mới. Đây là metadata/gate chẩn đoán local, không phải trạng thái GitHub. Gate thực tế đọc Done live trên Project theo ADR-011; xem docs/project/PROJECT_READINESS.md.
 
-44 task sau GM-00: 37 P0 (gồm GM-01), 4 P1, 3 P2. Mã roadmap-v2 tăng theo lộ trình; mọi dependency có số nhỏ hơn task. Owner/reviewer là đề xuất; không kế thừa approval khi đổi scope.
+59 task sau GM-00: 53 P0 (gồm GM-01), 3 P1, 3 P2. Mã roadmap-v2 tăng theo lộ trình; mọi dependency có số nhỏ hơn task. Owner/reviewer là đề xuất; không kế thừa approval khi đổi scope.
 
 ## Hai gate khác nhau
 
@@ -66,10 +66,25 @@ READY_TO_CLAIM: đủ start deps, chưa nhận việc (bao gồm task Needs Upda
 | [GM-38](../../tasks/backlog/GM-38.md) | BLOCKED | [GM-04](../../tasks/backlog/GM-04.md), [GM-07](../../tasks/backlog/GM-07.md), [GM-18](../../tasks/backlog/GM-18.md), [GM-21](../../tasks/backlog/GM-21.md), [GM-34](../../tasks/backlog/GM-34.md) | BLOCKED | [GM-04](../../tasks/backlog/GM-04.md), [GM-07](../../tasks/backlog/GM-07.md), [GM-18](../../tasks/backlog/GM-18.md), [GM-21](../../tasks/backlog/GM-21.md), [GM-34](../../tasks/backlog/GM-34.md) |
 | [GM-39](../../tasks/backlog/GM-39.md) | BLOCKED | [GM-05](../../tasks/backlog/GM-05.md), [GM-09](../../tasks/backlog/GM-09.md), [GM-10](../../tasks/backlog/GM-10.md), [GM-11](../../tasks/backlog/GM-11.md), [GM-12](../../tasks/backlog/GM-12.md), [GM-13](../../tasks/backlog/GM-13.md), [GM-14](../../tasks/backlog/GM-14.md) | BLOCKED | [GM-05](../../tasks/backlog/GM-05.md), [GM-09](../../tasks/backlog/GM-09.md), [GM-10](../../tasks/backlog/GM-10.md), [GM-11](../../tasks/backlog/GM-11.md), [GM-12](../../tasks/backlog/GM-12.md), [GM-13](../../tasks/backlog/GM-13.md), [GM-14](../../tasks/backlog/GM-14.md) |
 | [GM-40](../../tasks/backlog/GM-40.md) | BLOCKED | [GM-04](../../tasks/backlog/GM-04.md), [GM-06](../../tasks/backlog/GM-06.md), [GM-07](../../tasks/backlog/GM-07.md), [GM-08](../../tasks/in-progress/GM-08.md), [GM-18](../../tasks/backlog/GM-18.md) | BLOCKED | [GM-04](../../tasks/backlog/GM-04.md), [GM-06](../../tasks/backlog/GM-06.md), [GM-07](../../tasks/backlog/GM-07.md), [GM-08](../../tasks/in-progress/GM-08.md), [GM-18](../../tasks/backlog/GM-18.md) |
+| [GM-41](../../tasks/backlog/GM-41.md) | BLOCKED | [GM-40](../../tasks/backlog/GM-40.md) | BLOCKED | [GM-40](../../tasks/backlog/GM-40.md) |
 | [GM-42](../../tasks/backlog/GM-42.md) | BLOCKED | [GM-20](../../tasks/backlog/GM-20.md), [GM-21](../../tasks/backlog/GM-21.md) | BLOCKED | [GM-20](../../tasks/backlog/GM-20.md), [GM-21](../../tasks/backlog/GM-21.md) |
 | [GM-43](../../tasks/backlog/GM-43.md) | BLOCKED | [GM-20](../../tasks/backlog/GM-20.md), [GM-23](../../tasks/backlog/GM-23.md) | BLOCKED | [GM-20](../../tasks/backlog/GM-20.md), [GM-23](../../tasks/backlog/GM-23.md) |
 | [GM-44](../../tasks/backlog/GM-44.md) | BLOCKED | [GM-19](../../tasks/backlog/GM-19.md), [GM-25](../../tasks/backlog/GM-25.md) | BLOCKED | [GM-19](../../tasks/backlog/GM-19.md), [GM-25](../../tasks/backlog/GM-25.md) |
 | [GM-45](../../tasks/backlog/GM-45.md) | BLOCKED | [GM-19](../../tasks/backlog/GM-19.md), [GM-25](../../tasks/backlog/GM-25.md), [GM-26](../../tasks/backlog/GM-26.md) | BLOCKED | [GM-19](../../tasks/backlog/GM-19.md), [GM-25](../../tasks/backlog/GM-25.md), [GM-26](../../tasks/backlog/GM-26.md) |
+| [GM-46](../../tasks/backlog/GM-46.md) | BLOCKED | [GM-19](../../tasks/backlog/GM-19.md), [GM-21](../../tasks/backlog/GM-21.md), [GM-24](../../tasks/backlog/GM-24.md) | BLOCKED | [GM-19](../../tasks/backlog/GM-19.md), [GM-21](../../tasks/backlog/GM-21.md), [GM-24](../../tasks/backlog/GM-24.md) |
+| [GM-47](../../tasks/backlog/GM-47.md) | BLOCKED | [GM-40](../../tasks/backlog/GM-40.md) | BLOCKED | [GM-40](../../tasks/backlog/GM-40.md) |
+| [GM-48](../../tasks/backlog/GM-48.md) | BLOCKED | [GM-20](../../tasks/backlog/GM-20.md) | BLOCKED | [GM-20](../../tasks/backlog/GM-20.md) |
+| [GM-49](../../tasks/backlog/GM-49.md) | BLOCKED | [GM-16](../../tasks/in-progress/GM-16.md), [GM-17](../../tasks/backlog/GM-17.md), [GM-21](../../tasks/backlog/GM-21.md), [GM-22](../../tasks/backlog/GM-22.md), [GM-23](../../tasks/backlog/GM-23.md) | BLOCKED | [GM-16](../../tasks/in-progress/GM-16.md), [GM-17](../../tasks/backlog/GM-17.md), [GM-21](../../tasks/backlog/GM-21.md), [GM-22](../../tasks/backlog/GM-22.md), [GM-23](../../tasks/backlog/GM-23.md) |
+| [GM-50](../../tasks/backlog/GM-50.md) | BLOCKED | [GM-21](../../tasks/backlog/GM-21.md), [GM-23](../../tasks/backlog/GM-23.md) | BLOCKED | [GM-21](../../tasks/backlog/GM-21.md), [GM-23](../../tasks/backlog/GM-23.md) |
+| [GM-51](../../tasks/backlog/GM-51.md) | BLOCKED | [GM-08](../../tasks/in-progress/GM-08.md), [GM-40](../../tasks/backlog/GM-40.md), [GM-41](../../tasks/backlog/GM-41.md), [GM-47](../../tasks/backlog/GM-47.md) | BLOCKED | [GM-08](../../tasks/in-progress/GM-08.md), [GM-40](../../tasks/backlog/GM-40.md), [GM-41](../../tasks/backlog/GM-41.md), [GM-47](../../tasks/backlog/GM-47.md) |
+| [GM-52](../../tasks/backlog/GM-52.md) | BLOCKED | [GM-03](../../tasks/review/GM-03.md), [GM-48](../../tasks/backlog/GM-48.md), [GM-49](../../tasks/backlog/GM-49.md), [GM-51](../../tasks/backlog/GM-51.md) | BLOCKED | [GM-03](../../tasks/review/GM-03.md), [GM-48](../../tasks/backlog/GM-48.md), [GM-49](../../tasks/backlog/GM-49.md), [GM-51](../../tasks/backlog/GM-51.md) |
+| [GM-53](../../tasks/backlog/GM-53.md) | BLOCKED | [GM-35](../../tasks/backlog/GM-35.md), [GM-49](../../tasks/backlog/GM-49.md), [GM-50](../../tasks/backlog/GM-50.md) | BLOCKED | [GM-35](../../tasks/backlog/GM-35.md), [GM-49](../../tasks/backlog/GM-49.md), [GM-50](../../tasks/backlog/GM-50.md) |
+| [GM-54](../../tasks/backlog/GM-54.md) | BLOCKED | [GM-27](../../tasks/backlog/GM-27.md), [GM-30](../../tasks/backlog/GM-30.md), [GM-35](../../tasks/backlog/GM-35.md) | BLOCKED | [GM-27](../../tasks/backlog/GM-27.md), [GM-30](../../tasks/backlog/GM-30.md), [GM-35](../../tasks/backlog/GM-35.md) |
+| [GM-55](../../tasks/backlog/GM-55.md) | BLOCKED | [GM-32](../../tasks/backlog/GM-32.md) | BLOCKED | [GM-32](../../tasks/backlog/GM-32.md) |
+| [GM-56](../../tasks/backlog/GM-56.md) | BLOCKED | [GM-31](../../tasks/backlog/GM-31.md), [GM-32](../../tasks/backlog/GM-32.md) | BLOCKED | [GM-31](../../tasks/backlog/GM-31.md), [GM-32](../../tasks/backlog/GM-32.md), [GM-55](../../tasks/backlog/GM-55.md) |
+| [GM-57](../../tasks/backlog/GM-57.md) | BLOCKED | [GM-31](../../tasks/backlog/GM-31.md), [GM-32](../../tasks/backlog/GM-32.md) | BLOCKED | [GM-31](../../tasks/backlog/GM-31.md), [GM-32](../../tasks/backlog/GM-32.md), [GM-55](../../tasks/backlog/GM-55.md) |
+| [GM-58](../../tasks/backlog/GM-58.md) | BLOCKED | [GM-35](../../tasks/backlog/GM-35.md), [GM-46](../../tasks/backlog/GM-46.md), [GM-52](../../tasks/backlog/GM-52.md), [GM-53](../../tasks/backlog/GM-53.md), [GM-54](../../tasks/backlog/GM-54.md), [GM-55](../../tasks/backlog/GM-55.md), [GM-56](../../tasks/backlog/GM-56.md), [GM-57](../../tasks/backlog/GM-57.md) | BLOCKED | [GM-35](../../tasks/backlog/GM-35.md), [GM-42](../../tasks/backlog/GM-42.md), [GM-43](../../tasks/backlog/GM-43.md), [GM-46](../../tasks/backlog/GM-46.md), [GM-52](../../tasks/backlog/GM-52.md), [GM-53](../../tasks/backlog/GM-53.md), [GM-54](../../tasks/backlog/GM-54.md), [GM-55](../../tasks/backlog/GM-55.md), [GM-56](../../tasks/backlog/GM-56.md), [GM-57](../../tasks/backlog/GM-57.md) |
+| [GM-59](../../tasks/backlog/GM-59.md) | BLOCKED | [GM-50](../../tasks/backlog/GM-50.md), [GM-52](../../tasks/backlog/GM-52.md), [GM-58](../../tasks/backlog/GM-58.md) | BLOCKED | [GM-50](../../tasks/backlog/GM-50.md), [GM-52](../../tasks/backlog/GM-52.md), [GM-58](../../tasks/backlog/GM-58.md) |
 
 ## Lớp mở khóa bắt đầu
 
@@ -86,15 +101,18 @@ Lớp topo không là barrier cả nhóm hay deadline. Chỉ chờ dependency c�
 | 6 | [GM-17](../../tasks/backlog/GM-17.md), [GM-39](../../tasks/backlog/GM-39.md) | GM-17: Trí; GM-39: Trang |
 | 7 | [GM-18](../../tasks/backlog/GM-18.md) | GM-18: Tâm |
 | 8 | [GM-19](../../tasks/backlog/GM-19.md), [GM-24](../../tasks/backlog/GM-24.md), [GM-40](../../tasks/backlog/GM-40.md) | GM-19: Trí; GM-24: Trang; GM-40: Vinh |
-| 9 | [GM-20](../../tasks/backlog/GM-20.md), [GM-22](../../tasks/backlog/GM-22.md) | GM-20: Vinh; GM-22: Trí |
-| 10 | [GM-21](../../tasks/backlog/GM-21.md), [GM-23](../../tasks/backlog/GM-23.md) | GM-21: Tâm; GM-23: Trí |
-| 11 | [GM-25](../../tasks/backlog/GM-25.md), [GM-32](../../tasks/backlog/GM-32.md), [GM-42](../../tasks/backlog/GM-42.md), [GM-43](../../tasks/backlog/GM-43.md) | GM-25: Trang; GM-32: Vinh; GM-42: Trí; GM-43: Trí |
-| 12 | [GM-26](../../tasks/backlog/GM-26.md), [GM-28](../../tasks/backlog/GM-28.md), [GM-44](../../tasks/backlog/GM-44.md) | GM-26: Trang; GM-28: Trung; GM-44: Trí |
+| 9 | [GM-20](../../tasks/backlog/GM-20.md), [GM-22](../../tasks/backlog/GM-22.md), [GM-41](../../tasks/backlog/GM-41.md), [GM-47](../../tasks/backlog/GM-47.md) | GM-20: Vinh; GM-22: Trí; GM-41: Vinh; GM-47: Tâm |
+| 10 | [GM-21](../../tasks/backlog/GM-21.md), [GM-23](../../tasks/backlog/GM-23.md), [GM-48](../../tasks/backlog/GM-48.md), [GM-51](../../tasks/backlog/GM-51.md) | GM-21: Tâm; GM-23: Trí; GM-48: Tâm; GM-51: Tâm |
+| 11 | [GM-25](../../tasks/backlog/GM-25.md), [GM-32](../../tasks/backlog/GM-32.md), [GM-42](../../tasks/backlog/GM-42.md), [GM-43](../../tasks/backlog/GM-43.md), [GM-46](../../tasks/backlog/GM-46.md), [GM-49](../../tasks/backlog/GM-49.md), [GM-50](../../tasks/backlog/GM-50.md) | GM-25: Trang; GM-32: Vinh; GM-42: Trí; GM-43: Trí; GM-46: Trí; GM-49: Trí; GM-50: Trung |
+| 12 | [GM-26](../../tasks/backlog/GM-26.md), [GM-28](../../tasks/backlog/GM-28.md), [GM-44](../../tasks/backlog/GM-44.md), [GM-52](../../tasks/backlog/GM-52.md), [GM-55](../../tasks/backlog/GM-55.md) | GM-26: Trang; GM-28: Trung; GM-44: Trí; GM-52: Trí; GM-55: Trí |
 | 13 | [GM-27](../../tasks/backlog/GM-27.md), [GM-29](../../tasks/backlog/GM-29.md), [GM-31](../../tasks/backlog/GM-31.md), [GM-45](../../tasks/backlog/GM-45.md) | GM-27: Trang; GM-29: Trung; GM-31: Trung; GM-45: Trí |
-| 14 | [GM-30](../../tasks/backlog/GM-30.md) | GM-30: Trang |
+| 14 | [GM-30](../../tasks/backlog/GM-30.md), [GM-56](../../tasks/backlog/GM-56.md), [GM-57](../../tasks/backlog/GM-57.md) | GM-30: Trang; GM-56: Trí; GM-57: Trí |
 | 15 | [GM-33](../../tasks/backlog/GM-33.md) | GM-33: Vinh |
 | 16 | [GM-34](../../tasks/backlog/GM-34.md) | GM-34: Trí |
 | 17 | [GM-35](../../tasks/backlog/GM-35.md), [GM-36](../../tasks/backlog/GM-36.md), [GM-37](../../tasks/backlog/GM-37.md), [GM-38](../../tasks/backlog/GM-38.md) | GM-35: Tuấn; GM-36: Tâm; GM-37: Tuấn; GM-38: Tâm |
+| 18 | [GM-53](../../tasks/backlog/GM-53.md), [GM-54](../../tasks/backlog/GM-54.md) | GM-53: Tuấn; GM-54: Trang |
+| 19 | [GM-58](../../tasks/backlog/GM-58.md) | GM-58: Vinh |
+| 20 | [GM-59](../../tasks/backlog/GM-59.md) | GM-59: Trí |
 
 ## Thứ tự merge / tích hợp
 
@@ -111,15 +129,18 @@ Lớp topo không là barrier cả nhóm hay deadline. Chỉ chờ dependency c�
 | 6 | [GM-17](../../tasks/backlog/GM-17.md), [GM-39](../../tasks/backlog/GM-39.md) | GM-17: Trí; GM-39: Trang |
 | 7 | [GM-18](../../tasks/backlog/GM-18.md) | GM-18: Tâm |
 | 8 | [GM-19](../../tasks/backlog/GM-19.md), [GM-24](../../tasks/backlog/GM-24.md), [GM-40](../../tasks/backlog/GM-40.md) | GM-19: Trí; GM-24: Trang; GM-40: Vinh |
-| 9 | [GM-20](../../tasks/backlog/GM-20.md), [GM-22](../../tasks/backlog/GM-22.md) | GM-20: Vinh; GM-22: Trí |
-| 10 | [GM-21](../../tasks/backlog/GM-21.md), [GM-23](../../tasks/backlog/GM-23.md) | GM-21: Tâm; GM-23: Trí |
-| 11 | [GM-25](../../tasks/backlog/GM-25.md), [GM-42](../../tasks/backlog/GM-42.md), [GM-43](../../tasks/backlog/GM-43.md) | GM-25: Trang; GM-42: Trí; GM-43: Trí |
-| 12 | [GM-26](../../tasks/backlog/GM-26.md), [GM-28](../../tasks/backlog/GM-28.md), [GM-44](../../tasks/backlog/GM-44.md) | GM-26: Trang; GM-28: Trung; GM-44: Trí |
+| 9 | [GM-20](../../tasks/backlog/GM-20.md), [GM-22](../../tasks/backlog/GM-22.md), [GM-41](../../tasks/backlog/GM-41.md), [GM-47](../../tasks/backlog/GM-47.md) | GM-20: Vinh; GM-22: Trí; GM-41: Vinh; GM-47: Tâm |
+| 10 | [GM-21](../../tasks/backlog/GM-21.md), [GM-23](../../tasks/backlog/GM-23.md), [GM-48](../../tasks/backlog/GM-48.md), [GM-51](../../tasks/backlog/GM-51.md) | GM-21: Tâm; GM-23: Trí; GM-48: Tâm; GM-51: Tâm |
+| 11 | [GM-25](../../tasks/backlog/GM-25.md), [GM-42](../../tasks/backlog/GM-42.md), [GM-43](../../tasks/backlog/GM-43.md), [GM-46](../../tasks/backlog/GM-46.md), [GM-49](../../tasks/backlog/GM-49.md), [GM-50](../../tasks/backlog/GM-50.md) | GM-25: Trang; GM-42: Trí; GM-43: Trí; GM-46: Trí; GM-49: Trí; GM-50: Trung |
+| 12 | [GM-26](../../tasks/backlog/GM-26.md), [GM-28](../../tasks/backlog/GM-28.md), [GM-44](../../tasks/backlog/GM-44.md), [GM-52](../../tasks/backlog/GM-52.md) | GM-26: Trang; GM-28: Trung; GM-44: Trí; GM-52: Trí |
 | 13 | [GM-27](../../tasks/backlog/GM-27.md), [GM-29](../../tasks/backlog/GM-29.md), [GM-31](../../tasks/backlog/GM-31.md), [GM-45](../../tasks/backlog/GM-45.md) | GM-27: Trang; GM-29: Trung; GM-31: Trung; GM-45: Trí |
 | 14 | [GM-30](../../tasks/backlog/GM-30.md), [GM-32](../../tasks/backlog/GM-32.md) | GM-30: Trang; GM-32: Vinh |
-| 15 | [GM-33](../../tasks/backlog/GM-33.md) | GM-33: Vinh |
-| 16 | [GM-34](../../tasks/backlog/GM-34.md) | GM-34: Trí |
+| 15 | [GM-33](../../tasks/backlog/GM-33.md), [GM-55](../../tasks/backlog/GM-55.md) | GM-33: Vinh; GM-55: Trí |
+| 16 | [GM-34](../../tasks/backlog/GM-34.md), [GM-56](../../tasks/backlog/GM-56.md), [GM-57](../../tasks/backlog/GM-57.md) | GM-34: Trí; GM-56: Trí; GM-57: Trí |
 | 17 | [GM-35](../../tasks/backlog/GM-35.md), [GM-36](../../tasks/backlog/GM-36.md), [GM-37](../../tasks/backlog/GM-37.md), [GM-38](../../tasks/backlog/GM-38.md) | GM-35: Tuấn; GM-36: Tâm; GM-37: Tuấn; GM-38: Tâm |
+| 18 | [GM-53](../../tasks/backlog/GM-53.md), [GM-54](../../tasks/backlog/GM-54.md) | GM-53: Tuấn; GM-54: Trang |
+| 19 | [GM-58](../../tasks/backlog/GM-58.md) | GM-58: Vinh |
+| 20 | [GM-59](../../tasks/backlog/GM-59.md) | GM-59: Trí |
 
 ## Cặp song song cụ thể
 
@@ -158,6 +179,10 @@ Lớp topo không là barrier cả nhóm hay deadline. Chỉ chờ dependency c�
 | [GM-29](../../tasks/backlog/GM-29.md), [GM-30](../../tasks/backlog/GM-30.md) | Đạt start gate riêng; contract/version chung; nhánh/file riêng; merge theo bảng trên. |
 | [GM-35](../../tasks/backlog/GM-35.md), [GM-38](../../tasks/backlog/GM-38.md) | Đạt start gate riêng; contract/version chung; nhánh/file riêng; merge theo bảng trên. |
 | [GM-36](../../tasks/backlog/GM-36.md), [GM-37](../../tasks/backlog/GM-37.md) | Đạt start gate riêng; contract/version chung; nhánh/file riêng; merge theo bảng trên. |
+| [GM-41](../../tasks/backlog/GM-41.md), [GM-47](../../tasks/backlog/GM-47.md) | Đạt start gate riêng; contract/version chung; nhánh/file riêng; merge theo bảng trên. |
+| [GM-48](../../tasks/backlog/GM-48.md), [GM-49](../../tasks/backlog/GM-49.md) | Đạt start gate riêng; contract/version chung; nhánh/file riêng; merge theo bảng trên. |
+| [GM-48](../../tasks/backlog/GM-48.md), [GM-50](../../tasks/backlog/GM-50.md) | Đạt start gate riêng; contract/version chung; nhánh/file riêng; merge theo bảng trên. |
+| [GM-49](../../tasks/backlog/GM-49.md), [GM-50](../../tasks/backlog/GM-50.md) | Đạt start gate riêng; contract/version chung; nhánh/file riêng; merge theo bảng trên. |
 
 Không liệt kê mọi cặp có thể song song. Chốt interface và file ownership trong draft PR trước viết; GM-02 UI structure / GM-03 BE structure / GM-04 fields là ba nhánh nền. GM-05 components và GM-07 client/mock có thể làm đồng thời sau đầu vào riêng; GM-08 import chờ schema GM-06. GM-09..14 màn mock nghiệm thu riêng sau components+contract, không chờ API nghiệp vụ. GM-15..23 hoàn thiện BE; GM-24..31 tích hợp UI/API/native; GM-32..34 kiểm thử và release. GM-35..38 chỉ merge sau core. Trạng thái GM-01 theo hồ sơ local: done; Project Done mở dependency baseline theo ADR-011 nhưng không tự viết lại review evidence local hoặc nghiệm thu supplement. Mock không đóng AC native/SQL/dataset thật của task tích hợp.
 

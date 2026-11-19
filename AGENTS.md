@@ -10,6 +10,8 @@ Nguồn yêu cầu: chỉ dẫn hiện tại của chủ dự án → task/AC �
 
 ## AIDD
 
+**Phạm vi release v1 — đăng Google Play và App Store — 2026-11-20:** Chủ dự án chốt đợt đăng store đầu tiên ở P0 kèm các mục cần thiết của P1; xem [RELEASE_V1_SCOPE](docs/project/RELEASE_V1_SCOPE.md). Task `release:v1`: GM-35, GM-41, GM-46..GM-59 (GM-35/41/46/47 nâng lên P0). Hoãn sau khi lên store: GM-36/37/38 (đóng tạm trên GitHub, PR giữ draft), push từ xa FCM, Google Sign-In. Backend dùng Supabase hosted (staging và production); chuyển vòng khi hết giờ dùng pg_cron (GM-48), không dùng worker QA. Sau khi có bản trên store, migration mới phải tương thích ngược với app bản cũ hoặc đi kèm cổng phiên bản tối thiểu (GM-54); không sửa migration đã áp. Bộ test case GM-55..GM-58 là đầu ra chính cho báo cáo. Quy tắc Output == Merge Gate và 1 Task = 1 PR giữ nguyên.
+
 **Đồng bộ Đầu ra Task = Điều kiện Merge & Lộ trình Kiểm thử 2 Chặng (AVD trước, USB sau) — 2026-11-07:** Chủ dự án xác nhận nguyên tắc bắt buộc cho toàn bộ các task còn lại (`GM-27..38`, `GM-40`):
 1. **Đầu ra Task đồng nhất với Điều kiện Merge (`Output == Merge Gate`):** Task không đạt đủ đầu ra/test bắt buộc thì không đủ điều kiện merge. Trước khi mở/cập nhật PR yêu cầu review, bắt buộc chạy đạt `python scripts/task_readiness.py --task GM-XX --gate merge --base-ref origin/main --verify-outputs`.
 2. **1 Task = 1 PR đúng File Ownership:** Không gộp nhiều task vào chung một PR gây xung đột route/service (ví dụ `GM-27` sở hữu `resultRepository.ts`, `LiveDishResultScreen.tsx`, `DishResultEntry.tsx`, `room/result.tsx`, `room/no-consensus.tsx`; `GM-28`, `GM-29`, `GM-31` tách PR riêng và tái sử dụng reader của `GM-27`).
