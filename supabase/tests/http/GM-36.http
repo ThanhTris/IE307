@@ -1,8 +1,8 @@
 # GM36.1 independent boundary, not an enabled production OCR API.
 # Reproducible supported runner:
-# npm run backend:start
-# GM36_PYTHON=python3 node scripts/gm36_http_check.mjs
-# It creates its own loopback HTTP port, uses real GoTrue guests, asserts14 groups,
+# PYTHON=python3 npm run qa:start -- --run-id gm36-check
+# GM36_PYTHON=python3 node scripts/gm36_http_check.mjs --qa-manifest .work/qa/gm36-check/manifest.json
+# It creates its own loopback HTTP port, uses real GoTrue guests, asserts15 groups,
 # then removes guest identities/server. Recognizer is explicitly a test double.
 # These requests document the future reviewed Edge route. edge_runtime currently
 # remains false and index.ts remains disabled. Do not enable/deploy to run this file.
@@ -42,7 +42,8 @@ Content-Type: text/plain
 not an image request
 
 # Actual assertions/status/body/confidence/null/no-publish and source hashes:
-# docs/evidence/roadmap-v2/GM-36/http/results.json
+# .work/gm36-http/results.json
 # Provider timeout504, malformed502, unavailable503, empty422, quota429;
 # no secret/raw image/provider exception is returned. Actual output JSON is checked
-# by gm36_contract_check.py and the unchanged GM08 publish-ready preflight rejects it.
+# by gm36_contract_check.py; both legacy and dish-only importers reject it.
+# npm run qa:stop -- --run-id gm36-check

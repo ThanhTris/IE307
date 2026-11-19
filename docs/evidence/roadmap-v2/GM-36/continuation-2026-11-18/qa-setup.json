@@ -1,0 +1,19 @@
+{
+  "result": "Fail",
+  "stage": "qa:start before OCR HTTP",
+  "error": "QA_HOST_BINDING_NOT_LOOPBACK",
+  "runId": "gm36-20261118",
+  "phaseAfterCleanup": "stopped",
+  "ports": {
+    "api": 54361,
+    "db": 54362
+  },
+  "completedCleanup": [
+    "worker",
+    "supabase",
+    "network"
+  ],
+  "httpCasesExecuted": 0,
+  "realRecognizerExecuted": false,
+  "credentialsRecorded": false
+}

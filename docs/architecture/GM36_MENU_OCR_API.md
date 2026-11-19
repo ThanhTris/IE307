@@ -1,7 +1,8 @@
 # GM36.1 — Independent menu OCR/draft boundary
 
-2026-10-16, owner Tâm, reviewer Trí (Pending). Inputs GM04.2/food1.1.0 and GM07.1.
-This is the independent portion authorized before GM34, under the task's start gate.
+Updated 2026-11-18, owner Tâm, reviewer Trí (Pending). GM36.1 remains unchanged.
+This continues the previously authorized independent pipeline. GM34 is Done on
+Project and its handoff artifacts are available on main at `5a69b56`.
 No enabled app extension, provider, native package, DB migration or publish path.
 EXTENSIONS_SPEC still targets on-device recognition; no cloud recognizer is selected.
 
@@ -124,17 +125,22 @@ reject direct import, including publish-ready; the contract checker tests that
 unchanged code on the actual HTTP output. Do not rename the draft contract to food,
 set reviewStatus verified, infer schedules/coverage or fill null values to bypass it.
 
-A curator must inspect the real menu, correct/confirm name/price/unit, establish a
-real dataSources record and permitted source evidence, bind actual dish and branch
-UUIDs/venue–dish offering, hours/coverage/timezone and freshness. Populate the existing
-GM04 template with those reviewed fields, then run the original GM08 offline validator.
-All publication guards and human approval remain in GM08; this feature has no staging,
-publish or DB-write capability. Integration/real provider pilot waits for GM34 and
-provider review. Unknown menu hours/coverage remain unknown, never available by default.
+For dish-only, a curator confirms permitted provenance, corrects name/price/unit,
+and explicitly binds taxonomy under DISH_CATALOGUE_DICTIONARY. OCR never invents
+meal/category/cuisine/allergen labels. Venue/offering/coverage/hours are not required.
+The catalogue candidate validator also rejects this standalone draft before DB access.
+
+Only for legacy export: additionally bind actual branch UUIDs/offering/hours/coverage/
+timezone/freshness under GM04 and GM08. Keep those checks separate from dish-only.
+Both workflows require ordinary bundle validation/staging and human review. OCR
+has no staging, activation, publish or DB-write capability. Source declarations
+remain unverified, and unknown menu hours/coverage never become known defaults.
 
 ## Reproduce and reference
 
-Commands/evidence in GM36 HANDOFF/CHECKS. Node tests execute Web APIs/TypeScript,
+Commands/evidence in GM36 HANDOFF/CHECKS. The HTTP runner requires
+`--qa-manifest .work/qa/<run-id>/manifest.json` from GM03 qa:start and has no
+application-stack fallback. CI runs the suite on disposable QA. See CHECKS for the tested revision and result. Node tests execute Web APIs/TypeScript,
 loopback HTTP verifies actual GoTrue sessions, while the recognizer remains stubbed.
 Deno/Supabase Edge gateway execution and real recognition/native accuracy are Not run.
 No Android consumer exists in this task; later app OCR requires a separately agreed

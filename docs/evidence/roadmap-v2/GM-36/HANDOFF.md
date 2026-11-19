@@ -1,134 +1,88 @@
-# GM36 independent OCR/draft handoff
+# GM-36 draft pipeline — current handoff
 
-2026-10-16. Owner Tâm (@HoaiTam); reviewer Trí (@ThanhTris), Pending.
-Branch `codex/gm-36-menu-ocr` from target main
-`daa917461e68353f6ba015f2f746e805ec19710e`. Published PR123 commit
-`91c1dac48d80bcfcfb77b39bf99de793c703bd9e`, including the published price fix.
-Pre-commit test source hashes match that revision; target inspected4a8cd64.
-The follow-up in revision-sync-91c1dac changes documentation/evidence only.
-Live start gate READY_TO_CLAIM. Contract GM36.1; input GM04.2/food1.1.0/GM07.1.
-Merge/Done remains blocked by GM34 and unreviewed real recognizer/provider/pilot.
+Updated 2026-11-19. Owner Tâm (@HoaiTam), reviewer Trí (@ThanhTris).
+PR #123 tracks the independent pipeline on main `5bbee5d`. See [CHECKS](CHECKS.md)
+for current gate results and tested revisions. Earlier execution records retain their original dates.
 
-## Inputs and outputs
+## Received inputs and blockers
 
-| Producer | Received artifact/version on target | Scope |
+| Producer | Artifact received on main | Limit |
 | --- | --- | --- |
-| GM04 | FOOD_DATA_DICTIONARY, food-v1.schema.json, validator, food1.1.0 | UUID/source/null/price/unit/unknown/verification semantics |
-| GM07 | contracts.ts, API envelope/errors, PriceUnit, GM07.1 | Core unchanged; separate OCR DTO, no new client method |
-| GM08 | importer/preflight already Done | Reuse offline preflight to prove standalone OCR draft cannot import/publish |
-| GM34 | RELEASE/CHECKS/HANDOFF not delivered | Pending final integration/release gate; no substitute artifact |
+| GM04 | FOOD_DATA_DICTIONARY, food1.1.0 schema and validator | Source/nullable/price units reused |
+| GM07 | contracts.ts, B/B-supplement API schema and handoff | No core DTO/client edits |
+| GM08 | import_food_data.py and handoff | Unchanged preflight rejects OCR draft |
+| GM40 | dish-only dictionary, importer and sealed-manifest QA verifier | Catalogue importer also rejects OCR draft |
+| GM34 | Project Done | RELEASE, CHECKS, FIGMA_PARITY and HANDOFF are on main at `5a69b56` |
 
-- `supabase/functions/menu-ocr/index.ts` + contract/normalize/auth/quota/read-json:
-  executable Web handler/provider port; mandatory actual Auth + operator allowlist,
-  size/read/recognizer deadline, quota port, safe errors and unverified draft output.
-- `draft.schema.json`: standalone MenuDraft, never a food bundle; schema/semantic
-  CLI reuses existing GM04 validator and GM08 preflight without editing producers.
-- `scripts/gm36_http_check.mjs`: real loopback HTTP + actual GoTrue JWT verification;
-  recognizer strictly a test double. Creates/deletes only namespace-tagged synthetic
-  Auth identities; no food/room/history/consent business writes, no DB reset.
-- `tests/fixtures/menu-ocr-v1`: synthetic1×1 PNG and independently specified golden
-  rows, explicitly not actual OCR/menu data. Native decoder/accuracy NOT tested.
-- `supabase/tests/http/GM-36.http`: request/status/setup/limits; pipeline runner is
-  reproducible while actual Edge deployment is intentionally unavailable.
-- API semantics/errors/trust/unknown/manual correction in GM36_MENU_OCR_API;
-  provider/license/privacy/cost/accuracy checklist in PROVIDER_REVIEW (Pending).
-- New CI workflow checks TypeScript/unit/schema and real HTTP/JWT with fake provider;
-  no deploy, provider/network OCR or paid service invocation.
+GM36.1 contract/handler remain separate from core APIs. Runtime stays disabled,
+provider unselected, no native/package/schema/migration/data changes. This is the
+independent pipeline scope proposed for Trí’s review.
 
-## Reproduce from clean clone
+## Dish-only and legacy paths
 
-Node24+ supports stripping these TypeScript modules; pinned existing TypeScript
-is used for strict typechecking. Python3.11+ with repo prerequisites/Docker local.
-No Deno install/new application dependency is required for independent tests.
+A permitted source declaration and explicit processing consent are mandatory.
+Source declaration is not proof of rights: `sourceRightsVerified=false` always.
+Each draft row retains sourceRef, confidence, nullable name/price and PriceUnit.
+Taxonomy, meal/cuisine/category/allergen labels are not inferred by OCR. They must
+be bound/confirmed later under the catalogue dictionary; injected labels are rejected.
+Unknown price/currency/unit stay null; ambiguous 35-45k/35-45.000 đ remain null even
+at confidence 0.99. Explicit 35k-45k and 35000-45000 đ retain their exact amounts.
+
+Dish-only does not require a venue/offering/coverage/schedule. GM36.1 retains the
+three legacy location fields as null for wire compatibility. A curator corrects
+fields and binds reviewed provenance/taxonomy into a separate catalogue bundle,
+then uses the ordinary catalogue validation/staging/review flow. No automatic append,
+activation, verified status or production publish exists in OCR.
+
+Only if exporting legacy food data: bind venue/offering/coverage/hours/freshness
+under the GM04/GM08 legacy contract. These checks are not dish-only prerequisites.
+The standalone MenuDraft is rejected by both actual importers before DB access.
+
+## Reproduce the supported independent checks
+
+Node24+, Python with existing `scripts/ci-requirements.txt`, Docker, repository
+npm dependencies and the existing mobile TypeScript compiler are required.
+Set PYTHON/GM36_PYTHON to a Python executable with repository dependencies.
 
 ```sh
-npm ci
-npm ci --prefix mobile --no-audit --no-fund
 node mobile/node_modules/typescript/bin/tsc --noEmit --strict --target ES2022 --module ESNext --moduleResolution bundler --allowImportingTsExtensions --lib ES2022,DOM supabase/functions/menu-ocr/index.ts
 node --test tests/gm36-menu-ocr.test.mjs
-python3 -m unittest discover -s tests -p 'test_gm36_menu_ocr.py'
-npm run backend:start
-GM36_PYTHON=python3 node scripts/gm36_http_check.mjs
-python3 scripts/gm36_contract_check.py --draft docs/evidence/roadmap-v2/GM-36/http/actual-draft.json --report /tmp/gm36-contract.json
-python3 -m unittest discover -s tests -p 'test_*.py'
+python3 -m unittest discover -s tests -p 'test_gm36*.py'
+PYTHON=python3 npm run qa:start -- --run-id gm36-check
+GM36_PYTHON=python3 node scripts/gm36_http_check.mjs --qa-manifest .work/qa/gm36-check/manifest.json
+python3 scripts/gm36_contract_check.py --draft .work/gm36-http/actual-draft.json --report .work/gm36-http/contract-results.json
+npm run qa:verify -- --run-id gm36-check
+npm run qa:stop -- --run-id gm36-check
 python3 scripts/validate_repository.py
+python3 -m unittest discover -s tests -p 'test_*.py'
 python3 scripts/task_readiness.py --check-docs
-python3 scripts/task_readiness.py --task GM-36 --base-ref origin/main
-python3 scripts/task_readiness.py --task GM-36 --gate merge --base-ref origin/main
+python3 scripts/task_readiness.py --task GM-36 --gate merge --base-ref origin/main --verify-outputs
 git diff --check
-npm run backend:stop
 ```
 
-Expected independent checks: strict TypeScript Pass,48 Node tests,8 Python feature
-tests,14 HTTP groups, validDraft=true + gm08DirectImportRejected=true.
-Merge checker should remain BLOCKED GM34 until that real output is Done/delivered.
-A Mac system Python without CA certificates must use a trusted bundled Python for
-live gates, never disable TLS. Windows set GM36_PYTHON=python (CI already does).
-Runners guard loopback API54321/project gi-cung-duoc-local; no remote deployment.
-Token/public key stay in memory, no runtime credentials or menu photos in evidence.
+The HTTP runner now requires the explicit producer-owned manifest, verifies its
+seal/local state/worker/ownership and Auth/REST/gateway before reading that QA's
+private public-key file. It never prints credentials. Cleanup validates namespace,
+anonymous IDs and QA ownership transactionally; qa:stop removes the owned runtime.
+`.work/gm36-http/` contains only public assertion reports and synthetic draft data;
+CI uploads explicit report files, never credentials or the producer workdir.
 
-## What is implemented
+HTTP runs the actual Web Request/Response handler with real GoTrue JWTs through a
+loopback Node server. Recognizer output remains a test double, not real OCR. Auth,
+outsider, errors, timeout/quota, confidence/source/null and dish-only/import guards
+are asserted; no food/room/history write is made by the OCR handler.
 
-A correctly authorized test adapter can process bounded input through the real
-handler and return exact field projections: high-confidence NFC name/price range,
-null uncertain fields/units, source references, confidence/issues, draft state.
-No location/coverage/hours/taxonomy/allergens/safety or rights evidence is inferred.
-Bad JWT/outsider/unknown input/invalid image fail before recognition. Timeout aborts
-and suppresses late response; concurrency slot stays occupied while work continues.
-Quota counts actual attempts even on provider errors; memory quota is test-only.
-Body limit/deadline and Auth response bounds apply independently of Content-Length.
+## Remaining acceptance
 
-The production Deno entrypoint is explicitly disabled. `edge_runtime=false` stays
-unchanged. Real recognizer, native package, distribution-wide quota, device UI,
-Edge runtime/gateway parity and actual-menu pilot remain Not run/Pending. The HTTP
-result proves the Web handler/GoTrue boundary, not a deployed Supabase Edge function
-or functioning image recognition. Permanent core DTO/config/schema/package/data
-inputs are unchanged. No self Approved/Done and no GitHub status writes.
+Full OCR acceptance requires the provider/native/license/privacy/quota/cost/accuracy/rights
+decision and a pilot using menus with permission.
+See PROVIDER_REVIEW.md. No cloud key/cost is assumed and no provider is called.
+The production Deno entrypoint remains off. Deno/Edge deployment and recognition
+accuracy are Not run. Android is outside the current pipeline scope per the mobile
+API matrix; no screen/camera/native package is introduced to fill that gap. A future
+mobile consumer needs its own agreed scope/device upload/auth/fallback checks.
 
-## Manual correction / importer continuation
-
-1. A curator inspects the real permitted menu and corrects unknown/misaligned fields.
-2. Establish actual dataSources/sourceRef/license/freshness evidence and real
-   dish/branch/offering/coverage/hours/timezone bindings using the existing GM04 template.
-3. Keep unknown fields null/unknown. Confidence and a checked declaration are not
-   source approval, verification or current opening hours. No allergen inference.
-4. Build a real food1.1.0 bundle after human review and use existing GM08 offline
-   validate/stage/review flow. MenuDraft itself is always rejected by that importer.
-5. After GM34 and Trí's recognizer/native/provider decision, integrate and test the
-   selected real path and ordinary publish guards. Do not use synthetic image/rows
-   as accuracy/source evidence or change a running room's locked pool.
-
-## Remaining acceptance and consumer scope
-
-Provider/native license/size, quota/cost/privacy/rights evidence, actual Vietnamese
-menu accuracy target/pilot, real on-device recognition/correction and reviewed
-integration are still required for full GM36. No provider was selected or contacted.
-PROVIDER_REVIEW records Pending fields for Trí; no permission is invented.
-GM36 currently has no Android screen/camera consumer under MOBILE_API_TEST_MATRIX.
-Device tests are Not run/outside this independent pipeline; future mobile OCR needs
-a named consumer and upload/auth/timeout/privacy/accuracy cases before its acceptance.
-The transient Node test endpoint closes after execution; laptop localhost is not a
-phone endpoint. Do not repoint the core app to this stub or bypass Edge JWT checks.
-
-Rollback of this isolated patch: leave entrypoint/core flags off and remove its
-new feature modules/runners if rejected. No DB down migration or data deletion is
-needed. Published91c1dac has26/26 successful checks. Trí confirmed the price fix
-in the follow-up comment; full-task acceptance and review of this documentation
-revision remain Pending. New documentation commit CI must be checked after push.
-
-## Review fix continuation
-
-The PR123 price review is addressed by conservative unknown handling for a bare
-positive endpoint below1000 next to a thousand-valued endpoint.35-45k,
-35-45.000 đ and equivalent plain/grouped variants remain unknown, even with0.99
-confidence. Both parser and final price/source fields have regression assertions.
-35k-45k /35000-45000 đ remain35000..45000; a fully specified35000-45k is valid;
-explicit0-45k remains0..45000 because zero does not change with scale. No values
-are multiplied or inherited. Curator confirmation is still required for a draft.
-
-Published price fix91c1dac has26/26 successful checks; see
-revision-sync-91c1dac/ci-checks.json. Trí follow-up:
-https://github.com/ThanhTris/IE307/pull/123#issuecomment-6218965995.
-Review history and pre-commit red/green output remain in review-fix-2026-10-16.
-Their execution metadata is historical; PATCH_MANIFEST records source-hash parity
-with91c1dac. No new local HTTP run or actual recognizer execution is claimed.
+The transient loopback test URL is not a phone endpoint. Future reviewed integration
+must supply a reachable TLS endpoint/session and must keep auth/privacy checks.
+Rollback: leave the entrypoint off and remove the independent modules/runners;
+no database down migration or published data rollback is required.

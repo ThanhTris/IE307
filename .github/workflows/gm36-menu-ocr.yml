@@ -1,18 +1,18 @@
-name: GM-36 independent menu OCR
+name: GM-36 draft pipeline on owned QA
 on: [push, pull_request]
 permissions:
   contents: read
 jobs:
   independent:
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    timeout-minutes: 30
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1
         with:
           node-version: '24'
           cache: npm
-      - uses: actions/setup-python@v5
+      - uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0
         with:
           python-version: '3.12'
       - run: npm ci
@@ -20,22 +20,30 @@ jobs:
       - name: Strict isolated OCR TypeScript (no app package changes)
         run: node mobile/node_modules/typescript/bin/tsc --noEmit --strict --target ES2022 --module ESNext --moduleResolution bundler --allowImportingTsExtensions --lib ES2022,DOM supabase/functions/menu-ocr/index.ts
       - run: node --test tests/gm36-menu-ocr.test.mjs
-      - run: python -m unittest discover -s tests -p 'test_gm36_menu_ocr.py'
-      - run: npm run backend:start
+      - run: python -m pip install -r scripts/ci-requirements.txt
+      - run: python -m unittest discover -s tests -p 'test_gm36*.py'
+      - name: Start the owned disposable Auth/REST/worker project
+        env:
+          PYTHON: python
+        run: npm run qa:start -- --run-id gm36-ci
       - name: Real HTTP and GoTrue JWT, explicitly simulated recognizer
         env:
           GM36_PYTHON: python
-        run: node scripts/gm36_http_check.mjs
-      - name: Actual HTTP draft schema and unchanged GM08 import rejection
-        run: python scripts/gm36_contract_check.py --draft docs/evidence/roadmap-v2/GM-36/http/actual-draft.json --report docs/evidence/roadmap-v2/GM-36/http/contract-results.json
+        run: node scripts/gm36_http_check.mjs --qa-manifest .work/qa/gm36-ci/manifest.json
+      - name: Actual HTTP draft schema and both importer rejection checks
+        run: python scripts/gm36_contract_check.py --draft .work/gm36-http/actual-draft.json --report .work/gm36-http/contract-results.json
       - run: python scripts/validate_repository.py
       - run: python scripts/task_readiness.py --check-docs
       - run: git diff --check
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9
         if: always()
         with:
           name: gm36-independent-output
-          path: docs/evidence/roadmap-v2/GM-36/http/
+          path: |
+            .work/gm36-http/results.json
+            .work/gm36-http/actual-draft.json
+            .work/gm36-http/contract-results.json
+          include-hidden-files: true
           if-no-files-found: warn
       - if: always()
-        run: npm run backend:stop
+        run: npm run qa:stop -- --run-id gm36-ci

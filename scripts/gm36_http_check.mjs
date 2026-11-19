@@ -11,15 +11,16 @@ import { createMenuOcrHandler } from '../supabase/functions/menu-ocr/index.ts';
 import { supabaseAuthorizer } from '../supabase/functions/menu-ocr/auth.ts';
 import { memoryQuota } from '../supabase/functions/menu-ocr/quota.ts';
 import { MAX_BODY_BYTES } from '../supabase/functions/menu-ocr/contract.ts';
-import { runCommand,cliArgs,validateApiUrl,validateConfig } from './backend.mjs';
+import { runCommand } from './backend.mjs';
 
-if(process.argv.length>2)throw Error('Local owned test only; no deploy/provider arguments');
+if(process.argv.length!==4 || process.argv[2]!=='--qa-manifest')throw Error('Use --qa-manifest .work/qa/<run-id>/manifest.json; no default/app stack');
+const manifestPath=resolve(process.argv[3]);
 const root=resolve(dirname(fileURLToPath(import.meta.url)),'..');
 const python=process.env.GM36_PYTHON??(process.platform==='win32'?'python':'python3');
-const folder=resolve(root,'docs/evidence/roadmap-v2/GM-36/http');
+const folder=resolve(root,'.work/gm36-http');
 const fixtures=resolve(root,'tests/fixtures/menu-ocr-v1');
 const fixture=name=>JSON.parse(readFileSync(resolve(fixtures,name+'.json'),'utf8'));
-const sources=['scripts/gm36_http_check.mjs','scripts/gm36_auth_cleanup.py',
+const sources=['scripts/gm36_http_check.mjs','scripts/gm36_qa.py',
  ...readdirSync(resolve(root,'supabase/functions/menu-ocr')).map(p=>'supabase/functions/menu-ocr/'+p),
  ...readdirSync(fixtures).filter(p=>p.endsWith('.json')).map(p=>'tests/fixtures/menu-ocr-v1/'+p)];
 const hashes=()=>Object.fromEntries(sources.map(p=>[p,createHash('sha256').update(readFileSync(resolve(root,p))).digest('hex')]));
@@ -42,9 +43,12 @@ async function request(body=fixture('request'),token=guests[0]?.access_token,ext
 function failure(r,status,keyValue){assert.equal(r.status,status);assert.equal(r.body.messageKey,keyValue);assert.equal(r.cache,'no-store');return {status,messageKey:keyValue};}
 try{
  await mkdir(folder,{recursive:true});
- validateConfig(readFileSync(resolve(root,'supabase/config.toml'),'utf8'));
- const status=JSON.parse(await runCommand(process.execPath,cliArgs('status'),{quiet:true}));
- authBase=validateApiUrl(status.API_URL);key=status.ANON_KEY;
+ const qa=JSON.parse(await runCommand(python,[resolve(root,'scripts/gm36_qa.py'),'--qa-manifest',manifestPath],{quiet:true}));
+ assert.equal(qa.result,'Pass');
+ const credentials=JSON.parse(readFileSync(resolve(qa.workdir,'credentials.private.json'),'utf8'));
+ assert.equal(credentials.apiUrl,qa.baseUrl);
+ authBase=qa.baseUrl;key=credentials.anonKey;assert.ok(key);
+ report.qaRunId=qa.runId;report.qaSealSha256=qa.sealSha256;
  for(let n=0;n<2;n++){
   const response=await fetch(authBase+'/auth/v1/signup',{method:'POST',headers:{apikey:key,'Content-Type':'application/json'},signal:AbortSignal.timeout(10000),
    body:JSON.stringify({data:{display_name:'GM36 synthetic '+n,gm36_test_namespace:namespace,ocrOperator:true}})});
@@ -86,6 +90,16 @@ try{
  await check('real authorized HTTP returns exact three-row draft, never verified',async()=>{
   const r=await request();assert.equal(r.status,200);assert.deepEqual(r.body.data,fixture('expected-draft'));assert.equal(r.body.requestId,fixture('request').requestId);
   await writeFile(resolve(folder,'actual-draft.json'),JSON.stringify(r.body.data,null,2)+'\n');return {status:200,rows:3,publishable:false,sourceRightsVerified:false};
+ });
+ await check('dish-only draft needs no venue, coverage, schedule or fabricated taxonomy',async()=>{
+  deps.quota=memoryQuota();const r=await request();assert.equal(r.status,200);
+  for(const key of ['venueId','coverageId','scheduleId'])assert.equal(r.body.data[key],null);
+  for(const row of r.body.data.items){
+   assert.equal(row.sourceRef,fixture('request').source.sourceRef);
+   assert.equal(row.reviewStatus,'draft');
+   for(const key of ['mealSlots','cuisineIds','categoryIds','allergens'])assert.ok(!Object.hasOwn(row,key));
+  }
+  assert.equal(r.body.data.publishable,false);return {status:200,unverified:true,inferredTaxonomy:false};
  });
  await check('review regression: abbreviated ranges remain unknown even at confidence0.99',async()=>{
   scenario='range';deps.quota=memoryQuota(10);const actual=[];
@@ -140,7 +154,7 @@ try{
 finally{
  if(server)await new Promise(r=>server.close(r));
  if(guests.length){try{
-  await runCommand(python,[resolve(root,'scripts/gm36_auth_cleanup.py'),namespace,...guests.map(g=>g.user.id)],{quiet:true});report.cleanup='owned synthetic identities removed';
+  await runCommand(python,[resolve(root,'scripts/gm36_qa.py'),namespace,...guests.map(g=>g.user.id)],{quiet:true});report.cleanup='owned synthetic identities removed';
  }catch{report.cleanup='Fail; owned identities need cleanup';report.result='Fail';process.exitCode=1;}}
  await mkdir(folder,{recursive:true});await writeFile(resolve(folder,'results.json'),JSON.stringify(report,null,2)+'\n');
  console.log(JSON.stringify({result:report.result,cases:report.cases.length,cleanup:report.cleanup}));

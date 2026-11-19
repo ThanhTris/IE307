@@ -1,71 +1,22 @@
-# GM36 independent checks
+# GM-36 checks
 
-2026-10-16. Owner Tâm; reviewer Trí (Pending). Branch codex/gm-36-menu-ocr.
-Published/tested PR123 revision:91c1dac48d80bcfcfb77b39bf99de793c703bd9e.
-The source-hashed price fix tested before commit is now published in this revision.
-This follow-up changes documentation/evidence only; runtime and tests match91c1dac.
-Original branch base daa9174; fetched review target origin/main4a8cd64.
-GM36.1/food1.1.0; exact source/evidence hashes in PATCH_MANIFEST.json.
-macOS/Node26.0.0/TypeScript6.0.3/Python3.13.3; pinned CLI2.120.0, actual GoTrue local.
-No app package/config/DB schema/core contract/dataset change or production publish.
+Updated 2026-11-19. Owner Tâm (@HoaiTam), reviewer Trí (@ThanhTris).
+PR #123 integrates main `5bbee5d`. GM-34 delivered RELEASE, CHECKS, FIGMA_PARITY
+and HANDOFF in `5a69b56`. [Release](../GM-34/RELEASE.md)
 
-| Scope / AC | Input → expected assertion | Actual/evidence | Result / limitation |
-| --- | --- | --- | --- |
-| Strict input/image/source/consent | Base64/MIME/container/dimension/size/bool/unknown keys → reject before provider |48 Node tests, unit-run.txt | Pass; container checks are not full real decoding |
-| Draft/confidence/null/price | Vietnamese NFC/ranges/ambiguous values/unknown currency+unit/0 vs null → exact independent golden | Node tests + http/actual-draft.json | Pass for manually supplied provider output; no OCR accuracy claim |
-| Auth/operator/privacy | Real GoTrue missing/forged JWT401; valid outsider403 despite metadata/headers; errors no raw provider diagnostic; no image/token in response | http/results.json,14 groups | Pass; Node-hosted Web handler, not Edge gateway |
-| Disabled default | Authenticated default-disabled handler503 with no provider call | HTTP scenario + source entrypoint | Pass; actual Deno entry not executed |
-| Timeouts/quota/concurrency | Body408, provider504/abort, late job keeps lease, simultaneous200+429/one provider call; fourth operation429 | Node + HTTP | Pass with test-only memory quota; not distributed production enforcement |
-| Provider error/no text/malformed | Unavailable503 / empty422 / malformed502 with no draft | HTTP + unit | Pass using explicit recognizer test double |
-| Draft-only import boundary | Exact actual HTTP draft → JSON Schema+semantic validation; original GM08 publish-ready preflight rejects direct import | http/contract-results.json | Pass; no DB/import/publication performed |
-| Cross-language contract | Golden valid; fake verified/location/rights/low-confidence known fields/partial price/source spoof rejected |8 Python feature tests, python-unit.txt | Pass; reuse GM04 schema engine and unchanged GM08 code |
-| TypeScript | strict noEmit module compile of all reachable OCR modules | typecheck.txt | Pass; no app/native typecheck claim |
-| Regression | Existing Python suite + feature tests | python-regression.txt |558 tests,5 pre-existing skips; Pass with skips stated |
-| Repo/index/whitespace | Documents/JSON/link/task graph/index/diff | repository-check.txt/docs-check.txt/diff-check.txt | Offline only, not reviewer approval |
-| Start gate | Live Project Done GM04/07 + fetched artifacts/HANDOFF | start-gate.txt | READY_TO_CLAIM |
-| Merge gate | Live GM34 still Todo | revision-sync-91c1dac/merge-gate.txt | BLOCKED GM34; independent delivery only |
-| Real recognizer/provider/source/accuracy/license/quota/cost review | Real permitted-menu/native pilot and Trí decision | PROVIDER_REVIEW.md | Not run/Pending; blocks full task acceptance |
-| Deno/Edge, Android, production | Deployed Edge gateway; chosen native recognition/device flow | Not run | Current core edge_runtime remains false; no Android consumer in scope |
-| Remote CI / human review |26/26 checks SUCCESS on published91c1dac | revision-sync-91c1dac/ci-checks.json; Trí follow-up linked below | Price fix accepted in comment; full-task review Pending. New documentation commit CI not run |
+| Scope | Result | Evidence and limits |
+| --- | --- | --- |
+| Start gate | `READY_TO_CLAIM` | [Live start](readiness-2026-11-19/start.txt) on `5bbee5d` |
+| Merge/output checker | `READY_FOR_MERGE_REVIEW` | [Live merge](readiness-2026-11-19/merge.txt) checks artifacts and dependencies. Trí decides whether to accept the independent scope. |
+| Strict TypeScript, Node, Python feature checks | Pass | 48 Node tests, 12 Python tests. Includes ambiguous prices at high confidence, null/source/unit, auth and quota boundaries, and cleanup ownership guards. |
+| Python regression, repository and index validation | Pass | 703 Python tests, 6 skipped. Repository and task index checks passed. |
+| Dish-only and legacy import boundary | Pass offline | Both importers reject the standalone draft before DB access. Dish-only requires provenance and preserves nullable fields and typed units without venue/offering/hours/coverage. OCR does not infer taxonomy. |
+| HTTP, GoTrue and draft schema | See CI for the PR revision | The GM-36 workflow runs 15 HTTP scenarios in an owned GM-03 QA environment and publishes HTTP results with source hashes, the synthetic draft and both importer assertions. Auth/HTTP execute for real. Recognition uses a test double. |
+| Real recognizer, rights, privacy, quota/cost and accuracy | Not run | Provider and permitted-menu pilot await reviewer decision. [Provider dossier](PROVIDER_REVIEW.md) |
+| Edge deployment and device | Not run | Independent draft pipeline runs through a Node-hosted Web handler. GM-36 has no Android consumer in this scope. |
 
-The positive PNG is a synthetic1×1 image, and the recognizer rows are manually
-written fixtures. No real menu is recognized or sent to an external OCR/AI service.
-HTTP authentication is real network/GoTrue; authorization uses a server UUID allowlist,
-not user_metadata claims or a decoded token. Loopback transport executes the exact
-Web Request/Response handler; it does not claim a running Supabase Edge deployment.
-
-Python unittest chạy558 cases;5 ca skip có sẵn được giữ nguyên. Không thêm
-mobile/native package hoặc ghi app UI/build/device Pass từ phần độc lập này.
-RLS/race/SQL migrations N/A for this independent stateless food draft handler;
-GoTrue guest setup/namespace-verified cleanup is the only test identity DB mutation.
-No menu/food/room/history/publish writes occur. No actual credentials/private photos
-are in artifacts, and every HTTP test identity is removed after the run.
-
-Keep manual/unknown fields and existing GM08 guards. Source-rights declarations and
-confidence cannot substitute source evidence, schedules, freshness or verification.
-Before full merge/Done: real GM34 output, approved actual recognizer/provider/native
-scope, reviewed safety/accuracy/quota policy and its real tests, then Trí review.
-
-## PR123 review fix — 2026-10-16
-
-[Trí review](https://github.com/ThanhTris/IE307/pull/123#issuecomment-6209239517)
-reported35-45k and35-45.000 đ becoming35..45000. Added regression before fixing:
-48 tests /40 pass /8 fail at parser and normalized field assertions. After fixing,
-48/48 Pass;14 real HTTP/GoTrue groups Pass with explicit confidence0.99 cases.
-Ambiguous ranges keep priceMin/Max/currency/unit and fieldSources.price null,
-include PRICE_UNKNOWN_OR_AMBIGUOUS. Fully specified ranges and explicit zero remain
-supported. No inferred x1000 correction. New red/green evidence is in
-review-fix-2026-10-16/; original manifest/HTTP reports retained there as history.
-
-The initial implementation is858ef00; the price fix is committed/pushed as91c1dac.
-[Trí follow-up](https://github.com/ThanhTris/IE307/pull/123#issuecomment-6218965995)
-confirms the parser fix and no new blocking code issue in the inspected draft pipeline.
-Direct GitHub check-run lookup confirms26/26 SUCCESS at91c1dac. This is not approval
-of full GM36 or evidence of real OCR. Historical run metadata describes the
-pre-commit execution; PATCH_MANIFEST maps its source bytes to the published revision.
-Local review-fix HTTP completed all14 groups and cleaned its own synthetic guests.
-GM34/provider/native/license/privacy/quota/cost/accuracy/pilot remain Pending.
-
-Revision documentation follow-up:558 Python tests (5 existing skips), repository/
-indexes/diff checks Pass. See revision-sync-91c1dac/README.md. No runtime change or
-new local HTTP/provider run;26/26 remote checks above belong to91c1dac.
+The prior macOS run stopped during disposable QA startup with
+`QA_HOST_BINDING_NOT_LOOPBACK`. Its reports remain in the
+[18 November record](continuation-2026-11-18/MANIFEST.json). The entrypoint stays
+disabled. The handler returns drafts only and never activates a catalogue or
+publishes data. Earlier October reports apply to their recorded revisions.

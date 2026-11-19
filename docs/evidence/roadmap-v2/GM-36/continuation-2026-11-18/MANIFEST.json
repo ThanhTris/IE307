@@ -1,0 +1,61 @@
+{
+  "task": "GM-36",
+  "checkedAt": "2026-11-18T01:59:40.256264+00:00",
+  "testedHeadBeforeWorkingTree": "5a22be98542f0f79de8b77c2cab34992adb2e4f0",
+  "targetRef": "origin/main",
+  "targetSha": "0b349001291a0152eef71d01ddaae0c8d6b490c8",
+  "workingTreeChangesUncommitted": true,
+  "sourceHashes": {
+    ".github/workflows/gm36-menu-ocr.yml": "b610ca87ec37e5c06708673645a0a97314ac3fb41091b5491aee128e2a1d0e44",
+    "scripts/backend-qa.mjs": "25bd8ae894e4a0dbb61ea06e360ef892b8607c9dcbbbebc107bce38347a67370",
+    "scripts/dish_policy_worker.py": "276102553653912661365712b627897930bb2c1b81bd05451121010c9a9b2d24",
+    "scripts/gm36_contract_check.py": "0187e3eaeae181c14cedd60558d8f43f7dae2d05e5ac0328cf619c4c66ae2b8a",
+    "scripts/gm36_http_check.mjs": "f34fa390c768e8aa14479e3d8a964dbc4b2b3c17d90088948dd328b8fe244f26",
+    "scripts/gm36_qa.py": "988e8aed1abc8be290b01eafb70b9d00d6023cd57e2951fe71412a928e5d334e",
+    "scripts/gm40_manifest_check.py": "728f23e3d5cf1e1d7480d942fb0986a6521f67d9cfe6b644f9402bddcf91de6d",
+    "supabase/functions/menu-ocr/auth.ts": "24cb4f5578c91c69911801a108ee61f946976a146e709f532e3fdaa3009cd750",
+    "supabase/functions/menu-ocr/contract.ts": "167f53b1dba8d2650ffc0d48b57c2c380619d6f5bd2464a6ccfebdcc3dfaa8c2",
+    "supabase/functions/menu-ocr/draft.schema.json": "074d2610c0dec84eece13fb0bee5bfe43c1e548d76d82c8b0ccd2a1d7ffbc974",
+    "supabase/functions/menu-ocr/index.ts": "435b3945bf558aff8944aa09d84b63948a47d677f1e33cd655ee5a3e375a6d30",
+    "supabase/functions/menu-ocr/normalize.ts": "719733f2b8c198ac36fbcf11e2a093f9314a6c3a8aef9a5e3bef11c6343b7128",
+    "supabase/functions/menu-ocr/quota.ts": "d035f45bfaa729a7bcd40cf3f301c670c1a6346f6a74871cc0a198d099d7727f",
+    "supabase/functions/menu-ocr/read-json.ts": "69f70c9bae54a9f7b1b31549fd67665e6b3e8143f8dd7314c4954d64b3ec3230",
+    "supabase/seed/import_dish_catalogue.py": "51b73bae6c8824483182e6a7b02fb57786ab98d22149d73ac4a81e6174ddd91b",
+    "supabase/seed/import_food_data.py": "ac3d14eb633b03bcfb4ba04456cb19676bd3f9c69ca547ad278608872a747980",
+    "tests/fixtures/menu-ocr-v1/expected-draft.json": "f280cf1ba46baf62df7f9a6d5706d0eda20394d1ef905c1fc0961659a6d6e07a",
+    "tests/fixtures/menu-ocr-v1/provider-output.json": "50597364e0a7721350e2bc386770a73b1c4ddbdc2d826594ad20e17d071ffb28",
+    "tests/fixtures/menu-ocr-v1/request.json": "7c3f4c870f7bf769bc9872c363023471e279b0d5a3aee70b433cb5859dcf55b6",
+    "tests/gm36-menu-ocr.test.mjs": "c4fbd7e161563b2130659f6dc944c85643f9aeb5f0ffe991b415bbeab46381a1",
+    "tests/test_gm36_menu_ocr.py": "723da7002758e89110a44861b6a616161def19f3ad8fd41761b3cd428c552ade",
+    "tests/test_gm36_qa.py": "5f642cc41a26e31049eb9824f27253821d8e1e81def3bdfca66449d0f93ba491"
+  },
+  "reportHashes": {
+    "docs/evidence/roadmap-v2/GM-36/continuation-2026-11-18/contract-results.json": "a35ab351825faefb3f7e5e85aaa2fad332246973648541b88b1b61020824ec28",
+    "docs/evidence/roadmap-v2/GM-36/continuation-2026-11-18/diff-check.txt": "dffc1200d246b8e3b56e5a3410f6ad10b90bc136b4beb1c26ceba342e897f525",
+    "docs/evidence/roadmap-v2/GM-36/continuation-2026-11-18/docs-check.txt": "234e22deda2572ad8d8420bfa25a7cea614925c4fa044041d60412051aec8327",
+    "docs/evidence/roadmap-v2/GM-36/continuation-2026-11-18/merge-gate.txt": "b38810b26f55e655545851c44d2fadef6d6509098486b2ce94f738e04f6014d1",
+    "docs/evidence/roadmap-v2/GM-36/continuation-2026-11-18/node.txt": "ddb10915274aca77f34d8afa7169d765a3d28eaadca4f19b1a0b2d043f5196f1",
+    "docs/evidence/roadmap-v2/GM-36/continuation-2026-11-18/python-feature.txt": "f29f7827b66a1937eec363ec247bf347476092ad98d6e1de4cef3111b610bef6",
+    "docs/evidence/roadmap-v2/GM-36/continuation-2026-11-18/python-regression.txt": "9b956640c524e414dd1778759391f06f59cea58302cdba81e09582588dd75ae5",
+    "docs/evidence/roadmap-v2/GM-36/continuation-2026-11-18/qa-setup.json": "d4d474038ff9aed41960f93621c7b26e06bddd8d4a9c2cdcdced2c87595b0ef8",
+    "docs/evidence/roadmap-v2/GM-36/continuation-2026-11-18/repository-check.txt": "bafde887d56a88dbd066df4e7f6ddd50cdc3b6ff4526f7f4a192620fb81637aa",
+    "docs/evidence/roadmap-v2/GM-36/continuation-2026-11-18/start-gate.txt": "c621123899c55b992a7ce44153e7f282b7be436d5daf647325f75c340d56f882",
+    "docs/evidence/roadmap-v2/GM-36/continuation-2026-11-18/typecheck.txt": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "nodeTests": 48,
+  "pythonFeatureTests": 12,
+  "pythonRegression": {
+    "tests": 703,
+    "skipped": 6,
+    "result": "Pass with skips"
+  },
+  "currentHttp": {
+    "executedCases": 0,
+    "setupError": "QA_HOST_BINDING_NOT_LOOPBACK",
+    "cleanup": "verified no owned container/volume/network remains"
+  },
+  "gate": "BLOCKED_ARTIFACTS GM34",
+  "realRecognizer": "Not run; no approved implementation/pilot",
+  "publicationPerformed": false,
+  "pushPerformed": false
+}

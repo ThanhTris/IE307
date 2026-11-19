@@ -1,36 +1,24 @@
-# GM-36 — Independent OCR/draft plan
+# GM-36 continuation — 2026-11-19
 
-2026-10-16. Tâm explicitly requests the independent portion; reviewer ThanhTris/Trí
-Pending. Branch codex/gm-36-menu-ocr from main daa917461e68353f6ba015f2f746e805ec19710e.
-Live start gate READY_TO_CLAIM; GM04/07 Done and delivered target artifacts match.
-No merge/Done: GM34 remains a merge dependency, not an independent-code start gate.
-This follows task/ADR009 and the user's request; EXTENSIONS_SPEC's post-GM34 rule
-still applies to enabling/integrating the extension, not this isolated draft work.
+Owner Tâm requests completion; reviewer Trí remains Pending. Reuse PR123 and branch
+`codex/gm-36-menu-ocr`, updated from main `5bbee5d`. Keep one task/PR. Preserve the
+main task Markdown verbatim, as requested by Trí on PR123; implementation notes live here.
 
-Inputs: GM04.2/food1.1.0 dictionary/schema/validator; GM07.1 API envelope/errors,
-PriceUnit/null semantics. Do not edit these producer artifacts, migrations, app,
-packages/lockfiles, source datasets, shared clients or backend feature flags.
+Scope authorized independently since 2026-10-16: draft handler, normalization,
+contract checks and isolated HTTP tests. This continuation addresses the four
+review follow-ups: current main, dish-only profile, revision/evidence and merge gate.
 
-Output contract GM36.1 is separate from GM07 public core DTOs. New menu-ocr modules:
-strict bounded image/source/processing-consent input, typed provider port, confidence
-and Vietnamese price normalization, draft-only safe projection, request handler.
-No provider/native dependency is approved. Production entrypoint remains disabled;
-no external OCR call, stored image, DB write or publish capability. Spec's on-device
-recognition remains the target; fake provider is explicitly test-only. A reviewed
-provider/accuracy/license/privacy/quota/cost plan and GM34 are still required later.
+1. Reuse GM03 sealed QA manifest and GM40 ownership verifier; require an explicit
+   manifest before Auth or cleanup. No fallback to the application stack.
+2. Keep GM36.1 wire bytes and production entrypoint disabled. Source/confidence/
+   nullable/PriceUnit are retained. Do not infer taxonomy or require venues/hours
+   for dish-only. Both real importers must reject the standalone OCR draft.
+3. Run strict TS, Node/Python unit, actual HTTP/GoTrue with a test recognizer,
+   schema/semantic/import guards, full Python regression and repository checks.
+4. Capture hashes of actual tested sources, separate historical evidence, and
+   run live merge gate with --verify-outputs. Do not fabricate producer output.
 
-HTTP boundary: real Supabase Auth user lookup, operator UUID allowlist (never
-user_metadata permission), no guest-by-default processing, bounded streaming input,
-server timeout/abort, injected quota lease port. Memory quota is for isolated tests
-only, not distributed production enforcement. All outputs draft/unverified; unknown
-name/price/currency/unit remain null, no allergen/location/hours/category inference.
-Explicit source-rights declaration is input metadata, not evidence/approval.
-
-Tests: unit parser/contract/invalid image/low-confidence/timeout/provider failure/
-quota/concurrency/late response/privacy; real Node loopback HTTP using the exact
-Web handler + actual GoTrue JWTs (provider remains stub); separate Deno/Edge runtime
-and real provider marked Not run. JSON Schema/semantic validation + existing GM08
-preflight must reject direct draft import/publish. No synthetic verification claim.
-Run strict TypeScript, Python/repository/index/diff checks. Capture source hashes,
-HTTP statuses/output assertions, cleanup, limits in CHECKS/HANDOFF and PR template.
-No auto commit/push/merge/Project updates or reviewer approval.
+The start checker returns READY_TO_CLAIM. GM34 handoff is on main at `5a69b56`.
+The merge checker returns READY_FOR_MERGE_REVIEW for the files and dependencies.
+The proposed delivery covers the independent draft pipeline. Full OCR remains
+subject to Trí’s scope decision, provider selection and a permitted-menu pilot.

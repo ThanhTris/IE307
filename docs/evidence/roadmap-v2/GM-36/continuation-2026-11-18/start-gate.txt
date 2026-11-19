@@ -1,0 +1,9 @@
+Approval source: https://github.com/users/ThanhTris/projects/2 | checked at 2026-11-18T01:51:07.545603+00:00 | no cached/local fallback
+Baseline approval mapping: GM-01 -> Project GM-00 / issue #37 (owner-pinned; artifacts remain separate)
+GM-36: BLOCKED_ARTIFACTS | owner=Tâm reviewer=Trí | tasks/backlog/GM-36.md
+  WAIT GM-34: Project=baseline accepted (Done) | local_status=backlog | tasks/backlog/GM-34.md
+    missing delivered artifact: docs/evidence/roadmap-v2/GM-34/RELEASE.md
+    missing delivered artifact: docs/evidence/roadmap-v2/GM-34/CHECKS.md
+    missing delivered artifact: docs/evidence/roadmap-v2/GM-34/FIGMA_PARITY.md
+    missing delivered artifact: docs/evidence/roadmap-v2/GM-34/HANDOFF.md
+Gate checks approval source and delivered files, not execution. Merge still requires review of this PR, upstream PR/commit verification and real integration tests. No status/task edits performed.

@@ -12,6 +12,8 @@ sys.path.insert(0, str(ROOT / 'scripts'))
 sys.path.insert(0, str(ROOT / 'supabase/seed'))
 from validate_field_contracts import audit_schema, schema_errors, load_json
 from import_food_data import preflight
+from import_dish_catalogue import candidate
+import tempfile
 
 
 def validate_draft(draft):
@@ -53,11 +55,21 @@ def check(draft):
     # This calls the real existing importer without any DB/network invocation.
     direct = preflight(draft, '2026-10-16T00:00:00Z', publish=True)
     rejected = direct['valid'] is False and direct['publicationPerformed'] is False
+    # Dish-only has its own contract. OCR must not bypass that importer either.
+    with tempfile.TemporaryDirectory(prefix='gm36-draft-') as folder:
+        path = Path(folder) / 'draft.json'
+        path.write_text(json.dumps(draft), encoding='utf-8')
+        try:
+            candidate(path)
+            catalogue_rejected = False
+        except ValueError:
+            catalogue_rejected = True
     return {'contract': 'GM-36.1', 'validDraft': not errors, 'errors': errors,
             'gm08DirectImportRejected': rejected,
+            'dishCatalogueDirectImportRejected': catalogue_rejected,
             'gm08ErrorCodes': sorted({e['code'] for e in direct['errors']}),
             'publicationPerformed': False, 'databaseAccessed': False,
-            'result': 'Pass' if not errors and rejected else 'Fail'}
+            'result': 'Pass' if not errors and rejected and catalogue_rejected else 'Fail'}
 
 
 def main():

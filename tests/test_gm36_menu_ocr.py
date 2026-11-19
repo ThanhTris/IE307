@@ -21,6 +21,7 @@ class MenuOcrContractTests(unittest.TestCase):
         result = gm36.check(self.draft)
         self.assertEqual(result['result'], 'Pass')
         self.assertTrue(result['gm08DirectImportRejected'])
+        self.assertTrue(result['dishCatalogueDirectImportRejected'])
         self.assertFalse(result['databaseAccessed'])
         self.assertFalse(result['publicationPerformed'])
 
@@ -64,6 +65,15 @@ class MenuOcrContractTests(unittest.TestCase):
                        lambda d: d['items'][0].update(allergenSafe=True)):
             draft = deepcopy(self.draft)
             mutate(draft)
+            self.assertTrue(gm36.validate_draft(draft))
+
+    def test_dish_only_draft_needs_no_venue_coverage_schedule_or_inferred_taxonomy(self):
+        self.assertEqual(gm36.validate_draft(self.draft), [])
+        for key in ('venueId', 'coverageId', 'scheduleId'):
+            self.assertIsNone(self.draft[key])
+        for key in ('mealSlots', 'cuisineIds', 'categoryIds', 'allergens'):
+            draft = deepcopy(self.draft)
+            draft['items'][0][key] = ['inferred']
             self.assertTrue(gm36.validate_draft(draft))
 
     def test_price_range_and_nfc_must_be_consistent(self):

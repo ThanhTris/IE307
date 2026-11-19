@@ -1,0 +1,60 @@
+(node:9355) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///Users/hoaitam/Desktop/Learn/23521394/HK1-Nam-4/IE307/ThanhTris-IE307/supabase/functions/menu-ocr/index.ts is not specified and it doesn't parse as CommonJS.
+Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+To eliminate this warning, add "type": "module" to /Users/hoaitam/Desktop/Learn/23521394/HK1-Nam-4/IE307/ThanhTris-IE307/package.json.
+(Use `node --trace-warnings ...` to show where the warning was created)
+✔ VND price 35.000 đ (3.23975ms)
+✔ VND price 35,000 VND (0.200583ms)
+✔ VND price 35 000 (0.059667ms)
+✔ VND price 35k (0.052667ms)
+✔ VND price 35,5k (0.064ms)
+✔ VND price 35k - 45k (0.092084ms)
+✔ VND price 35000–45000 ₫ (0.15975ms)
+✔ VND price 0 (0.045625ms)
+✔ ambiguous/invalid price remains unknown:  (0.089459ms)
+✔ ambiguous/invalid price remains unknown: 35.5 (0.085209ms)
+✔ ambiguous/invalid price remains unknown: 35/45k (0.056167ms)
+✔ ambiguous/invalid price remains unknown: 35k-30k (0.038708ms)
+✔ ambiguous/invalid price remains unknown: 35.000,000 (0.038958ms)
+✔ ambiguous/invalid price remains unknown: USD 5 (0.030834ms)
+✔ ambiguous/invalid price remains unknown: từ 35k (0.12075ms)
+✔ ambiguous/invalid price remains unknown: -100 (0.026542ms)
+✔ ambiguous/invalid price remains unknown: 1000000001 (0.0215ms)
+✔ ambiguous/invalid price remains unknown: 35k-45k-50k (0.038084ms)
+✔ ambiguous/invalid price remains unknown: NaN (0.553375ms)
+✔ ambiguous/invalid price remains unknown: 35k đ đ (0.039833ms)
+✔ abbreviated range cannot confirm an implied thousand scale: 35-45k (0.052459ms)
+✔ high confidence cannot confirm ambiguous range or its price source: 35-45k (1.75475ms)
+✔ abbreviated range cannot confirm an implied thousand scale: 35-45.000 đ (0.044042ms)
+✔ high confidence cannot confirm ambiguous range or its price source: 35-45.000 đ (0.218042ms)
+✔ abbreviated range cannot confirm an implied thousand scale: 35-45000 đ (0.025834ms)
+✔ high confidence cannot confirm ambiguous range or its price source: 35-45000 đ (0.12225ms)
+✔ abbreviated range cannot confirm an implied thousand scale: 35-45 000 đ (0.02475ms)
+✔ high confidence cannot confirm ambiguous range or its price source: 35-45 000 đ (0.106834ms)
+✔ fully specified range retains explicit VND amounts: 35k-45k (0.184084ms)
+✔ fully specified range retains explicit VND amounts: 35000-45000 đ (0.12925ms)
+✔ fully specified range retains explicit VND amounts: 35000-45k (0.149042ms)
+✔ fully specified range retains explicit VND amounts: 0-45k (0.130291ms)
+✔ independent golden: Vietnamese NFC, price interval, low confidence and unknown unit (0.266709ms)
+✔ no category, allergy, location, schedule, version or verified data can come from provider (0.552625ms)
+✔ reject malformed/provider quantities instead of coercing confidence or currency (0.378542ms)
+✔ confidence boundary inclusive, never default price/currency/unit (0.182ms)
+✔ request rejects URLs, unknown keys, arbitrary caller IDs and data URIs (0.214042ms)
+✔ missing, unknown or unlicensed source rights and consent are not implicit (0.186875ms)
+✔ invalid image: MIME mismatch, malformed base64, truncated container, zero or excessive dimensions (0.405375ms)
+✔ no authentication, outsider and disabled/missing adapters never invoke recognizer (42.488792ms)
+✔ HTTP method, media type, malformed JSON and streaming length independent of Content-Length (5.471209ms)
+✔ handler returns the exact golden draft without images/tokens/provider raw text (0.933584ms)
+✔ slow request body times out before provider/quota work (10.530875ms)
+✔ empty/provider-malformed/failure paths are safe and do not echo provider exception (0.975292ms)
+✔ quota isolates callers, resets expired idle windows and bounds memory (0.079625ms)
+✔ concurrent duplicate attempts have only one recognizer call (12.327834ms)
+✔ provider timeout aborts and a late provider keeps its lease until actually settled (11.587916ms)
+✔ Auth verifier forwards only Authorization and public key to fixed project endpoint (1.10825ms)
+ℹ tests 48
+ℹ suites 0
+ℹ pass 48
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 289.990541

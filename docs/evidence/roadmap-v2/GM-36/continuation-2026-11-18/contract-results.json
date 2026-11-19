@@ -1,0 +1,14 @@
+{
+  "contract": "GM-36.1",
+  "validDraft": true,
+  "errors": [],
+  "gm08DirectImportRejected": true,
+  "dishCatalogueDirectImportRejected": true,
+  "gm08ErrorCodes": [
+    "SCHEMA"
+  ],
+  "publicationPerformed": false,
+  "databaseAccessed": false,
+  "result": "Pass",
+  "checkedAt": "2026-11-18T01:58:53.848921+00:00"
+}
