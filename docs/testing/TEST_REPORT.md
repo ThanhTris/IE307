@@ -4,7 +4,7 @@ Sinh bằng `python scripts/test_cases.py --write` từ `docs/testing/cases` và
 
 - Tổng số test case: **194** (15 module)
 - Có liên kết test tự động: **149**; chưa có: **45**
-- Trạng thái: Pass 82, Fail 1, Blocked 0, Partial 10, Not run 101
+- Trạng thái: Pass 83, Fail 1, Blocked 0, Partial 10, Not run 100
 
 ## Theo module
 
@@ -14,7 +14,7 @@ Sinh bằng `python scripts/test_cases.py --write` từ `docs/testing/cases` và
 | ENTRY — Khởi động, hướng dẫn và quyền | 5 | 0 | 0 | 0 | 1 | 6 |
 | ROOM — Phòng, lobby và tham gia | 5 | 0 | 0 | 1 | 15 | 21 |
 | PREF — Khẩu vị và bộ lọc | 4 | 0 | 0 | 0 | 6 | 10 |
-| VOTE1 — Bình chọn vòng 1 và chờ kết quả | 10 | 0 | 0 | 3 | 9 | 22 |
+| VOTE1 — Bình chọn vòng 1 và chờ kết quả | 11 | 0 | 0 | 3 | 8 | 22 |
 | VOTE2 — Bình chọn vòng 2 | 7 | 0 | 0 | 1 | 5 | 13 |
 | RES — Kết quả, Top 3 và Places | 12 | 1 | 0 | 1 | 1 | 15 |
 | SOC — Bạn bè, lời mời và hộp thư | 4 | 0 | 0 | 0 | 9 | 13 |
@@ -65,6 +65,7 @@ Sinh bằng `python scripts/test_cases.py --write` từ `docs/testing/cases` và
 | automated-jest-20261120-app-gaps | ab8c63f | 2026-11-20 | GM-56 tests on top of GM-55, Windows, Node v24.15.0 | 3 |
 | automated-jest-20261120-rerun | 08f3bc3 | 2026-11-20 | rerun of the two result-screen suites on an idle machine, Windows, Node v24.15.0 | 3 |
 | automated-python-20261120 | 08f3bc3 | 2026-11-20 | main 08f3bc3 + GM-55 working tree, Windows, Python 3.14.5 | 7 |
+| qa-local-e2e-20261120 | 028ba6a | 2026-11-20 | owned GM-03 QA stack gm03qa-gm57-e2e (migrations checked in at this commit, contract dish-session-v4/roadmap-v2/GM-07.B-supplement), Windows, Node v24.15.0 | 1 |
 
 ## Ca chưa có test tự động
 

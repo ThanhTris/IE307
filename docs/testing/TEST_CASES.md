@@ -250,11 +250,11 @@ Tổng cộng 194 test case, 15 module.
 
 | ID | Ưu tiên | Loại | Tầng | Tiêu đề | Yêu cầu | Tự động | Trạng thái |
 | --- | --- | --- | --- | --- | --- | --- | --- |
-| TC-ROOM-001 | P0 | functional | api | Tạo phòng 10 món cho bữa trưa | REQ-ROOM-01 | 3 | Not run |
+| TC-ROOM-001 | P0 | functional | api | Tạo phòng 10 món cho bữa trưa | REQ-ROOM-01 | 4 | Not run |
 | TC-ROOM-002 | P0 | boundary | api | Tạo phòng 20 món (giới hạn trên) | REQ-ROOM-01 | 2 | Not run |
 | TC-ROOM-003 | P0 | boundary | api | Thiếu món: dùng 5–9 món hoặc báo không đủ | REQ-ROOM-01 | 4 | Not run |
 | TC-ROOM-004 | P1 | functional | unit | Hẹn giờ và xung đột bữa ăn | REQ-ROOM-01 | 2 | Pass |
-| TC-ROOM-005 | P0 | functional | component | Vào phòng bằng mã: xem trước rồi xác nhận | REQ-ROOM-02 | 2 | Not run |
+| TC-ROOM-005 | P0 | functional | component | Vào phòng bằng mã: xem trước rồi xác nhận | REQ-ROOM-02 | 3 | Not run |
 | TC-ROOM-006 | P0 | negative | component | Mã phòng sai định dạng hoặc không tồn tại | REQ-ROOM-02 | 3 | Pass |
 | TC-ROOM-007 | P0 | negative | api | Phòng hết hạn, đầy hoặc đã bắt đầu | REQ-ROOM-02 | 3 | Not run |
 | TC-ROOM-008 | P0 | security | unit | Liên kết vào phòng an toàn | REQ-ROOM-02 | 3 | Pass |
@@ -281,7 +281,7 @@ Tổng cộng 194 test case, 15 module.
   2. Xác nhận tạo phòng.
   3. Đọc lại phòng từ server.
 - **Kết quả mong đợi:** Phòng lưu đúng 10 món khác nhau, mã phòng 6 ký tự, không yêu cầu vị trí.
-- **Tự động hóa:** `supabase/tests/http/GM-19.http`, `supabase/tests/http/GM-20-canonical.http`, `mobile/tests/component/gm25FigmaParity.test.tsx::liveDishSetupGateway creates room via canonical dish_session v4 dispatch`
+- **Tự động hóa:** `supabase/tests/http/GM-19.http`, `supabase/tests/http/GM-20-canonical.http`, `mobile/tests/component/gm25FigmaParity.test.tsx::liveDishSetupGateway creates room via canonical dish_session v4 dispatch`, `scripts/e2e/two_client_flow.mjs (tag)`
 
 ### TC-ROOM-002 — Tạo phòng 20 món (giới hạn trên)
 
@@ -323,7 +323,7 @@ Tổng cộng 194 test case, 15 module.
   2. Xem màn xem trước.
   3. Bấm xác nhận vào phòng.
 - **Kết quả mong đợi:** Xem trước chỉ hiện số người, không đổi số thành viên; chỉ lần xác nhận mới tham gia, một lần duy nhất.
-- **Tự động hóa:** `mobile/tests/component/joinRoomEntry.test.tsx::preview shows count only, ignores supplied private fields, and confirmation is the only join mutation`, `supabase/tests/http/GM-22.http`
+- **Tự động hóa:** `mobile/tests/component/joinRoomEntry.test.tsx::preview shows count only, ignores supplied private fields, and confirmation is the only join mutation`, `supabase/tests/http/GM-22.http`, `scripts/e2e/two_client_flow.mjs (tag)`
 
 ### TC-ROOM-006 — Mã phòng sai định dạng hoặc không tồn tại
 
@@ -605,7 +605,7 @@ Tổng cộng 194 test case, 15 module.
 | TC-VOTE1-007 | P0 | resilience | unit | Gửi lại cùng request id không nhân đôi phiếu | REQ-VOTE-02 | 3 | Not run |
 | TC-VOTE1-008 | P0 | resilience | component | Lỗi gửi phiếu giữ lựa chọn và cho thử lại | REQ-VOTE-02 | 2 | Pass |
 | TC-VOTE1-009 | P0 | resilience | unit | Phiếu đã ACK chặn ghi đè sau khi mở lại app | REQ-RT-03 | 2 | Partial |
-| TC-VOTE1-010 | P0 | functional | api | Có người thắng ở vòng 1 khi mọi người cùng WANT | REQ-VOTE-03 | 2 | Not run |
+| TC-VOTE1-010 | P0 | functional | api | Có người thắng ở vòng 1 khi mọi người cùng WANT | REQ-VOTE-03 | 3 | Pass |
 | TC-VOTE1-011 | P0 | functional | api | Không có winner thì mở vòng 2 với món sống sót | REQ-VOTE-03 | 2 | Not run |
 | TC-VOTE1-012 | P0 | boundary | api | Mọi món bị NO thì kết thúc ở vòng 1 | REQ-VOTE-03 | 2 | Not run |
 | TC-VOTE1-013 | P0 | functional | api | Đồng hồ 60 giây bắt đầu từ lần vào phòng chờ đầu tiên | REQ-VOTE-04 | 2 | Not run |
@@ -720,7 +720,7 @@ Tổng cộng 194 test case, 15 module.
   1. Gửi phiếu của mọi thành viên.
   2. Đọc kết quả.
 - **Kết quả mong đợi:** Server chọn một winner một lần, trạng thái DECIDED ở vòng 1.
-- **Tự động hóa:** `supabase/tests/http/GM-20.http`, `supabase/tests/http/GM-20-canonical.http`
+- **Tự động hóa:** `supabase/tests/http/GM-20.http`, `supabase/tests/http/GM-20-canonical.http`, `scripts/e2e/two_client_flow.mjs (tag)`
 
 ### TC-VOTE1-011 — Không có winner thì mở vòng 2 với món sống sót
 
@@ -987,7 +987,7 @@ Tổng cộng 194 test case, 15 module.
 | --- | --- | --- | --- | --- | --- | --- | --- |
 | TC-RES-001 | P0 | functional | component | Kết quả winner và Top 3 hiển thị đúng | REQ-RES-02 | 2 | Fail |
 | TC-RES-002 | P0 | boundary | component | Đồng hạng: cùng hạng, bục riêng theo thứ tự server | REQ-RES-02 | 3 | Pass |
-| TC-RES-003 | P0 | resilience | e2e | Kết quả ổn định khi tải lại và thử lại | REQ-RES-01 | 2 | Not run |
+| TC-RES-003 | P0 | resilience | e2e | Kết quả ổn định khi tải lại và thử lại | REQ-RES-01 | 4 | Not run |
 | TC-RES-004 | P0 | security | unit | Server từ chối kết quả sai schema | REQ-RES-01 | 3 | Pass |
 | TC-RES-005 | P0 | functional | component | NO_CONSENSUS hiện đúng lý do | REQ-RES-03 | 1 | Pass |
 | TC-RES-006 | P0 | functional | component | Places chỉ gọi sau khi có winner | REQ-RES-04 | 2 | Partial |
@@ -1026,7 +1026,7 @@ Tổng cộng 194 test case, 15 module.
 - **Các bước:**
   1. Mở kết quả, force-stop, mở lại, đọc từ Inbox.
 - **Kết quả mong đợi:** Cùng winner, cùng Top 3 và điểm ở mọi lần đọc.
-- **Tự động hóa:** `supabase/tests/http/GM-20-canonical.http`, `supabase/tests/http/GM-21-canonical.http`
+- **Tự động hóa:** `supabase/tests/http/GM-20-canonical.http`, `supabase/tests/http/GM-21-canonical.http`, `supabase/tests/http/GM-57.http (tag)`, `scripts/e2e/two_client_flow.mjs (tag)`
 
 ### TC-RES-004 — Server từ chối kết quả sai schema
 
@@ -1542,7 +1542,7 @@ Tổng cộng 194 test case, 15 module.
 
 | ID | Ưu tiên | Loại | Tầng | Tiêu đề | Yêu cầu | Tự động | Trạng thái |
 | --- | --- | --- | --- | --- | --- | --- | --- |
-| TC-SEC-001 | P0 | security | sql | RLS: người ngoài không đọc được dữ liệu phòng | REQ-SEC-01 | 2 | Not run |
+| TC-SEC-001 | P0 | security | sql | RLS: người ngoài không đọc được dữ liệu phòng | REQ-SEC-01 | 4 | Not run |
 | TC-SEC-002 | P0 | security | sql | Người bị loại không đọc được nữa | REQ-SEC-01 | 2 | Not run |
 | TC-SEC-003 | P0 | security | api | RPC đặc quyền kiểm danh tính và quyền | REQ-SEC-01 | 2 | Not run |
 | TC-SEC-004 | P0 | privacy | sql | Phiếu thô không thể đọc bằng quyền host | REQ-VOTE-09 | 2 | Not run |
@@ -1562,7 +1562,7 @@ Tổng cộng 194 test case, 15 module.
 - **Các bước:**
   1. Người ngoài đọc phòng, thành viên, phiếu, kết quả.
 - **Kết quả mong đợi:** Mọi truy vấn trả rỗng hoặc bị từ chối.
-- **Tự động hóa:** `supabase/tests/rls.sql`, `supabase/tests/http/GM-17.http`
+- **Tự động hóa:** `supabase/tests/rls.sql`, `supabase/tests/http/GM-17.http`, `supabase/tests/http/GM-57.http (tag)`, `scripts/e2e/two_client_flow.mjs (tag)`
 
 ### TC-SEC-002 — Người bị loại không đọc được nữa
 
