@@ -1,0 +1,26 @@
+{
+  "run": "automated-jest-20261120-app-gaps",
+  "commit": "ab8c63f",
+  "build": "GM-56 tests on top of GM-55, Windows, Node v24.15.0",
+  "date": "2026-11-20",
+  "results": [
+    {
+      "case": "TC-ENTRY-006",
+      "env": "ci",
+      "status": "Pass",
+      "actual": "1 automated test(s) pass"
+    },
+    {
+      "case": "TC-PREF-010",
+      "env": "ci",
+      "status": "Pass",
+      "actual": "1 automated test(s) pass"
+    },
+    {
+      "case": "TC-UI-004",
+      "env": "ci",
+      "status": "Pass",
+      "actual": "1 automated test(s) pass"
+    }
+  ]
+}

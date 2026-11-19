@@ -3,17 +3,17 @@
 Sinh bằng `python scripts/test_cases.py --write` từ `docs/testing/cases` và `docs/testing/results`; không sửa tay. `Not run` nghĩa là chưa có kết quả được ghi, không phải đạt.
 
 - Tổng số test case: **194** (15 module)
-- Có liên kết test tự động: **146**; chưa có: **48**
-- Trạng thái: Pass 79, Fail 1, Blocked 0, Partial 10, Not run 104
+- Có liên kết test tự động: **149**; chưa có: **45**
+- Trạng thái: Pass 82, Fail 1, Blocked 0, Partial 10, Not run 101
 
 ## Theo module
 
 | Module | Pass | Fail | Blocked | Partial | Not run | Tổng |
 | --- | --- | --- | --- | --- | --- | --- |
 | AUTH — Tài khoản và phiên | 5 | 0 | 0 | 1 | 8 | 14 |
-| ENTRY — Khởi động, hướng dẫn và quyền | 4 | 0 | 0 | 0 | 2 | 6 |
+| ENTRY — Khởi động, hướng dẫn và quyền | 5 | 0 | 0 | 0 | 1 | 6 |
 | ROOM — Phòng, lobby và tham gia | 5 | 0 | 0 | 1 | 15 | 21 |
-| PREF — Khẩu vị và bộ lọc | 3 | 0 | 0 | 0 | 7 | 10 |
+| PREF — Khẩu vị và bộ lọc | 4 | 0 | 0 | 0 | 6 | 10 |
 | VOTE1 — Bình chọn vòng 1 và chờ kết quả | 10 | 0 | 0 | 3 | 9 | 22 |
 | VOTE2 — Bình chọn vòng 2 | 7 | 0 | 0 | 1 | 5 | 13 |
 | RES — Kết quả, Top 3 và Places | 12 | 1 | 0 | 1 | 1 | 15 |
@@ -22,7 +22,7 @@ Sinh bằng `python scripts/test_cases.py --write` từ `docs/testing/cases` và
 | RT — Realtime, phục hồi và ngoại tuyến | 9 | 0 | 0 | 0 | 4 | 13 |
 | SEC — Bảo mật và quyền riêng tư | 4 | 0 | 0 | 0 | 8 | 12 |
 | DATA — Dữ liệu món ăn | 7 | 0 | 0 | 0 | 3 | 10 |
-| UI — Giao diện và trợ năng | 4 | 0 | 0 | 3 | 6 | 13 |
+| UI — Giao diện và trợ năng | 5 | 0 | 0 | 3 | 5 | 13 |
 | REL — Phát hành và nâng cấp | 0 | 0 | 0 | 0 | 12 | 12 |
 | IOS — iOS | 0 | 0 | 0 | 0 | 10 | 10 |
 
@@ -62,6 +62,7 @@ Sinh bằng `python scripts/test_cases.py --write` từ `docs/testing/cases` và
 | Lượt | Commit | Ngày | Build | Số kết quả |
 | --- | --- | --- | --- | --- |
 | automated-jest-20261120 | 08f3bc3 | 2026-11-20 | main 08f3bc3 + GM-55 working tree, Windows, Node v24.15.0, jest-expo | 83 |
+| automated-jest-20261120-app-gaps | ab8c63f | 2026-11-20 | GM-56 tests on top of GM-55, Windows, Node v24.15.0 | 3 |
 | automated-jest-20261120-rerun | 08f3bc3 | 2026-11-20 | rerun of the two result-screen suites on an idle machine, Windows, Node v24.15.0 | 3 |
 | automated-python-20261120 | 08f3bc3 | 2026-11-20 | main 08f3bc3 + GM-55 working tree, Windows, Python 3.14.5 | 7 |
 
@@ -79,7 +80,6 @@ Sinh bằng `python scripts/test_cases.py --write` từ `docs/testing/cases` và
 | TC-AUTH-014 | e2e |  |
 | TC-DATA-003 | unit | Chức năng thuộc GM-51 chưa có; test thêm khi GM-51 hoàn tất. |
 | TC-DATA-010 | unit | Bundle kế tiếp thuộc GM-41/GM-47 chưa có; kiểm bằng scripts/dish_filter_coverage.py khi bàn giao. |
-| TC-ENTRY-006 | component | Chưa có test riêng cho NotFoundScreen; bổ sung ở GM-56. |
 | TC-IOS-001 | e2e |  |
 | TC-IOS-002 | e2e |  |
 | TC-IOS-003 | e2e |  |
@@ -90,7 +90,6 @@ Sinh bằng `python scripts/test_cases.py --write` từ `docs/testing/cases` và
 | TC-IOS-008 | e2e |  |
 | TC-IOS-009 | e2e |  |
 | TC-IOS-010 | e2e |  |
-| TC-PREF-010 | component | Chưa có test riêng cho trường hợp bỏ qua xếp hạng nâng cao; bổ sung ở GM-56. |
 | TC-RT-005 | e2e |  |
 | TC-RT-013 | e2e |  |
 | TC-REL-001 | e2e |  |
@@ -110,7 +109,6 @@ Sinh bằng `python scripts/test_cases.py --write` từ `docs/testing/cases` và
 | TC-SEC-010 | api | Tính năng của task release v1 chưa merge; test được thêm khi task đó hoàn tất (GM-56/57). |
 | TC-SEC-012 | e2e |  |
 | TC-UI-001 | e2e |  |
-| TC-UI-004 | component | Chưa có test đo vùng chạm 48dp; bổ sung ở GM-56 và kiểm tay ở GM-58. |
 | TC-UI-007 | e2e |  |
 | TC-UI-010 | e2e |  |
 | TC-UI-012 | e2e |  |

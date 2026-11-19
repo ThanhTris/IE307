@@ -12,7 +12,7 @@ Sinh bằng `python scripts/test_cases.py --write`; không sửa tay. Yêu cầu
 | REQ-AUTH-06 | P0 | Sửa tên hồ sơ và đổi mật khẩu: nút khóa khi đang gửi, lỗi giữ dữ liệu đã nhập, chỉ báo thành công sau ACK (Active) | TC-AUTH-012, TC-AUTH-013 | 0/2 | 0 | 0 |
 | REQ-AUTH-07 | P0 | Đăng xuất hoặc đổi tài khoản dừng mọi thao tác của phiên cũ trước khi gửi, xóa cache, outbox và dữ liệu riêng của danh tính cũ (Active) | TC-AUTH-005, TC-AUTH-006, TC-RT-009, TC-VOTE1-022 | 4/4 | 4 | 0 |
 | REQ-AUTH-08 | P0 | Xóa tài khoản trong app: xác nhận, xóa dữ liệu cá nhân, thu hồi phiên, về màn chào; dữ liệu người khác nguyên vẹn (Active) | TC-AUTH-014, TC-IOS-008, TC-SEC-010 | 0/3 | 0 | 0 |
-| REQ-ENTRY-01 | P0 | Màn chào, hướng dẫn và nhập tên khách chạy được ở lần mở đầu; mở lại tự vào Home khi phiên còn hợp lệ (Active) | TC-ENTRY-001, TC-ENTRY-005, TC-ENTRY-006 | 2/3 | 2 | 0 |
+| REQ-ENTRY-01 | P0 | Màn chào, hướng dẫn và nhập tên khách chạy được ở lần mở đầu; mở lại tự vào Home khi phiên còn hợp lệ (Active) | TC-ENTRY-001, TC-ENTRY-005, TC-ENTRY-006 | 3/3 | 3 | 0 |
 | REQ-ENTRY-02 | P0 | Lần đầu sau đăng nhập hỏi quyền Thông báo, Camera, Vị trí một lần; từ chối thì tính năng hỏi lại khi dùng, app vẫn chạy (Active) | TC-ENTRY-002, TC-IOS-010, TC-REL-011 | 1/3 | 1 | 0 |
 | REQ-ENTRY-03 | P0 | Home tự tìm phòng đang tham gia (kể cả đổi máy) và cho tiếp tục đúng màn theo trạng thái phòng (Active) | TC-ENTRY-003, TC-ENTRY-004 | 2/2 | 1 | 0 |
 | REQ-ROOM-01 | P0 | Host tạo phòng với đúng 10–20 món ban đầu, độc lập quán, GPS, giờ bán; thiếu món thì cho 5–9 món qua "Dùng N món", dưới 5 món báo không đủ món (Active) | TC-ROOM-001, TC-ROOM-002, TC-ROOM-003, TC-ROOM-004, TC-ROOM-018 | 5/5 | 1 | 0 |
@@ -22,7 +22,7 @@ Sinh bằng `python scripts/test_cases.py --write`; không sửa tay. Yêu cầu
 | REQ-ROOM-05 | P0 | Chỉ host sửa thiết lập phòng; sửa không đổi (no-op) hoặc chỉ đổi giờ giữ nguyên pool và version pool; yêu cầu mới được chấp nhận tăng version phòng, ACK replay thì không (Active) | TC-ROOM-015, TC-ROOM-016, TC-ROOM-021 | 3/3 | 0 | 0 |
 | REQ-ROOM-06 | P1 | Thành viên vào lại phòng ở vòng 1 sau khi thoát; phòng đã bắt đầu, người chưa vào không vào được (Active) | TC-ROOM-017 | 1/1 | 0 | 0 |
 | REQ-PREF-01 | P0 | Khẩu vị lưu mặc định theo tài khoản, chụp riêng cho từng phòng; chỉ chính người đó xem lựa chọn thô, host không xem của người khác (Active) | TC-PREF-001, TC-PREF-002, TC-PREF-007, TC-PREF-008 | 4/4 | 2 | 0 |
-| REQ-PREF-02 | P0 | Bộ lọc loại món, miền, vị, bữa là ưu tiên mềm, đa nhãn (khớp khi trùng bất kỳ giá trị nào); không loại món khỏi pool, không bù món (Active) | TC-PREF-003, TC-PREF-004, TC-PREF-010 | 2/3 | 0 | 0 |
+| REQ-PREF-02 | P0 | Bộ lọc loại món, miền, vị, bữa là ưu tiên mềm, đa nhãn (khớp khi trùng bất kỳ giá trị nào); không loại món khỏi pool, không bù món (Active) | TC-PREF-003, TC-PREF-004, TC-PREF-010 | 3/3 | 1 | 0 |
 | REQ-PREF-03 | P1 | Ô "Tránh món gần đây" chỉ hiện khi có lịch sử cá nhân còn hạn và consent bật; món gần đây xếp cuối, vẫn được chọn khi thiếu món (Active) | TC-PREF-005, TC-PREF-006 | 2/2 | 1 | 0 |
 | REQ-VOTE-01 | P0 | Mỗi món WANT, OK hoặc NO; chưa chọn hết thì không gửi được; thiếu phiếu không phải OK; chạm đơn, cuộn, vuốt dọc không tính phiếu (Active) | TC-VOTE1-001, TC-VOTE1-002, TC-VOTE1-003, TC-VOTE1-004 | 3/4 | 3 | 0 |
 | REQ-VOTE-02 | P0 | Gửi phiếu có ACK, thử lại cùng request id không nhân đôi; pending khác ACK; mất mạng sau ACK không gửi lại phiếu (Active) | TC-IOS-007, TC-VOTE1-006, TC-VOTE1-007, TC-VOTE1-008 | 3/4 | 2 | 0 |
@@ -57,7 +57,7 @@ Sinh bằng `python scripts/test_cases.py --write`; không sửa tay. Yêu cầu
 | REQ-DATA-04 | P1 | Ảnh và mô tả có tác giả, license, ghi công; thiếu căn cứ giữ null (Active) | TC-DATA-009 | 1/1 | 1 | 0 |
 | REQ-UI-01 | P0 | Màn hình dùng được ở 320, 360, 412dp và màn rộng, safe area, bàn phím không che nút chính, nút Back đúng (Active) | TC-UI-001, TC-UI-006, TC-UI-010, TC-UI-011, TC-UI-013 | 2/5 | 1 | 0 |
 | REQ-UI-02 | P0 | Chữ phóng 200% không cắt nội dung hay nút; nhãn không bẻ giữa từ (Active) | TC-IOS-009, TC-UI-002, TC-UI-012 | 1/3 | 0 | 0 |
-| REQ-UI-03 | P0 | TalkBack/VoiceOver đọc đúng nhãn và vai trò, vùng chạm tối thiểu 48dp, có nút thay cử chỉ vuốt, giảm chuyển động được tôn trọng (Active) | TC-RES-015, TC-UI-003, TC-UI-004, TC-UI-005, TC-VOTE1-005 | 4/5 | 2 | 0 |
+| REQ-UI-03 | P0 | TalkBack/VoiceOver đọc đúng nhãn và vai trò, vùng chạm tối thiểu 48dp, có nút thay cử chỉ vuốt, giảm chuyển động được tôn trọng (Active) | TC-RES-015, TC-UI-003, TC-UI-004, TC-UI-005, TC-VOTE1-005 | 5/5 | 3 | 0 |
 | REQ-UI-04 | P0 | Mọi màn có trạng thái loading, rỗng, lỗi, thử lại; chế độ tối không làm mất nội dung hay độ tương phản (Active) | TC-HIS-009, TC-RES-013, TC-SOC-004, TC-UI-007, TC-UI-008, TC-UI-009 | 5/6 | 5 | 0 |
 | REQ-REL-01 | P0 | Cài mới chạy được; nâng cấp từ bản trước giữ phiên và dữ liệu cục bộ hợp lệ (Active) | TC-REL-001, TC-REL-002, TC-REL-010 | 0/3 | 0 | 0 |
 | REQ-REL-02 | P0 | Cổng phiên bản tối thiểu: bản thấp hơn thấy màn "Cần cập nhật" kèm liên kết store; không đọc được cấu hình thì vẫn dùng bình thường (Active) | TC-REL-003, TC-REL-004 | 0/2 | 0 | 0 |
@@ -96,6 +96,7 @@ Sinh bằng `python scripts/test_cases.py --write`; không sửa tay. Yêu cầu
 | TC-ENTRY-003 | `supabase/tests/http/GM-44.http`<br>`mobile/tests/component/homeScreen.test.tsx::Home offers continuation only for a verified member room` |
 | TC-ENTRY-004 | `mobile/tests/component/returnToRoom.test.tsx::round 1 offers the way back`<br>`mobile/tests/component/returnToRoom.test.tsx::round 2 says the room cannot be entered again and offers no button`<br>`mobile/tests/component/homeScreen.test.tsx::continue does not label terminal state %s as active` |
 | TC-ENTRY-005 | `mobile/tests/integration/gm32ClientStates.test.tsx::G03 history without a cache reports offline failure and recovers to an empty list`<br>`mobile/tests/component/homeScreen.test.tsx::room network retry preserves the receipt and does not create or join`<br>`mobile/tests/unit/roomRepository.test.ts::retains a retryable restore error when stored credentials cannot be verified online` |
+| TC-ENTRY-006 | `mobile/tests/component/appEntryEdgeCases.test.tsx (tag)` |
 | TC-HIS-001 | `mobile/tests/component/permissionsWelcome.test.tsx::keeping the meal history is off until ticked and is saved on the account when ticked`<br>`mobile/tests/component/permissionsWelcome.test.tsx::history is not saved when the box stays unticked` |
 | TC-HIS-002 | `supabase/tests/http/GM-21.http`<br>`supabase/tests/http/GM-21-canonical.http`<br>`supabase/tests/history.sql` |
 | TC-HIS-003 | `supabase/tests/http/GM-21-canonical.http`<br>`supabase/tests/history.sql` |
@@ -115,6 +116,7 @@ Sinh bằng `python scripts/test_cases.py --write`; không sửa tay. Yêu cầu
 | TC-PREF-007 | `mobile/tests/component/dishSetupFlow.test.tsx::save rejection retains own choices for retry; account defaults stay unchanged` |
 | TC-PREF-008 | `mobile/tests/component/dishPreferences.test.tsx::unknown taxonomy is disabled; skip is explicit and does not expose another member`<br>`supabase/tests/database/ADR-028_lobby_ready.test.sql` |
 | TC-PREF-009 | `supabase/tests/http/GM-17.http`<br>`supabase/tests/http/GM-45.http` |
+| TC-PREF-010 | `mobile/tests/component/appEntryEdgeCases.test.tsx (tag)` |
 | TC-RT-001 | `supabase/tests/http/GM-45.http`<br>`mobile/tests/unit/roomRealtime.test.ts::validates minimal version signals` |
 | TC-RT-002 | `supabase/tests/http/GM-45.http` |
 | TC-RT-003 | `mobile/tests/unit/roomRealtime.test.ts::disconnect uses finite backoff, reconnect reads once, stop invalidates response guard`<br>`mobile/tests/unit/roomRealtime.test.ts::late token after stop cannot open a socket` |
@@ -185,6 +187,7 @@ Sinh bằng `python scripts/test_cases.py --write`; không sửa tay. Yêu cầu
 | TC-SOC-013 | `mobile/tests/unit/notificationInboxResolver.test.ts::fails closed when the server repeats a pagination cursor`<br>`mobile/tests/component/socialAndHistoryScreens.test.tsx::notification retry resolves the same event from authenticated inbox after a network error` |
 | TC-UI-002 | `mobile/tests/component/dishPreferences.test.tsx::long dish-group labels break at their last separator` |
 | TC-UI-003 | `mobile/tests/component/sharedComponents.test.tsx::shared controls expose labels, touch actions and selected state` |
+| TC-UI-004 | `mobile/tests/component/appEntryEdgeCases.test.tsx (tag)` |
 | TC-UI-005 | `mobile/tests/component/winnerCelebration.test.tsx::Reduce Motion requests zero-duration native animations`<br>`mobile/tests/component/tutorialCardMotion.test.tsx::reduced motion keeps gesture choices without moving the card` |
 | TC-UI-006 | `mobile/tests/component/guestEntryScreen.test.tsx::pending submission locks input, button and hardware Back, including repeated presses`<br>`mobile/tests/component/roomCodeField.test.tsx::pasting a whole code fills all cells once, including when replacing from a middle cell` |
 | TC-UI-008 | `mobile/tests/integration/gm32ClientStates.test.tsx::G01 friends distinguishes network failure, no friends and no search match`<br>`mobile/tests/component/voteLoadingScreens.test.tsx::the round 1 skeleton has the flashcard layout (title, progress, card) and no home-style header`<br>`mobile/tests/component/dishResultStates.test.tsx::%s never masquerades as no consensus or calls a finalization action` |

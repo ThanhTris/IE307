@@ -183,7 +183,7 @@ Tổng cộng 194 test case, 15 module.
 | TC-ENTRY-003 | P1 | functional | api | Home tìm phòng đang tham gia | REQ-ENTRY-03 | 2 | Not run |
 | TC-ENTRY-004 | P1 | functional | component | Tiếp tục phiên theo vòng hiện tại | REQ-ENTRY-03 | 3 | Pass |
 | TC-ENTRY-005 | P1 | resilience | component | Lỗi mạng khi mở Home có nút thử lại | REQ-ENTRY-01 | 3 | Pass |
-| TC-ENTRY-006 | P2 | negative | component | Màn không tìm thấy (route sai) | REQ-ENTRY-01 | — | Not run |
+| TC-ENTRY-006 | P2 | negative | component | Màn không tìm thấy (route sai) | REQ-ENTRY-01 | 1 | Pass |
 
 ### TC-ENTRY-001 — Mở lần đầu: chào, hướng dẫn và nhập tên
 
@@ -244,7 +244,7 @@ Tổng cộng 194 test case, 15 module.
 - **Các bước:**
   1. Mở liên kết sai.
 - **Kết quả mong đợi:** Hiện màn không tìm thấy kèm nút về Home.
-- **Tự động hóa:** chưa có — Chưa có test riêng cho NotFoundScreen; bổ sung ở GM-56.
+- **Tự động hóa:** `mobile/tests/component/appEntryEdgeCases.test.tsx (tag)`
 
 ## ROOM — Phòng, lobby và tham gia (21 ca)
 
@@ -496,7 +496,7 @@ Tổng cộng 194 test case, 15 module.
 | TC-PREF-007 | P0 | resilience | component | Lỗi lưu khẩu vị giữ lựa chọn và cho thử lại | REQ-PREF-01 | 1 | Pass |
 | TC-PREF-008 | P1 | functional | component | Bỏ qua khẩu vị vẫn vào được phòng | REQ-PREF-01 | 2 | Not run |
 | TC-PREF-009 | P0 | privacy | api | Khẩu vị người khác không lộ qua polling | REQ-VOTE-09 | 2 | Not run |
-| TC-PREF-010 | P2 | functional | component | Xếp hạng khẩu vị là nâng cao, không chặn luồng chính | REQ-PREF-02 | — | Not run |
+| TC-PREF-010 | P2 | functional | component | Xếp hạng khẩu vị là nâng cao, không chặn luồng chính | REQ-PREF-02 | 1 | Pass |
 
 ### TC-PREF-001 — Lưu khẩu vị mặc định theo tài khoản
 
@@ -590,7 +590,7 @@ Tổng cộng 194 test case, 15 module.
 - **Các bước:**
   1. Bắt đầu phòng mà không dùng xếp hạng.
 - **Kết quả mong đợi:** Luồng vào phòng và bầu chọn không bị chặn.
-- **Tự động hóa:** chưa có — Chưa có test riêng cho trường hợp bỏ qua xếp hạng nâng cao; bổ sung ở GM-56.
+- **Tự động hóa:** `mobile/tests/component/appEntryEdgeCases.test.tsx (tag)`
 
 ## VOTE1 — Bình chọn vòng 1 và chờ kết quả (22 ca)
 
@@ -1780,7 +1780,7 @@ Tổng cộng 194 test case, 15 module.
 | TC-UI-001 | P0 | compatibility | e2e | Bố cục dùng được ở 320dp, 360dp và 412dp | REQ-UI-01 | — | Not run |
 | TC-UI-002 | P0 | accessibility | e2e | Chữ phóng 200% không cắt nội dung | REQ-UI-02 | 1 | Partial |
 | TC-UI-003 | P0 | accessibility | e2e | Nhãn và vai trò cho TalkBack/VoiceOver | REQ-UI-03 | 1 | Partial |
-| TC-UI-004 | P0 | accessibility | component | Vùng chạm tối thiểu 48dp | REQ-UI-03 | — | Not run |
+| TC-UI-004 | P0 | accessibility | component | Vùng chạm tối thiểu 48dp | REQ-UI-03 | 1 | Pass |
 | TC-UI-005 | P1 | accessibility | component | Giảm chuyển động được tôn trọng | REQ-UI-03 | 2 | Pass |
 | TC-UI-006 | P0 | functional | component | Bàn phím và nút Back | REQ-UI-01 | 2 | Partial |
 | TC-UI-007 | P1 | compatibility | e2e | Chế độ tối giữ nội dung và độ tương phản | REQ-UI-04 | — | Not run |
@@ -1825,7 +1825,7 @@ Tổng cộng 194 test case, 15 module.
 - **Các bước:**
   1. Đo vùng chạm của nút, ô chọn, biểu tượng.
 - **Kết quả mong đợi:** Mọi mục tương tác có vùng chạm không nhỏ hơn 48dp.
-- **Tự động hóa:** chưa có — Chưa có test đo vùng chạm 48dp; bổ sung ở GM-56 và kiểm tay ở GM-58.
+- **Tự động hóa:** `mobile/tests/component/appEntryEdgeCases.test.tsx (tag)`
 
 ### TC-UI-005 — Giảm chuyển động được tôn trọng
 
