@@ -1,6 +1,6 @@
 # GM-38 · Đề xuất contract và kiểm thử
 
-Ngày 18/11/2026. Owner Tâm (`HoaiTam`), reviewer Trí (`ThanhTris`). Các lựa chọn bên dưới là đề xuất để review theo [issue GM-38](https://github.com/ThanhTris/IE307/issues/99). Baseline kiểm tra là [main `0b34900`](https://github.com/ThanhTris/IE307/commit/0b349001291a0152eef71d01ddaae0c8d6b490c8).
+Cập nhật 19/11/2026. Owner Tâm (`HoaiTam`), reviewer Trí (`ThanhTris`). Các lựa chọn bên dưới là đề xuất để review theo [issue GM-38](https://github.com/ThanhTris/IE307/issues/99). Baseline kiểm tra là [main `5bbee5d`](https://github.com/ThanhTris/IE307/commit/5bbee5d5cdd43b8571297885148af65ea62d7f27).
 
 ## Kết quả kiểm đầu vào
 
@@ -10,9 +10,11 @@ Ngày 18/11/2026. Owner Tâm (`HoaiTam`), reviewer Trí (`ThanhTris`). Các lự
 | GM-07 | Done | Contract/client, PR #138, `40feb9b` |
 | GM-18 | Done | Catalogue/preview dish-only, PR #139, `a6e89fc` |
 | GM-21 | Done | History/consent, PR #146, `621accc` |
-| GM-34 | Done | Thiếu `RELEASE.md`, `CHECKS.md`, `FIGMA_PARITY.md` và `HANDOFF.md` trong `docs/evidence/roadmap-v2/GM-34/` |
+| GM-34 | Done | RELEASE, CHECKS, FIGMA_PARITY và HANDOFF đã có từ commit [`5a69b56`](https://github.com/ThanhTris/IE307/commit/5a69b56) |
 
-Lúc 09:36 ngày 18/11 (giờ Việt Nam), `python scripts/task_readiness.py --task GM-38 --base-ref origin/main` trả `BLOCKED_ARTIFACTS` cho GM-34. Cần nhận revision và hồ sơ release thực tế từ Trí. [Issue GM-34](https://github.com/ThanhTris/IE307/issues/95)
+Lúc 16:26 ngày 19/11 (giờ Việt Nam), `python scripts/task_readiness.py --task GM-38 --base-ref origin/main` trả `READY_TO_CLAIM` trên `5bbee5d`. [Bàn giao GM-34](../GM-34/HANDOFF.md)
+
+Trí yêu cầu duyệt bốn quyết định trong draft PR #181 trước implementation. Các mục vẫn chờ quyết định gồm phương án provider/điều khoản/quota, khu vực và giờ đích, consent/TTL/opt-out của mood và luật ưu tiên mềm. [Phản hồi trên PR #181](https://github.com/ThanhTris/IE307/pull/181)
 
 ## Contract GM-38.1 để Trí review
 
@@ -22,7 +24,7 @@ Lúc 09:36 ngày 18/11 (giờ Việt Nam), `python scripts/task_readiness.py --t
 4. **Mood riêng tư.** Đề xuất nhãn tự khai, bật riêng theo phiên. Lưu trong bộ nhớ client theo cặp tài khoản và room/draft, TTL đề xuất 60 phút hoặc đến lúc khóa/kết thúc phiên, tùy mốc đến trước. Xóa ngay khi opt-out, đổi tài khoản/phòng, đăng xuất hoặc clearCache. App kiểm TTL khi quay lại foreground. Mood và consent thuộc phiên hiện tại, ngoài payload phòng, lịch sử, logs và request provider. Review UI trên Context hiện tại, xác nhận mẫu/giao diện với Trí trước khi gắn vào màn.
 5. **Xếp hạng.** Đề xuất `gm38-preview-v1` chỉ sắp thứ tự hiển thị gợi ý cá nhân trước khóa. Server vẫn sở hữu danh sách hợp lệ, phiên bản pool và quyết định cuối. Áp tối đa một bậc ưu tiên cho món khớp quy tắc nguồn/nhãn đã review, giữ thứ tự server khi bằng điểm. Món thiếu nhãn nhận ưu tiên trung tính. Kiểm tập ID, NO/REMOVE, phiên bản và trạng thái khóa trước dùng dữ liệu. Bỏ xếp hạng nếu dữ liệu stale, chưa có mapping đã review, pool đã khóa hoặc context đổi giữa hai request. Nếu nhóm cần xếp thứ tự chung theo mood, cần chốt riêng cơ chế tổng hợp và quyền riêng tư trước khi sửa contract phòng.
 
-## Phạm vi patch và kiểm thử sau khi mở gate
+## Phạm vi patch và kiểm thử sau khi contract được duyệt
 
 - Backend `supabase/functions/weather-context/index.ts` và request suite `supabase/tests/http/GM-38.http`. Kiểm Auth thật, schema trước mapping, timezone/giờ dự báo, TTL đúng biên, dữ liệu sai định dạng, 429/timeout và đường đi optional. Ghi riêng kết quả Edge thật chạy với provider giả lập và lượt gọi provider thực tế.
 - Mobile `mobile/src/features/context/services/mood.ts` và wiring ở Context. Kiểm opt-in/opt-out, đổi danh tính/phòng khi request còn chạy, background/resume, TTL và lỗi HTTP. Kiểm từ composition mặc định trên AVD qua transport thực tới Edge QA, kèm client thứ hai để đối chiếu `poolVersion` và thứ tự đã khóa.
