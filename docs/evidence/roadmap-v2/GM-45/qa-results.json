@@ -1,0 +1,229 @@
+{
+  "result": "Pass",
+  "fixtureOnly": true,
+  "caseCount": 22,
+  "cases": [
+    {
+      "case": "v4 worker heartbeat verified",
+      "result": "Pass",
+      "expected": "t",
+      "actual": "t"
+    },
+    {
+      "case": "member REST signal projection",
+      "result": "Pass",
+      "expected": [
+        {
+          "room_id": "164a4393-c69e-4411-9f90-0cf4dcbad8e6",
+          "version": 3
+        }
+      ],
+      "actual": [
+        {
+          "room_id": "164a4393-c69e-4411-9f90-0cf4dcbad8e6",
+          "version": 3
+        }
+      ]
+    },
+    {
+      "case": "outsider REST rows filtered",
+      "result": "Pass",
+      "expected": [],
+      "actual": []
+    },
+    {
+      "case": "host gets same transaction version",
+      "result": "Pass",
+      "expected": true,
+      "actual": true
+    },
+    {
+      "case": "second client gets version and can refetch",
+      "result": "Pass",
+      "expected": true,
+      "actual": true
+    },
+    {
+      "case": "ACK replay unchanged",
+      "result": "Pass",
+      "expected": {
+        "version": 4,
+        "accepted": true,
+        "settings": {
+          "mealSlot": "lunch",
+          "desiredAt": "2026-11-18T02:47:25.565Z",
+          "dishCount": 10
+        },
+        "poolVersion": 1
+      },
+      "actual": {
+        "version": 4,
+        "accepted": true,
+        "settings": {
+          "mealSlot": "lunch",
+          "desiredAt": "2026-11-18T02:47:25.565Z",
+          "dishCount": 10
+        },
+        "poolVersion": 1
+      }
+    },
+    {
+      "case": "no new signal version on ACK replay",
+      "result": "Pass",
+      "expected": 4,
+      "actual": 4
+    },
+    {
+      "case": "rollback neither persists nor emits signal",
+      "result": "Pass",
+      "expected": [
+        4,
+        1
+      ],
+      "actual": [
+        4,
+        1
+      ]
+    },
+    {
+      "case": "reconnect catch-up reads latest snapshot",
+      "result": "Pass",
+      "expected": 5,
+      "actual": 5
+    },
+    {
+      "case": "reconnected client receives next transition",
+      "result": "Pass",
+      "expected": true,
+      "actual": true
+    },
+    {
+      "case": "worker advances R1 to R2",
+      "result": "Pass",
+      "expected": 2,
+      "actual": 2
+    },
+    {
+      "case": "worker transition pushes committed version",
+      "result": "Pass",
+      "expected": true,
+      "actual": true
+    },
+    {
+      "case": "outsider gets no events",
+      "result": "Pass",
+      "expected": [],
+      "actual": []
+    },
+    {
+      "case": "kicked member loses REST signal visibility",
+      "result": "Pass",
+      "expected": [],
+      "actual": []
+    },
+    {
+      "case": "kicked subscription cannot receive final removal signal",
+      "result": "Pass",
+      "expected": [],
+      "actual": []
+    },
+    {
+      "case": "retention deletes expired room and cascades its signal",
+      "result": "Pass",
+      "expected": [
+        false,
+        false
+      ],
+      "actual": [
+        false,
+        false
+      ]
+    },
+    {
+      "case": "outsider wildcard channel is live after cleanup",
+      "result": "Pass",
+      "expected": true,
+      "actual": true
+    },
+    {
+      "case": "kicked wildcard channel is live after cleanup",
+      "result": "Pass",
+      "expected": true,
+      "actual": true
+    },
+    {
+      "case": "room cleanup publishes no DELETE to unauthorized wildcard channels",
+      "result": "Pass",
+      "expected": [
+        0,
+        0,
+        0
+      ],
+      "actual": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "case": "publication permits only INSERT and UPDATE",
+      "result": "Pass",
+      "expected": [
+        true,
+        true,
+        false,
+        false
+      ],
+      "actual": [
+        true,
+        true,
+        false,
+        false
+      ]
+    },
+    {
+      "case": "SQL privilege boundary",
+      "result": "Pass",
+      "expected": [
+        true,
+        false,
+        false,
+        false
+      ],
+      "actual": [
+        true,
+        false,
+        false,
+        false
+      ]
+    },
+    {
+      "case": "room table not published, signals published",
+      "result": "Pass",
+      "expected": [
+        false,
+        true
+      ],
+      "actual": [
+        false,
+        true
+      ]
+    }
+  ],
+  "credentialsInEvidence": false,
+  "baseline": "0b349001291a0152eef71d01ddaae0c8d6b490c8",
+  "migration": "0061_gm45_room_realtime.sql",
+  "schemaVersion": "0.31.6",
+  "contractVersion": "dish-session-v4/roadmap-v2/GM-45.1",
+  "hashNormalization": "UTF-8 text with LF line endings",
+  "runId": "gm45-review-fixes",
+  "sourceSha256": {
+    "supabase/migrations/0061_gm45_room_realtime.sql": "b36015cae1c5493f410dd08d90fa16ea79a86670efd52e686575f47cbad47cf4",
+    "scripts/gm45_realtime_check.mjs": "59d47d09562e615dabdacd6280e1575128da0244334251cbbd5ae7288416f3b0",
+    "scripts/dish_policy_worker.py": "e6b069b7c9fdcd65c1e2fdd4de4691d35a993cb4dd7a357e9ecc354b30e13355",
+    "mobile/src/features/rooms/services/roomRealtime.ts": "3c27f7b00f33254a7fbb0d01153b036c01c83a87b437bdf0f1c7b5e42422e70c",
+    "mobile/src/features/rooms/services/roomSnapshotSync.ts": "f3bbde1aba516362485d262f837d85f9114da5404dfd271a0aca1c105a774521",
+    "mobile/src/features/rooms/hooks/useRoomUpdates.ts": "cd70b05de4a9df32020d86db98037c57a9313b1bdebec2388efa31f5f8c8ff52",
+    "mobile/src/bootstrap/RoomRepositoryProvider.tsx": "787681d003cb3b069da51cdc1fa6f012e49966891f95f2d404d9eed11091696c"
+  }
+}

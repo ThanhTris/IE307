@@ -1,0 +1,44 @@
+@baseUrl = http://127.0.0.1:54375
+@anonKey = <QA-public-key>
+@memberToken = <active-member-JWT>
+@outsiderToken = <outsider-JWT>
+@roomId = <QA-room-UUID>
+
+### Minimal signal projection, active member
+GET {{baseUrl}}/rest/v1/room_version_signals?select=room_id,version&room_id=eq.{{roomId}}
+apikey: {{anonKey}}
+Authorization: Bearer {{memberToken}}
+
+> {%
+  client.test('one minimal version signal', function () {
+    client.assert(response.status === 200 && response.body.length === 1);
+    client.assert(Object.keys(response.body[0]).sort().join(',') === 'room_id,version');
+    client.assert(Number.isSafeInteger(response.body[0].version));
+  });
+%}
+
+### RLS hides signals from outsider or kicked member
+GET {{baseUrl}}/rest/v1/room_version_signals?select=room_id,version&room_id=eq.{{roomId}}
+apikey: {{anonKey}}
+Authorization: Bearer {{outsiderToken}}
+
+> {%
+  client.test('no authorized room rows', function () {
+    client.assert(response.status === 200 && response.body.length === 0);
+  });
+%}
+
+### After every signal or reconnect, read the existing authorized snapshot
+POST {{baseUrl}}/rest/v1/rpc/dish_session
+apikey: {{anonKey}}
+Authorization: Bearer {{memberToken}}
+Content-Type: application/json
+
+{"command":"snapshot","payload":{"contractVersion":"dish-session-v4/roadmap-v2/GM-07.B-supplement","roomId":"{{roomId}}"}}
+
+> {%
+  client.test('server snapshot', function () {
+    client.assert(response.status === 200 && response.body.ok === true);
+    client.assert(response.body.data.roomId === '{{roomId}}');
+  });
+%}
