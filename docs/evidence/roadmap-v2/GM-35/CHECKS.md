@@ -65,3 +65,11 @@ Revision app và migration `8329d49` ghép với `origin/main` `5bbee5d`. QA s�
 - Python 3.12 với dependencies của CI chạy 691 ca, có 3 lỗi và 7 ca bỏ qua. Khi chạy lại 3 ca lỗi với thư mục tạm mặc định, hai ca export fixture/báo cáo đạt. Ca `test_gm40_manifest...test_foreign_checkout_and_symlink_rejected` vẫn dừng ở thao tác tạo symlink trên Windows vì thiếu quyền (`WinError 1314`).
 - Merge gate với `--verify-outputs` trên `origin/main` `5bbee5d` trả `BLOCKED_ON_BASE` duy nhất ở `mobile/src/data/auth/session.ts` của GM-16. [HANDOFF](HANDOFF.md#ranh-giới-artifact-cần-trí-xác-nhận) ghi lệnh lấy patch producer, các guard cần bàn giao kèm và phần do GM-35 sở hữu. Chờ Trí xác nhận ranh giới producer.
 - AVD trên revision `8329d49` còn thiếu. Đối chiếu lại SDK local chỉ có `platform-tools` và danh sách ADB rỗng. Xem [FIGMA_PARITY](FIGMA_PARITY.md#bằng-chứng-avd-sau-review-182) cho các ca cần ghi khi có máy ảo.
+
+## Lượt kiểm trên máy Android API 37
+
+Ngày 19/11/2026, checkout `1561d901fa6d15f76091445e005b2cc097f52e91`. QA `gm35-avd-092834100` trên loopback xác minh ownership, 49 migration (gồm `0061` và `0062`), worker và hai catalogue QA. Backend thật đạt 5/5 nhóm Auth/Mailpit, gồm đổi tên và đọc lại bằng hai tài khoản.
+
+Realtime đạt 22/22 khi chạy lại. Lượt đầu fail ở assertion sau khi kick vì kênh nhận các version 1–3 đã tạo trước thao tác kick; ca REST xác nhận người bị kick không đọc được dòng tín hiệu. Log của cả hai lượt được giữ riêng để truy vết độ ổn định của runner.
+
+`Medium_Phone_API_37.0` boot với Expo Go 58.0.5. Các ca tương tác trong app, G04/G05, ảnh đối chiếu và trợ năng vẫn **Not run** tại lần ghi này vì Metro QA trên cổng 8082 chưa khởi động. Merge gate với base `5bbee5d` vẫn `BLOCKED_ON_BASE` ở artifact GM-16 `mobile/src/data/auth/session.ts`. Log và ma trận local nằm trong `review-results/gm35-avd-092834100/`.

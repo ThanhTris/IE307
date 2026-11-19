@@ -31,3 +31,5 @@ Sau khi nhận GM-45, revision app `8329d49` đã chạy hồi quy tự động 
 | G04 pending, lỗi, thử lại | Ghi đầu vào tên mới và lỗi có kiểm soát trên đường tới QA. Chụp pending, lỗi vẫn giữ tên và lần thử lại có ACK. Đối chiếu các frame G04 ở 412dp. |
 | G05 pending và lỗi | Bấm lưu lần hai khi lần đầu còn pending, kiểm một lần gửi. Khi lần đầu lỗi, chụp cả ba ô đã xóa và nút lưu hoạt động lại. Đối chiếu các frame G05 ở 412dp, giữ mật khẩu ngoài ảnh và log. |
 | 320/360dp, chữ 200%, TalkBack, bàn phím, Back | Ghi kết quả thực tế theo từng cấu hình. Kiểm trường và nút còn tới được khi cuộn, nhãn/lỗi được đọc, nút Back khi bàn phím mở và khi đang gửi, nội dung tránh thanh hệ thống. |
+
+Lượt 19/11/2026 trên `1561d90` đã boot AVD API 37, 1080 × 2400, 420 dpi, font scale 1,0 và xác nhận Expo Go 58.0.5. Metro QA chưa mở ở `8082`; bảng ca trên vẫn **Not run** cho lượt này và chưa có ảnh app tại 412/360/320dp. Lượt Expo Go thủ công đã ghi ở trên vẫn là bằng chứng của lần kiểm trước.
