@@ -13,7 +13,7 @@ import {
   type FinalScreenScenario,
 } from '../fixtures';
 import { WAITING_DEADLINE_SECONDS, getRoundTwoEliminationCap, isHostEarlyFinishAllowed } from '../services/votingRules';
-import { startVotingSnapshotPolling } from '../services/snapshotPolling';
+import { useRoomUpdates } from '../../rooms/hooks/useRoomUpdates';
 import {
   createDurableRequestId,
   mapSnapshotPoolToPoolDishes,
@@ -410,10 +410,16 @@ export function useRoundTwoVoting({
   }, [submissionState, isWaitingForMembers, repository, activeDeadline, computeRemainingFromDeadline]);
 
   // Results can be finalized by the server before this caller submits.
-  useEffect(() => {
-    if (!repository || submissionState === 'pending') return;
-    return startVotingSnapshotPolling(fetchSnapshot, () => Boolean(navigatedOutcomeRef.current));
-  }, [repository, fetchSnapshot, submissionState]);
+  useRoomUpdates({
+    roomId, userId: identityId, enabled: !!repository, readEpoch: submissionState,
+    isCurrent: () => !navigatedOutcomeRef.current,
+    read: guard => submissionState === 'pending' ? Promise.resolve(null) : fetchSnapshot(guard),
+    onError: error => {
+      setSnapshotError(error.messageKey);
+      setIsLoadingSnapshot(false);
+      setLocalCandidates([]);
+    },
+  });
 
   const attemptEnterWaiting = useCallback(async (allowConflictRetry = true) => {
     if (!repository) return;

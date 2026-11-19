@@ -1,7 +1,8 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import type { ApiClient, RoomSnapshot } from '../../../data/api';
 import { createDurableRequestId } from '../services/roomRepository';
 import { errorCopy } from '../services/roomEntry';
+import { useRoomUpdates } from './useRoomUpdates';
 
 export type LobbyRepository = Pick<ApiClient, 'getRoomSnapshot' | 'listFriends' | 'startRound' | 'updateContext' | 'leaveRoom' | 'cancelRoom' | 'inviteToRoom'> & Partial<Pick<ApiClient, 'removeRoomMember'>> & {
   previewFoodPool?: ApiClient['previewFoodPool'];
@@ -47,13 +48,16 @@ export function useLobby({
   } | null>(null);
 
   const activeRoomId = roomId ?? '';
-  const loadKey = `${activeRoomId}:${realRevision}`;
+  const loadKey = `${currentUserId ?? ''}:${activeRoomId}:${realRevision}`;
+  const scopeRef = useRef(loadKey);
+  const backgroundLoadRevision = useRef(0);
+  useLayoutEffect(() => { scopeRef.current = loadKey; }, [loadKey]);
   const loading = loadedKey !== loadKey;
   const loadState: 'loading' | 'error' | 'ready' = loading ? 'loading' : loadError ? 'error' : 'ready';
 
   const api = repository;
 
-  const checkEligibility = useCallback(async (snap: RoomSnapshot) => {
+  const checkEligibility = useCallback(async (snap: RoomSnapshot, isCurrent: () => boolean = () => true) => {
     if (snap.state !== 'LOBBY' || !snap.context) return;
     if (typeof (api as any).previewFoodPool === 'function') {
       try {
@@ -66,6 +70,7 @@ export function useLobby({
           timeHint: snap.context.timeHint,
           budget: snap.context.budget,
         });
+        if (!isCurrent()) return;
         if (!preview.ok) {
           setEligibilityError(preview.error.messageKey);
         } else if (preview.data.totalCandidateCount === 0 || preview.data.pool.length === 0) {
@@ -81,36 +86,41 @@ export function useLobby({
 
   useEffect(() => {
     let active = true;
-    if (!activeRoomId) {
-      void Promise.resolve().then(() => {
-        if (!active) return;
-        setLoadedKey(loadKey);
-        setSnapshot(null);
-        setLoadError('ROOM_NOT_FOUND');
-      });
-      return;
-    }
-    void api.getRoomSnapshot(activeRoomId).then(result => {
-      if (!active) return;
+    const revision = backgroundLoadRevision.current;
+    // The initial read can seed the lobby until background sync resolves this load.
+    const isCurrent = () => active && scopeRef.current === loadKey
+      && backgroundLoadRevision.current === revision;
+
+    const initialRead = activeRoomId
+      ? api.getRoomSnapshot(activeRoomId)
+      : Promise.resolve({ ok: false, error: { messageKey: 'ROOM_NOT_FOUND' } } as const);
+    void initialRead.then(result => {
+      if (!isCurrent()) return;
       setLoadedKey(loadKey);
       if (result.ok) {
-        setSnapshot(result.data);
+        setSnapshot(previous => previous?.roomId === result.data.roomId && previous.version > result.data.version ? previous : result.data);
         setLoadError('');
-        void checkEligibility(result.data);
+        void checkEligibility(result.data, isCurrent);
       } else {
         setSnapshot(null);
         setLoadError(result.error.messageKey);
       }
+    }).catch(() => {
+      if (!isCurrent()) return;
+      setLoadedKey(loadKey);
+      setLoadError('NETWORK_ERROR');
     });
     return () => { active = false; };
   }, [api, activeRoomId, loadKey, checkEligibility]);
 
   const refreshSnapshot = async (targetId: string): Promise<RoomSnapshot | null> => {
     if (!targetId) return null;
+    const scope = scopeRef.current;
     const result = await api.getRoomSnapshot(targetId);
+    if (scopeRef.current !== scope) return null;
     if (result.ok) {
-      setSnapshot(result.data);
-      void checkEligibility(result.data);
+      setSnapshot(previous => previous?.roomId === result.data.roomId && previous.version > result.data.version ? previous : result.data);
+      void checkEligibility(result.data, () => scopeRef.current === scope);
       return result.data;
     } else {
       setNotice(`Không đọc lại được snapshot · ${result.error.messageKey}`); setNoticeTone('error');
@@ -118,24 +128,36 @@ export function useLobby({
     }
   };
 
-  useEffect(() => {
-    if (!activeRoomId) return;
-    let active = true;
-    let polling = false;
-    const interval = setInterval(() => {
-      if (busyRef.current || polling) return;
-      polling = true;
-      void api.getRoomSnapshot(activeRoomId).then(result => {
-        if (!active || !result.ok) return;
-        const next = result.data;
-        setSnapshot(previous => previous?.roomId === next.roomId && previous.version > next.version ? previous : next);
-        void checkEligibility(next);
-      }).catch(() => {
-        // A later poll or manual reload can retry this background read.
-      }).finally(() => { polling = false; });
-    }, 4000);
-    return () => { active = false; clearInterval(interval); };
-  }, [activeRoomId, currentUserId, api, checkEligibility]);
+  const applyBackgroundLoadError = (messageKey: string) => {
+    ++backgroundLoadRevision.current;
+    setSnapshot(null);
+    setLoadError(messageKey);
+    setLoadedKey(loadKey);
+  };
+
+  useRoomUpdates({
+    roomId: activeRoomId, userId: currentUserId, enabled: !!activeRoomId, readEpoch: loadKey,
+    isCurrent: () => true,
+    read: async shouldApply => {
+      if (busyRef.current) return null;
+      const result = await api.getRoomSnapshot(activeRoomId);
+      if (!shouldApply()) return null;
+      if (!result.ok) {
+        if (['NOT_MEMBER', 'AUTH_REQUIRED', 'ROOM_EXPIRED', 'ROOM_TERMINAL'].includes(result.error.messageKey)) {
+          applyBackgroundLoadError(result.error.messageKey);
+        }
+        return null;
+      }
+      const next = result.data;
+      ++backgroundLoadRevision.current;
+      setSnapshot(previous => previous?.roomId === next.roomId && previous.version > next.version ? previous : next);
+      setLoadedKey(loadKey);
+      setLoadError('');
+      void checkEligibility(next, shouldApply);
+      return next;
+    },
+    onError: error => applyBackgroundLoadError(error.messageKey),
+  });
 
   const getRequestId = (action: string, version: number, targetId?: string) => {
     const pending = pendingIntentRef.current;

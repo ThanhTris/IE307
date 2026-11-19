@@ -10,6 +10,8 @@ import { clearVoteSession } from '../features/voting/services/voteSessionState';
 import { createNativePushService } from '../features/inbox/services/nativePush';
 import { clearPushRegistrationSecrets, getActivePushDriver, getPushDeviceId } from '../features/inbox/services/expoPushDriver';
 import { createActiveRoomReader } from '../features/rooms/services/activeRoom';
+import { createRoomSubscription } from '../features/rooms/services/roomRealtime';
+import { RoomUpdatesContext } from '../features/rooms/hooks/useRoomUpdates';
 import {
   LiveRoomRepository,
   createDurableRequestId,
@@ -210,7 +212,26 @@ function ConfiguredRoomRepositoryProvider({
     logout,
   }), [repository, snapshot, isInitializing, restoreSession, ensureSession, logout]);
 
-  return <RoomRepositoryContext.Provider value={value}>{children}</RoomRepositoryContext.Provider>;
+  const roomUpdates = useMemo(() => createRoomSubscription({
+    baseUrl,
+    apiKey: publicKey,
+    getAccessToken: async () => {
+      const userId = snapshot.user?.id;
+      const auth = repository.getSessionApi();
+      const generation = auth?.getGeneration();
+      if (!auth || !userId || snapshot.status !== 'active') return { ok: false, error: { messageKey: 'AUTH_REQUIRED' } };
+      const token = await auth.getAccessToken();
+      if (auth.getGeneration() !== generation
+          || repository.getCurrentUser()?.id !== userId || repository.getSessionStatus() !== 'active') {
+        return { ok: false, error: { messageKey: 'AUTH_REQUIRED' } };
+      }
+      return token;
+    },
+  }), [baseUrl, publicKey, repository, snapshot.user?.id, snapshot.status]);
+
+  return <RoomRepositoryContext.Provider value={value}>
+    <RoomUpdatesContext.Provider value={roomUpdates}>{children}</RoomUpdatesContext.Provider>
+  </RoomRepositoryContext.Provider>;
 }
 
 export function useRoomRepository(): RoomRepositoryContextValue {
