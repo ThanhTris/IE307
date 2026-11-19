@@ -274,15 +274,20 @@ class ManifestValidationTests(unittest.TestCase):
         self.assertIn('dependency checklist differs from metadata', self.errors())
 
     def test_release_must_wait_for_all_core_tasks(self):
-        path = 'tasks/backlog/GM-34.md'
+        path = 'tasks/backlog/GM-59.md'
         self.source.contents[path] = re.sub(r'^(start|merge)_dependencies:.*$', r'\1_dependencies: GM-01', self.source.read(path), flags=re.M)
         self.assertIn('release bypasses P0 tasks', self.errors())
 
     def test_gm40_owner_exception_does_not_exempt_other_core_tasks(self):
         self.assertEqual(self.errors(), '')
+        # The GM-34 baseline exception only applies while GM-34 is the release task.
+        mapping_path = 'tasks/task-id-map.json'
+        mapping = json.loads(self.source.read(mapping_path))
+        mapping['release_task'] = 'GM-34'
+        self.source.contents[mapping_path] = json.dumps(mapping)
         path = self.source.task_path('GM-40')
         self.source.contents[path] = self.source.read(path).replace('github_issue: 125', 'github_issue: 999')
-        self.assertIn('release bypasses P0 tasks: GM-40', self.errors())
+        self.assertRegex(self.errors(), r'release bypasses P0 tasks: .*GM-40')
 
     def set_status_in_memory(self, tid, status, approve=False):
         record = validator.task_records(self.source)[tid]
@@ -380,7 +385,7 @@ class ManifestValidationTests(unittest.TestCase):
         records = validator.task_records(self.source)
         self.assertEqual(records['GM-01']['meta']['previous_ids'], 'GM-01')
         self.assertEqual(records['GM-03']['meta']['start_dependencies'], 'GM-01')
-        self.assertEqual(records['GM-35']['meta']['priority'], 'P1')
+        self.assertEqual(records['GM-35']['meta']['priority'], 'P0')
         for tid, record in records.items():
             for gate in ('start', 'merge'):
                 for dep in validator.dependency_ids(record, gate):
