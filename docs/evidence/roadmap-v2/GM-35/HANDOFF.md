@@ -1,6 +1,6 @@
 # GM-35 — Bàn giao tài khoản, hồ sơ và recovery
 
-[GM-35 / #96](../../../../tasks/backlog/GM-35.md) · Tuấn phụ trách · Trí (`ThanhTris`) review. Nhánh `codex/gm-35-account-profile-recovery` nhắm tới `main`. Revision mã nguồn bàn giao `9193459`, hợp đồng UI `ui-figma-final/2026-10-25/GM-35.2`. Xác nhận Expo Go ngày 2026-11-19 và bằng chứng API nằm trong [CHECKS](CHECKS.md). Bảng đường dẫn Figma và các khác biệt nằm trong [FIGMA_PARITY](FIGMA_PARITY.md).
+[GM-35 / #96](../../../../tasks/backlog/GM-35.md) · Tuấn phụ trách · Trí (`ThanhTris`) review. Nhánh `codex/gm-35-account-profile-recovery` nhắm tới `main`, hợp đồng UI `ui-figma-final/2026-10-25/GM-35.2`. Revision theo từng lượt kiểm, xác nhận Expo Go ngày 2026-11-19 và bằng chứng API nằm trong [CHECKS](CHECKS.md). Bảng đường dẫn Figma và các khác biệt nằm trong [FIGMA_PARITY](FIGMA_PARITY.md).
 
 ## Các đường vào sản phẩm
 
@@ -26,9 +26,19 @@ Code tài khoản dùng GoTrue `auth/v1`. Migration [`0062_gm35_profile_display_
 | Producer | Đề xuất bàn giao |
 | --- | --- |
 | GM-16 · [`session.ts`](../../../../mobile/src/data/auth/session.ts) | Producer bàn giao `runAccountOperation`, callback công bố phiên và thứ tự serialize đổi phiên, xoay token, logout. Epoch tiến khi bắt đầu thay danh tính và khi phiên mới đã lưu an toàn. Lấy token kiểm epoch đã chụp trước hàng đợi và client kiểm lại ngay trước transport. Phần này cần review cùng kiểm thử `clearPrivateData` tạm dừng. GM-35 giữ thao tác đăng nhập, xác minh, recovery và màn hình tiêu thụ API phiên. |
-| GM-28 · [`historyRepository.ts`](../../../../mobile/src/features/history/services/historyRepository.ts) | Artifact đã khớp `origin/main` `5a69b56`. GM-35 giữ luồng xóa nhiều mục cá nhân trong adapter, tái sử dụng `fetch`, `delete`, `readConsent` và `updateConsent`. |
+| GM-28 · [`historyRepository.ts`](../../../../mobile/src/features/history/services/historyRepository.ts) | Artifact đã khớp `origin/main` `5bbee5d`. GM-35 giữ luồng xóa nhiều mục cá nhân trong adapter, tái sử dụng `fetch`, `delete`, `readConsent` và `updateConsent`. |
 
-Đề xuất cho Trí xác nhận phiên bản và PR/commit bàn giao của GM-16. Sau khi artifact trên `main` khớp bản bàn giao, nhận lại revision đó và chạy `python scripts/task_readiness.py --task GM-35 --gate merge --base-ref origin/main --verify-outputs`. Kết quả gate và bằng chứng chạy trên revision đang xét nằm trong [CHECKS](CHECKS.md).
+Patch nguồn để GM-16 review độc lập. Lấy diff của artifact trên baseline đã ghép và revision vẫn giữ ca hồi quy đổi phiên:
+
+```powershell
+git diff 5bbee5d ae1c392 -- mobile/src/data/auth/session.ts
+```
+
+- Lớp phiên GM-16 sở hữu `runAccountOperation` và `onAccountSessionChange`, lưu token trước khi công bố danh tính, tăng epoch trước khi dọn cache và sau khi lưu phiên đích. Logout và refresh dùng cùng hàng đợi. Restore/refresh tiếp tục kiểm UUID và hỗ trợ phiên email đã xác minh.
+- Khi đưa phần quản lý phiên lên producer riêng, nhận cùng hai guard tối thiểu của auth nền. `isStoredSession` trong `validation.ts` chấp nhận session hợp lệ của cả khách và tài khoản. `userDto` trong `transport.ts` chấp nhận cả hai loại cho verify/refresh. `createGuestSession` vẫn yêu cầu `isGuest === true`. Hai guard có thể đối chiếu theo diff `5bbee5d..ae1c392` của các file tương ứng.
+- GM-35 giữ OTP, recovery proof, credential validation, luồng GoTrue riêng cho tài khoản, màn hình và callback wiring của app. Giữ ca `consent started while guest cleanup is paused` trong [kiểm thử tích hợp client/repository](../../../../mobile/tests/unit/authSession.test.ts). Ca này kiểm request cũ dừng trước transport và request mới đi đúng một lần với token phiên đích.
+
+Trí xác nhận ranh giới và PR/commit bàn giao của GM-16 trước khi tiếp nhận. Sau khi lấy revision producer trên `main`, chạy `python scripts/task_readiness.py --task GM-35 --gate merge --base-ref origin/main --verify-outputs` và chạy lại ca đổi phiên. Xem [CHECKS](CHECKS.md).
 
 ## Kiểm thử trên Expo Go với mã Mailpit
 
@@ -42,6 +52,14 @@ npm ci
 npm run qa:start -- --run-id $gm35Run --api-port 54391 --db-port 54392 --mail-port 54394
 npm run qa:verify -- --run-id $gm35Run
 node scripts/gm35_account_check.mjs $gm35Run
+```
+
+Khi kiểm đồng tồn tại với GM-45, dùng cùng phiên QA sạch sau khi `qa:verify` đạt:
+
+```powershell
+$env:GM03_QA_WORKDIR = (Resolve-Path ".work/qa/$gm35Run").Path
+$env:GM03_QA_MANIFEST = (Resolve-Path ".work/qa/$gm35Run/manifest.json").Path
+node scripts/gm45_realtime_check.mjs
 ```
 
 Runner cần báo `READY` trước khi verify và thử Auth. Lấy `anonKey` từ `.work/qa/$gm35Run/credentials.private.json` cho `EXPO_PUBLIC_SUPABASE_PUBLISHABLE_KEY` trong `mobile/.env.local` và đặt `EXPO_PUBLIC_SUPABASE_URL=http://127.0.0.1:54391`. Giữ credential và OTP trong môi trường QA.
