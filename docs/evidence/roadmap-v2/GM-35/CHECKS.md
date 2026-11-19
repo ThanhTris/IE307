@@ -86,3 +86,11 @@ Revision `7cb8d89`, Android API 37, Expo Go 58.0.5, QA local `gm35-avd-092834100
 - **G05:** nút lưu khóa lúc pending. Bấm thêm trong lúc chờ, proxy ghi đúng một request ghi và trả 503. Chưa có bằng chứng trạng thái ba ô sau phản hồi.
 - **Trợ năng:** phát hiện nhãn Giao diện bẻ giữa từ ở 320dp với chữ 200%. Kiểm lại bản sửa trên AVD 320dp và font scale 2,0: cả Giao diện và Cỡ chữ đọc trọn nhãn và giá trị trên hai dòng, vẫn cuộn được. TalkBack còn chờ. [Trước sửa](avd-20261119/avd-profile-settings-320-200.png) · [Sau sửa](avd-20261119/avd-profile-settings-fixed-320-200.png)
 - **Hồi quy sau sửa:** 57/57 ca tập trung của GM-35 đạt. GM-16 tách ở PR #183, đạt 69/69 ca Auth/session và TypeScript. Runner backend QA xác minh 49 migration, 7/7 assertion Auth–REST và 5/5 nhóm Auth/Mailpit đạt.
+
+### Kiểm bổ sung trực tiếp trên AVD
+
+App revision `3675d42` trên cùng AVD và QA. G04 trả lỗi 503 có kiểm soát: nút khóa khi chờ, toast báo lỗi, tên còn nguyên và nút lưu mở lại. [Đang lưu](avd-20261119/avd-g04-pending-412.png) · [Sau lỗi](avd-20261119/avd-g04-error-412.png)
+
+G05 với mật khẩu hiện tại cố ý sai: GoTrue từ chối bước xác thực, app báo lỗi ngay dưới ô hiện tại, xóa cả ba trường và nút lưu hoạt động lại. Lượt trước có bằng chứng riêng về chặn gửi lặp và một request ghi bị proxy trả 503. Ca xác minh cả ba trường sau 503 vẫn chờ. [Ảnh lỗi Auth](avd-20261119/avd-g05-invalid-current-412.png)
+
+Recovery trong app gửi yêu cầu tới Auth QA, Mailpit có thư cho đúng tài khoản thử. Bước lưu mật khẩu mới và đăng nhập lại trên AVD chờ thao tác trực tiếp.
