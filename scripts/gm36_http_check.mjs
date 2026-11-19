@@ -153,9 +153,22 @@ try{
 }catch(e){report.failedCase=report.cases.at(-1)?.result==='Fail'?report.cases.at(-1).case:'setup';console.error('GM36 HTTP failed:',report.failedCase);process.exitCode=1;}
 finally{
  if(server)await new Promise(r=>server.close(r));
- if(guests.length){try{
-  await runCommand(python,[resolve(root,'scripts/gm36_qa.py'),namespace,...guests.map(g=>g.user.id)],{quiet:true});report.cleanup='owned synthetic identities removed';
- }catch{report.cleanup='Fail; owned identities need cleanup';report.result='Fail';process.exitCode=1;}}
+ if (guests.length) {
+  try {
+   const output = await runCommand(python, [
+    resolve(root, 'scripts/gm36_qa.py'), '--qa-manifest', manifestPath,
+    '--cleanup-namespace', namespace, '--users', ...guests.map(guest => guest.user.id),
+   ], {quiet:true});
+   assert.equal(JSON.parse(output).result, 'Pass');
+   report.cleanup = 'owned synthetic identities removed';
+  } catch (error) {
+   // Only emit known QA error codes, never subprocess arguments or raw diagnostics.
+   const safeCode = String(error.message).match(/\b(?:QA|GM36|GM40)_[A-Z0-9_]+\b/)?.[0];
+   report.cleanup = safeCode ? `Fail: ${safeCode}` : 'Fail: GM36_AUTH_CLEANUP_FAILED';
+   report.result = 'Fail';
+   process.exitCode = 1;
+  }
+ }
  await mkdir(folder,{recursive:true});await writeFile(resolve(folder,'results.json'),JSON.stringify(report,null,2)+'\n');
  console.log(JSON.stringify({result:report.result,cases:report.cases.length,cleanup:report.cleanup}));
 }
