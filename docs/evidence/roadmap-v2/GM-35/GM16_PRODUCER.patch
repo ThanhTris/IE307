@@ -11,9 +11,11 @@ index a958ed5..d4c9e85 100644
    sleep?: (ms: number) => Promise<void>;
    random?: () => number;
 @@ -16,6 +17,12 @@ export interface SessionConfig {
-
+-
++
  export type SessionStatus = 'empty' | 'active' | 'lost' | 'blocked';
-
+-
++
 +interface AccountOperationContext {
 +  assertCurrent: () => void;
 +  requireSession: () => Promise<StoredSession>;
@@ -52,7 +54,8 @@ index a958ed5..d4c9e85 100644
 @@ -204,6 +212,60 @@ export class SessionManager implements SessionApi {
      });
    }
-
+-
++
 +  /** Account writes are serialized with rotation/logout. Credential errors do not revoke an active guest. */
 +  runAccountOperation<T>(work: (context: AccountOperationContext) => Promise<T>): Promise<ReadResult<T>> {
 +    let generation = this.generation;
@@ -124,7 +127,8 @@ index 02d1932..77d567a 100644
    }
    return user;
 @@ -116,7 +116,9 @@ export class AuthHttpTransport implements AuthPort {
-
+-
++
    async createGuest(displayName: string): Promise<StoredSession> {
      if (!validDisplayName(displayName)) throw new AuthFailure({ messageKey: 'INVALID_INPUT' });
 -    return this.tokens(await this.request('signup', 'POST', { data: { display_name: displayName.trim() } }));

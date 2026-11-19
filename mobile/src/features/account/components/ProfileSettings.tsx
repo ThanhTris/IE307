@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Pressable, StyleSheet, Switch, View } from 'react-native';
+import { Pressable, StyleSheet, Switch, View, useWindowDimensions } from 'react-native';
 import { Text } from '../../../shared/ui/forms/ScaledText';
 import { useAppPreferences, type AppearanceChoice, type TextSizeChoice } from '../../../shared/lib/AppPreferences';
 import { useShellTheme } from '../../../shared/lib/useShellTheme';
@@ -20,6 +20,8 @@ type Panel = 'appearance' | 'textSize' | 'delete';
 export function ProfileSettings({ history }: { history?: PersonalHistorySettings }) {
   const { colors } = useShellTheme();
   const preferences = useAppPreferences();
+  const { width, fontScale } = useWindowDimensions();
+  const stackSettingValues = width <= 360 || fontScale >= 1.5;
   const [panel, setPanel] = useState<Panel>();
   const [consent, setConsent] = useState<boolean>();
   const [reload, setReload] = useState(0);
@@ -72,8 +74,17 @@ export function ProfileSettings({ history }: { history?: PersonalHistorySettings
       }} style={({ pressed }) => [
         styles.row, hasDivider && styles.divider, { borderColor: colors.line, opacity: pressed ? 0.7 : 1 },
       ]}>
-      <Text style={[typography.body, styles.label, { color: colors.text }]}>{label}</Text>
-      {value ? <Text style={[typography.caption, { color: colors.muted }]}>{value}</Text> : null}
+      {value && stackSettingValues ? (
+        <View style={styles.label}>
+          <Text style={[typography.body, { color: colors.text }]}>{label}</Text>
+          <Text style={[typography.caption, { color: colors.muted }]}>{value}</Text>
+        </View>
+      ) : (
+        <>
+          <Text style={[typography.body, styles.label, { color: colors.text }]}>{label}</Text>
+          {value ? <Text style={[typography.caption, { color: colors.muted }]}>{value}</Text> : null}
+        </>
+      )}
       <Text accessible={false} style={[typography.titleMedium, { color: colors.muted }]}>›</Text>
     </Pressable>;
   }

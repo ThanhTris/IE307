@@ -31,3 +31,5 @@ Trí thực hiện và ghi bằng chứng AVD nối Auth, REST và worker QA loc
 | 320/360dp, chữ 200%, TalkBack, bàn phím, Back | Ghi kết quả thực tế theo từng cấu hình. Kiểm trường và nút còn tới được khi cuộn, nhãn/lỗi được đọc, nút Back khi bàn phím mở và khi đang gửi, nội dung tránh thanh hệ thống. |
 
 Lượt 19/11/2026 trên `1561d90` đã boot AVD API 37, 1080 × 2400, 420 dpi, font scale 1,0 và xác nhận Expo Go 58.0.5. Metro QA chưa mở ở `8082`; bảng ca trên vẫn **Not run** cho lượt này và chưa có ảnh app tại 412/360/320dp. Lượt Expo Go thủ công đã ghi ở trên vẫn là bằng chứng của lần kiểm trước.
+
+Lượt tiếp theo trên `7cb8d89` đã mở được app qua Metro QA. Có [ảnh đăng ký ở 412dp](avd-20261119/avd-signup-412.png) và [ảnh G04 sau retry ở 412dp](avd-20261119/avd-g04-readback-412.png). G04 dùng nút lưu ngay dưới form. Frame lỗi Figma đặt nút retry về cuối màn. Ảnh trạng thái pending/lỗi và xác nhận sai khác còn chờ bổ sung. [Kết quả hành vi](CHECKS.md#kết-quả-avd-đã-thu-trước-khi-sửa-bố-cục)

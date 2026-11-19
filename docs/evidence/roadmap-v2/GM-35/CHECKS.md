@@ -77,3 +77,12 @@ Realtime đạt 22/22 khi chạy lại. Lượt đầu fail ở assertion sau kh
 
 - **GM-16.** [Patch producer](GM16_PRODUCER.patch) tách `session.ts` và hai guard Auth từ baseline `5bbee5d`. `git apply --check` đạt trên baseline. Checkout thử của producer đạt 69/69 ca `authSession` và `authTransport`, cùng TypeScript. Ca hồi quy đổi phiên trên nhánh GM-35 cũng đạt khi chạy riêng. Trí chốt ranh giới để tiếp nhận vào `main`. Sau bàn giao, chạy lại ca đổi phiên và merge gate trên revision đã đồng bộ. [HANDOFF](HANDOFF.md#bàn-giao-producer-gm-16)
 - **AVD.** Trí sẽ chạy và ghi bằng chứng trên revision cuối, gồm các luồng tài khoản, G04/G05, ảnh Figma/app ở 412dp và cấu hình trợ năng. Trạng thái chờ lượt AVD. [FIGMA_PARITY](FIGMA_PARITY.md#bàn-giao-lượt-avd-cho-trí)
+
+## Kết quả AVD đã thu trước khi sửa bố cục
+
+Revision `7cb8d89`, Android API 37, Expo Go 58.0.5, QA local `gm35-avd-092834100`. GoTrue ghi `signup` 200, `verify` 403 cho mã sai và 200 cho mã Mailpit hợp lệ. App vào Home và giữ phiên khi đổi mật độ. Đăng nhập lại bằng mật khẩu và recovery hoàn chỉnh từ UI vẫn chờ kiểm.
+
+- **G04:** proxy trả 503, tên vừa nhập vẫn còn sau lỗi. Lần thử lại được chuyển tới GoTrue. Đọc lại DB QA xác nhận tên mới ở cả GoTrue và hồ sơ xã hội. [Ảnh sau lưu](avd-20261119/avd-g04-readback-412.png)
+- **G05:** nút lưu khóa lúc pending. Bấm thêm trong lúc chờ, proxy ghi đúng một request ghi và trả 503. Chưa có bằng chứng trạng thái ba ô sau phản hồi.
+- **Trợ năng:** phát hiện nhãn Giao diện bẻ giữa từ ở 320dp với chữ 200%. Kiểm lại bản sửa trên AVD 320dp và font scale 2,0: cả Giao diện và Cỡ chữ đọc trọn nhãn và giá trị trên hai dòng, vẫn cuộn được. TalkBack còn chờ. [Trước sửa](avd-20261119/avd-profile-settings-320-200.png) · [Sau sửa](avd-20261119/avd-profile-settings-fixed-320-200.png)
+- **Hồi quy sau sửa:** 57/57 ca tập trung của GM-35 đạt. GM-16 tách ở PR #183, đạt 69/69 ca Auth/session và TypeScript. Runner backend QA xác minh 49 migration, 7/7 assertion Auth–REST và 5/5 nhóm Auth/Mailpit đạt.

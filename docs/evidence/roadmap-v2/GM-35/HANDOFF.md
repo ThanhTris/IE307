@@ -23,7 +23,7 @@ Code tài khoản dùng GoTrue `auth/v1`. Migration [`0062_gm35_profile_display_
 
 ## Bàn giao producer GM-16
 
-Trí xác nhận ranh giới producer và quyết định đưa patch lên `main`. [GM16_PRODUCER.patch](GM16_PRODUCER.patch) tách đúng ba file quản lý phiên và kiểm dữ liệu Auth từ baseline `5bbee5d`. Code của consumer GM-35 đã có trên PR #182.
+Trí review ranh giới producer trong [PR #183](https://github.com/ThanhTris/IE307/pull/183). [GM16_PRODUCER.patch](GM16_PRODUCER.patch) tách ba file quản lý phiên và kiểm dữ liệu Auth từ baseline `5bbee5d`. Code của consumer GM-35 đã có trên PR #182.
 
 | Producer | Đề xuất bàn giao |
 | --- | --- |
