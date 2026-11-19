@@ -1,0 +1,301 @@
+{
+ "module": "UI",
+ "title": "Giao diện và trợ năng",
+ "cases": [
+  {
+   "id": "TC-UI-001",
+   "title": "Bố cục dùng được ở 320dp, 360dp và 412dp",
+   "req": [
+    "REQ-UI-01"
+   ],
+   "priority": "P0",
+   "type": "compatibility",
+   "level": "e2e",
+   "preconditions": "Máy hoặc AVD ở ba độ rộng.",
+   "steps": [
+    "Mở lần lượt: Welcome, Home, Tạo phòng, Lobby, Bình chọn, Kết quả, Hồ sơ."
+   ],
+   "expected": "Không nội dung hay nút bị cắt; cuộn được; hành động chính luôn tới được.",
+   "automation": [
+    "manual"
+   ],
+   "env": [
+    "avd",
+    "android",
+    "ios"
+   ]
+  },
+  {
+   "id": "TC-UI-002",
+   "title": "Chữ phóng 200% không cắt nội dung",
+   "req": [
+    "REQ-UI-02"
+   ],
+   "priority": "P0",
+   "type": "accessibility",
+   "level": "e2e",
+   "preconditions": "Font scale 2.0 ở 320dp.",
+   "steps": [
+    "Mở Hồ sơ, Cài đặt giao diện, Lobby, Kết quả."
+   ],
+   "expected": "Nhãn đọc trọn trên nhiều dòng, không bẻ giữa từ, vẫn cuộn được.",
+   "automation": [
+    "mobile/tests/component/dishPreferences.test.tsx::long dish-group labels break at their last separator"
+   ],
+   "env": [
+    "ci",
+    "avd",
+    "android"
+   ]
+  },
+  {
+   "id": "TC-UI-003",
+   "title": "Nhãn và vai trò cho TalkBack/VoiceOver",
+   "req": [
+    "REQ-UI-03"
+   ],
+   "priority": "P0",
+   "type": "accessibility",
+   "level": "e2e",
+   "preconditions": "Bật TalkBack hoặc VoiceOver.",
+   "steps": [
+    "Đi qua luồng khách → tạo phòng → bình chọn → kết quả bằng trình đọc màn hình."
+   ],
+   "expected": "Mọi nút, ô nhập, lỗi có nhãn và vai trò đúng; thứ tự focus hợp lý.",
+   "automation": [
+    "mobile/tests/component/sharedComponents.test.tsx::shared controls expose labels, touch actions and selected state"
+   ],
+   "env": [
+    "ci",
+    "android",
+    "ios"
+   ]
+  },
+  {
+   "id": "TC-UI-004",
+   "title": "Vùng chạm tối thiểu 48dp",
+   "req": [
+    "REQ-UI-03"
+   ],
+   "priority": "P0",
+   "type": "accessibility",
+   "level": "component",
+   "preconditions": "Các nút chính.",
+   "steps": [
+    "Đo vùng chạm của nút, ô chọn, biểu tượng."
+   ],
+   "expected": "Mọi mục tương tác có vùng chạm không nhỏ hơn 48dp.",
+   "automation": [],
+   "env": [
+    "ci"
+   ],
+   "gap": "Chưa có test đo vùng chạm 48dp; bổ sung ở GM-56 và kiểm tay ở GM-58."
+  },
+  {
+   "id": "TC-UI-005",
+   "title": "Giảm chuyển động được tôn trọng",
+   "req": [
+    "REQ-UI-03"
+   ],
+   "priority": "P1",
+   "type": "accessibility",
+   "level": "component",
+   "preconditions": "Bật giảm chuyển động của hệ điều hành.",
+   "steps": [
+    "Mở hướng dẫn, kết quả, chuyển bước."
+   ],
+   "expected": "Hiệu ứng được rút gọn hoặc tắt.",
+   "automation": [
+    "mobile/tests/component/winnerCelebration.test.tsx::Reduce Motion requests zero-duration native animations",
+    "mobile/tests/component/tutorialCardMotion.test.tsx::reduced motion keeps gesture choices without moving the card"
+   ],
+   "env": [
+    "ci"
+   ]
+  },
+  {
+   "id": "TC-UI-006",
+   "title": "Bàn phím và nút Back",
+   "req": [
+    "REQ-UI-01"
+   ],
+   "priority": "P0",
+   "type": "functional",
+   "level": "component",
+   "preconditions": "Màn có ô nhập (tên, mã phòng, mật khẩu).",
+   "steps": [
+    "Mở bàn phím.",
+    "Bấm nút Back khi đang chờ và khi không chờ."
+   ],
+   "expected": "Bàn phím không che nút chính; Back không gửi nhầm; khi đang chờ Back bị khóa theo thiết kế.",
+   "automation": [
+    "mobile/tests/component/guestEntryScreen.test.tsx::pending submission locks input, button and hardware Back, including repeated presses",
+    "mobile/tests/component/roomCodeField.test.tsx::pasting a whole code fills all cells once, including when replacing from a middle cell"
+   ],
+   "env": [
+    "ci",
+    "avd",
+    "android"
+   ]
+  },
+  {
+   "id": "TC-UI-007",
+   "title": "Chế độ tối giữ nội dung và độ tương phản",
+   "req": [
+    "REQ-UI-04"
+   ],
+   "priority": "P1",
+   "type": "compatibility",
+   "level": "e2e",
+   "preconditions": "Bật chế độ tối.",
+   "steps": [
+    "Mở các màn chính."
+   ],
+   "expected": "Nội dung đọc được, không mất biểu tượng hay trạng thái.",
+   "automation": [
+    "manual"
+   ],
+   "env": [
+    "avd",
+    "android",
+    "ios"
+   ]
+  },
+  {
+   "id": "TC-UI-008",
+   "title": "Mọi màn có loading, rỗng, lỗi, thử lại",
+   "req": [
+    "REQ-UI-04"
+   ],
+   "priority": "P0",
+   "type": "functional",
+   "level": "component",
+   "preconditions": "Từng màn danh sách và màn dữ liệu.",
+   "steps": [
+    "Giả lập đang tải, danh sách rỗng, lỗi mạng."
+   ],
+   "expected": "Mỗi trạng thái hiện rõ và có nút thử lại khi áp dụng.",
+   "automation": [
+    "mobile/tests/integration/gm32ClientStates.test.tsx::G01 friends distinguishes network failure, no friends and no search match",
+    "mobile/tests/component/voteLoadingScreens.test.tsx::the round 1 skeleton has the flashcard layout (title, progress, card) and no home-style header",
+    "mobile/tests/component/dishResultStates.test.tsx::%s never masquerades as no consensus or calls a finalization action"
+   ],
+   "env": [
+    "ci"
+   ]
+  },
+  {
+   "id": "TC-UI-009",
+   "title": "Thông báo toast chỉ cho lỗi API và thao tác của chính mình",
+   "req": [
+    "REQ-UI-04"
+   ],
+   "priority": "P1",
+   "type": "functional",
+   "level": "component",
+   "preconditions": "Có sự kiện do người khác gây ra.",
+   "steps": [
+    "Nhận lời mời, chấp nhận kết bạn, kết quả chốt."
+   ],
+   "expected": "Sự kiện của người khác dùng banner thông báo, không dùng toast.",
+   "automation": [
+    "mobile/tests/component/feedbackRules.test.tsx::an API error is a red toast; the retry button stays on the page",
+    "mobile/tests/component/feedbackRules.test.tsx::a notification from someone else is a banner, not a toast, and opens where it points",
+    "mobile/tests/unit/inboxNotice.test.ts::a friend request names who sent it and opens the inbox"
+   ],
+   "env": [
+    "ci"
+   ]
+  },
+  {
+   "id": "TC-UI-010",
+   "title": "Safe area và tai thỏ",
+   "req": [
+    "REQ-UI-01"
+   ],
+   "priority": "P1",
+   "type": "compatibility",
+   "level": "e2e",
+   "preconditions": "Máy có tai thỏ hoặc thanh gesture.",
+   "steps": [
+    "Mở các màn chính ở dọc và ngang."
+   ],
+   "expected": "Nội dung tránh vùng hệ thống; nút dưới cùng không bị che.",
+   "automation": [
+    "manual"
+   ],
+   "env": [
+    "android",
+    "ios"
+   ]
+  },
+  {
+   "id": "TC-UI-011",
+   "title": "Phông chữ tải và dự phòng",
+   "req": [
+    "REQ-UI-01"
+   ],
+   "priority": "P1",
+   "type": "resilience",
+   "level": "component",
+   "preconditions": "Phông Inter chưa tải xong hoặc tải lỗi.",
+   "steps": [
+    "Mở app."
+   ],
+   "expected": "Dùng phông dự phòng, không chặn màn hình.",
+   "automation": [
+    "mobile/tests/component/AppFontProvider.test.tsx::a font load failure keeps Vietnamese text available with system weights",
+    "mobile/tests/component/AppFontProvider.test.tsx::a delayed font load keeps usable children on screen"
+   ],
+   "env": [
+    "ci"
+   ]
+  },
+  {
+   "id": "TC-UI-012",
+   "title": "Màn tài khoản ở 320dp và chữ 200%",
+   "req": [
+    "REQ-UI-02"
+   ],
+   "priority": "P0",
+   "type": "accessibility",
+   "level": "e2e",
+   "preconditions": "Chữ 200% ở 320dp.",
+   "steps": [
+    "Mở Hồ sơ, Cài đặt, Đăng nhập, Đăng ký."
+   ],
+   "expected": "Nhãn Giao diện và Cỡ chữ đọc trọn trên hai dòng, form cuộn được.",
+   "automation": [
+    "manual"
+   ],
+   "env": [
+    "avd",
+    "android"
+   ]
+  },
+  {
+   "id": "TC-UI-013",
+   "title": "Đối chiếu Figma cùng state ở 412dp",
+   "req": [
+    "REQ-UI-01"
+   ],
+   "priority": "P0",
+   "type": "compatibility",
+   "level": "e2e",
+   "preconditions": "Frame Figma và app cùng dữ liệu, vai trò.",
+   "steps": [
+    "Chụp app ở 412dp, chữ chuẩn.",
+    "So với frame Figma tương ứng."
+   ],
+   "expected": "Khác biệt nằm trong phần đã được Trí chấp nhận bằng văn bản.",
+   "automation": [
+    "manual"
+   ],
+   "env": [
+    "avd",
+    "android",
+    "ios"
+   ]
+  }
+ ]
+}

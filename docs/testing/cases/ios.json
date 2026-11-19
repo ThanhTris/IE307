@@ -1,0 +1,224 @@
+{
+ "module": "IOS",
+ "title": "iOS",
+ "cases": [
+  {
+   "id": "TC-IOS-001",
+   "title": "Quét QR vào phòng trên iPhone",
+   "req": [
+    "REQ-IOS-01"
+   ],
+   "priority": "P0",
+   "type": "functional",
+   "level": "e2e",
+   "preconditions": "iPhone thật, bản TestFlight.",
+   "steps": [
+    "Chọn quét QR, cho phép camera.",
+    "Quét mã phòng."
+   ],
+   "expected": "Quét thành công hiện màn xác nhận trước khi vào.",
+   "automation": [
+    "manual"
+   ],
+   "env": [
+    "ios"
+   ]
+  },
+  {
+   "id": "TC-IOS-002",
+   "title": "Từ chối camera trên iOS vẫn nhập mã tay",
+   "req": [
+    "REQ-IOS-01"
+   ],
+   "priority": "P0",
+   "type": "negative",
+   "level": "e2e",
+   "preconditions": "Đã từ chối quyền camera.",
+   "steps": [
+    "Chọn quét QR.",
+    "Mở Cài đặt từ app.",
+    "Nhập mã tay."
+   ],
+   "expected": "Có lời nhắc mở Cài đặt; nhập mã tay vẫn hoạt động; mô tả quyền hiển thị đúng.",
+   "automation": [
+    "manual"
+   ],
+   "env": [
+    "ios"
+   ]
+  },
+  {
+   "id": "TC-IOS-003",
+   "title": "Vị trí chỉ khi dùng và Places trên iOS",
+   "req": [
+    "REQ-IOS-02"
+   ],
+   "priority": "P0",
+   "type": "functional",
+   "level": "e2e",
+   "preconditions": "iPhone, kết quả có winner.",
+   "steps": [
+    "Cho phép vị trí khi dùng.",
+    "Mở kết quả.",
+    "Lặp lại khi từ chối."
+   ],
+   "expected": "Hiện quán và bản đồ khi cho phép; từ chối thì kết quả giữ nguyên.",
+   "automation": [
+    "manual"
+   ],
+   "env": [
+    "ios"
+   ]
+  },
+  {
+   "id": "TC-IOS-004",
+   "title": "Phiên khôi phục sau khi mở lại bằng Keychain",
+   "req": [
+    "REQ-IOS-02"
+   ],
+   "priority": "P0",
+   "type": "resilience",
+   "level": "e2e",
+   "preconditions": "Đã đăng nhập trên iPhone.",
+   "steps": [
+    "Thoát hẳn app.",
+    "Mở lại."
+   ],
+   "expected": "Khôi phục đúng danh tính, không tạo khách mới.",
+   "automation": [
+    "manual"
+   ],
+   "env": [
+    "ios"
+   ]
+  },
+  {
+   "id": "TC-IOS-005",
+   "title": "Liên kết vào phòng khi lạnh và khi nóng",
+   "req": [
+    "REQ-IOS-03"
+   ],
+   "priority": "P0",
+   "type": "functional",
+   "level": "e2e",
+   "preconditions": "Có liên kết phòng.",
+   "steps": [
+    "Mở liên kết khi app đã tắt.",
+    "Mở khi app ở nền."
+   ],
+   "expected": "App mở màn xem trước đúng mã phòng, vẫn cần xác nhận.",
+   "automation": [
+    "manual"
+   ],
+   "env": [
+    "ios"
+   ]
+  },
+  {
+   "id": "TC-IOS-006",
+   "title": "Tai thỏ, bàn phím và cử chỉ Back",
+   "req": [
+    "REQ-IOS-03"
+   ],
+   "priority": "P0",
+   "type": "compatibility",
+   "level": "e2e",
+   "preconditions": "iPhone có tai thỏ.",
+   "steps": [
+    "Nhập tên, mã phòng, mật khẩu.",
+    "Vuốt từ mép để quay lại."
+   ],
+   "expected": "Nội dung tránh tai thỏ; bàn phím không che nút; cử chỉ Back không gửi nhầm.",
+   "automation": [
+    "manual"
+   ],
+   "env": [
+    "ios"
+   ]
+  },
+  {
+   "id": "TC-IOS-007",
+   "title": "Bình chọn hai vòng trên iPhone",
+   "req": [
+    "REQ-VOTE-02"
+   ],
+   "priority": "P0",
+   "type": "functional",
+   "level": "e2e",
+   "preconditions": "iPhone cùng một thiết bị khác trong phòng.",
+   "steps": [
+    "Chơi hết hai vòng."
+   ],
+   "expected": "Kết quả giống thiết bị kia; ACK và đồng hồ đúng.",
+   "automation": [
+    "manual"
+   ],
+   "env": [
+    "ios"
+   ]
+  },
+  {
+   "id": "TC-IOS-008",
+   "title": "Xóa tài khoản trên iPhone",
+   "req": [
+    "REQ-AUTH-08"
+   ],
+   "priority": "P0",
+   "type": "functional",
+   "level": "e2e",
+   "preconditions": "iPhone đã đăng nhập.",
+   "steps": [
+    "Vào Hồ sơ, Xóa tài khoản, xác nhận."
+   ],
+   "expected": "Về màn chào, dữ liệu bị xóa theo yêu cầu của App Store.",
+   "automation": [
+    "manual"
+   ],
+   "env": [
+    "ios"
+   ]
+  },
+  {
+   "id": "TC-IOS-009",
+   "title": "Chế độ tối và chữ lớn trên iPhone",
+   "req": [
+    "REQ-UI-02"
+   ],
+   "priority": "P1",
+   "type": "accessibility",
+   "level": "e2e",
+   "preconditions": "Bật Dark và cỡ chữ lớn nhất.",
+   "steps": [
+    "Mở các màn chính."
+   ],
+   "expected": "Không cắt nội dung, VoiceOver đọc đúng.",
+   "automation": [
+    "manual"
+   ],
+   "env": [
+    "ios"
+   ]
+  },
+  {
+   "id": "TC-IOS-010",
+   "title": "Quyền thông báo trên iPhone khi chưa có push từ xa",
+   "req": [
+    "REQ-ENTRY-02"
+   ],
+   "priority": "P1",
+   "type": "functional",
+   "level": "e2e",
+   "preconditions": "Lần đầu sau đăng nhập.",
+   "steps": [
+    "Từ chối rồi cho phép thông báo."
+   ],
+   "expected": "App không crash, banner trong app vẫn hoạt động, không hứa push khi app tắt.",
+   "automation": [
+    "manual"
+   ],
+   "env": [
+    "ios"
+   ]
+  }
+ ]
+}

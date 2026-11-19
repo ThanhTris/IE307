@@ -1,0 +1,148 @@
+{
+ "module": "ENTRY",
+ "title": "Khởi động, hướng dẫn và quyền",
+ "cases": [
+  {
+   "id": "TC-ENTRY-001",
+   "title": "Mở lần đầu: chào, hướng dẫn và nhập tên",
+   "req": [
+    "REQ-ENTRY-01"
+   ],
+   "priority": "P0",
+   "type": "functional",
+   "level": "component",
+   "preconditions": "Cài mới, chưa có phiên.",
+   "steps": [
+    "Mở app.",
+    "Đi qua màn chào và hướng dẫn.",
+    "Nhập tên khách."
+   ],
+   "expected": "Mở màn chào mà không tự tạo khách; sau khi xác nhận tên mới vào Home.",
+   "automation": [
+    "mobile/tests/component/guestEntryScreen.test.tsx::opening welcome and account placeholders never creates a guest; guest entry stays available",
+    "mobile/tests/component/tutorialScreen.test.tsx::tutorial only advances after the requested NO/OK choice",
+    "mobile/tests/integration/guestEntryRoute.test.tsx::confirmed no-session entry creates a guest through the existing seam only after name confirmation"
+   ],
+   "env": [
+    "ci"
+   ]
+  },
+  {
+   "id": "TC-ENTRY-002",
+   "title": "Xin quyền lần đầu: từ chối vẫn dùng được app",
+   "req": [
+    "REQ-ENTRY-02"
+   ],
+   "priority": "P0",
+   "type": "negative",
+   "level": "component",
+   "preconditions": "Vừa đăng nhập lần đầu.",
+   "steps": [
+    "Từ chối quyền Thông báo, Camera, Vị trí.",
+    "Vào Home và tạo phòng.",
+    "Mở quét QR."
+   ],
+   "expected": "App không crash, vào được Home; tính năng cần quyền hỏi lại khi dùng và có đường nhập tay.",
+   "automation": [
+    "mobile/tests/component/permissionsWelcome.test.tsx::skipping asks for nothing and still continues",
+    "mobile/tests/component/permissionsWelcome.test.tsx::a refused notification permission shows a reminder; a second refusal points to Settings",
+    "mobile/tests/unit/appPermissions.test.ts::a first refusal is denied, and the feature asks again next time it is used"
+   ],
+   "env": [
+    "ci"
+   ]
+  },
+  {
+   "id": "TC-ENTRY-003",
+   "title": "Home tìm phòng đang tham gia",
+   "req": [
+    "REQ-ENTRY-03"
+   ],
+   "priority": "P1",
+   "type": "functional",
+   "level": "api",
+   "preconditions": "Người dùng đang ở một phòng chưa kết thúc.",
+   "steps": [
+    "Mở lại app hoặc đăng nhập trên máy khác.",
+    "Quan sát Home."
+   ],
+   "expected": "Home hiện thẻ tiếp tục và mở đúng màn theo trạng thái phòng.",
+   "automation": [
+    "supabase/tests/http/GM-44.http",
+    "mobile/tests/component/homeScreen.test.tsx::Home offers continuation only for a verified member room"
+   ],
+   "env": [
+    "qa-local",
+    "ci"
+   ]
+  },
+  {
+   "id": "TC-ENTRY-004",
+   "title": "Tiếp tục phiên theo vòng hiện tại",
+   "req": [
+    "REQ-ENTRY-03"
+   ],
+   "priority": "P1",
+   "type": "functional",
+   "level": "component",
+   "preconditions": "Phòng ở vòng 1 hoặc vòng 2.",
+   "steps": [
+    "Mở Home khi phòng ở vòng 1.",
+    "Mở Home khi phòng ở vòng 2."
+   ],
+   "expected": "Vòng 1 có nút quay lại phòng; vòng 2 báo không thể vào lại và không có nút; trạng thái kết thúc không bị coi là đang chơi.",
+   "automation": [
+    "mobile/tests/component/returnToRoom.test.tsx::round 1 offers the way back",
+    "mobile/tests/component/returnToRoom.test.tsx::round 2 says the room cannot be entered again and offers no button",
+    "mobile/tests/component/homeScreen.test.tsx::continue does not label terminal state %s as active"
+   ],
+   "env": [
+    "ci"
+   ]
+  },
+  {
+   "id": "TC-ENTRY-005",
+   "title": "Lỗi mạng khi mở Home có nút thử lại",
+   "req": [
+    "REQ-ENTRY-01"
+   ],
+   "priority": "P1",
+   "type": "resilience",
+   "level": "component",
+   "preconditions": "Mất mạng khi mở app.",
+   "steps": [
+    "Mở app khi offline.",
+    "Bật mạng và bấm thử lại."
+   ],
+   "expected": "Không crash, hiện lỗi rõ, thử lại hoạt động.",
+   "automation": [
+    "mobile/tests/integration/gm32ClientStates.test.tsx::G03 history without a cache reports offline failure and recovers to an empty list",
+    "mobile/tests/component/homeScreen.test.tsx::room network retry preserves the receipt and does not create or join",
+    "mobile/tests/unit/roomRepository.test.ts::retains a retryable restore error when stored credentials cannot be verified online"
+   ],
+   "env": [
+    "ci"
+   ]
+  },
+  {
+   "id": "TC-ENTRY-006",
+   "title": "Màn không tìm thấy (route sai)",
+   "req": [
+    "REQ-ENTRY-01"
+   ],
+   "priority": "P2",
+   "type": "negative",
+   "level": "component",
+   "preconditions": "Mở một đường dẫn không tồn tại.",
+   "steps": [
+    "Mở liên kết sai."
+   ],
+   "expected": "Hiện màn không tìm thấy kèm nút về Home.",
+   "automation": [],
+   "env": [
+    "ci"
+   ],
+   "gap": "Chưa có test riêng cho NotFoundScreen; bổ sung ở GM-56."
+  }
+ ]
+}

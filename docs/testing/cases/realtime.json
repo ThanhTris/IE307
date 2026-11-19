@@ -1,0 +1,298 @@
+{
+ "module": "RT",
+ "title": "Realtime, phục hồi và ngoại tuyến",
+ "cases": [
+  {
+   "id": "TC-RT-001",
+   "title": "Thay đổi version phòng đến app qua Realtime",
+   "req": [
+    "REQ-RT-01"
+   ],
+   "priority": "P0",
+   "type": "functional",
+   "level": "api",
+   "preconditions": "Hai client, một người mở lobby.",
+   "steps": [
+    "Client kia vào phòng.",
+    "Quan sát lobby."
+   ],
+   "expected": "Lobby nhận tín hiệu room_id/version, đọc lại snapshot theo contract mà không cần polling.",
+   "automation": [
+    "supabase/tests/http/GM-45.http",
+    "mobile/tests/unit/roomRealtime.test.ts::validates minimal version signals"
+   ],
+   "env": [
+    "qa-local",
+    "ci"
+   ]
+  },
+  {
+   "id": "TC-RT-002",
+   "title": "Tín hiệu Realtime không chứa phiếu bầu",
+   "req": [
+    "REQ-RT-01"
+   ],
+   "priority": "P0",
+   "type": "privacy",
+   "level": "api",
+   "preconditions": "Phòng đang bình chọn.",
+   "steps": [
+    "Nghe kênh Realtime của phòng bằng thành viên và người ngoài."
+   ],
+   "expected": "Payload chỉ có room_id và version; người ngoài và người bị loại không nhận được.",
+   "automation": [
+    "supabase/tests/http/GM-45.http"
+   ],
+   "env": [
+    "qa-local"
+   ]
+  },
+  {
+   "id": "TC-RT-003",
+   "title": "Mất kết nối thì đọc bù và backoff hữu hạn",
+   "req": [
+    "REQ-RT-01"
+   ],
+   "priority": "P0",
+   "type": "resilience",
+   "level": "unit",
+   "preconditions": "Kênh Realtime mất kết nối.",
+   "steps": [
+    "Ngắt mạng.",
+    "Bật lại."
+   ],
+   "expected": "Retry với backoff hữu hạn, sau khi nối lại đọc bù đúng một lần, token muộn sau khi dừng không mở socket.",
+   "automation": [
+    "mobile/tests/unit/roomRealtime.test.ts::disconnect uses finite backoff, reconnect reads once, stop invalidates response guard",
+    "mobile/tests/unit/roomRealtime.test.ts::late token after stop cannot open a socket"
+   ],
+   "env": [
+    "ci"
+   ]
+  },
+  {
+   "id": "TC-RT-004",
+   "title": "Thiếu capability backend thì báo rõ, không kết nối",
+   "req": [
+    "REQ-RT-01"
+   ],
+   "priority": "P1",
+   "type": "negative",
+   "level": "unit",
+   "preconditions": "Backend cũ chưa có Realtime.",
+   "steps": [
+    "Mở lobby."
+   ],
+   "expected": "Thiếu capability báo lỗi rõ ràng và quay về polling, không kết nối giả.",
+   "automation": [
+    "mobile/tests/unit/roomRealtime.test.ts::missing backend capability fails explicitly and does not connect"
+   ],
+   "env": [
+    "ci"
+   ]
+  },
+  {
+   "id": "TC-RT-005",
+   "title": "Chuyển vòng khi hết giờ không cần worker (hosted)",
+   "req": [
+    "REQ-RT-02"
+   ],
+   "priority": "P0",
+   "type": "resilience",
+   "level": "e2e",
+   "preconditions": "Staging hosted, không có worker chạy trên máy.",
+   "steps": [
+    "Phòng 3 người, hai người ACK.",
+    "Chờ hết 60 giây."
+   ],
+   "expected": "Phòng tự chuyển vòng trong vài giây quanh deadline nhờ pg_cron.",
+   "automation": [
+    "manual"
+   ],
+   "env": [
+    "staging"
+   ]
+  },
+  {
+   "id": "TC-RT-006",
+   "title": "Outbox lưu trước khi gọi mạng và không phát lại phiếu đã ACK",
+   "req": [
+    "REQ-RT-03"
+   ],
+   "priority": "P0",
+   "type": "resilience",
+   "level": "unit",
+   "preconditions": "Bấm Gửi phiếu khi mạng chập chờn.",
+   "steps": [
+    "Bấm Gửi.",
+    "Force-stop trước khi nhận phản hồi.",
+    "Mở lại app."
+   ],
+   "expected": "Payload đã lưu; mở lại đối chiếu server trước khi phát lại; phiếu đã ACK được quét khỏi outbox.",
+   "automation": [
+    "mobile/tests/unit/gm31Outbox.test.ts::recognizes canonical ballot ACKs and legacy submission receipts",
+    "mobile/tests/unit/gm31Outbox.test.ts::does not replay a future expectedVersion for an otherwise matching room snapshot"
+   ],
+   "env": [
+    "ci"
+   ]
+  },
+  {
+   "id": "TC-RT-007",
+   "title": "Outbox hết hạn và xóa theo danh tính",
+   "req": [
+    "REQ-RT-03"
+   ],
+   "priority": "P0",
+   "type": "security",
+   "level": "unit",
+   "preconditions": "Có hàng đợi của tài khoản A.",
+   "steps": [
+    "Đăng xuất.",
+    "Mô phỏng quá thời hạn TTL."
+   ],
+   "expected": "Payload an toàn và hàng của danh tính bị xóa; lỗi xóa SecureStore được ghi để thử lại.",
+   "automation": [
+    "mobile/tests/unit/gm31Outbox.test.ts::TTL expiry removes the secure payload and identity-scoped rows",
+    "mobile/tests/unit/gm31Outbox.test.ts::retains cleanup metadata when SecureStore deletion fails, then retries successfully"
+   ],
+   "env": [
+    "ci"
+   ]
+  },
+  {
+   "id": "TC-RT-008",
+   "title": "Một request nền tại một thời điểm, bỏ phản hồi cũ",
+   "req": [
+    "REQ-RT-04"
+   ],
+   "priority": "P0",
+   "type": "resilience",
+   "level": "component",
+   "preconditions": "Lobby polling 4 giây.",
+   "steps": [
+    "Chuyển phòng khi một request cũ còn bay."
+   ],
+   "expected": "Phản hồi phòng cũ bị bỏ; snapshot mới không bị ghi đè bởi version thấp hơn.",
+   "automation": [
+    "mobile/tests/component/gm25FigmaParity.test.tsx::ignores an old room poll after switching to another room",
+    "mobile/tests/component/gm25FigmaParity.test.tsx::keeps the newer lobby snapshot when a poll returns an older round snapshot"
+   ],
+   "env": [
+    "ci"
+   ]
+  },
+  {
+   "id": "TC-RT-009",
+   "title": "Guard epoch khi đổi tài khoản",
+   "req": [
+    "REQ-AUTH-07"
+   ],
+   "priority": "P0",
+   "type": "security",
+   "level": "unit",
+   "preconditions": "Đang đổi tài khoản.",
+   "steps": [
+    "Gửi yêu cầu trong lúc chuyển."
+   ],
+   "expected": "Yêu cầu của phiên cũ dừng trước transport.",
+   "automation": [
+    "mobile/tests/unit/authSession.test.ts::business response received after logout is rejected before exposure to caller",
+    "mobile/tests/unit/authSession.test.ts::server-detected auth loss also drops an already-running business response"
+   ],
+   "env": [
+    "ci"
+   ]
+  },
+  {
+   "id": "TC-RT-010",
+   "title": "Mở lại app khi backend không thể kết nối",
+   "req": [
+    "REQ-REL-03"
+   ],
+   "priority": "P0",
+   "type": "resilience",
+   "level": "component",
+   "preconditions": "Backend tắt hoặc mất mạng khi mở app.",
+   "steps": [
+    "Mở app.",
+    "Chờ vài giây.",
+    "Thử lại khi backend sống."
+   ],
+   "expected": "Không crash; báo lỗi rõ và nút thử lại; thiếu cấu hình hiện \"Chưa cấu hình máy chủ\".",
+   "automation": [
+    "mobile/tests/component/liveRoomLifecycle.test.tsx::P5: RoomRepositoryProvider throws when forcedMode=real and publicKey is missing",
+    "mobile/tests/integration/gm32ClientStates.test.tsx::G02 inbox distinguishes a failed request from an empty authenticated page"
+   ],
+   "env": [
+    "ci"
+   ]
+  },
+  {
+   "id": "TC-RT-011",
+   "title": "Token hết hạn khi nghe Realtime hộp thư",
+   "req": [
+    "REQ-SOC-03"
+   ],
+   "priority": "P1",
+   "type": "resilience",
+   "level": "unit",
+   "preconditions": "Token hết hạn khi đang nghe.",
+   "steps": [
+    "Chờ token hết hạn."
+   ],
+   "expected": "Kênh đóng và tham gia lại bằng token mới; dừng thì hủy mọi timer.",
+   "automation": [
+    "mobile/tests/unit/inboxRealtime.test.ts::an expired token closes the channel and it joins again",
+    "mobile/tests/unit/inboxRealtime.test.ts::stopping closes the socket and cancels every timer"
+   ],
+   "env": [
+    "ci"
+   ]
+  },
+  {
+   "id": "TC-RT-012",
+   "title": "Nhiều tín hiệu liên tiếp chỉ đọc lại một lần",
+   "req": [
+    "REQ-RT-01"
+   ],
+   "priority": "P1",
+   "type": "boundary",
+   "level": "unit",
+   "preconditions": "Server đẩy nhiều thay đổi version.",
+   "steps": [
+    "Nhận 5 tín hiệu trong 1 giây."
+   ],
+   "expected": "Gộp tín hiệu, bỏ version cũ, chỉ đọc lại snapshot khi cần.",
+   "automation": [
+    "mobile/tests/unit/roomRealtime.test.ts::temporary token refresh failures keep both retries alive until the room reconnects"
+   ],
+   "env": [
+    "ci"
+   ]
+  },
+  {
+   "id": "TC-RT-013",
+   "title": "Force-stop khi gửi phiếu và khôi phục ở máy thật",
+   "req": [
+    "REQ-RT-03"
+   ],
+   "priority": "P0",
+   "type": "resilience",
+   "level": "e2e",
+   "preconditions": "Máy thật, phiên bình chọn đang diễn ra.",
+   "steps": [
+    "Gửi phiếu rồi force-stop ngay.",
+    "Mở lại và so sánh với server."
+   ],
+   "expected": "Không có phiếu trùng, không có phiếu sai vòng; kết quả cuối giống hai máy.",
+   "automation": [
+    "manual"
+   ],
+   "env": [
+    "android",
+    "ios"
+   ]
+  }
+ ]
+}

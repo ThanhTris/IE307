@@ -1,0 +1,518 @@
+{
+ "module": "VOTE1",
+ "title": "Bình chọn vòng 1 và chờ kết quả",
+ "cases": [
+  {
+   "id": "TC-VOTE1-001",
+   "title": "Ba nút WANT, OK, NO bắt đầu ở UNSET",
+   "req": [
+    "REQ-VOTE-01"
+   ],
+   "priority": "P0",
+   "type": "functional",
+   "level": "component",
+   "preconditions": "Phòng ở vòng 1, người chơi chưa chọn gì.",
+   "steps": [
+    "Mở màn bình chọn.",
+    "Quan sát thẻ món đầu tiên."
+   ],
+   "expected": "Một thẻ mỗi lần, ba nút WANT, OK, NO luôn hiện và chưa nút nào được chọn.",
+   "automation": [
+    "mobile/tests/component/votingScreens.test.tsx::Ba nút WANT, OK, NO luôn hiện và bắt đầu ở trạng thái UNSET",
+    "mobile/tests/component/gm26FigmaParity.test.tsx::renders the flashcard deck and records WANT/OK/NO; the last answer sends the ballot"
+   ],
+   "env": [
+    "ci"
+   ]
+  },
+  {
+   "id": "TC-VOTE1-002",
+   "title": "Gửi phiếu chỉ bật khi đã chọn đủ mọi món",
+   "req": [
+    "REQ-VOTE-01"
+   ],
+   "priority": "P0",
+   "type": "negative",
+   "level": "component",
+   "preconditions": "Phòng 10 món, đã chọn 9 món.",
+   "steps": [
+    "Kiểm tra nút Gửi.",
+    "Chọn nốt món cuối."
+   ],
+   "expected": "UNSET khác OK: nút Gửi chỉ bật khi đã chọn đủ cho tất cả món.",
+   "automation": [
+    "mobile/tests/component/votingScreens.test.tsx::UNSET khác OK: nút Gửi chỉ bật khi đã chọn đủ phiếu cho tất cả các món"
+   ],
+   "env": [
+    "ci"
+   ]
+  },
+  {
+   "id": "TC-VOTE1-003",
+   "title": "Chạm đúp luôn đặt WANT, không bật tắt",
+   "req": [
+    "REQ-VOTE-01"
+   ],
+   "priority": "P0",
+   "type": "functional",
+   "level": "component",
+   "preconditions": "Thẻ món ở trạng thái UNSET, OK hoặc NO.",
+   "steps": [
+    "Chạm đúp lên thẻ ở từng trạng thái.",
+    "Chạm đúp lần nữa."
+   ],
+   "expected": "Thẻ chuyển WANT và giữ WANT, không về UNSET, không tự gửi.",
+   "automation": [
+    "mobile/tests/component/votingScreens.test.tsx::Double-tap đặt WANT từ UNSET, OK, NO và lặp lại vẫn là WANT (không toggle về UNSET, không tự gửi)"
+   ],
+   "env": [
+    "ci"
+   ]
+  },
+  {
+   "id": "TC-VOTE1-004",
+   "title": "Cuộn, vuốt dọc và chạm đơn không tính phiếu",
+   "req": [
+    "REQ-VOTE-01"
+   ],
+   "priority": "P0",
+   "type": "negative",
+   "level": "e2e",
+   "preconditions": "Đang xem thẻ món.",
+   "steps": [
+    "Vuốt dọc để cuộn.",
+    "Chạm đơn lên thẻ.",
+    "Mở chi tiết bằng nút."
+   ],
+   "expected": "Không phiếu nào thay đổi; chi tiết mở bằng nút, không bằng chạm đơn.",
+   "automation": [
+    "manual"
+   ],
+   "env": [
+    "avd",
+    "android",
+    "ios"
+   ]
+  },
+  {
+   "id": "TC-VOTE1-005",
+   "title": "Thay thế cử chỉ bằng nút và thao tác TalkBack",
+   "req": [
+    "REQ-UI-03"
+   ],
+   "priority": "P0",
+   "type": "accessibility",
+   "level": "component",
+   "preconditions": "Bật TalkBack.",
+   "steps": [
+    "Duyệt thẻ bằng TalkBack.",
+    "Dùng nút WANT/OK/NO thay vì vuốt."
+   ],
+   "expected": "Mọi hành động có nút thay thế, có nhãn đọc được.",
+   "automation": [
+    "mobile/tests/component/votingScreens.test.tsx::Flashcard Vòng 1: một thẻ mỗi lần, cử chỉ (thao tác TalkBack), Hoàn tác trên header, xong thẻ cuối là tự gửi"
+   ],
+   "env": [
+    "ci",
+    "android"
+   ]
+  },
+  {
+   "id": "TC-VOTE1-006",
+   "title": "Gửi phiếu: pending rồi ACK khóa phiếu",
+   "req": [
+    "REQ-VOTE-02"
+   ],
+   "priority": "P0",
+   "type": "functional",
+   "level": "component",
+   "preconditions": "Đã chọn đủ phiếu.",
+   "steps": [
+    "Bấm Gửi.",
+    "Quan sát khi chờ.",
+    "Nhận ACK."
+   ],
+   "expected": "Pending khóa tương tác; sau ACK phiếu bị khóa, không sửa hay nộp lại.",
+   "automation": [
+    "mobile/tests/component/votingScreens.test.tsx::Trạng thái Pending hiển thị rõ ràng và khóa tương tác trong khi chờ phản hồi",
+    "mobile/tests/component/votingScreens.test.tsx::Sau ACK: khóa toàn bộ phiếu, không thể sửa hay nộp lại trùng",
+    "mobile/tests/component/gm26FigmaParity.test.tsx::submits ballot via VoteRepository, enters pending state, and locks interaction on ACK"
+   ],
+   "env": [
+    "ci"
+   ]
+  },
+  {
+   "id": "TC-VOTE1-007",
+   "title": "Gửi lại cùng request id không nhân đôi phiếu",
+   "req": [
+    "REQ-VOTE-02"
+   ],
+   "priority": "P0",
+   "type": "resilience",
+   "level": "unit",
+   "preconditions": "Mất mạng ngay khi gửi, kết quả chưa rõ.",
+   "steps": [
+    "Gửi phiếu.",
+    "Thử lại với cùng request id.",
+    "Thử với request id cũ nhưng nội dung khác."
+   ],
+   "expected": "Lần thử lại nhận biên nhận đã lưu; request id dùng lại với nội dung khác bị từ chối.",
+   "automation": [
+    "mobile/tests/unit/voteRepository.test.ts::preserves idempotency and returns cached receipt on retry with identical requestId",
+    "mobile/tests/unit/voteRepository.test.ts::rejects reused requestId with mismatched payload (F6)",
+    "supabase/tests/http/GM-20.http"
+   ],
+   "env": [
+    "ci",
+    "qa-local"
+   ]
+  },
+  {
+   "id": "TC-VOTE1-008",
+   "title": "Lỗi gửi phiếu giữ lựa chọn và cho thử lại",
+   "req": [
+    "REQ-VOTE-02"
+   ],
+   "priority": "P0",
+   "type": "resilience",
+   "level": "component",
+   "preconditions": "Server trả lỗi khi gửi.",
+   "steps": [
+    "Bấm Gửi.",
+    "Bấm Thử lại khi mạng ổn."
+   ],
+   "expected": "Lựa chọn còn nguyên, thử lại thành công và không gửi trùng.",
+   "automation": [
+    "mobile/tests/component/votingScreens.test.tsx::Mô phỏng lỗi nộp phiếu (Error state fixture) và nút Thử lại gửi thành công",
+    "mobile/tests/component/gm26FigmaParity.test.tsx::handles error state gracefully and allows retry without losing choices"
+   ],
+   "env": [
+    "ci"
+   ]
+  },
+  {
+   "id": "TC-VOTE1-009",
+   "title": "Phiếu đã ACK chặn ghi đè sau khi mở lại app",
+   "req": [
+    "REQ-RT-03"
+   ],
+   "priority": "P0",
+   "type": "resilience",
+   "level": "unit",
+   "preconditions": "Đã ACK phiếu, người chơi force-stop app.",
+   "steps": [
+    "Mở lại app.",
+    "Quan sát màn bình chọn."
+   ],
+   "expected": "App khôi phục trạng thái chờ, không cho gửi phiếu thứ hai.",
+   "automation": [
+    "mobile/tests/component/votingSnapshotLifecycle.test.tsx::recovers the waiting transition after reopening with an ACKed ballot in ROUND_%s",
+    "mobile/tests/unit/gm31Outbox.test.ts::identity isolation, ACK scrub, and logout deletion apply to outbox and cache"
+   ],
+   "env": [
+    "ci",
+    "avd"
+   ]
+  },
+  {
+   "id": "TC-VOTE1-010",
+   "title": "Có người thắng ở vòng 1 khi mọi người cùng WANT",
+   "req": [
+    "REQ-VOTE-03"
+   ],
+   "priority": "P0",
+   "type": "functional",
+   "level": "api",
+   "preconditions": "Mọi thành viên đã ACK và có ít nhất một món được tất cả WANT.",
+   "steps": [
+    "Gửi phiếu của mọi thành viên.",
+    "Đọc kết quả."
+   ],
+   "expected": "Server chọn một winner một lần, trạng thái DECIDED ở vòng 1.",
+   "automation": [
+    "supabase/tests/http/GM-20.http",
+    "supabase/tests/http/GM-20-canonical.http"
+   ],
+   "env": [
+    "qa-local"
+   ]
+  },
+  {
+   "id": "TC-VOTE1-011",
+   "title": "Không có winner thì mở vòng 2 với món sống sót",
+   "req": [
+    "REQ-VOTE-03"
+   ],
+   "priority": "P0",
+   "type": "functional",
+   "level": "api",
+   "preconditions": "Không món nào được tất cả WANT; có món không bị ai NO.",
+   "steps": [
+    "Gửi phiếu hai thành viên khác nhau.",
+    "Đọc trạng thái phòng."
+   ],
+   "expected": "Phòng sang vòng 2 với tập món bằng pool trừ hợp NO của mọi phiếu đã ACK (N≥1, kể cả N=1).",
+   "automation": [
+    "supabase/tests/http/GM-20.http",
+    "supabase/tests/http/DISH-POLICY-V3.http"
+   ],
+   "env": [
+    "qa-local"
+   ]
+  },
+  {
+   "id": "TC-VOTE1-012",
+   "title": "Mọi món bị NO thì kết thúc ở vòng 1",
+   "req": [
+    "REQ-VOTE-03"
+   ],
+   "priority": "P0",
+   "type": "boundary",
+   "level": "api",
+   "preconditions": "Hợp NO của mọi phiếu phủ toàn bộ pool.",
+   "steps": [
+    "Gửi phiếu khiến N=0."
+   ],
+   "expected": "Kết thúc NO_CONSENSUS với lý do EMPTY_INTERSECTION ngay ở vòng 1, không mở vòng 2.",
+   "automation": [
+    "supabase/tests/http/GM-20-canonical.http",
+    "mobile/tests/component/dishResultStates.test.tsx::%s has the correct terminal reason and no winner/podium/places"
+   ],
+   "env": [
+    "qa-local",
+    "ci"
+   ]
+  },
+  {
+   "id": "TC-VOTE1-013",
+   "title": "Đồng hồ 60 giây bắt đầu từ lần vào phòng chờ đầu tiên",
+   "req": [
+    "REQ-VOTE-04"
+   ],
+   "priority": "P0",
+   "type": "functional",
+   "level": "api",
+   "preconditions": "Hai thành viên, chưa ai gửi.",
+   "steps": [
+    "Thành viên A gửi phiếu và vào phòng chờ.",
+    "Đọc waitingStartedAt và deadline."
+   ],
+   "expected": "deadline = waitingStartedAt + 60 giây; lần ACK đầu tiên mới đặt mốc; người thứ hai không đổi mốc.",
+   "automation": [
+    "supabase/tests/http/GM-20-canonical.http",
+    "mobile/tests/component/votingSnapshotLifecycle.test.tsx::computes the countdown using server clock offset on a skewed client"
+   ],
+   "env": [
+    "qa-local",
+    "ci"
+   ]
+  },
+  {
+   "id": "TC-VOTE1-014",
+   "title": "Mất mạng sau ACK không gia hạn hay đặt lại đồng hồ",
+   "req": [
+    "REQ-VOTE-04"
+   ],
+   "priority": "P0",
+   "type": "resilience",
+   "level": "e2e",
+   "preconditions": "Thành viên đã ACK và đang chờ.",
+   "steps": [
+    "Tắt mạng 20 giây rồi bật lại.",
+    "So sánh đồng hồ và danh sách phiếu."
+   ],
+   "expected": "Đồng hồ vẫn theo deadline server, không có phiếu mới, không lộ phiếu người khác.",
+   "automation": [
+    "manual"
+   ],
+   "env": [
+    "avd",
+    "android"
+   ]
+  },
+  {
+   "id": "TC-VOTE1-015",
+   "title": "Chốt sớm cần hơn một nửa roster đã ACK",
+   "req": [
+    "REQ-VOTE-05"
+   ],
+   "priority": "P0",
+   "type": "boundary",
+   "level": "unit",
+   "preconditions": "Roster khóa M thành viên.",
+   "steps": [
+    "Host bấm Chốt ngay khi A = M/2.",
+    "Lặp lại khi A = floor(M/2)+1."
+   ],
+   "expected": "Bị chặn khi A ≤ M/2; cho phép khi A > M/2; host không chọn món thắng.",
+   "automation": [
+    "mobile/tests/unit/voteRepository.test.ts::blocks early finish when A_r is less than or equal to half the roster",
+    "mobile/tests/unit/voteRepository.test.ts::permits early finish only when strictly more than half has acknowledged ballots",
+    "mobile/tests/component/gm26FigmaParity.test.tsx::disables Chốt ngay when A_r <= M/2 and enables when quorum A_r > M/2 is reached"
+   ],
+   "env": [
+    "ci"
+   ]
+  },
+  {
+   "id": "TC-VOTE1-016",
+   "title": "Chỉ host mới có nút chốt sớm",
+   "req": [
+    "REQ-VOTE-05"
+   ],
+   "priority": "P0",
+   "type": "security",
+   "level": "component",
+   "preconditions": "Hai vai host và thành viên ở phòng chờ.",
+   "steps": [
+    "Mở phòng chờ bằng từng vai."
+   ],
+   "expected": "Thành viên không thấy hoặc không bật được nút chốt sớm.",
+   "automation": [
+    "mobile/tests/component/votingScreens.test.tsx::Waiting: Countdown 60s và nút Host kết thúc chờ sớm chỉ bật khi A_r > M/2"
+   ],
+   "env": [
+    "ci"
+   ]
+  },
+  {
+   "id": "TC-VOTE1-017",
+   "title": "Hết 60 giây với một phiếu hợp lệ vẫn chuyển vòng",
+   "req": [
+    "REQ-VOTE-06"
+   ],
+   "priority": "P0",
+   "type": "resilience",
+   "level": "api",
+   "preconditions": "Phòng 3 người, chỉ một người ACK.",
+   "steps": [
+    "Chờ hết 60 giây (không dùng worker chạy tay trên hosted).",
+    "Đọc trạng thái phòng."
+   ],
+   "expected": "Server xử lý theo quorum tối thiểu 1; phòng sang vòng 2 hoặc có kết quả, không kẹt.",
+   "automation": [
+    "supabase/tests/http/GM-20.http"
+   ],
+   "env": [
+    "qa-local",
+    "staging"
+   ],
+   "gap": "GM-48 mới được đăng ký; HTTP suite và migration chưa có. Hiện chỉ có kiểm chứng bằng worker QA."
+  },
+  {
+   "id": "TC-VOTE1-018",
+   "title": "Thành viên chưa gửi tự sang vòng 2 khi server hết giờ",
+   "req": [
+    "REQ-VOTE-06"
+   ],
+   "priority": "P0",
+   "type": "resilience",
+   "level": "component",
+   "preconditions": "Thành viên chưa gửi phiếu, người khác đã hết giờ.",
+   "steps": [
+    "Giữ nguyên màn bình chọn.",
+    "Server mở vòng 2."
+   ],
+   "expected": "App tự sang vòng 2, bản nháp chưa gửi được giữ lại.",
+   "automation": [
+    "mobile/tests/component/votingSnapshotLifecycle.test.tsx::observes the move to round two for an unsubmitted member and preserves an unsent draft before that move"
+   ],
+   "env": [
+    "ci",
+    "avd"
+   ]
+  },
+  {
+   "id": "TC-VOTE1-019",
+   "title": "Polling nền dừng khi rời màn và có backoff",
+   "req": [
+    "REQ-RT-04"
+   ],
+   "priority": "P0",
+   "type": "resilience",
+   "level": "component",
+   "preconditions": "Màn bình chọn đang mở.",
+   "steps": [
+    "Làm server trả lỗi hoặc NOT_READY.",
+    "Thoát màn hình."
+   ],
+   "expected": "Backoff hữu hạn, phục hồi không mất nháp, timer dọn khi unmount kể cả phản hồi đang bay.",
+   "automation": [
+    "mobile/tests/component/votingSnapshotLifecycle.test.tsx::backs off round %s errors/NOT_READY and recovers without losing a draft",
+    "mobile/tests/component/votingSnapshotLifecycle.test.tsx::stops round %s polling on unmount, including an in-flight response"
+   ],
+   "env": [
+    "ci"
+   ]
+  },
+  {
+   "id": "TC-VOTE1-020",
+   "title": "Phiếu của người khác không lộ khi chờ",
+   "req": [
+    "REQ-VOTE-09"
+   ],
+   "priority": "P0",
+   "type": "privacy",
+   "level": "api",
+   "preconditions": "Hai thành viên, một người đã ACK.",
+   "steps": [
+    "Người còn lại đọc snapshot và danh sách phiếu.",
+    "Host đọc."
+   ],
+   "expected": "Chỉ thấy số người đã ACK; không có lựa chọn WANT/OK/NO của ai khác.",
+   "automation": [
+    "supabase/tests/http/GM-17.http",
+    "supabase/tests/http/GM-20-canonical.http"
+   ],
+   "env": [
+    "qa-local"
+   ]
+  },
+  {
+   "id": "TC-VOTE1-021",
+   "title": "Snapshot cũ không ghi đè snapshot mới",
+   "req": [
+    "REQ-RT-04"
+   ],
+   "priority": "P0",
+   "type": "resilience",
+   "level": "unit",
+   "preconditions": "Hai phản hồi snapshot đến sai thứ tự.",
+   "steps": [
+    "Áp phản hồi version cao.",
+    "Áp phản hồi version thấp đến muộn."
+   ],
+   "expected": "Version thấp bị bỏ, vòng và trạng thái kết thúc không thụt lùi.",
+   "automation": [
+    "mobile/tests/unit/voteSessionState.test.ts::never accepts a lower version even when it claims a forward state transition",
+    "mobile/tests/unit/voteSessionState.test.ts::ignores an older snapshot response after a newer version has been applied"
+   ],
+   "env": [
+    "ci"
+   ]
+  },
+  {
+   "id": "TC-VOTE1-022",
+   "title": "Ban nháp phiếu tách theo danh tính, phòng, vòng",
+   "req": [
+    "REQ-AUTH-07"
+   ],
+   "priority": "P1",
+   "type": "security",
+   "level": "unit",
+   "preconditions": "Hai tài khoản dùng chung máy.",
+   "steps": [
+    "Chọn dở phiếu ở tài khoản A.",
+    "Chuyển sang tài khoản B."
+   ],
+   "expected": "Bản nháp và biên nhận ACK không sang B và bị xóa khi đăng xuất.",
+   "automation": [
+    "mobile/tests/unit/voteSessionState.test.ts::partitions drafts and ACK receipts by scope and clears them on logout"
+   ],
+   "env": [
+    "ci"
+   ]
+  }
+ ]
+}

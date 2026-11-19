@@ -1,0 +1,269 @@
+{
+ "module": "SEC",
+ "title": "Bảo mật và quyền riêng tư",
+ "cases": [
+  {
+   "id": "TC-SEC-001",
+   "title": "RLS: người ngoài không đọc được dữ liệu phòng",
+   "req": [
+    "REQ-SEC-01"
+   ],
+   "priority": "P0",
+   "type": "security",
+   "level": "sql",
+   "preconditions": "Phòng có thành viên và một người ngoài.",
+   "steps": [
+    "Người ngoài đọc phòng, thành viên, phiếu, kết quả."
+   ],
+   "expected": "Mọi truy vấn trả rỗng hoặc bị từ chối.",
+   "automation": [
+    "supabase/tests/rls.sql",
+    "supabase/tests/http/GM-17.http"
+   ],
+   "env": [
+    "qa-local"
+   ]
+  },
+  {
+   "id": "TC-SEC-002",
+   "title": "Người bị loại không đọc được nữa",
+   "req": [
+    "REQ-SEC-01"
+   ],
+   "priority": "P0",
+   "type": "security",
+   "level": "sql",
+   "preconditions": "Thành viên bị host loại.",
+   "steps": [
+    "Thành viên đọc phòng và Realtime."
+   ],
+   "expected": "Không đọc được dữ liệu phòng và không nhận tín hiệu.",
+   "automation": [
+    "supabase/tests/database/GM-19_room_lifecycle.test.sql",
+    "supabase/tests/http/GM-45.http"
+   ],
+   "env": [
+    "qa-local"
+   ]
+  },
+  {
+   "id": "TC-SEC-003",
+   "title": "RPC đặc quyền kiểm danh tính và quyền",
+   "req": [
+    "REQ-SEC-01"
+   ],
+   "priority": "P0",
+   "type": "security",
+   "level": "api",
+   "preconditions": "Có các RPC quản trị phòng.",
+   "steps": [
+    "Gọi RPC bằng token không có quyền.",
+    "Gọi bằng host."
+   ],
+   "expected": "Từ chối đúng lỗi khi thiếu quyền; chỉ host hoặc thành viên hợp lệ thực hiện được.",
+   "automation": [
+    "supabase/tests/http/GM-17.http",
+    "supabase/tests/http/GM-19.http"
+   ],
+   "env": [
+    "qa-local"
+   ]
+  },
+  {
+   "id": "TC-SEC-004",
+   "title": "Phiếu thô không thể đọc bằng quyền host",
+   "req": [
+    "REQ-VOTE-09"
+   ],
+   "priority": "P0",
+   "type": "privacy",
+   "level": "sql",
+   "preconditions": "Host và thành viên đã gửi phiếu.",
+   "steps": [
+    "Host truy vấn bảng phiếu trực tiếp."
+   ],
+   "expected": "Bị từ chối; host chỉ thấy số liệu công khai.",
+   "automation": [
+    "supabase/tests/rls.sql",
+    "supabase/tests/finalize.sql"
+   ],
+   "env": [
+    "qa-local"
+   ]
+  },
+  {
+   "id": "TC-SEC-005",
+   "title": "Khóa nhạy cảm bị từ chối trong cấu hình client",
+   "req": [
+    "REQ-SEC-02"
+   ],
+   "priority": "P0",
+   "type": "security",
+   "level": "unit",
+   "preconditions": "Cấu hình có khóa quyền cao.",
+   "steps": [
+    "Khởi tạo client với service-role key."
+   ],
+   "expected": "Client từ chối khóa quyền cao và endpoint không an toàn.",
+   "automation": [
+    "mobile/tests/unit/authTransport.test.ts::reject privileged/unrecognized configured key %s",
+    "mobile/tests/unit/authTransport.test.ts::legacy anon JWT allowed, legacy service-role JWT rejected"
+   ],
+   "env": [
+    "ci"
+   ]
+  },
+  {
+   "id": "TC-SEC-006",
+   "title": "Không có secret trong repo và bundle",
+   "req": [
+    "REQ-SEC-02"
+   ],
+   "priority": "P0",
+   "type": "security",
+   "level": "e2e",
+   "preconditions": "Mã nguồn và gói release.",
+   "steps": [
+    "Quét repo và bundle JS tìm service_role, khóa SMTP, app password."
+   ],
+   "expected": "Không tìm thấy secret; chỉ có publishable key và khóa Places đã giới hạn.",
+   "automation": [],
+   "env": [
+    "ci"
+   ],
+   "gap": "Chưa có script quét secret; bổ sung ở GM-57."
+  },
+  {
+   "id": "TC-SEC-007",
+   "title": "Không log phiếu bầu, token, email",
+   "req": [
+    "REQ-SEC-02"
+   ],
+   "priority": "P0",
+   "type": "privacy",
+   "level": "unit",
+   "preconditions": "Lỗi mạng xảy ra khi gửi.",
+   "steps": [
+    "Gây lỗi mạng và đọc log, thông báo lỗi công khai."
+   ],
+   "expected": "Thông báo lỗi và log không chứa token, phiếu hay email.",
+   "automation": [
+    "mobile/tests/unit/authSession.test.ts::read verification transient retry is bounded; secrets never enter public errors",
+    "mobile/tests/unit/authTransport.test.ts::network failure raw token message suppressed"
+   ],
+   "env": [
+    "ci"
+   ]
+  },
+  {
+   "id": "TC-SEC-008",
+   "title": "Liên kết chứa token hoặc userinfo bị chặn",
+   "req": [
+    "REQ-SEC-02"
+   ],
+   "priority": "P0",
+   "type": "security",
+   "level": "unit",
+   "preconditions": "Liên kết vào phòng chứa token trong query.",
+   "steps": [
+    "Mở liên kết."
+   ],
+   "expected": "Bị từ chối, không điền mã phòng.",
+   "automation": [
+    "mobile/tests/unit/joinLinks.test.ts::rejects suspicious payloads containing tokens or passwords in query params",
+    "mobile/tests/unit/externalLinks.test.ts::rejects URLs containing embedded credentials or suspicious token params"
+   ],
+   "env": [
+    "ci"
+   ]
+  },
+  {
+   "id": "TC-SEC-009",
+   "title": "Khóa Places giới hạn theo app và API",
+   "req": [
+    "REQ-SEC-03"
+   ],
+   "priority": "P0",
+   "type": "security",
+   "level": "e2e",
+   "preconditions": "Khóa Places dùng trong bản release.",
+   "steps": [
+    "Gọi Places API từ ngoài app bằng khóa đó.",
+    "Gọi từ app."
+   ],
+   "expected": "Chỉ gọi được từ app (package/bundle), chỉ hai API cho phép, quota ngày đã đặt.",
+   "automation": [
+    "manual"
+   ],
+   "env": [
+    "staging",
+    "android",
+    "ios"
+   ]
+  },
+  {
+   "id": "TC-SEC-010",
+   "title": "Tài khoản đã xóa không đọc được dữ liệu cũ",
+   "req": [
+    "REQ-AUTH-08"
+   ],
+   "priority": "P0",
+   "type": "security",
+   "level": "api",
+   "preconditions": "Tài khoản đã bị xóa.",
+   "steps": [
+    "Dùng token cũ đọc phòng, bạn bè, lịch sử."
+   ],
+   "expected": "Mọi truy cập bị từ chối; dữ liệu người khác nguyên vẹn.",
+   "automation": [],
+   "env": [
+    "qa-local",
+    "staging"
+   ],
+   "gap": "Tính năng của task release v1 chưa merge; test được thêm khi task đó hoàn tất (GM-56/57)."
+  },
+  {
+   "id": "TC-SEC-011",
+   "title": "Danh tính do server xác minh, không tin metadata",
+   "req": [
+    "REQ-SEC-01"
+   ],
+   "priority": "P0",
+   "type": "security",
+   "level": "unit",
+   "preconditions": "Token có metadata userId giả.",
+   "steps": [
+    "Gọi xác minh phiên."
+   ],
+   "expected": "Danh tính lấy từ GoTrue, metadata userId không thành caller.",
+   "automation": [
+    "mobile/tests/unit/authTransport.test.ts::GET user verifies bearer on server; metadata userId never becomes caller"
+   ],
+   "env": [
+    "ci"
+   ]
+  },
+  {
+   "id": "TC-SEC-012",
+   "title": "Dữ liệu chỉ gửi tới Supabase và Google Places",
+   "req": [
+    "REQ-SEC-03"
+   ],
+   "priority": "P1",
+   "type": "privacy",
+   "level": "e2e",
+   "preconditions": "Build release chạy qua proxy ghi log domain.",
+   "steps": [
+    "Dùng đủ luồng chính và kết quả."
+   ],
+   "expected": "Chỉ gọi tới Supabase và domain Google Places/Maps; không gửi sang AI hay bên thứ ba khác.",
+   "automation": [
+    "manual"
+   ],
+   "env": [
+    "android",
+    "ios"
+   ]
+  }
+ ]
+}

@@ -1,4 +1,90 @@
-# Test plan food-v1
+# Kế hoạch kiểm thử release v1
+
+Tài liệu mô tả cách kiểm thử ứng dụng "Gì Cũng Được" trước khi đăng Google Play và App Store. Phạm vi phát hành xem [RELEASE_V1_SCOPE](../project/RELEASE_V1_SCOPE.md); yêu cầu được kiểm xem [REQUIREMENTS](REQUIREMENTS.md). Đầu ra cho báo cáo gồm [TEST_CASES](TEST_CASES.md), [TRACEABILITY](TRACEABILITY.md), [TEST_REPORT](TEST_REPORT.md) và file Excel xuất bằng `scripts/test_cases.py`.
+
+## 1. Mục tiêu và phạm vi
+
+- Chứng minh các yêu cầu P0 của release v1 hoạt động trên cả hai nền tảng với backend Supabase hosted: tài khoản, phòng, bình chọn hai vòng, kết quả Top 3, Places, bạn bè và hộp thư, lịch sử, xóa tài khoản, bảo mật và quyền riêng tư, trợ năng, nâng cấp.
+- Ngoài phạm vi: OCR menu, AI sở thích, weather/mood, push từ xa FCM, Google Sign-In (hoãn sau khi lên store).
+- Đây là bộ test case cho ứng dụng, không chỉ liệt kê tính năng: mỗi ca có tiền điều kiện, dữ liệu, các bước, kết quả mong đợi, mức ưu tiên, loại ca, tầng kiểm, môi trường và liên kết tới yêu cầu.
+
+## 2. Cấu trúc bộ test case
+
+| Thành phần | Vị trí | Ghi chú |
+| --- | --- | --- |
+| Yêu cầu (REQ) | `REQUIREMENTS.md` | Bảng yêu cầu hiện hành; yêu cầu cũ ghi `Superseded` để không mâu thuẫn |
+| Test case | `cases/*.json` (15 module) | Nguồn dữ liệu duy nhất; ID dạng `TC-<MODULE>-NNN` |
+| Kết quả chạy | `results/*.json` | Mỗi lượt chạy một file; không có kết quả thì trạng thái là `Not run` |
+| Bản trình bày | `TEST_CASES.md`, `TRACEABILITY.md`, `TEST_REPORT.md`, Excel | Sinh tự động, không sửa tay |
+
+Module: AUTH, ENTRY, ROOM, PREF, VOTE1, VOTE2, RES, SOC, HIS, RT, SEC, DATA, UI, REL, IOS.
+
+Mỗi test case có các trường: `id`, `title`, `req`, `priority` (P0–P2), `type` (functional, negative, boundary, security, privacy, accessibility, compatibility, resilience), `level`, `preconditions`, `data`, `steps`, `expected`, `automation`, `env`, và `gap` khi chưa có test tự động.
+
+## 3. Các tầng kiểm thử
+
+| Tầng (`level`) | Công cụ | Nơi chạy |
+| --- | --- | --- |
+| `unit` | Jest (`mobile/tests/unit`), `node --test` (engine), `unittest` (Python, dữ liệu, validator) | CI, máy lập trình |
+| `component` | Jest + Testing Library (`mobile/tests/component`) | CI |
+| `sql` | Bộ `supabase/tests/database/*.sql` và `supabase/tests/*.sql` trên QA cô lập | QA local (GM-03) |
+| `api` | Bộ `supabase/tests/http/*.http`, runner GM-20/21/40 và script E2E hai client (GM-57) | QA local, staging |
+| `e2e` | Chạy trên thiết bị: AVD, Android thật, iPhone thật, iOS Simulator | Thiết bị, nối staging |
+
+Liên kết tự động hóa (`automation`) cho biết test nào chịu trách nhiệm kiểm ca đó. Liên kết chỉ có giá trị truy vết: **một ca chỉ được coi là Pass khi có kết quả chạy thật trong `results/`**, không suy ra từ việc có test. Với liên kết tới cả file `.sql` hay `.http`, người chạy xác nhận trong kết quả rằng suite thực sự bao phủ ca đó; ca nào suite không bao phủ thì ghi Fail hoặc bổ sung test ở GM-57.
+
+## 4. Môi trường
+
+| Mã (`env`) | Môi trường | Dùng cho |
+| --- | --- | --- |
+| `ci` | Máy chạy Jest/unittest/node:test | Ca tự động mức unit và component |
+| `qa-local` | Supabase local do GM-03 dựng (Auth + REST + worker), catalogue 1.1.0 | Ca SQL/API, E2E hai client |
+| `staging` | Supabase staging hosted (GM-52), build release candidate | Ca cần hosted: chuyển vòng bằng pg_cron, quota Places, review store |
+| `avd` | Android Virtual Device API 35–37 nối QA local hoặc staging | Giao diện và luồng đầu cuối |
+| `android` | Điện thoại Android thật qua USB | QR thật, camera, quyền, force-stop, chữ lớn, TalkBack |
+| `ios` | iPhone thật (TestFlight) và iOS Simulator trên Mac | Toàn bộ nhóm IOS và ca dùng chung cần xác nhận trên iOS |
+
+Một ca có nhiều môi trường chỉ đạt khi đủ mọi môi trường liệt kê đều Pass.
+
+## 5. Quy trình chạy và ghi kết quả
+
+1. `python scripts/test_cases.py --check` phải đạt trước mọi lượt chạy.
+2. **Tự động:** chạy `npm test -- --json --outputFile=jest.json` trong `mobile/`, và `python -m unittest discover -s tests -p "test_*.py" -v` rồi ghi vào kết quả bằng `--import-jest` và `--import-unittest` (kèm `--run-id`, `--commit`). Chỉ các ca có môi trường `ci` và toàn bộ automation là Jest hoặc unittest được tự ghi; ca còn lại ghi tay.
+3. **QA local và staging:** chạy suite HTTP/SQL tương ứng, tạo `results/<run-id>.json` với các trường `case`, `env`, `status`, `actual`, `evidence`, `device`, `tester`.
+4. **Thiết bị:** người chạy thực hiện từng bước trong ca trên build release candidate (hash APK/IPA ghi ở `build`), chụp ảnh đã che dữ liệu nhạy cảm, ghi kết quả thực tế.
+5. Ca Fail ghi `defect` (issue hoặc PR); sửa xong chạy lại, kết quả mới ghi đè kết quả cũ của cùng `(case, env)`.
+6. `python scripts/test_cases.py --write` cập nhật bản trình bày; `--xlsx <file>` xuất Excel cho báo cáo.
+
+Trạng thái hợp lệ: `Pass`, `Fail`, `Blocked`, `N/A` (kèm lý do). `Not run` nghĩa là chưa chạy, không phải đạt.
+
+## 6. Tiêu chí bắt đầu và kết thúc
+
+- **Bắt đầu chạy trên release candidate:** GM-52 (staging), GM-53, GM-54, GM-35, GM-46 hoàn tất, GM-55/56/57 đã merge và `--check` đạt.
+- **Kết thúc (đủ điều kiện nộp store):** mọi ca P0 là Pass hoặc lỗi đã được Trí chấp nhận bằng văn bản; không còn `Not run` hoặc `Blocked` ở phạm vi bắt buộc; mọi hạng mục checklist store có bằng chứng; báo cáo cuối và file Excel được xuất.
+
+## 7. Mức độ lỗi
+
+| Mức | Mô tả | Ví dụ |
+| --- | --- | --- |
+| Nghiêm trọng | Crash, mất hoặc lộ dữ liệu, sai kết quả bình chọn, không vào được phòng | Lộ phiếu của người khác; kết quả đổi giữa hai lần đọc |
+| Cao | Luồng chính không hoàn thành nhưng có cách vòng | Kẹt ở lobby sau khi host bắt đầu |
+| Trung bình | Sai hành vi phụ hoặc giao diện, có cách khắc phục | Nhãn bị cắt ở chữ 200% |
+| Thấp | Sai nhỏ về câu chữ hoặc căn chỉnh | Lệch vài dp so với Figma |
+
+Lỗi nghiêm trọng và cao chặn việc nộp store.
+
+## 8. Rủi ro và khoảng trống đã biết
+
+- Ca thuộc GM-35 (đăng ký, đăng nhập email, khôi phục, đổi mật khẩu) và các ca của GM-46, GM-48, GM-49, GM-51, GM-53, GM-54 chưa có test tự động vì tính năng chưa merge; được liệt kê trong mục "Ca chưa có test tự động" của [TEST_REPORT](TEST_REPORT.md) và do GM-56/GM-57 lấp.
+- Nhóm UI, REL, IOS chủ yếu chạy tay trên thiết bị (GM-58); không có thiết bị thật thì ghi `Blocked`, không đánh dấu đạt.
+- FCM, push từ xa và Google Sign-In nằm ngoài phạm vi; các ca chỉ kiểm rằng app không hứa tính năng này.
+- Quota và key Places chỉ kiểm được trên staging với key thật; ghi kết quả có che khóa.
+
+## 9. Phụ lục — kế hoạch food-v1 (lịch sử, 2026-10-07)
+
+Nội dung dưới đây là bản test plan food-v1 có từ trước, giữ nguyên để các task và tài liệu khác còn tham chiếu được mã `T-01`..`T-26`. Bộ test case release v1 ở trên không thay thế các kịch bản đó; ánh xạ giữa chúng nằm trong [TRACEABILITY](TRACEABILITY.md) qua yêu cầu `REQ-*`.
+
+### Test plan food-v1
 
 [Ma trận Android–API bổ sung ngày 2026-10-12](MOBILE_API_TEST_MATRIX.md) ánh xạ producer/consumer/người kiểm và case điện thoại thật. HTTP/SQL máy tính, unit/mock trong mobile và app Android gọi API thật là ba lớp evidence khác nhau; không hoán đổi Pass giữa các lớp hoặc thêm dependency ngược.
 

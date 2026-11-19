@@ -1,0 +1,232 @@
+{
+ "module": "HIS",
+ "title": "Lịch sử và đồng ý lưu",
+ "cases": [
+  {
+   "id": "TC-HIS-001",
+   "title": "Lưu lịch sử mặc định tắt, chỉ bật khi người dùng đồng ý",
+   "req": [
+    "REQ-HIS-01"
+   ],
+   "priority": "P0",
+   "type": "privacy",
+   "level": "component",
+   "preconditions": "Tài khoản mới đăng nhập lần đầu.",
+   "steps": [
+    "Đi qua màn xin quyền đầu tiên mà không tích lưu lịch sử.",
+    "Chơi hết một ván.",
+    "Mở Lịch sử."
+   ],
+   "expected": "Không có lịch sử nào được lưu; tích đồng ý thì consent được ghi lên tài khoản.",
+   "automation": [
+    "mobile/tests/component/permissionsWelcome.test.tsx::keeping the meal history is off until ticked and is saved on the account when ticked",
+    "mobile/tests/component/permissionsWelcome.test.tsx::history is not saved when the box stays unticked"
+   ],
+   "env": [
+    "ci"
+   ]
+  },
+  {
+   "id": "TC-HIS-002",
+   "title": "Consent cá nhân và nhóm độc lập",
+   "req": [
+    "REQ-HIS-01"
+   ],
+   "priority": "P0",
+   "type": "privacy",
+   "level": "api",
+   "preconditions": "Một thành viên bật cá nhân, tắt nhóm; thành viên khác ngược lại.",
+   "steps": [
+    "Chốt kết quả phòng.",
+    "Mỗi người đọc lịch sử cá nhân và nhóm."
+   ],
+   "expected": "Mỗi phạm vi lưu đúng theo consent riêng; thiếu consent thì không lưu phạm vi đó.",
+   "automation": [
+    "supabase/tests/http/GM-21.http",
+    "supabase/tests/http/GM-21-canonical.http",
+    "supabase/tests/history.sql"
+   ],
+   "env": [
+    "qa-local"
+   ]
+  },
+  {
+   "id": "TC-HIS-003",
+   "title": "Không lưu lịch sử khi thiếu consent",
+   "req": [
+    "REQ-HIS-01"
+   ],
+   "priority": "P0",
+   "type": "negative",
+   "level": "api",
+   "preconditions": "Không ai bật lưu lịch sử.",
+   "steps": [
+    "Chốt một phòng.",
+    "Đọc lịch sử của từng thành viên."
+   ],
+   "expected": "Không có dòng lịch sử nào trong database cho phòng đó.",
+   "automation": [
+    "supabase/tests/http/GM-21-canonical.http",
+    "supabase/tests/history.sql"
+   ],
+   "env": [
+    "qa-local"
+   ]
+  },
+  {
+   "id": "TC-HIS-004",
+   "title": "Xóa lịch sử cá nhân",
+   "req": [
+    "REQ-HIS-02"
+   ],
+   "priority": "P0",
+   "type": "functional",
+   "level": "api",
+   "preconditions": "Có lịch sử cá nhân.",
+   "steps": [
+    "Xóa một mục (vuốt hoặc nút).",
+    "Đọc lại lịch sử."
+   ],
+   "expected": "Mục đã xóa không còn ở mọi lần đọc; xóa theo ngưỡng một nửa hàng thì xóa đúng một lần.",
+   "automation": [
+    "supabase/tests/http/GM-21.http",
+    "mobile/tests/component/historyCard.test.tsx::a swipe deletes once it passes half of the row"
+   ],
+   "env": [
+    "qa-local",
+    "ci"
+   ]
+  },
+  {
+   "id": "TC-HIS-005",
+   "title": "Thu hồi consent và hết hạn",
+   "req": [
+    "REQ-HIS-02"
+   ],
+   "priority": "P0",
+   "type": "functional",
+   "level": "api",
+   "preconditions": "Có lịch sử còn hạn; sau đó thu hồi consent hoặc quá hạn.",
+   "steps": [
+    "Thu hồi consent.",
+    "Đọc lịch sử.",
+    "Chờ quá hạn lưu và đọc lại."
+   ],
+   "expected": "Dữ liệu đã thu hồi hoặc hết hạn biến mất và không thể khôi phục từ cache.",
+   "automation": [
+    "supabase/tests/http/GM-21-canonical.http",
+    "supabase/tests/history.sql"
+   ],
+   "env": [
+    "qa-local"
+   ]
+  },
+  {
+   "id": "TC-HIS-006",
+   "title": "Cache lịch sử không vượt sang tài khoản khác",
+   "req": [
+    "REQ-HIS-02"
+   ],
+   "priority": "P0",
+   "type": "security",
+   "level": "unit",
+   "preconditions": "Hai tài khoản dùng chung máy, mạng chập chờn.",
+   "steps": [
+    "A xem lịch sử.",
+    "Đổi sang B khi phản hồi của A đến muộn."
+   ],
+   "expected": "Phản hồi muộn của A bị bỏ; cache được tách theo danh tính và xóa khi đăng xuất.",
+   "automation": [
+    "mobile/tests/unit/socialInboxHistoryRepositories.test.ts::history cache is scoped to the authenticated identity and cleared after consent or logout cleanup",
+    "mobile/tests/unit/socialInboxHistoryRepositories.test.ts::drops a late A history response after switching to B"
+   ],
+   "env": [
+    "ci"
+   ]
+  },
+  {
+   "id": "TC-HIS-007",
+   "title": "Lịch sử mở lại kết quả đã lưu, không đọc lại thao tác",
+   "req": [
+    "REQ-HIS-02"
+   ],
+   "priority": "P1",
+   "type": "functional",
+   "level": "component",
+   "preconditions": "Có mục lịch sử đã lưu.",
+   "steps": [
+    "Mở một mục lịch sử."
+   ],
+   "expected": "Hiện kết quả đã lưu (winner, Top 3) mà không đọc lại thao tác gốc.",
+   "automation": [
+    "mobile/tests/component/socialAndHistoryScreens.test.tsx::live history opens the saved projection without re-reading the operational room"
+   ],
+   "env": [
+    "ci"
+   ]
+  },
+  {
+   "id": "TC-HIS-008",
+   "title": "Danh sách Cùng ăn chỉ gồm người đồng ý",
+   "req": [
+    "REQ-HIS-03"
+   ],
+   "priority": "P1",
+   "type": "privacy",
+   "level": "api",
+   "preconditions": "Một người trong nhóm không đồng ý chia sẻ.",
+   "steps": [
+    "Mở lịch sử nhóm."
+   ],
+   "expected": "Danh sách Cùng ăn không có người không đồng ý.",
+   "automation": [
+    "supabase/tests/http/GM-42.http"
+   ],
+   "env": [
+    "qa-local"
+   ]
+  },
+  {
+   "id": "TC-HIS-009",
+   "title": "Lịch sử trống và lỗi offline",
+   "req": [
+    "REQ-UI-04"
+   ],
+   "priority": "P1",
+   "type": "resilience",
+   "level": "component",
+   "preconditions": "Chưa có lịch sử hoặc mất mạng.",
+   "steps": [
+    "Mở Lịch sử."
+   ],
+   "expected": "Phân biệt rỗng và lỗi; hồi phục về danh sách rỗng khi có mạng.",
+   "automation": [
+    "mobile/tests/integration/gm32ClientStates.test.tsx::G03 history without a cache reports offline failure and recovers to an empty list"
+   ],
+   "env": [
+    "ci"
+   ]
+  },
+  {
+   "id": "TC-HIS-010",
+   "title": "Winner kết quả hợp lệ mới được lưu",
+   "req": [
+    "REQ-HIS-01"
+   ],
+   "priority": "P1",
+   "type": "negative",
+   "level": "unit",
+   "preconditions": "Kết quả sai schema (vòng 1 mang lý do vòng 2).",
+   "steps": [
+    "Cho repository nhận dữ liệu sai."
+   ],
+   "expected": "Bị từ chối trước khi ánh xạ.",
+   "automation": [
+    "mobile/tests/unit/canonicalHistory.test.ts::rejects a DECIDED round-one result carrying the round-two reason"
+   ],
+   "env": [
+    "ci"
+   ]
+  }
+ ]
+}
