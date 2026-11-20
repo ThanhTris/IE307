@@ -26,7 +26,7 @@ Sinh bằng `python scripts/test_cases.py --write`; không sửa tay. Yêu cầu
 | REQ-PREF-03 | P1 | Ô "Tránh món gần đây" chỉ hiện khi có lịch sử cá nhân còn hạn và consent bật; món gần đây xếp cuối, vẫn được chọn khi thiếu món (Active) | TC-PREF-005, TC-PREF-006 | 2/2 | 1 | 0 |
 | REQ-VOTE-01 | P0 | Mỗi món WANT, OK hoặc NO; chưa chọn hết thì không gửi được; thiếu phiếu không phải OK; chạm đơn, cuộn, vuốt dọc không tính phiếu (Active) | TC-VOTE1-001, TC-VOTE1-002, TC-VOTE1-003, TC-VOTE1-004 | 3/4 | 3 | 0 |
 | REQ-VOTE-02 | P0 | Gửi phiếu có ACK, thử lại cùng request id không nhân đôi; pending khác ACK; mất mạng sau ACK không gửi lại phiếu (Active) | TC-IOS-007, TC-VOTE1-006, TC-VOTE1-007, TC-VOTE1-008 | 3/4 | 2 | 0 |
-| REQ-VOTE-03 | P0 | Vòng 1 kiểm winner trước (cùng WANT); chưa có thì lấy món sống sót sau khi trừ hợp NO của mọi phiếu đã ACK; N=0 kết thúc `EMPTY_INTERSECTION` (Active) | TC-VOTE1-010, TC-VOTE1-011, TC-VOTE1-012 | 3/3 | 0 | 0 |
+| REQ-VOTE-03 | P0 | Vòng 1 kiểm winner trước (cùng WANT); chưa có thì lấy món sống sót sau khi trừ hợp NO của mọi phiếu đã ACK; N=0 kết thúc `EMPTY_INTERSECTION` (Active) | TC-VOTE1-010, TC-VOTE1-011, TC-VOTE1-012 | 3/3 | 1 | 0 |
 | REQ-VOTE-04 | P0 | Đồng hồ chờ 60 giây của mỗi vòng bắt đầu khi người đầu tiên vào phòng chờ sau ACK; mất mạng hay kết nối lại không gia hạn hoặc giảm số thành viên (Active) | TC-VOTE1-013, TC-VOTE1-014 | 1/2 | 0 | 0 |
 | REQ-VOTE-05 | P0 | Host chỉ chốt sớm khi số người đã ACK lớn hơn một nửa roster khóa (A > M/2); host không chọn hay ép món thắng (Active) | TC-VOTE1-015, TC-VOTE1-016 | 2/2 | 2 | 0 |
 | REQ-VOTE-06 | P0 | Hết 60 giây server xử lý các phiếu hợp lệ đã nhận với quorum tối thiểu 1; thành viên chưa gửi vẫn được chuyển sang vòng sau hoặc kết quả mà không bị kẹt (Active) | TC-VOTE1-017, TC-VOTE1-018, TC-VOTE2-011 | 3/3 | 0 | 0 |
@@ -130,7 +130,7 @@ Sinh bằng `python scripts/test_cases.py --write`; không sửa tay. Yêu cầu
 | TC-RT-012 | `mobile/tests/unit/roomRealtime.test.ts::temporary token refresh failures keep both retries alive until the room reconnects` |
 | TC-RES-001 | `mobile/tests/component/liveDishResultScreen.test.tsx::renders DECIDED result with Top 3 podium, winner and price`<br>`mobile/tests/component/dishResultPodium.test.tsx::podium %s shows one dish on each pedestal, in server order` |
 | TC-RES-002 | `mobile/tests/unit/resultRepository.test.ts::maps valid tied podium (dense ranks 1, 1, 2)`<br>`mobile/tests/component/liveDishResultScreen.test.tsx::puts tied dishes on separate pedestals in server order`<br>`mobile/tests/unit/podiumOrder.test.ts::keeps score order and the server order for equal scores` |
-| TC-RES-003 | `supabase/tests/http/GM-20-canonical.http`<br>`supabase/tests/http/GM-21-canonical.http` |
+| TC-RES-003 | `supabase/tests/http/GM-20-canonical.http`<br>`supabase/tests/http/GM-21-canonical.http`<br>`supabase/tests/http/GM-57.http (tag)`<br>`scripts/e2e/two_client_flow.mjs (tag)` |
 | TC-RES-004 | `mobile/tests/unit/resultRepository.test.ts::rejects payload missing policyVersion`<br>`mobile/tests/unit/resultRepository.test.ts::rejects score exceeding 2 * round1BallotCount`<br>`mobile/tests/unit/resultRepository.test.ts::rejects dish missing description key` |
 | TC-RES-005 | `mobile/tests/component/dishResultStates.test.tsx::%s has the correct terminal reason and no winner/podium/places` |
 | TC-RES-006 | `mobile/tests/component/gm30FigmaParity.test.tsx::Figma 206:913 & 379:1478 — Places loaded and external actions trigger allowlisted URLs`<br>`mobile/tests/component/nearbyResult.test.tsx::map capability renders in-app, retains attribution and never uses a mock illustration in real mode` |
@@ -143,11 +143,11 @@ Sinh bằng `python scripts/test_cases.py --write`; không sửa tay. Yêu cầu
 | TC-RES-013 | `mobile/tests/component/liveDishResultScreen.test.tsx::renders error state with retry button on failure`<br>`mobile/tests/component/liveDishResultScreen.test.tsx::cancels NOT_READY poll timer upon unmount` |
 | TC-RES-014 | `mobile/tests/component/gm27ReviewRegression.test.tsx::the production roomRepository composition partitions cache using the active identity` |
 | TC-RES-015 | `mobile/tests/component/winnerCelebration.test.tsx::Reduce Motion requests zero-duration native animations` |
-| TC-ROOM-001 | `supabase/tests/http/GM-19.http`<br>`supabase/tests/http/GM-20-canonical.http`<br>`mobile/tests/component/gm25FigmaParity.test.tsx::liveDishSetupGateway creates room via canonical dish_session v4 dispatch` |
+| TC-ROOM-001 | `supabase/tests/http/GM-19.http`<br>`supabase/tests/http/GM-20-canonical.http`<br>`mobile/tests/component/gm25FigmaParity.test.tsx::liveDishSetupGateway creates room via canonical dish_session v4 dispatch`<br>`scripts/e2e/two_client_flow.mjs (tag)` |
 | TC-ROOM-002 | `supabase/tests/http/GM-19.http`<br>`supabase/tests/http/GM-20-canonical.http` |
 | TC-ROOM-003 | `supabase/tests/http/GM-18.http`<br>`mobile/tests/component/dishSetupFlow.test.tsx::shortage dialog shows requested/available separately and requires an explicit confirmation`<br>`mobile/tests/component/dishSetupFlow.test.tsx::below five only offers to change the time and never creates a room`<br>`mobile/tests/component/dishSetupFlow.test.tsx::7 of 15 dishes: "Dùng 7 món" creates the room with 7 dishes` |
 | TC-ROOM-004 | `mobile/tests/unit/mealTimeConflict.test.ts::an hour outside the window reports the meal that hour belongs to`<br>`mobile/tests/unit/dishSetupTimePolicy.test.ts::schedule default advances fifteen displayed minutes and rolls the date at midnight` |
-| TC-ROOM-005 | `mobile/tests/component/joinRoomEntry.test.tsx::preview shows count only, ignores supplied private fields, and confirmation is the only join mutation`<br>`supabase/tests/http/GM-22.http` |
+| TC-ROOM-005 | `mobile/tests/component/joinRoomEntry.test.tsx::preview shows count only, ignores supplied private fields, and confirmation is the only join mutation`<br>`supabase/tests/http/GM-22.http`<br>`scripts/e2e/two_client_flow.mjs (tag)` |
 | TC-ROOM-006 | `mobile/tests/component/joinRoomEntry.test.tsx::invalid code %s never previews or joins`<br>`mobile/tests/component/roomCodeField.test.tsx::pasting a whole code fills all cells once, including when replacing from a middle cell`<br>`mobile/tests/unit/joinLinks.test.ts::rejects invalid room codes (wrong length or excluded chars: 0, O, 1, I)` |
 | TC-ROOM-007 | `supabase/tests/http/GM-22.http`<br>`mobile/tests/component/gm25FigmaParity.test.tsx::displays error states for full or expired room preview`<br>`supabase/tests/database/ADR-027_room_rejoin.test.sql` |
 | TC-ROOM-008 | `mobile/tests/unit/joinLinks.test.ts::parses custom scheme with path (gi-cung-duoc://join/XYZ789)`<br>`mobile/tests/unit/joinLinks.test.ts::rejects disallowed web hosts (e.g. phishing / external domain)`<br>`mobile/tests/unit/joinLinks.test.ts::rejects suspicious payloads containing tokens or passwords in query params` |
@@ -164,7 +164,7 @@ Sinh bằng `python scripts/test_cases.py --write`; không sửa tay. Yêu cầu
 | TC-ROOM-019 | `mobile/tests/component/gm25FigmaParity.test.tsx::opens voting once when poll reads %s for a member`<br>`mobile/tests/component/gm25FigmaParity.test.tsx::opens voting once when manual reload reads %s for a member`<br>`mobile/tests/component/lobbySnapshotLifecycle.test.tsx::keeps the lobby ready when the initial load settles with a late %s` |
 | TC-ROOM-020 | `mobile/tests/component/gm30FigmaParity.test.tsx::renders modal title, room code badge, QR matrix, copy button and triggers actions` |
 | TC-ROOM-021 | `supabase/tests/database/GM-19_room_lifecycle.test.sql`<br>`mobile/tests/component/dishSetupRepair.test.tsx::lost cancellation acknowledgement replays the same intent and never cancels twice` |
-| TC-SEC-001 | `supabase/tests/rls.sql`<br>`supabase/tests/http/GM-17.http` |
+| TC-SEC-001 | `supabase/tests/rls.sql`<br>`supabase/tests/http/GM-17.http`<br>`supabase/tests/http/GM-57.http (tag)`<br>`scripts/e2e/two_client_flow.mjs (tag)` |
 | TC-SEC-002 | `supabase/tests/database/GM-19_room_lifecycle.test.sql`<br>`supabase/tests/http/GM-45.http` |
 | TC-SEC-003 | `supabase/tests/http/GM-17.http`<br>`supabase/tests/http/GM-19.http` |
 | TC-SEC-004 | `supabase/tests/rls.sql`<br>`supabase/tests/finalize.sql` |
@@ -201,7 +201,7 @@ Sinh bằng `python scripts/test_cases.py --write`; không sửa tay. Yêu cầu
 | TC-VOTE1-007 | `mobile/tests/unit/voteRepository.test.ts::preserves idempotency and returns cached receipt on retry with identical requestId`<br>`mobile/tests/unit/voteRepository.test.ts::rejects reused requestId with mismatched payload (F6)`<br>`supabase/tests/http/GM-20.http` |
 | TC-VOTE1-008 | `mobile/tests/component/votingScreens.test.tsx::Mô phỏng lỗi nộp phiếu (Error state fixture) và nút Thử lại gửi thành công`<br>`mobile/tests/component/gm26FigmaParity.test.tsx::handles error state gracefully and allows retry without losing choices` |
 | TC-VOTE1-009 | `mobile/tests/component/votingSnapshotLifecycle.test.tsx::recovers the waiting transition after reopening with an ACKed ballot in ROUND_%s`<br>`mobile/tests/unit/gm31Outbox.test.ts::identity isolation, ACK scrub, and logout deletion apply to outbox and cache` |
-| TC-VOTE1-010 | `supabase/tests/http/GM-20.http`<br>`supabase/tests/http/GM-20-canonical.http` |
+| TC-VOTE1-010 | `supabase/tests/http/GM-20.http`<br>`supabase/tests/http/GM-20-canonical.http`<br>`scripts/e2e/two_client_flow.mjs (tag)` |
 | TC-VOTE1-011 | `supabase/tests/http/GM-20.http`<br>`supabase/tests/http/DISH-POLICY-V3.http` |
 | TC-VOTE1-012 | `supabase/tests/http/GM-20-canonical.http`<br>`mobile/tests/component/dishResultStates.test.tsx::%s has the correct terminal reason and no winner/podium/places` |
 | TC-VOTE1-013 | `supabase/tests/http/GM-20-canonical.http`<br>`mobile/tests/component/votingSnapshotLifecycle.test.tsx::computes the countdown using server clock offset on a skewed client` |

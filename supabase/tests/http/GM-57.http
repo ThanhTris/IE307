@@ -1,0 +1,69 @@
+# Requests that complement scripts/e2e/two_client_flow.mjs on an owned QA stack or staging.
+# Fill the variables with disposable test identities; never paste real tokens into the repository.
+@baseUrl = http://127.0.0.1:54381
+@anonKey = <owned-QA-public-key>
+@hostToken = <JWT-of-the-host-who-played-a-finished-room>
+@memberToken = <JWT-of-a-member-of-that-room>
+@outsiderToken = <JWT-of-an-account-that-never-joined-that-room>
+@roomId = <room-id-of-the-finished-room>
+@contract = dish-session-v4/roadmap-v2/GM-07.B-supplement
+
+### TC-RES-003 The host reads the persisted result
+POST {{baseUrl}}/rest/v1/rpc/dish_session
+apikey: {{anonKey}}
+Authorization: Bearer {{hostToken}}
+Content-Type: application/json
+
+{"command":"result","payload":{"contractVersion":"{{contract}}","roomId":"{{roomId}}"}}
+
+> {%
+  client.global.set('hostResult', JSON.stringify(response.body.data));
+  client.test('decided result with one to three dishes', function () {
+    client.assert(response.status === 200 && response.body.ok === true);
+    client.assert(response.body.data.topDishes.length >= 1 && response.body.data.topDishes.length <= 3);
+  });
+%}
+
+### TC-RES-003 A member reads exactly the same result
+POST {{baseUrl}}/rest/v1/rpc/dish_session
+apikey: {{anonKey}}
+Authorization: Bearer {{memberToken}}
+Content-Type: application/json
+
+{"command":"result","payload":{"contractVersion":"{{contract}}","roomId":"{{roomId}}"}}
+
+> {%
+  client.test('same persisted result for every member', function () {
+    client.assert(response.status === 200 && response.body.ok === true);
+    client.assert(JSON.stringify(response.body.data) === client.global.get('hostResult'));
+  });
+%}
+
+### TC-SEC-001 An outsider cannot read the result of someone else's room
+POST {{baseUrl}}/rest/v1/rpc/dish_session
+apikey: {{anonKey}}
+Authorization: Bearer {{outsiderToken}}
+Content-Type: application/json
+
+{"command":"result","payload":{"contractVersion":"{{contract}}","roomId":"{{roomId}}"}}
+
+> {%
+  client.test('refused as not a member', function () {
+    client.assert(response.status === 403);
+    client.assert(response.body.ok === false && response.body.error.messageKey === 'NOT_MEMBER');
+  });
+%}
+
+### TC-SEC-001 An outsider cannot read the room snapshot either
+POST {{baseUrl}}/rest/v1/rpc/dish_session
+apikey: {{anonKey}}
+Authorization: Bearer {{outsiderToken}}
+Content-Type: application/json
+
+{"command":"snapshot","payload":{"contractVersion":"{{contract}}","roomId":"{{roomId}}"}}
+
+> {%
+  client.test('no snapshot for a non-member', function () {
+    client.assert(response.status !== 200 || response.body.ok === false);
+  });
+%}
