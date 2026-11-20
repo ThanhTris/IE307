@@ -25,6 +25,6 @@ where j.jobname = 'ie307-gm48-tick'
 order by d.start_time desc limit 5;
 ```
 
-Kỳ vọng 1 job 2 giây dưới quyền postgres, 1 job prune mỗi giờ, ít nhất 2 lần chạy thành công cách nhau dưới một phút. Cho khách tạo phòng hai người, có một người ACK và vào chờ, rồi kiểm trạng thái sau 60 giây qua [request suite](../../../../supabase/tests/http/GM-48.http). Kiểm roster vẫn có hai người, một phiếu thực tế và replay được ACK. CI QA dùng project disposable có xác minh ownership. [CHECKS](CHECKS.md)
+Kỳ vọng 1 job 2 giây dưới quyền postgres, 1 job prune mỗi giờ, ít nhất 2 lần chạy thành công cách nhau dưới một phút. Cho khách tạo phòng hai người, có một người ACK và vào chờ, rồi kiểm trạng thái sau 60 giây qua [request suite](../../../../supabase/tests/http/GM-48.http). Kiểm roster vẫn có hai người, một phiếu thực tế và replay được ACK. Các ca này đã qua trên QA disposable với Cron và Auth/REST thật. Phép kiểm riêng trên hosted staging đang chờ project xác nhận. [CHECKS](CHECKS.md)
 
 Rollback bằng `supabase/rollback/0065_gm48_hosted_tick_schedule.down.sql` trên đúng project dưới quyền postgres. Rollback gỡ hai job GM-48. Lịch job khác và dữ liệu phòng vẫn giữ nguyên. Nếu dừng cron trên hosted, cần có phương án khôi phục tick trước khi nhận phòng mới.
