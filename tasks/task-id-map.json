@@ -2317,9 +2317,6 @@
       "outputs": [
         "docs/testing/TEST_PLAN.md",
         "docs/testing/REQUIREMENTS.md",
-        "docs/testing/TEST_CASES.md",
-        "docs/testing/TRACEABILITY.md",
-        "docs/testing/TEST_REPORT.md",
         "docs/testing/cases/auth.json",
         "docs/testing/cases/entry.json",
         "docs/testing/cases/room.json",
@@ -2434,7 +2431,6 @@
       "stage": "qa",
       "outputs": [
         "docs/testing/results/release-candidate.json",
-        "docs/testing/TEST_REPORT.md",
         "docs/testing/DEFECTS.md",
         "docs/evidence/roadmap-v2/GM-58/CHECKS.md",
         "docs/evidence/roadmap-v2/GM-58/FIGMA_PARITY.md"

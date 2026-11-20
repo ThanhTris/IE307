@@ -106,7 +106,7 @@ Lớp topo không là barrier cả nhóm hay deadline. Chỉ chờ dependency c�
 | 11 | [GM-25](../../tasks/backlog/GM-25.md), [GM-32](../../tasks/backlog/GM-32.md), [GM-42](../../tasks/backlog/GM-42.md), [GM-43](../../tasks/backlog/GM-43.md), [GM-46](../../tasks/backlog/GM-46.md), [GM-49](../../tasks/backlog/GM-49.md), [GM-50](../../tasks/backlog/GM-50.md) | GM-25: Trang; GM-32: Vinh; GM-42: Trí; GM-43: Trí; GM-46: Trí; GM-49: Trí; GM-50: Trung |
 | 12 | [GM-26](../../tasks/backlog/GM-26.md), [GM-28](../../tasks/backlog/GM-28.md), [GM-44](../../tasks/backlog/GM-44.md), [GM-52](../../tasks/backlog/GM-52.md), [GM-55](../../tasks/backlog/GM-55.md) | GM-26: Trang; GM-28: Trung; GM-44: Trí; GM-52: Trí; GM-55: Trí |
 | 13 | [GM-27](../../tasks/backlog/GM-27.md), [GM-29](../../tasks/backlog/GM-29.md), [GM-31](../../tasks/backlog/GM-31.md), [GM-45](../../tasks/backlog/GM-45.md) | GM-27: Trang; GM-29: Trung; GM-31: Trung; GM-45: Trí |
-| 14 | [GM-30](../../tasks/backlog/GM-30.md), [GM-56](../../tasks/backlog/GM-56.md), [GM-57](../../tasks/backlog/GM-57.md) | GM-30: Trang; GM-56: Trí; GM-57: Trí |
+| 14 | [GM-30](../../tasks/backlog/GM-30.md), [GM-56](../../tasks/backlog/GM-56.md), [GM-57](../../tasks/backlog/GM-57.md) | GM-30: Trang; GM-56: Trang; GM-57: Trang |
 | 15 | [GM-33](../../tasks/backlog/GM-33.md) | GM-33: Vinh |
 | 16 | [GM-34](../../tasks/backlog/GM-34.md) | GM-34: Trí |
 | 17 | [GM-35](../../tasks/backlog/GM-35.md), [GM-36](../../tasks/backlog/GM-36.md), [GM-37](../../tasks/backlog/GM-37.md), [GM-38](../../tasks/backlog/GM-38.md) | GM-35: Tuấn; GM-36: Tâm; GM-37: Tuấn; GM-38: Tâm |
@@ -136,7 +136,7 @@ Lớp topo không là barrier cả nhóm hay deadline. Chỉ chờ dependency c�
 | 13 | [GM-27](../../tasks/backlog/GM-27.md), [GM-29](../../tasks/backlog/GM-29.md), [GM-31](../../tasks/backlog/GM-31.md), [GM-45](../../tasks/backlog/GM-45.md) | GM-27: Trang; GM-29: Trung; GM-31: Trung; GM-45: Trí |
 | 14 | [GM-30](../../tasks/backlog/GM-30.md), [GM-32](../../tasks/backlog/GM-32.md) | GM-30: Trang; GM-32: Vinh |
 | 15 | [GM-33](../../tasks/backlog/GM-33.md), [GM-55](../../tasks/backlog/GM-55.md) | GM-33: Vinh; GM-55: Trí |
-| 16 | [GM-34](../../tasks/backlog/GM-34.md), [GM-56](../../tasks/backlog/GM-56.md), [GM-57](../../tasks/backlog/GM-57.md) | GM-34: Trí; GM-56: Trí; GM-57: Trí |
+| 16 | [GM-34](../../tasks/backlog/GM-34.md), [GM-56](../../tasks/backlog/GM-56.md), [GM-57](../../tasks/backlog/GM-57.md) | GM-34: Trí; GM-56: Trang; GM-57: Trang |
 | 17 | [GM-35](../../tasks/backlog/GM-35.md), [GM-36](../../tasks/backlog/GM-36.md), [GM-37](../../tasks/backlog/GM-37.md), [GM-38](../../tasks/backlog/GM-38.md) | GM-35: Tuấn; GM-36: Tâm; GM-37: Tuấn; GM-38: Tâm |
 | 18 | [GM-53](../../tasks/backlog/GM-53.md), [GM-54](../../tasks/backlog/GM-54.md) | GM-53: Tuấn; GM-54: Trang |
 | 19 | [GM-58](../../tasks/backlog/GM-58.md) | GM-58: Vinh |
