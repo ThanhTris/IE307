@@ -1,0 +1,15 @@
+begin;
+create extension if not exists pgtap with schema extensions;
+set local search_path=public,extensions;
+select plan(9);
+select ok(has_function_privilege('service_role','public.gm49_prepare_account_delete(uuid,uuid,uuid,text,bigint)','EXECUTE'),'trusted Edge can stage deletion');
+select ok(not has_function_privilege('anon','public.gm49_prepare_account_delete(uuid,uuid,uuid,text,bigint)','EXECUTE'),'anon cannot stage deletion');
+select ok(not has_function_privilege('authenticated','public.gm49_prepare_account_delete(uuid,uuid,uuid,text,bigint)','EXECUTE'),'client cannot stage deletion');
+select ok(not has_function_privilege('authenticated','public.gm49_account_delete_completed(uuid,text)','EXECUTE'),'client cannot inspect receipts');
+select ok(not has_schema_privilege('authenticated','gm49_private','USAGE'),'client cannot access private tables');
+select ok(not has_schema_privilege('service_role','gm49_private','USAGE'),'trusted Edge has only scoped RPC privileges');
+select is(public.gm49_prepare_account_delete(gen_random_uuid(),gen_random_uuid(),gen_random_uuid(),repeat('0',64),extract(epoch from now())::bigint+60),'AUTH_REQUIRED','unknown account is denied');
+select is(public.gm49_prepare_account_delete(gen_random_uuid(),gen_random_uuid(),gen_random_uuid(),repeat('0',64),0),'AUTH_REQUIRED','expired token is denied');
+select is(public.gm49_account_delete_completed(gen_random_uuid(),repeat('0',64)),false,'unknown receipt is not completed');
+select * from finish();
+rollback;

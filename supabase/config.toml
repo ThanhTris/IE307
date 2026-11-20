@@ -54,5 +54,10 @@ token_refresh = 150
 [edge_runtime]
 enabled = false
 
+# The function checks GoTrue and the live session, and separately handles
+# completed-request replay after GoTrue has removed that session.
+[functions.delete-account]
+verify_jwt = false
+
 [analytics]
 enabled = false

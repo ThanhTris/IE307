@@ -1,0 +1,100 @@
+@baseUrl = http://127.0.0.1:54381
+@anonKey = <owned-QA-public-key>
+@ownerToken = <JWT-of-synthetic-account-outside-active-room>
+@activeToken = <JWT-of-host-or-member-in-an-active-room>
+@otherToken = <different-valid-QA-session>
+@revokedToken = <unexpired-QA-JWT-without-a-live-session>
+@expiredToken = <expired-QA-JWT>
+@requestId = d864de7c-66d5-462c-bb5c-5ebb96c6b230
+
+# Run only on an isolated QA project. Successful requests really delete the caller.
+
+### Account outside active room
+POST {{baseUrl}}/functions/v1/delete-account
+apikey: {{anonKey}}
+Authorization: Bearer {{ownerToken}}
+Content-Type: application/json
+
+{"requestId":"{{requestId}}"}
+
+> {%
+  client.test('Account outside active room', function () {
+    client.assert(response.status === 200);
+    client.assert(response.body.ok === true && response.body.data.deleted === true);
+  });
+%}
+
+### Replay original request and JWT
+POST {{baseUrl}}/functions/v1/delete-account
+apikey: {{anonKey}}
+Authorization: Bearer {{ownerToken}}
+Content-Type: application/json
+
+{"requestId":"{{requestId}}"}
+
+> {%
+  client.test('Replay original request and JWT', function () {
+    client.assert(response.status === 200);
+    client.assert(response.body.ok === true && response.body.data.deleted === true);
+  });
+%}
+
+### Active host or member
+POST {{baseUrl}}/functions/v1/delete-account
+apikey: {{anonKey}}
+Authorization: Bearer {{activeToken}}
+Content-Type: application/json
+
+{"requestId":"{{requestId}}"}
+
+> {%
+  client.test('Active host or member', function () {
+    client.assert(response.status === 409);
+    client.assert(response.body.error.messageKey === 'ACTIVE_ROOM');
+  });
+%}
+
+### Expired token
+POST {{baseUrl}}/functions/v1/delete-account
+apikey: {{anonKey}}
+Authorization: Bearer {{expiredToken}}
+Content-Type: application/json
+
+{"requestId":"{{requestId}}"}
+
+> {%
+  client.test('Expired token', function () {
+    client.assert(response.status === 401);
+    client.assert(response.body.error.messageKey === 'AUTH_REQUIRED');
+  });
+%}
+
+### Revoked session
+POST {{baseUrl}}/functions/v1/delete-account
+apikey: {{anonKey}}
+Authorization: Bearer {{revokedToken}}
+Content-Type: application/json
+
+{"requestId":"{{requestId}}"}
+
+> {%
+  client.test('Revoked session', function () {
+    client.assert(response.status === 401);
+    client.assert(response.body.error.messageKey === 'AUTH_REQUIRED');
+  });
+%}
+
+### Attempt to target another account
+POST {{baseUrl}}/functions/v1/delete-account
+apikey: {{anonKey}}
+Authorization: Bearer {{otherToken}}
+Content-Type: application/json
+
+{"requestId":"{{requestId}}","userId":"untrusted-target"}
+
+> {%
+  client.test('Attempt to target another account', function () {
+    client.assert(response.status === 400);
+    client.assert(response.body.error.messageKey === 'INVALID_INPUT');
+  });
+%}
