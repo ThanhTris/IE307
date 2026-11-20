@@ -1,8 +1,8 @@
-"""Coverage of the dish fields the preference filters need (ADR-024), offline and read-only.
+"""Generate offline coverage of ADR-024/025 dish filters.
 
 Reads the catalogue bundle and writes:
-- docs/data/DISH_FILTER_COVERAGE.md: per-filter coverage of the 39 dishes;
-- data-preparation/templates/dish_filter_enrichment.csv: one row per dish with what the data has today and empty
+- docs/data/DISH_FILTER_COVERAGE.md: per-filter coverage of the GM-41 release;
+- data-preparation/templates/dish_filter_enrichment.csv: one row per GM-40 dish with what the data has today and empty
   columns for the data team to fill (never guessed here). Validate a filled copy with
   `python data-preparation/scripts/filter_taxonomy.py --validate <csv>`.
 
@@ -11,6 +11,7 @@ Usage: python scripts/dish_filter_coverage.py [--check]
 """
 from __future__ import annotations
 
+import argparse
 import csv
 import io
 import json
@@ -34,8 +35,8 @@ LEGACY_ORIGIN = {origin: code for code, (_, origin) in ft.REGIONS.items()}
 FLAVOURS = ['spicy', 'sour', 'sweet', 'salty', 'fatty']
 
 
-def load():
-    data = json.loads(BUNDLE.read_text(encoding='utf-8'))
+def load(bundle):
+    data = json.loads(bundle.read_text(encoding='utf-8'))
     entities = data['entities']
     taxonomy = {t['id']: t for t in entities['taxonomy']}
     prices = Counter(p.get('dishId') for p in entities.get('priceReferences', []))
@@ -47,8 +48,8 @@ def groups_of(codes: set[str], groups: dict[str, list[str]]) -> list[str]:
     return [name for name, families in groups.items() if codes & {f'family:{f}' for f in families}]
 
 
-def build():
-    data, dishes, taxonomy, prices = load()
+def build(bundle=BUNDLE):
+    data, dishes, taxonomy, prices = load(bundle)
     rows = []
     for dish in dishes:
         codes = {taxonomy[c]['code'] for c in dish.get('categoryIds', []) if c in taxonomy}
@@ -59,7 +60,7 @@ def build():
             'main': groups_of(codes, MAIN_GROUPS),
             'snack': groups_of(codes, SNACK_GROUPS),
             'regions': sorted({REGION_BY_ID[c] for c in dish.get('cuisineIds', []) if c in REGION_BY_ID}
-                              | ({LEGACY_ORIGIN[dish['origin']]} if dish.get('origin') in LEGACY_ORIGIN else set())),
+                              | ({LEGACY_ORIGIN[dish['origin']]} if data['contractVersion'] == '1.0.0' and dish.get('origin') in LEGACY_ORIGIN else set())),
             'flavor': {k: (flavor.get(k) or {}).get('present') for k in FLAVOURS},
             'meals': dish.get('mealSlots') or [],
             'temperature': dish.get('temperature') if dish.get('temperature') not in (None, 'unknown') else None,
@@ -69,23 +70,28 @@ def build():
     return data, rows
 
 
-def report(data, rows) -> str:
+def report(data, rows, bundle=BUNDLE) -> str:
     n = len(rows)
+    def in_meal_group(row, key):
+        if data['contractVersion'] == '1.0.0':
+            return True
+        return 'snack' in row['meals'] if key == 'snack' else bool(set(row['meals']) - {'snack'})
+
     pct = lambda k: f'{k}/{n} ({round(100 * k / n)}%)' if n else '0/0'
     meal = Counter(m for r in rows for m in r['meals'])
     lines = [
         '# Độ phủ dữ liệu cho bộ lọc khẩu vị',
         '',
-        f'Sinh bởi `python scripts/dish_filter_coverage.py` từ `supabase/seed/catalogue/dishes.json` '
+        f'Sinh bởi `python scripts/dish_filter_coverage.py` từ `{bundle.relative_to(ROOT)}` '
         f'(dataset {data.get("datasetVersion")}, {data.get("usageScope")}). Không sửa tay; chạy lại script sau khi dữ liệu đổi.',
         '',
         '## Tổng quan',
         '',
         '| Trường | Có dữ liệu | Bộ lọc dùng |',
         '|---|---|---|',
-        f'| Nhóm món (bữa chính) | {pct(sum(1 for r in rows if r["main"]))} | Loại món |',
-        f'| Nhóm món (Ăn vặt) | {pct(sum(1 for r in rows if r["snack"]))} | Loại món khi chọn Ăn vặt |',
-        f'| Miền (`cuisineIds` miền hoặc `origin` cũ) | {pct(sum(1 for r in rows if r["regions"]))} | Ẩm thực |',
+        f'| Nhóm món (bữa chính) | {pct(sum(1 for r in rows if r["main"] and in_meal_group(r, "main")))} | Loại món |',
+        f'| Nhóm món (Ăn vặt) | {pct(sum(1 for r in rows if r["snack"] and in_meal_group(r, "snack")))} | Loại món khi chọn Ăn vặt |',
+        f'| Miền | {pct(sum(1 for r in rows if r["regions"]))} | Ẩm thực |',
         f'| `flavor` (ít nhất 1 vị đã biết) | {pct(sum(1 for r in rows if any(v is not None for v in r["flavor"].values())))} | Hương vị |',
         f'| Béo / Ngậy (`flavor.fatty`) | {pct(sum(1 for r in rows if r["flavor"]["fatty"] is not None))} | Hương vị |',
         f'| `mealSlots` | {pct(sum(1 for r in rows if r["meals"]))} | Chọn pool theo bữa |',
@@ -103,13 +109,17 @@ def report(data, rows) -> str:
     ]
     for title, groups, key in (('Bữa chính', MAIN_GROUPS, 'main'), ('Ăn vặt', SNACK_GROUPS, 'snack')):
         for name in groups:
-            names = [r['dish']['name'] for r in rows if name in r[key]]
+            names = [r['dish']['name'] for r in rows if name in r[key] and in_meal_group(r, key)]
             lines.append(f'| {title} · {name} | {len(names)} | {", ".join(names) or "—"} |')
     for code, label in REGIONS.items():
         names = [r['dish']['name'] for r in rows if code in r['regions']]
         lines.append(f'| Ẩm thực · {label} | {len(names)} | {", ".join(names) or "—"} |')
-    for key, label in (('spicy', 'Cay'), ('sour', 'Chua / Chua cay'), ('sweet', 'Ngọt'), ('salty', 'Mặn / Thanh đạm'), ('fatty', 'Béo / Ngậy')):
+    for key, label in (('spicy', 'Cay'), ('sour', 'Chua / Chua cay'), ('sweet', 'Ngọt'), ('fatty', 'Béo / Ngậy')):
         names = [r['dish']['name'] for r in rows if r['flavor'][key] is True]
+        lines.append(f'| Hương vị · {label} | {len(names)} | {", ".join(names) or "—"} |')
+    for intensities, label in (({'medium', 'high'}, 'Mặn / Đậm đà'), ({'low'}, 'Thanh đạm')):
+        names = [r['dish']['name'] for r in rows if r['flavor']['salty'] is True
+                 and r['dish']['flavor']['salty']['intensity'] in intensities]
         lines.append(f'| Hương vị · {label} | {len(names)} | {", ".join(names) or "—"} |')
     multi = lambda key, minimum=2: sum(1 for r in rows if len(r[key]) >= minimum)
     lines += ['', f'Món đa nhãn (≥ 2 giá trị): bữa {multi("meals")}/{n}, nhóm món {sum(1 for r in rows if len(r["main"]) + len(r["snack"]) >= 2)}/{n}, miền {multi("regions")}/{n}. '
@@ -135,9 +145,13 @@ def template(rows) -> str:
 
 
 def main() -> int:
-    data, rows = build()
-    outputs = {REPORT: report(data, rows), TEMPLATE: template(rows)}
-    if '--check' in sys.argv:
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument('--check', action='store_true')
+    args = parser.parse_args()
+    from gm41_catalogue import BUNDLE as GM41_BUNDLE
+    data, rows = build(GM41_BUNDLE)
+    outputs = {REPORT: report(data, rows, GM41_BUNDLE), TEMPLATE: template(build()[1])}
+    if args.check:
         stale = [str(p.relative_to(ROOT)) for p, text in outputs.items() if not p.exists() or p.read_text(encoding='utf-8') != text]
         if stale:
             print('out of date:', ', '.join(stale))

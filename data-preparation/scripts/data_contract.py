@@ -40,8 +40,10 @@ def interval(value):
     if not 0 < end-start <= 1440:raise ValueError('Interval must be positive and <=24h')
     if value['is24Hours'] != (end-start==1440):raise ValueError('24h flag and duration mismatch')
 
-def flavor(value):
-    if not isinstance(value,dict) or set(value)!={'spicy','salty','sweet','sour'}:raise ValueError('Four flavor kinds required')
+def flavor(value, *, optional=()):
+    required = {'spicy', 'salty', 'sweet', 'sour'}
+    if not isinstance(value, dict) or not required <= value.keys() <= required | set(optional):
+        raise ValueError('Four required flavor kinds and only declared optional kinds allowed')
     for part in value.values():
         if not isinstance(part,dict) or set(part)!={'present','intensity'}:raise ValueError('Flavor fields mismatch')
         p=part['present'];i=part['intensity']
