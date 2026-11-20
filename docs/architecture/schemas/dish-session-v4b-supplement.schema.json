@@ -2722,6 +2722,9 @@
         },
         "preferences": {
           "$ref": "#/$defs/softPreferences"
+        },
+        "hasRecentHistory": {
+          "type": "boolean"
         }
       },
       "additionalProperties": false
