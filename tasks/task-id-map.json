@@ -2042,7 +2042,7 @@
       "track": "BE",
       "stage": "implementation",
       "outputs": [
-        "supabase/migrations/0063_gm48_hosted_tick_schedule.sql",
+        "supabase/migrations/0065_gm48_hosted_tick_schedule.sql",
         "supabase/tests/http/GM-48.http",
         "docs/evidence/roadmap-v2/GM-48/CHECKS.md"
       ],
@@ -2207,7 +2207,7 @@
         },
         {
           "task": "GM-48",
-          "artifact": "supabase/migrations/0063_gm48_hosted_tick_schedule.sql",
+          "artifact": "supabase/migrations/0065_gm48_hosted_tick_schedule.sql",
           "gate": "start"
         },
         {
