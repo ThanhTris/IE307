@@ -39,9 +39,12 @@ def exercise(path, *, test_cron):
             'Fresh QA without cron applies migration and worker is healthy')
     db.psql(deploy)
     privileges_sql = """
-      select not bool_or(has_function_privilege(role, function, 'EXECUTE'))
+      select not bool_or(
+        has_schema_privilege(role, schema_name, 'USAGE')
+        and has_function_privilege(role, schema_name || '.tick()', 'EXECUTE')
+      )
       from unnest(array['anon','authenticated','service_role']) as r(role)
-      cross join unnest(array['dish_v3_private.tick()','dish_v4_private.tick()']) as f(function);
+      cross join unnest(array['dish_v3_private','dish_v4_private']) as s(schema_name);
     """
     require(db.psql(privileges_sql).strip() == 't', 'Client roles cannot execute either tick')
 
@@ -53,7 +56,7 @@ def exercise(path, *, test_cron):
         if name != 'snapshot':
             payload['requestId'] = request_id or uuid.uuid4().hex
         status, body = auth.http(name, {'contractVersion': CONTRACT, **payload}, who=who)
-        require(status == 200 and body.get('ok') is True, f'{name} HTTP ACK')
+        require(status == 200 and body.get('ok') is True, f'{name} HTTP ACK (status {status})')
         return body['data']
 
     def waiting_room():
