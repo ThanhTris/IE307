@@ -1,0 +1,114 @@
+@baseUrl = http://127.0.0.1:54379
+@anonKey = <owned-QA-public-key>
+@winnerToken = <JWT-for-account-with-personal-consent-and-unexpired-winner>
+@otherToken = <JWT-for-independent-account-without-a-winner>
+@noConsensusToken = <JWT-with-only-a-personal-no-consensus-entry>
+@winnerHistoryId = <canonical-UUID>
+@contract = dish-session-v4/roadmap-v2/GM-07.B-supplement
+
+### Caller with a saved winner
+POST {{baseUrl}}/rest/v1/rpc/dish_session
+apikey: {{anonKey}}
+Authorization: Bearer {{winnerToken}}
+Content-Type: application/json
+
+{"command":"getDefaultPreferences","payload":{"contractVersion":"{{contract}}"}}
+
+> {%
+  client.test('Caller with a saved winner', function () {
+    client.assert(response.status === 200 && response.body.ok === true);
+    client.assert(response.body.data.hasRecentHistory === true);
+  });
+%}
+
+### Other account has no winner
+POST {{baseUrl}}/rest/v1/rpc/dish_session
+apikey: {{anonKey}}
+Authorization: Bearer {{otherToken}}
+Content-Type: application/json
+
+{"command":"getDefaultPreferences","payload":{"contractVersion":"{{contract}}"}}
+
+> {%
+  client.test('Other account has no winner', function () {
+    client.assert(response.status === 200 && response.body.ok === true);
+    client.assert(response.body.data.hasRecentHistory === false);
+  });
+%}
+
+### Only NO_CONSENSUS
+POST {{baseUrl}}/rest/v1/rpc/dish_session
+apikey: {{anonKey}}
+Authorization: Bearer {{noConsensusToken}}
+Content-Type: application/json
+
+{"command":"getDefaultPreferences","payload":{"contractVersion":"{{contract}}"}}
+
+> {%
+  client.test('Only NO_CONSENSUS', function () {
+    client.assert(response.status === 200 && response.body.ok === true);
+    client.assert(response.body.data.hasRecentHistory === false);
+  });
+%}
+
+### Baseline response omits flag
+POST {{baseUrl}}/rest/v1/rpc/dish_session
+apikey: {{anonKey}}
+Authorization: Bearer {{winnerToken}}
+Content-Type: application/json
+
+{"command":"getDefaultPreferences","payload":{"contractVersion":"dish-session-v4/roadmap-v2/GM-07.B"}}
+
+> {%
+  client.test('Baseline response omits flag', function () {
+    client.assert(response.status === 200 && response.body.ok === true);
+    client.assert(response.body.data.hasRecentHistory === undefined);
+  });
+%}
+
+### Delete the caller's winning history
+POST {{baseUrl}}/rest/v1/rpc/delete_history
+apikey: {{anonKey}}
+Authorization: Bearer {{winnerToken}}
+Content-Type: application/json
+
+{"requestId":"{{$uuid}}","history_id":"{{winnerHistoryId}}"}
+
+> {%
+  client.test('Authorized delete succeeds', function () {
+    client.assert(response.status === 200 && response.body.ok === true);
+  });
+%}
+
+### After deletion, no winning history remains
+POST {{baseUrl}}/rest/v1/rpc/dish_session
+apikey: {{anonKey}}
+Authorization: Bearer {{winnerToken}}
+Content-Type: application/json
+
+{"command":"getDefaultPreferences","payload":{"contractVersion":"{{contract}}"}}
+
+> {%
+  client.test('After deletion, no winning history remains', function () {
+    client.assert(response.status === 200 && response.body.ok === true);
+    client.assert(response.body.data.hasRecentHistory === false);
+  });
+%}
+
+# For expiry and consent-off, first verify the saved-winner case with a fresh
+# fixture. Advance expires_at in the owned QA DB, or turn off personal consent
+# using update_history_consent, then run the following request.
+### Expired history or disabled consent
+POST {{baseUrl}}/rest/v1/rpc/dish_session
+apikey: {{anonKey}}
+Authorization: Bearer {{winnerToken}}
+Content-Type: application/json
+
+{"command":"getDefaultPreferences","payload":{"contractVersion":"{{contract}}"}}
+
+> {%
+  client.test('Expired history or disabled consent', function () {
+    client.assert(response.status === 200 && response.body.ok === true);
+    client.assert(response.body.data.hasRecentHistory === false);
+  });
+%}
