@@ -31,7 +31,7 @@ function userDto(value: unknown): SessionUser {
     isGuest: value.is_anonymous,
     createdAt: value.created_at,
   };
-  if (!isSessionUser(user) || !user.isGuest || !validDisplayName(user.displayName)) {
+  if (!isSessionUser(user) || !validDisplayName(user.displayName)) {
     throw new AuthFailure({ messageKey: 'MALFORMED_RESPONSE' });
   }
   return user;
@@ -116,7 +116,9 @@ export class AuthHttpTransport implements AuthPort {
 
   async createGuest(displayName: string): Promise<StoredSession> {
     if (!validDisplayName(displayName)) throw new AuthFailure({ messageKey: 'INVALID_INPUT' });
-    return this.tokens(await this.request('signup', 'POST', { data: { display_name: displayName.trim() } }));
+    const session = this.tokens(await this.request('signup', 'POST', { data: { display_name: displayName.trim() } }));
+    if (!session.user.isGuest) throw new AuthFailure({ messageKey: 'MALFORMED_RESPONSE' });
+    return session;
   }
   async verify(accessToken: string): Promise<SessionUser> {
     if (!accessToken) throw new AuthFailure({ messageKey: 'AUTH_REQUIRED' });
