@@ -82,7 +82,8 @@ def exercise(path, *, test_cron):
         if near_deadline:
             # Move only this QA room's clock boundary. The API and scheduler still
             # evaluate the unchanged 60-second business threshold.
-            db.psql(f"update dish_v4_private.sessions set waiting_started_at=clock_timestamp()-interval '56 seconds' where room_id='{key}';")
+            elapsed = 61 if overlap else 56
+            db.psql(f"update dish_v4_private.sessions set waiting_started_at=clock_timestamp()-interval '{elapsed} seconds' where room_id='{key}';")
         if overlap:
             # Live worker and cron stay running. Start two more simultaneous
             # transactions against the same epoch lock and waiting room.
@@ -107,7 +108,13 @@ def exercise(path, *, test_cron):
         return
 
     require('pg_cron' in db.psql('show shared_preload_libraries;'), 'pg_cron loaded by disposable Postgres')
-    db.psql('create extension pg_cron;')
+    # Supabase preloads the library. Extension install and synthetic log
+    # setup need supabase_admin in this verified disposable container.
+    def fixture_admin(sql):
+        command(['docker', 'exec', db.container, 'psql', '-Xq', '-U', 'supabase_admin',
+                 '-d', 'postgres', '-v', 'ON_ERROR_STOP=1', '-c', sql])
+
+    fixture_admin('create extension pg_cron;')
     try:
         db.psql(deploy)
         jobs_query = f"select jobid, jobname, schedule, username from cron.job where {JOBS} order by jobname;"
@@ -128,7 +135,7 @@ def exercise(path, *, test_cron):
           where jobid=(select jobid from cron.job where jobname='ie307-gm48-tick')
           and status='succeeded';""").strip() == 't', 'Real sub-minute job history records successful runs')
 
-        db.psql("""insert into cron.job_run_details(jobid,status,start_time,end_time)
+        fixture_admin("""insert into cron.job_run_details(jobid,status,start_time,end_time)
           select jobid,'succeeded',now()-interval '3 days',now()-interval '3 days'
           from cron.job where jobname='ie307-gm48-tick';""")
         prune = db.psql("select command from cron.job where jobname='ie307-gm48-prune';")
