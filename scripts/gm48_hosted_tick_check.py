@@ -130,7 +130,7 @@ def exercise(path, *, test_cron):
         check_timeout('Worker plus cron', near_deadline=True, overlap=True)
 
         command(['node', str(ROOT/'scripts/backend-qa.mjs'), 'worker-stop', '--run-id', manifest['runId']])
-        db.psql("update dish_v4_private.runtime set last_tick='-infinity' where singleton;")
+        db.psql("update dish_v4_private.runtime set last_tick=clock_timestamp()-interval '1 minute' where singleton;")
         await_sql(db, "select last_tick>clock_timestamp()-interval '5 seconds' from dish_v4_private.runtime where singleton;",
                   time.monotonic()+12)
         check_timeout('Cron only')
