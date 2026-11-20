@@ -29,8 +29,8 @@ Mọi task dưới đây mang nhãn `release:v1` và đều ở mức P0 (bắt 
 | Data | [GM-51](../../tasks/backlog/GM-51.md) | Tâm | Catalogue production và import cho hosted |
 | Cấu hình app | [GM-54](../../tasks/backlog/GM-54.md) | Trang | Android/iOS, cổng phiên bản, Places |
 | Kiểm thử | [GM-55](../../tasks/backlog/GM-55.md) | Trí | Bộ test case, truy vết, xuất Excel |
-| Kiểm thử | [GM-56](../../tasks/backlog/GM-56.md) | Trí | Test tự động phía app cho ca còn thiếu |
-| Kiểm thử | [GM-57](../../tasks/backlog/GM-57.md) | Trí | Test SQL/HTTP và script E2E hai client |
+| Kiểm thử | [GM-56](../../tasks/backlog/GM-56.md) | Trang | Test tự động phía app cho ca còn thiếu |
+| Kiểm thử | [GM-57](../../tasks/backlog/GM-57.md) | Trang | Test SQL/HTTP và script E2E hai client |
 | Kiểm thử | [GM-58](../../tasks/backlog/GM-58.md) | Vinh | Chạy toàn bộ test case trên release candidate |
 | Phát hành | [GM-59](../../tasks/backlog/GM-59.md) | Trí | Build EAS, hồ sơ store, kiểm thử kín, gửi duyệt |
 
