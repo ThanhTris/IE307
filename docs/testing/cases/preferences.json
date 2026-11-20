@@ -1,0 +1,225 @@
+{
+ "module": "PREF",
+ "title": "Khẩu vị và bộ lọc",
+ "cases": [
+  {
+   "id": "TC-PREF-001",
+   "title": "Lưu khẩu vị mặc định theo tài khoản",
+   "req": [
+    "REQ-PREF-01"
+   ],
+   "priority": "P0",
+   "type": "functional",
+   "level": "component",
+   "preconditions": "Đăng nhập.",
+   "steps": [
+    "Chọn khẩu vị và lưu.",
+    "Tạo phòng mới."
+   ],
+   "expected": "Khẩu vị được nạp sẵn từ mặc định tài khoản và chụp riêng cho phòng.",
+   "automation": [
+    "mobile/tests/component/memberSetupFlow.test.tsx::member starts on preferences, saves once and reaches the lobby without touching room settings",
+    "mobile/tests/component/gm25FigmaParity.test.tsx::renders dish preferences with Anything choice, skip, save actions and privacy note"
+   ],
+   "env": [
+    "ci"
+   ]
+  },
+  {
+   "id": "TC-PREF-002",
+   "title": "Chỉ chính chủ đọc khẩu vị thô",
+   "req": [
+    "REQ-PREF-01"
+   ],
+   "priority": "P0",
+   "type": "privacy",
+   "level": "api",
+   "preconditions": "Hai thành viên chọn khẩu vị khác nhau.",
+   "steps": [
+    "Mỗi người đọc snapshot phòng.",
+    "Host đọc snapshot phòng."
+   ],
+   "expected": "Mỗi người chỉ thấy khẩu vị của mình; snapshot chỉ có dữ liệu công khai của thành viên.",
+   "automation": [
+    "supabase/tests/http/GM-20-canonical.http",
+    "supabase/tests/database/ADR-024_preference_ranking.test.sql"
+   ],
+   "env": [
+    "qa-local"
+   ]
+  },
+  {
+   "id": "TC-PREF-003",
+   "title": "Bộ lọc nhiều nhãn chỉ ưu tiên mềm",
+   "req": [
+    "REQ-PREF-02"
+   ],
+   "priority": "P0",
+   "type": "functional",
+   "level": "sql",
+   "preconditions": "Catalogue có món đa nhãn.",
+   "steps": [
+    "Chọn nhóm \"Bún / Phở\" và vị cay.",
+    "Bắt đầu phòng."
+   ],
+   "expected": "Món khớp bất kỳ nhãn nào được xếp trước; không món nào bị loại khỏi pool.",
+   "automation": [
+    "supabase/tests/database/ADR-025_multi_label_filters.test.sql",
+    "supabase/tests/database/ADR-024_preference_ranking.test.sql"
+   ],
+   "env": [
+    "qa-local"
+   ]
+  },
+  {
+   "id": "TC-PREF-004",
+   "title": "Món thiếu nhãn không bị trừ điểm",
+   "req": [
+    "REQ-PREF-02"
+   ],
+   "priority": "P1",
+   "type": "boundary",
+   "level": "sql",
+   "preconditions": "Có món không có nhóm, miền, vị.",
+   "steps": [
+    "Chọn bộ lọc rồi bắt đầu."
+   ],
+   "expected": "Món thiếu nhãn vẫn ở trong pool, chỉ không được cộng điểm.",
+   "automation": [
+    "supabase/tests/database/ADR-025_multi_label_filters.test.sql"
+   ],
+   "env": [
+    "qa-local"
+   ]
+  },
+  {
+   "id": "TC-PREF-005",
+   "title": "Tránh món gần đây chỉ hiện khi có lịch sử",
+   "req": [
+    "REQ-PREF-03"
+   ],
+   "priority": "P1",
+   "type": "functional",
+   "level": "component",
+   "preconditions": "Tài khoản có và không có lịch sử cá nhân còn hạn.",
+   "steps": [
+    "Mở màn khẩu vị với từng tài khoản."
+   ],
+   "expected": "Ô hiện khi consent bật và có lịch sử còn hạn; ngược lại ẩn.",
+   "automation": [
+    "mobile/tests/component/dishSetupRepair.test.tsx::recent-history helper stays in the checkbox row and does not disable the preference"
+   ],
+   "env": [
+    "ci"
+   ]
+  },
+  {
+   "id": "TC-PREF-006",
+   "title": "Món gần đây xếp cuối nhưng vẫn được chọn khi thiếu món",
+   "req": [
+    "REQ-PREF-03"
+   ],
+   "priority": "P1",
+   "type": "boundary",
+   "level": "sql",
+   "preconditions": "Người có avoidRecent bật và lịch sử gần đây.",
+   "steps": [
+    "Bắt đầu phòng với catalogue ít món."
+   ],
+   "expected": "Món gần đây ở cuối bốc thăm; vẫn được dùng khi không đủ món khác.",
+   "automation": [
+    "supabase/tests/database/ADR-028_lobby_ready.test.sql"
+   ],
+   "env": [
+    "qa-local"
+   ]
+  },
+  {
+   "id": "TC-PREF-007",
+   "title": "Lỗi lưu khẩu vị giữ lựa chọn và cho thử lại",
+   "req": [
+    "REQ-PREF-01"
+   ],
+   "priority": "P0",
+   "type": "resilience",
+   "level": "component",
+   "preconditions": "Mạng lỗi khi lưu.",
+   "steps": [
+    "Lưu khẩu vị.",
+    "Bật lại mạng và thử lại."
+   ],
+   "expected": "Lựa chọn còn nguyên, có nút thử lại, lưu lại được.",
+   "automation": [
+    "mobile/tests/component/dishSetupFlow.test.tsx::save rejection retains own choices for retry; account defaults stay unchanged"
+   ],
+   "env": [
+    "ci"
+   ]
+  },
+  {
+   "id": "TC-PREF-008",
+   "title": "Bỏ qua khẩu vị vẫn vào được phòng",
+   "req": [
+    "REQ-PREF-01"
+   ],
+   "priority": "P1",
+   "type": "functional",
+   "level": "component",
+   "preconditions": "Thành viên mới vào phòng.",
+   "steps": [
+    "Bấm Bỏ qua ở màn khẩu vị."
+   ],
+   "expected": "Vào lobby, được tính là sẵn sàng theo luật hiện hành.",
+   "automation": [
+    "mobile/tests/component/dishPreferences.test.tsx::unknown taxonomy is disabled; skip is explicit and does not expose another member",
+    "supabase/tests/database/ADR-028_lobby_ready.test.sql"
+   ],
+   "env": [
+    "ci",
+    "qa-local"
+   ]
+  },
+  {
+   "id": "TC-PREF-009",
+   "title": "Khẩu vị người khác không lộ qua polling",
+   "req": [
+    "REQ-VOTE-09"
+   ],
+   "priority": "P0",
+   "type": "privacy",
+   "level": "api",
+   "preconditions": "Phòng đang ở lobby.",
+   "steps": [
+    "Poll snapshot phòng bằng token của người ngoài và thành viên."
+   ],
+   "expected": "Người ngoài bị từ chối; thành viên không thấy khẩu vị người khác.",
+   "automation": [
+    "supabase/tests/http/GM-17.http",
+    "supabase/tests/http/GM-45.http"
+   ],
+   "env": [
+    "qa-local"
+   ]
+  },
+  {
+   "id": "TC-PREF-010",
+   "title": "Xếp hạng khẩu vị là nâng cao, không chặn luồng chính",
+   "req": [
+    "REQ-PREF-02"
+   ],
+   "priority": "P2",
+   "type": "functional",
+   "level": "component",
+   "preconditions": "Người dùng bỏ qua phần xếp hạng nâng cao.",
+   "steps": [
+    "Bắt đầu phòng mà không dùng xếp hạng."
+   ],
+   "expected": "Luồng vào phòng và bầu chọn không bị chặn.",
+   "automation": [],
+   "env": [
+    "ci"
+   ],
+   "gap": "Chưa có test riêng cho trường hợp bỏ qua xếp hạng nâng cao; bổ sung ở GM-56."
+  }
+ ]
+}

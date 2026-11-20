@@ -1,0 +1,26 @@
+{
+  "run": "automated-jest-20261120-rerun",
+  "commit": "08f3bc3",
+  "build": "rerun of the two result-screen suites on an idle machine, Windows, Node v24.15.0",
+  "date": "2026-11-20",
+  "results": [
+    {
+      "case": "TC-RES-001",
+      "env": "ci",
+      "status": "Pass",
+      "actual": "2 automated test(s) pass"
+    },
+    {
+      "case": "TC-RES-012",
+      "env": "ci",
+      "status": "Pass",
+      "actual": "1 automated test(s) pass"
+    },
+    {
+      "case": "TC-RES-013",
+      "env": "ci",
+      "status": "Pass",
+      "actual": "2 automated test(s) pass"
+    }
+  ]
+}

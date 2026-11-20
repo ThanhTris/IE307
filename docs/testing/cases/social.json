@@ -1,0 +1,302 @@
+{
+ "module": "SOC",
+ "title": "Bạn bè, lời mời và hộp thư",
+ "cases": [
+  {
+   "id": "TC-SOC-001",
+   "title": "Gửi lời mời kết bạn và chấp nhận",
+   "req": [
+    "REQ-SOC-01"
+   ],
+   "priority": "P0",
+   "type": "functional",
+   "level": "sql",
+   "preconditions": "Hai tài khoản email.",
+   "steps": [
+    "A gửi lời mời cho B.",
+    "B chấp nhận."
+   ],
+   "expected": "Hai người thành bạn hai chiều; chưa chấp nhận thì chưa là bạn.",
+   "automation": [
+    "supabase/tests/database/GM-22_social.test.sql",
+    "supabase/tests/http/GM-22.http",
+    "mobile/tests/unit/socialInboxHistoryRepositories.test.ts::social adapter delegates invite/accept/reject/unfriend to session-aware API methods"
+   ],
+   "env": [
+    "qa-local",
+    "ci"
+   ]
+  },
+  {
+   "id": "TC-SOC-002",
+   "title": "Từ chối và hủy kết bạn",
+   "req": [
+    "REQ-SOC-01"
+   ],
+   "priority": "P0",
+   "type": "functional",
+   "level": "sql",
+   "preconditions": "A và B đã là bạn hoặc có lời mời chờ.",
+   "steps": [
+    "B từ chối lời mời.",
+    "A hủy kết bạn một người đã là bạn."
+   ],
+   "expected": "Lời mời bị từ chối biến mất; hủy kết bạn gỡ quan hệ ở cả hai phía.",
+   "automation": [
+    "supabase/tests/database/GM-22_social.test.sql",
+    "supabase/tests/http/GM-28.http"
+   ],
+   "env": [
+    "qa-local"
+   ]
+  },
+  {
+   "id": "TC-SOC-003",
+   "title": "Tìm bạn theo mã",
+   "req": [
+    "REQ-SOC-01"
+   ],
+   "priority": "P0",
+   "type": "functional",
+   "level": "component",
+   "preconditions": "Có mã bạn hợp lệ và không hợp lệ.",
+   "steps": [
+    "Nhập mã đúng.",
+    "Nhập mã không tồn tại."
+   ],
+   "expected": "Mã đúng hiện tên chủ mã; mã lạ báo không tìm thấy; không lộ thông tin riêng.",
+   "automation": [
+    "mobile/tests/integration/gm32ClientStates.test.tsx::a typed friend code shows the owner\\'s name (not the bare code); an unknown code says so; the invite names who it went to"
+   ],
+   "env": [
+    "ci"
+   ]
+  },
+  {
+   "id": "TC-SOC-004",
+   "title": "Danh sách bạn phân biệt lỗi mạng và rỗng",
+   "req": [
+    "REQ-UI-04"
+   ],
+   "priority": "P1",
+   "type": "resilience",
+   "level": "component",
+   "preconditions": "Không có bạn hoặc mạng lỗi.",
+   "steps": [
+    "Mở Bạn bè trong từng trường hợp."
+   ],
+   "expected": "Phân biệt lỗi mạng, chưa có bạn và không tìm thấy.",
+   "automation": [
+    "mobile/tests/integration/gm32ClientStates.test.tsx::G01 friends distinguishes network failure, no friends and no search match"
+   ],
+   "env": [
+    "ci"
+   ]
+  },
+  {
+   "id": "TC-SOC-005",
+   "title": "Mời bạn vào phòng và bạn chấp nhận",
+   "req": [
+    "REQ-SOC-02"
+   ],
+   "priority": "P0",
+   "type": "functional",
+   "level": "api",
+   "preconditions": "Host và bạn đã kết bạn.",
+   "steps": [
+    "Host mời bạn.",
+    "Bạn mở hộp thư và chấp nhận."
+   ],
+   "expected": "Bạn vào phòng qua cùng kiểm tra như vào bằng mã (đầy, đã bắt đầu vẫn bị từ chối); không tự vào.",
+   "automation": [
+    "supabase/tests/http/GM-22.http",
+    "mobile/tests/unit/socialInboxHistoryRepositories.test.ts::resolves an accepted invite to the latest room route and verifies result references against the server"
+   ],
+   "env": [
+    "qa-local",
+    "ci"
+   ]
+  },
+  {
+   "id": "TC-SOC-006",
+   "title": "Lời mời hết hạn hoặc đã trả lời",
+   "req": [
+    "REQ-SOC-02"
+   ],
+   "priority": "P1",
+   "type": "negative",
+   "level": "sql",
+   "preconditions": "Lời mời quá hạn hoặc đã chấp nhận.",
+   "steps": [
+    "Chấp nhận lại."
+   ],
+   "expected": "Báo hết hạn hoặc đã xử lý; không vào phòng, không nhân đôi.",
+   "automation": [
+    "supabase/tests/database/GM-22_social.test.sql",
+    "mobile/tests/component/socialAndHistoryScreens.test.tsx::tapping a notification marks that one read; an invite shows the sender, with Từ chối left of Đồng ý"
+   ],
+   "env": [
+    "qa-local",
+    "ci"
+   ]
+  },
+  {
+   "id": "TC-SOC-007",
+   "title": "Hộp thư hiển thị sự kiện và đánh dấu đã đọc",
+   "req": [
+    "REQ-SOC-03"
+   ],
+   "priority": "P0",
+   "type": "functional",
+   "level": "component",
+   "preconditions": "Hộp thư có lời mời và kết quả.",
+   "steps": [
+    "Mở hộp thư.",
+    "Chạm một thông báo."
+   ],
+   "expected": "Chỉ thông báo đó được đánh dấu đã đọc; lời mời hiện người gửi; kết quả mở đúng màn.",
+   "automation": [
+    "mobile/tests/component/socialAndHistoryScreens.test.tsx::tapping a notification marks that one read; an invite shows the sender, with Từ chối left of Đồng ý",
+    "supabase/tests/database/GM-28_inbox_read_all.test.sql"
+   ],
+   "env": [
+    "ci",
+    "qa-local"
+   ]
+  },
+  {
+   "id": "TC-SOC-008",
+   "title": "Banner khi có dòng mới qua Realtime",
+   "req": [
+    "REQ-SOC-03"
+   ],
+   "priority": "P0",
+   "type": "functional",
+   "level": "unit",
+   "preconditions": "App đang mở, kết nối Realtime sống.",
+   "steps": [
+    "Server thêm dòng hộp thư mới."
+   ],
+   "expected": "App nhận dòng mới qua Realtime (không đọc theo chu kỳ), hiện banner; nhiều dòng cùng lúc chỉ một lần đọc.",
+   "automation": [
+    "mobile/tests/unit/inboxRealtime.test.ts::a new row calls onInsert, and the status turns live once the database subscription is confirmed",
+    "mobile/tests/component/inboxBadgePolling.test.tsx::several pushes together cause one read",
+    "supabase/tests/database/ADR-026_inbox_realtime.test.sql"
+   ],
+   "env": [
+    "ci",
+    "qa-local"
+   ]
+  },
+  {
+   "id": "TC-SOC-009",
+   "title": "Mất Realtime thì đọc mỗi 30 giây và đóng khi nền",
+   "req": [
+    "REQ-SOC-03"
+   ],
+   "priority": "P0",
+   "type": "resilience",
+   "level": "component",
+   "preconditions": "Kênh Realtime bị đóng.",
+   "steps": [
+    "Chờ vài chu kỳ.",
+    "Đưa app xuống nền rồi quay lại."
+   ],
+   "expected": "Chỉ đọc theo chu kỳ khi mất kết nối; không có timer khi kết nối sống; quay lại app thì đọc một lần.",
+   "automation": [
+    "mobile/tests/component/inboxBadgePolling.test.tsx::nothing is read while nothing happens: no timer while the push connection is live",
+    "mobile/tests/component/inboxBadgePolling.test.tsx::the connection closes in the background and comes back with a read on return"
+   ],
+   "env": [
+    "ci"
+   ]
+  },
+  {
+   "id": "TC-SOC-010",
+   "title": "Sự kiện chấp nhận kết bạn có trong hộp thư",
+   "req": [
+    "REQ-SOC-03"
+   ],
+   "priority": "P1",
+   "type": "functional",
+   "level": "sql",
+   "preconditions": "A gửi lời mời, B chấp nhận.",
+   "steps": [
+    "A mở hộp thư."
+   ],
+   "expected": "A nhận sự kiện FRIEND_ACCEPTED.",
+   "automation": [
+    "supabase/tests/database/ADR-026_inbox_friend_accepted.test.sql"
+   ],
+   "env": [
+    "qa-local"
+   ]
+  },
+  {
+   "id": "TC-SOC-011",
+   "title": "Hộp thư không trùng sự kiện",
+   "req": [
+    "REQ-SOC-03"
+   ],
+   "priority": "P1",
+   "type": "boundary",
+   "level": "unit",
+   "preconditions": "Cùng một event đến hai lần.",
+   "steps": [
+    "Đọc hộp thư hai lần."
+   ],
+   "expected": "Chỉ một dòng, con trỏ tiến theo inbox item ID.",
+   "automation": [
+    "mobile/tests/unit/socialInboxHistoryRepositories.test.ts::inbox adapter deduplicates by eventId and advances by inbox item ID"
+   ],
+   "env": [
+    "ci"
+   ]
+  },
+  {
+   "id": "TC-SOC-012",
+   "title": "Người ngoài không đọc được hộp thư của người khác",
+   "req": [
+    "REQ-SEC-01"
+   ],
+   "priority": "P0",
+   "type": "security",
+   "level": "api",
+   "preconditions": "Hai tài khoản.",
+   "steps": [
+    "B đọc hộp thư bằng token của B.",
+    "Thử đọc hộp thư của A."
+   ],
+   "expected": "B chỉ thấy dòng của B; truy cập chéo bị chặn.",
+   "automation": [
+    "supabase/tests/http/GM-23.http",
+    "supabase/tests/http/GM-28.http"
+   ],
+   "env": [
+    "qa-local"
+   ]
+  },
+  {
+   "id": "TC-SOC-013",
+   "title": "Thông báo hết hạn hoặc tham chiếu bị cấm được xử lý",
+   "req": [
+    "REQ-SOC-03"
+   ],
+   "priority": "P1",
+   "type": "negative",
+   "level": "unit",
+   "preconditions": "Thông báo trỏ tới kết quả đã hết hạn.",
+   "steps": [
+    "Chạm thông báo."
+   ],
+   "expected": "Không mở dữ liệu không được phép; hiện thông báo phù hợp và không cấp quyền ngầm.",
+   "automation": [
+    "mobile/tests/unit/notificationInboxResolver.test.ts::fails closed when the server repeats a pagination cursor",
+    "mobile/tests/component/socialAndHistoryScreens.test.tsx::notification retry resolves the same event from authenticated inbox after a network error"
+   ],
+   "env": [
+    "ci"
+   ]
+  }
+ ]
+}

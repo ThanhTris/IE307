@@ -1,0 +1,342 @@
+{
+ "module": "RES",
+ "title": "Kết quả, Top 3 và Places",
+ "cases": [
+  {
+   "id": "TC-RES-001",
+   "title": "Kết quả winner và Top 3 hiển thị đúng",
+   "req": [
+    "REQ-RES-02"
+   ],
+   "priority": "P0",
+   "type": "functional",
+   "level": "component",
+   "preconditions": "Phòng có kết quả DECIDED.",
+   "steps": [
+    "Mở màn kết quả."
+   ],
+   "expected": "Hiện winner, tối đa 3 món trên bục kèm điểm và giá (nếu có).",
+   "automation": [
+    "mobile/tests/component/liveDishResultScreen.test.tsx::renders DECIDED result with Top 3 podium, winner and price",
+    "mobile/tests/component/dishResultPodium.test.tsx::podium %s shows one dish on each pedestal, in server order"
+   ],
+   "env": [
+    "ci"
+   ]
+  },
+  {
+   "id": "TC-RES-002",
+   "title": "Đồng hạng: cùng hạng, bục riêng theo thứ tự server",
+   "req": [
+    "REQ-RES-02"
+   ],
+   "priority": "P0",
+   "type": "boundary",
+   "level": "component",
+   "preconditions": "Kết quả có hai món đồng hạng 1.",
+   "steps": [
+    "Mở màn kết quả."
+   ],
+   "expected": "Thứ hạng dày (1, 1, 2); món đồng hạng đứng bục riêng theo thứ tự server; app không tự tính lại.",
+   "automation": [
+    "mobile/tests/unit/resultRepository.test.ts::maps valid tied podium (dense ranks 1, 1, 2)",
+    "mobile/tests/component/liveDishResultScreen.test.tsx::puts tied dishes on separate pedestals in server order",
+    "mobile/tests/unit/podiumOrder.test.ts::keeps score order and the server order for equal scores"
+   ],
+   "env": [
+    "ci"
+   ]
+  },
+  {
+   "id": "TC-RES-003",
+   "title": "Kết quả ổn định khi tải lại và thử lại",
+   "req": [
+    "REQ-RES-01"
+   ],
+   "priority": "P0",
+   "type": "resilience",
+   "level": "e2e",
+   "preconditions": "Phòng đã chốt kết quả.",
+   "steps": [
+    "Mở kết quả, force-stop, mở lại, đọc từ Inbox."
+   ],
+   "expected": "Cùng winner, cùng Top 3 và điểm ở mọi lần đọc.",
+   "automation": [
+    "supabase/tests/http/GM-20-canonical.http",
+    "supabase/tests/http/GM-21-canonical.http"
+   ],
+   "env": [
+    "qa-local",
+    "avd",
+    "android"
+   ]
+  },
+  {
+   "id": "TC-RES-004",
+   "title": "Server từ chối kết quả sai schema",
+   "req": [
+    "REQ-RES-01"
+   ],
+   "priority": "P0",
+   "type": "security",
+   "level": "unit",
+   "preconditions": "Phản hồi kết quả thiếu trường hoặc sai kiểu.",
+   "steps": [
+    "Cho app nhận phản hồi sai."
+   ],
+   "expected": "App trả MALFORMED_RESPONSE, không điền giá trị mặc định, không hiển thị kết quả.",
+   "automation": [
+    "mobile/tests/unit/resultRepository.test.ts::rejects payload missing policyVersion",
+    "mobile/tests/unit/resultRepository.test.ts::rejects score exceeding 2 * round1BallotCount",
+    "mobile/tests/unit/resultRepository.test.ts::rejects dish missing description key"
+   ],
+   "env": [
+    "ci"
+   ]
+  },
+  {
+   "id": "TC-RES-005",
+   "title": "NO_CONSENSUS hiện đúng lý do",
+   "req": [
+    "REQ-RES-03"
+   ],
+   "priority": "P0",
+   "type": "functional",
+   "level": "component",
+   "preconditions": "Kết quả NO_CONSENSUS với EMPTY_INTERSECTION hoặc ALL_REMOVED.",
+   "steps": [
+    "Mở màn không đồng thuận."
+   ],
+   "expected": "Hiện đúng lý do, không có winner, bục hay Places; có nút tạo phòng mới.",
+   "automation": [
+    "mobile/tests/component/dishResultStates.test.tsx::%s has the correct terminal reason and no winner/podium/places"
+   ],
+   "env": [
+    "ci"
+   ]
+  },
+  {
+   "id": "TC-RES-006",
+   "title": "Places chỉ gọi sau khi có winner",
+   "req": [
+    "REQ-RES-04"
+   ],
+   "priority": "P0",
+   "type": "functional",
+   "level": "component",
+   "preconditions": "Phòng có winner, đã cấp quyền vị trí.",
+   "steps": [
+    "Mở kết quả.",
+    "Xem phần quán gần đây."
+   ],
+   "expected": "Hiện quán, bản đồ và ghi công Google; liên kết ngoài chỉ mở đường dẫn được cho phép.",
+   "automation": [
+    "mobile/tests/component/gm30FigmaParity.test.tsx::Figma 206:913 & 379:1478 — Places loaded and external actions trigger allowlisted URLs",
+    "mobile/tests/component/nearbyResult.test.tsx::map capability renders in-app, retains attribution and never uses a mock illustration in real mode"
+   ],
+   "env": [
+    "ci",
+    "android",
+    "ios"
+   ]
+  },
+  {
+   "id": "TC-RES-007",
+   "title": "Từ chối vị trí không đổi kết quả",
+   "req": [
+    "REQ-RES-04"
+   ],
+   "priority": "P0",
+   "type": "negative",
+   "level": "component",
+   "preconditions": "Người dùng từ chối quyền vị trí.",
+   "steps": [
+    "Mở kết quả."
+   ],
+   "expected": "Hiện lời nhắc cấp quyền; winner và Top 3 không đổi.",
+   "automation": [
+    "mobile/tests/component/gm30FigmaParity.test.tsx::Figma 622:8962 — Location permission prompt shown when location is not granted",
+    "mobile/tests/unit/placesRepository.test.ts::denied permission returns status denied"
+   ],
+   "env": [
+    "ci"
+   ]
+  },
+  {
+   "id": "TC-RES-008",
+   "title": "Places lỗi, 403 hoặc hết quota không phá kết quả",
+   "req": [
+    "REQ-RES-04"
+   ],
+   "priority": "P0",
+   "type": "resilience",
+   "level": "unit",
+   "preconditions": "Google trả 403, 500 hoặc hết quota.",
+   "steps": [
+    "Mở kết quả."
+   ],
+   "expected": "Trạng thái lỗi an toàn, không ném lỗi; winner và bục giữ nguyên.",
+   "automation": [
+    "mobile/tests/unit/placesRepository.test.ts::never throws on network error or quota exceeded; returns safe ReadResult with status error",
+    "mobile/tests/unit/placesRepository.test.ts::returns error status when Google Places API responds with 403 or 500",
+    "mobile/tests/component/gm30FigmaParity.test.tsx::Absolute Winner Isolation: places failure never corrupts or alters decided winner"
+   ],
+   "env": [
+    "ci"
+   ]
+  },
+  {
+   "id": "TC-RES-009",
+   "title": "Yêu cầu Places cũ bị hủy khi đổi kết quả",
+   "req": [
+    "REQ-RT-04"
+   ],
+   "priority": "P1",
+   "type": "resilience",
+   "level": "unit",
+   "preconditions": "Đổi kết quả khi Places đang tải.",
+   "steps": [
+    "Chuyển sang kết quả khác."
+   ],
+   "expected": "Yêu cầu cũ bị hủy và không ghi đè.",
+   "automation": [
+    "mobile/tests/unit/placesRepository.test.ts::superseded request is aborted and does not overwrite current result",
+    "mobile/tests/component/nearbyResult.test.tsx::late action response from a previous result cannot update the new result feedback"
+   ],
+   "env": [
+    "ci"
+   ]
+  },
+  {
+   "id": "TC-RES-010",
+   "title": "Giá hiển thị theo observation mới nhất",
+   "req": [
+    "REQ-RES-05"
+   ],
+   "priority": "P1",
+   "type": "boundary",
+   "level": "unit",
+   "preconditions": "Món có nhiều observation giá, một số có amount null hoặc trùng timestamp.",
+   "steps": [
+    "Mở kết quả."
+   ],
+   "expected": "Hiện giá mới nhất hợp lệ; amount null hoặc timestamp trùng thì ẩn giá, không dùng giá cũ.",
+   "automation": [
+    "mobile/tests/unit/resultRepository.test.ts::rejects malformed raw price with null amount",
+    "mobile/tests/unit/voteSessionState.test.ts::hides a price if amount, currency, or unit is unknown"
+   ],
+   "env": [
+    "ci"
+   ]
+  },
+  {
+   "id": "TC-RES-011",
+   "title": "Mở Google Maps chỉ là hỗ trợ",
+   "req": [
+    "REQ-RES-04"
+   ],
+   "priority": "P1",
+   "type": "functional",
+   "level": "unit",
+   "preconditions": "Winner có thông tin địa điểm.",
+   "steps": [
+    "Bấm mở Google Maps."
+   ],
+   "expected": "Mở đường dẫn Google Maps hợp lệ; bản đồ trong app vẫn hiển thị.",
+   "automation": [
+    "mobile/tests/unit/externalLinks.test.ts::allows official Google Maps, TikTok, and YouTube URLs",
+    "mobile/tests/unit/externalLinks.test.ts::buildGoogleMapsUrl with place coordinates and id"
+   ],
+   "env": [
+    "ci"
+   ]
+  },
+  {
+   "id": "TC-RES-012",
+   "title": "Kết quả không khớp resultId báo lỗi",
+   "req": [
+    "REQ-RES-01"
+   ],
+   "priority": "P1",
+   "type": "negative",
+   "level": "component",
+   "preconditions": "Link kết quả với resultId không khớp phòng.",
+   "steps": [
+    "Mở màn kết quả."
+   ],
+   "expected": "Hiện lỗi, không hiển thị kết quả của phòng khác.",
+   "automation": [
+    "mobile/tests/component/liveDishResultScreen.test.tsx::transitions to error notice when resultId does not match server response"
+   ],
+   "env": [
+    "ci"
+   ]
+  },
+  {
+   "id": "TC-RES-013",
+   "title": "Màn kết quả có lỗi và thử lại",
+   "req": [
+    "REQ-UI-04"
+   ],
+   "priority": "P1",
+   "type": "resilience",
+   "level": "component",
+   "preconditions": "Server trả lỗi khi tải kết quả.",
+   "steps": [
+    "Mở kết quả.",
+    "Bấm thử lại."
+   ],
+   "expected": "Hiện thông báo lỗi kèm nút thử lại; NOT_READY có timer và dọn khi thoát màn.",
+   "automation": [
+    "mobile/tests/component/liveDishResultScreen.test.tsx::renders error state with retry button on failure",
+    "mobile/tests/component/liveDishResultScreen.test.tsx::cancels NOT_READY poll timer upon unmount"
+   ],
+   "env": [
+    "ci"
+   ]
+  },
+  {
+   "id": "TC-RES-014",
+   "title": "Kết quả khi cache khác tài khoản",
+   "req": [
+    "REQ-HIS-02"
+   ],
+   "priority": "P0",
+   "type": "security",
+   "level": "component",
+   "preconditions": "Hai tài khoản dùng chung máy.",
+   "steps": [
+    "Xem kết quả bằng tài khoản A.",
+    "Đổi sang tài khoản B và mở kết quả."
+   ],
+   "expected": "Cache được tách theo danh tính, B không thấy dữ liệu của A.",
+   "automation": [
+    "mobile/tests/component/gm27ReviewRegression.test.tsx::the production roomRepository composition partitions cache using the active identity"
+   ],
+   "env": [
+    "ci"
+   ]
+  },
+  {
+   "id": "TC-RES-015",
+   "title": "Hiệu ứng ăn mừng tôn trọng giảm chuyển động",
+   "req": [
+    "REQ-UI-03"
+   ],
+   "priority": "P2",
+   "type": "accessibility",
+   "level": "component",
+   "preconditions": "Bật giảm chuyển động.",
+   "steps": [
+    "Mở kết quả có winner."
+   ],
+   "expected": "Không phát hiệu ứng chuyển động mạnh.",
+   "automation": [
+    "mobile/tests/component/winnerCelebration.test.tsx::Reduce Motion requests zero-duration native animations"
+   ],
+   "env": [
+    "ci"
+   ]
+  }
+ ]
+}
