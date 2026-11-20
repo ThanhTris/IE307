@@ -2,7 +2,7 @@
 
 Sinh từ task bằng `python scripts/task_readiness.py --write-docs`; không sửa tay. `--check-docs` kiểm độ mới. Đây là metadata/gate chẩn đoán local, không phải trạng thái GitHub. Gate thực tế đọc Done live trên Project theo ADR-011; xem docs/project/PROJECT_READINESS.md.
 
-59 task sau GM-00: 53 P0 (gồm GM-01), 3 P1, 3 P2. Mã roadmap-v2 tăng theo lộ trình; mọi dependency có số nhỏ hơn task. Owner/reviewer là đề xuất; không kế thừa approval khi đổi scope.
+61 task sau GM-00: 55 P0 (gồm GM-01), 3 P1, 3 P2. Mã roadmap-v2 tăng theo lộ trình; mọi dependency có số nhỏ hơn task. Owner/reviewer là đề xuất; không kế thừa approval khi đổi scope.
 
 ## Hai gate khác nhau
 
@@ -84,7 +84,9 @@ READY_TO_CLAIM: đủ start deps, chưa nhận việc (bao gồm task Needs Upda
 | [GM-56](../../tasks/backlog/GM-56.md) | BLOCKED | [GM-31](../../tasks/backlog/GM-31.md), [GM-32](../../tasks/backlog/GM-32.md) | BLOCKED | [GM-31](../../tasks/backlog/GM-31.md), [GM-32](../../tasks/backlog/GM-32.md), [GM-55](../../tasks/backlog/GM-55.md) |
 | [GM-57](../../tasks/backlog/GM-57.md) | BLOCKED | [GM-31](../../tasks/backlog/GM-31.md), [GM-32](../../tasks/backlog/GM-32.md) | BLOCKED | [GM-31](../../tasks/backlog/GM-31.md), [GM-32](../../tasks/backlog/GM-32.md), [GM-55](../../tasks/backlog/GM-55.md) |
 | [GM-58](../../tasks/backlog/GM-58.md) | BLOCKED | [GM-35](../../tasks/backlog/GM-35.md), [GM-46](../../tasks/backlog/GM-46.md), [GM-52](../../tasks/backlog/GM-52.md), [GM-53](../../tasks/backlog/GM-53.md), [GM-54](../../tasks/backlog/GM-54.md), [GM-55](../../tasks/backlog/GM-55.md), [GM-56](../../tasks/backlog/GM-56.md), [GM-57](../../tasks/backlog/GM-57.md) | BLOCKED | [GM-35](../../tasks/backlog/GM-35.md), [GM-42](../../tasks/backlog/GM-42.md), [GM-43](../../tasks/backlog/GM-43.md), [GM-46](../../tasks/backlog/GM-46.md), [GM-52](../../tasks/backlog/GM-52.md), [GM-53](../../tasks/backlog/GM-53.md), [GM-54](../../tasks/backlog/GM-54.md), [GM-55](../../tasks/backlog/GM-55.md), [GM-56](../../tasks/backlog/GM-56.md), [GM-57](../../tasks/backlog/GM-57.md) |
-| [GM-59](../../tasks/backlog/GM-59.md) | BLOCKED | [GM-50](../../tasks/backlog/GM-50.md), [GM-52](../../tasks/backlog/GM-52.md), [GM-58](../../tasks/backlog/GM-58.md) | BLOCKED | [GM-50](../../tasks/backlog/GM-50.md), [GM-52](../../tasks/backlog/GM-52.md), [GM-58](../../tasks/backlog/GM-58.md) |
+| [GM-59](../../tasks/backlog/GM-59.md) | BLOCKED | [GM-50](../../tasks/backlog/GM-50.md), [GM-52](../../tasks/backlog/GM-52.md), [GM-54](../../tasks/backlog/GM-54.md) | BLOCKED | [GM-50](../../tasks/backlog/GM-50.md), [GM-52](../../tasks/backlog/GM-52.md), [GM-54](../../tasks/backlog/GM-54.md), [GM-58](../../tasks/backlog/GM-58.md) |
+| [GM-60](../../tasks/backlog/GM-60.md) | BLOCKED | [GM-50](../../tasks/backlog/GM-50.md), [GM-52](../../tasks/backlog/GM-52.md), [GM-54](../../tasks/backlog/GM-54.md) | BLOCKED | [GM-50](../../tasks/backlog/GM-50.md), [GM-52](../../tasks/backlog/GM-52.md), [GM-54](../../tasks/backlog/GM-54.md), [GM-58](../../tasks/backlog/GM-58.md) |
+| [GM-61](../../tasks/backlog/GM-61.md) | BLOCKED | [GM-59](../../tasks/backlog/GM-59.md), [GM-60](../../tasks/backlog/GM-60.md) | BLOCKED | [GM-59](../../tasks/backlog/GM-59.md), [GM-60](../../tasks/backlog/GM-60.md) |
 
 ## Lớp mở khóa bắt đầu
 
@@ -111,8 +113,8 @@ Lớp topo không là barrier cả nhóm hay deadline. Chỉ chờ dependency c�
 | 16 | [GM-34](../../tasks/backlog/GM-34.md) | GM-34: Trí |
 | 17 | [GM-35](../../tasks/backlog/GM-35.md), [GM-36](../../tasks/backlog/GM-36.md), [GM-37](../../tasks/backlog/GM-37.md), [GM-38](../../tasks/backlog/GM-38.md) | GM-35: Tuấn; GM-36: Tâm; GM-37: Tuấn; GM-38: Tâm |
 | 18 | [GM-53](../../tasks/backlog/GM-53.md), [GM-54](../../tasks/backlog/GM-54.md) | GM-53: Tuấn; GM-54: Trang |
-| 19 | [GM-58](../../tasks/backlog/GM-58.md) | GM-58: Vinh |
-| 20 | [GM-59](../../tasks/backlog/GM-59.md) | GM-59: Trí |
+| 19 | [GM-58](../../tasks/backlog/GM-58.md), [GM-59](../../tasks/backlog/GM-59.md), [GM-60](../../tasks/backlog/GM-60.md) | GM-58: Vinh; GM-59: Trí; GM-60: Tâm |
+| 20 | [GM-61](../../tasks/backlog/GM-61.md) | GM-61: Trí |
 
 ## Thứ tự merge / tích hợp
 
@@ -140,7 +142,8 @@ Lớp topo không là barrier cả nhóm hay deadline. Chỉ chờ dependency c�
 | 17 | [GM-35](../../tasks/backlog/GM-35.md), [GM-36](../../tasks/backlog/GM-36.md), [GM-37](../../tasks/backlog/GM-37.md), [GM-38](../../tasks/backlog/GM-38.md) | GM-35: Tuấn; GM-36: Tâm; GM-37: Tuấn; GM-38: Tâm |
 | 18 | [GM-53](../../tasks/backlog/GM-53.md), [GM-54](../../tasks/backlog/GM-54.md) | GM-53: Tuấn; GM-54: Trang |
 | 19 | [GM-58](../../tasks/backlog/GM-58.md) | GM-58: Vinh |
-| 20 | [GM-59](../../tasks/backlog/GM-59.md) | GM-59: Trí |
+| 20 | [GM-59](../../tasks/backlog/GM-59.md), [GM-60](../../tasks/backlog/GM-60.md) | GM-59: Trí; GM-60: Tâm |
+| 21 | [GM-61](../../tasks/backlog/GM-61.md) | GM-61: Trí |
 
 ## Cặp song song cụ thể
 
@@ -183,6 +186,7 @@ Lớp topo không là barrier cả nhóm hay deadline. Chỉ chờ dependency c�
 | [GM-48](../../tasks/backlog/GM-48.md), [GM-49](../../tasks/backlog/GM-49.md) | Đạt start gate riêng; contract/version chung; nhánh/file riêng; merge theo bảng trên. |
 | [GM-48](../../tasks/backlog/GM-48.md), [GM-50](../../tasks/backlog/GM-50.md) | Đạt start gate riêng; contract/version chung; nhánh/file riêng; merge theo bảng trên. |
 | [GM-49](../../tasks/backlog/GM-49.md), [GM-50](../../tasks/backlog/GM-50.md) | Đạt start gate riêng; contract/version chung; nhánh/file riêng; merge theo bảng trên. |
+| [GM-59](../../tasks/backlog/GM-59.md), [GM-60](../../tasks/backlog/GM-60.md) | Đạt start gate riêng; contract/version chung; nhánh/file riêng; merge theo bảng trên. |
 
 Không liệt kê mọi cặp có thể song song. Chốt interface và file ownership trong draft PR trước viết; GM-02 UI structure / GM-03 BE structure / GM-04 fields là ba nhánh nền. GM-05 components và GM-07 client/mock có thể làm đồng thời sau đầu vào riêng; GM-08 import chờ schema GM-06. GM-09..14 màn mock nghiệm thu riêng sau components+contract, không chờ API nghiệp vụ. GM-15..23 hoàn thiện BE; GM-24..31 tích hợp UI/API/native; GM-32..34 kiểm thử và release. GM-35..38 chỉ merge sau core. Trạng thái GM-01 theo hồ sơ local: done; Project Done mở dependency baseline theo ADR-011 nhưng không tự viết lại review evidence local hoặc nghiệm thu supplement. Mock không đóng AC native/SQL/dataset thật của task tích hợp.
 

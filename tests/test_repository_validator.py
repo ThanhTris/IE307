@@ -274,7 +274,7 @@ class ManifestValidationTests(unittest.TestCase):
         self.assertIn('dependency checklist differs from metadata', self.errors())
 
     def test_release_must_wait_for_all_core_tasks(self):
-        path = 'tasks/backlog/GM-59.md'
+        path = 'tasks/backlog/GM-61.md'
         self.source.contents[path] = re.sub(r'^(start|merge)_dependencies:.*$', r'\1_dependencies: GM-01', self.source.read(path), flags=re.M)
         self.assertIn('release bypasses P0 tasks', self.errors())
 
