@@ -114,6 +114,8 @@ Persist result, winner, podium rows, score/rank versions, terminal room state an
 
 ## Account-scoped history consent — schema 0.9.1 candidate
 
+GM-46 adds `data.hasRecentHistory` to supplement `getDefaultPreferences`, for example `{"revision":0,"preferences":{"cuisineIds":[],"categoryIds":[]},"hasRecentHistory":false}` (data excerpt). It is true only for the caller with personal history enabled and at least one unexpired canonical personal history with a winning dish. The field is present as a boolean on a GM-46 backend. Older deployments may omit it. Setup treats omission as unavailable and does not read the history list.
+
 The two history permissions are account settings (`personal` and `group`) managed by `update_history_consent`; a missing setting means opted out. For v4, host creation, direct join and invitation admission inherit the caller's currently enabled scope choices. Start synchronizes current account choices for the locked roster and freezes each scope independently in the session snapshot in the same transaction. A grant made after start applies only to later rooms. A revocation before result persistence suppresses and removes the affected scope without changing the winner, score or podium. Personal history is written for each member whose personal scope was locked and remains active; group history is written only when every locked roster member's group scope was locked and remains active. History reads return the stored result projection, including the same `resultId` and Top 3, subject to existing ACL, deletion and retention. No ballot details are included.
 
 ### History Query and item DTO
