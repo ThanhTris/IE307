@@ -53,7 +53,7 @@ def exercise(path, *, test_cron):
     auth.signup()
 
     def call(who, name, *, request_id=None, **payload):
-        if name != 'snapshot':
+        if name not in ('snapshot', 'result'):
             payload['requestId'] = request_id or uuid.uuid4().hex
         status, body = auth.http(name, {'contractVersion': CONTRACT, **payload}, who=who)
         require(status == 200 and body.get('ok') is True, f'{name} HTTP ACK (status {status})')
