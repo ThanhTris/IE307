@@ -11,6 +11,8 @@ create table gm49_private.requests (
  session_key uuid,
  expires_at timestamptz not null,
  completed boolean not null default false,
+ -- Staged by an operator for a deletion request received outside the app (store web form).
+ admin boolean not null default false,
  primary key(request_key,token_hash),
  check(completed=(person is null and session_key is null))
 );
@@ -61,11 +63,31 @@ begin
  return 'READY';
 end $$;
 
+-- Operator path for requests that arrive outside the app, such as the web form the stores require.
+-- It stages one account for deletion; the operator then deletes the user through the GoTrue admin API
+-- (scripts/gm49_admin_delete.mjs or the dashboard) within fifteen minutes. The same trigger performs the
+-- cleanup. There is no session to check, so the account is identified by the operator after verifying the
+-- request out of band. An account in a live room is refused, as for self-service.
+create function public.gm49_admin_prepare_delete(person uuid) returns text
+language plpgsql security definer set search_path=pg_catalog as $$
+begin
+ perform 1 from gm06_private.reference_epoch where singleton for update;
+ if person is null or not exists(select 1 from auth.users u where u.id=person) then return 'NOT_FOUND'; end if;
+ if gm49_private.active_room(person) then return 'ACTIVE_ROOM'; end if;
+ delete from gm49_private.requests q where q.expires_at<=clock_timestamp();
+ insert into gm49_private.requests(request_key,token_hash,person,session_key,expires_at,admin)
+ values(gen_random_uuid(),encode(sha256(convert_to('admin-delete:'||person::text,'UTF8')),'hex'),person,null,
+  clock_timestamp()+interval '15 minutes',true)
+ on conflict on constraint requests_person_key do update set request_key=excluded.request_key,token_hash=excluded.token_hash,
+  session_key=null,expires_at=excluded.expires_at,admin=true;
+ return 'READY';
+end $$;
+
 revoke all on function public.gm49_account_delete_completed(uuid,text),
- public.gm49_prepare_account_delete(uuid,uuid,uuid,text,bigint)
+ public.gm49_prepare_account_delete(uuid,uuid,uuid,text,bigint),public.gm49_admin_prepare_delete(uuid)
  from public,anon,authenticated,service_role,gm06_publisher;
 grant execute on function public.gm49_account_delete_completed(uuid,text),
- public.gm49_prepare_account_delete(uuid,uuid,uuid,text,bigint) to service_role;
+ public.gm49_prepare_account_delete(uuid,uuid,uuid,text,bigint),public.gm49_admin_prepare_delete(uuid) to service_role;
 
 create or replace function gm06_canonical.history_visible(key uuid,viewer uuid,at_time timestamptz) returns boolean
 language sql stable set search_path=pg_catalog as $$
@@ -149,8 +171,8 @@ begin
  -- GoTrue may already hold the auth row lock. Fail fast if a writer holds
  -- reference_epoch, rather than waiting for a lock it may need us to release.
  perform 1 from gm06_private.reference_epoch where singleton for update nowait;
- if intent.expires_at<=clock_timestamp() or to_regclass('auth.sessions') is null
-    or not gm23_private.session_valid(person,intent.session_key) then
+ if intent.expires_at<=clock_timestamp() or (not intent.admin and to_regclass('auth.sessions') is null)
+    or (not intent.admin and not gm23_private.session_valid(person,intent.session_key)) then
   raise exception using message='AUTH_REQUIRED';
  end if;
  if gm49_private.active_room(person) then raise exception using message='ACTIVE_ROOM'; end if;

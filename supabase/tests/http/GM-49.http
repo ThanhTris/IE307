@@ -98,3 +98,32 @@ Content-Type: application/json
     client.assert(response.body.error.messageKey === 'INVALID_INPUT');
   });
 %}
+
+### Operator: stage an account for deletion (service role only, web-form requests)
+POST {{baseUrl}}/rest/v1/rpc/gm49_admin_prepare_delete
+apikey: {{serviceKey}}
+Authorization: Bearer {{serviceKey}}
+Content-Type: application/json
+
+{"person":"{{targetUserId}}"}
+
+> {%
+  client.test('Operator stage', function () {
+    client.assert(response.status === 200);
+    client.assert(['READY', 'ACTIVE_ROOM', 'NOT_FOUND'].includes(response.body));
+  });
+%}
+
+### Operator: client key cannot stage a deletion
+POST {{baseUrl}}/rest/v1/rpc/gm49_admin_prepare_delete
+apikey: {{anonKey}}
+Authorization: Bearer {{otherToken}}
+Content-Type: application/json
+
+{"person":"{{targetUserId}}"}
+
+> {%
+  client.test('Operator RPC denied to clients', function () {
+    client.assert(response.status >= 400);
+  });
+%}

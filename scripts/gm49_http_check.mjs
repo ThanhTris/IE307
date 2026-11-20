@@ -184,3 +184,32 @@ check('email account can delete', emailDelete.body.data?.deleted, true);
 const second = await signup();
 assert.ok(second.status < 300 && second.body.id !== first.body.id, 'Deleted email can create a new account');
 console.log('PASS same email can be registered again');
+
+// Operator path for a deletion request received outside the app (store web form).
+const adminCall = (name, payload) => http('/rest/v1/rpc/' + name, { ...admin, payload });
+const adminRemove = id => fetch(baseUrl + '/auth/v1/admin/users/' + id, {
+  method: 'DELETE', headers: { apikey: admin.key, authorization: 'Bearer ' + admin.token }, signal: AbortSignal.timeout(35000) });
+check('operator stage of unknown account is refused', (await adminCall('gm49_admin_prepare_delete', { person: randomUUID() })).body, 'NOT_FOUND');
+check('anon cannot stage an operator deletion', (await http('/rest/v1/rpc/gm49_admin_prepare_delete',
+  { payload: { person: host.id } })).status >= 400, true);
+
+const webUser = await guest('GM49 web request');
+await rpc(webUser, 'update_history_consent', { requestId: randomUUID(), scope: 'personal', consent: true });
+const unstaged = await adminRemove(webUser.id);
+assert.ok(unstaged.status >= 400, 'Admin API delete without staging must fail');
+check('unstaged admin delete leaves the account', sql(`select count(*) from auth.users where id='${webUser.id}'`), '1');
+check('operator stage succeeds', (await adminCall('gm49_admin_prepare_delete', { person: webUser.id })).body, 'READY');
+check('operator stage is repeatable', (await adminCall('gm49_admin_prepare_delete', { person: webUser.id })).body, 'READY');
+const staged = await adminRemove(webUser.id);
+assert.ok(staged.status < 300, 'Staged admin delete must succeed');
+check('operator delete removes auth user', sql(`select count(*) from auth.users where id='${webUser.id}'`), '0');
+check('operator delete removes profile', sql(`select count(*) from public.profiles where user_id='${webUser.id}'`), '0');
+check('operator delete removes consent', sql(`select count(*) from public.consents where user_id='${webUser.id}'`), '0');
+
+const busy = await guest('GM49 web busy');
+await api(busy, 'create', { requestId: randomUUID(), displayName: busy.name,
+  settings: { dishCount: 10, mealSlot: 'lunch', desiredAt: null }, preferences: prefs });
+check('operator stage refuses a host in a live room', (await adminCall('gm49_admin_prepare_delete', { person: busy.id })).body, 'ACTIVE_ROOM');
+const refusedAdmin = await adminRemove(busy.id);
+assert.ok(refusedAdmin.status >= 400, 'Admin delete of an account in a live room must fail');
+check('account in a live room is untouched', sql(`select count(*) from public.profiles where user_id='${busy.id}'`), '1');

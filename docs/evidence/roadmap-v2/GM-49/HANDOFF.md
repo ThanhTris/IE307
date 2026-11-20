@@ -21,3 +21,15 @@ node node_modules/supabase/dist/supabase.js functions serve delete-account --wor
 Trong terminal thứ hai đặt `GM03_QA_MANIFEST` trỏ tới manifest của run, chạy `node scripts/gm49_http_check.mjs` và bộ SQL `supabase/tests/database/GM-49_delete_account.test.sql`. Dừng Edge local rồi `npm run qa:stop -- --run-id gm49-qa`. Manual suite ở `supabase/tests/http/GM-49.http`.
 
 GM-52 áp migration trước khi deploy Edge và xác minh ledger, trigger, RPC grants và smoke Auth. Cấu hình gateway bỏ kiểm JWT chung cho route này vì Edge thực hiện xác thực và chỉ cho token đã xóa nhận lại xác nhận cùng yêu cầu còn hạn. Không đưa service role vào client. Kiểm audit log của dịch vụ theo cấu hình hosted. Khi rollback thì gỡ route trước, rồi áp migration nối tiếp sau review. Dữ liệu đã xóa không thể khôi phục bằng rollback code.
+
+## Yêu cầu xóa ngoài app (trang web của store)
+
+Google Play yêu cầu có đường xóa tài khoản trên web. Người vận hành xử lý từng yêu cầu bằng:
+
+```powershell
+$env:SUPABASE_URL = 'https://<ref>.supabase.co'
+$env:SUPABASE_SERVICE_ROLE_KEY = '<chỉ đặt trong phiên shell này>'
+node scripts/gm49_admin_delete.mjs --user-id <uuid> --yes
+```
+
+Script gọi `gm49_admin_prepare_delete`, rồi xóa user qua Admin API để trigger dọn dữ liệu. Phòng đang chơi trả `ACTIVE_ROOM`, thử lại sau khi phòng kết thúc. Ý định có hạn 15 phút; lỗi giữa chừng không commit gì và chạy lại được. Không xóa trực tiếp trên Dashboard khi chưa chạy bước này (khóa ngoại làm lệnh xóa thất bại). Người vận hành xác minh chủ tài khoản ngoài hệ thống trước; GM-50 ghi quy trình, GM-52 ghi cách giữ service key.
