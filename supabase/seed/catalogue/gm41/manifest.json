@@ -1,0 +1,53 @@
+{
+  "datasetVersion": "1.2.0",
+  "schemaVersion": "1.1.0",
+  "status": "draft",
+  "fixtureOnly": false,
+  "usageScope": "test_demo",
+  "bundleSha256": "57edc91164e953929b3868c8ea9567705af6cba96523b2350219108a69621b78",
+  "schemaSha256": "9d05a9ffb4f0878cab7bf5be47d8c3d011b962876847c2ed0eb56d03af702e23",
+  "counts": {
+    "dishes": 72,
+    "taxonomy": 39,
+    "dataSources": 75,
+    "priceReferences": 273,
+    "fieldEvidence": 290
+  },
+  "coverage": {
+    "meals": {
+      "breakfast": 21,
+      "lunch": 42,
+      "dinner": 22,
+      "snack": 26
+    },
+    "groups": {
+      "family:rice": 13,
+      "family:bun": 13,
+      "family:noodles": 8,
+      "family:hotpot": 6,
+      "family:banh_mi": 3,
+      "family:porridge": 3,
+      "snack:fried": 3,
+      "snack:savory_cake": 5,
+      "snack:mixed": 3,
+      "snack:seafood": 3,
+      "snack:sweet_cake": 3,
+      "snack:che": 3,
+      "snack:fruit": 3,
+      "snack:dry": 3
+    },
+    "regions": {
+      "vi_north": 6,
+      "vi_central": 9,
+      "vi_south": 4,
+      "vi_west": 6
+    }
+  },
+  "inputs": {
+    "supabase/seed/catalogue/dishes.json": "776b1e4998d0b170b51a7c39a4ead74461bdfd721f167dafddf7f072bf117a2f",
+    "supabase/seed/catalogue/manifest.json": "592062fbae266373dda828b1f39785a4dece08c4508b9266adf5c5e5c9089138",
+    "data-preparation/config/filter_taxonomy_v2.json": "9caa043b5a6a088fccf516f73292d65d3d5d6b47a59d2a6506225b65af9afbcd",
+    "data-preparation/config/taxonomy_v1.json": "6cb1191446b06d93bc0c2eceb9c75bc2ad0ad9c28a8b71dba0361df0cd5d8e89",
+    "data-preparation/editorial/gm41/dish_filter_enrichment.csv": "968874a208430fe473f597f4325ed01853c2408b17fba34eb88e045de38c7ed7"
+  }
+}

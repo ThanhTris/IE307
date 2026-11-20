@@ -153,7 +153,9 @@ def validate_csv(path: Path) -> list[str]:
                     errors.append(f'{where}: unknown flavour "{kind}"')
                 elif level not in ('present', 'none', 'unknown', 'low', 'medium', 'high'):
                     errors.append(f'{where}: flavour level "{level}" for {kind} must be present, none, low, medium, high or unknown')
-            if (row.get('fillFamilies') or row.get('fillRegions') or row.get('fillFlavors')) and not row.get('sourceRef', '').strip():
+            if row.get('fillTemperature', '') not in ('', 'hot', 'warm', 'cold', 'ambient', 'unknown'):
+                errors.append(f'{where}: unknown temperature')
+            if any(row.get(key) for key in ('fillFamilies', 'fillRegions', 'fillFlavors', 'fillMealSlots', 'fillTemperature')) and not row.get('sourceRef', '').strip():
                 errors.append(f'{where}: filled values need a sourceRef')
     return errors
 
