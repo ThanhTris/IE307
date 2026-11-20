@@ -1,5 +1,5 @@
 const url = Deno.env.get('SUPABASE_URL') ?? '';
-const publishableKey = Deno.env.get('SUPABASE_ANON_KEY') ?? '';
+const publishableKey = Deno.env.get('SUPABASE_ANON_KEY') ?? Deno.env.get('SUPABASE_PUBLISHABLE_KEY') ?? '';
 const serviceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '';
 const uuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
@@ -34,6 +34,8 @@ async function fingerprint(token: string): Promise<string> {
 
 Deno.serve(async request => {
   if (request.method !== 'POST') return failure(405, 'METHOD_NOT_ALLOWED');
+  // A missing key would make GoTrue reject every valid token as AUTH_REQUIRED; fail loudly instead.
+  if (!url || !publishableKey || !serviceKey) return failure(500, 'SERVER_MISCONFIGURED');
   const token = request.headers.get('authorization')?.match(/^Bearer ([\w-]+\.[\w-]+\.[\w-]+)$/i)?.[1];
   if (!token) return failure(401, 'AUTH_REQUIRED');
 

@@ -19,6 +19,12 @@ async function main() {
   const base = (env.SUPABASE_URL ?? '').replace(/\/$/, '');
   const key = env.SUPABASE_SERVICE_ROLE_KEY ?? '';
   if (!base || !key) fail('Set SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY in the environment.');
+  let target;
+  try { target = new URL(base); } catch { fail('SUPABASE_URL is not a valid URL.'); }
+  const loopback = ['127.0.0.1', 'localhost', '[::1]'].includes(target.hostname);
+  if (target.protocol !== 'https:' && !(loopback && target.protocol === 'http:')) {
+    fail('SUPABASE_URL must use https (plain http is allowed only for 127.0.0.1 or localhost); the service key is not sent.');
+  }
 
   const headers = { apikey: key, authorization: 'Bearer ' + key, 'content-type': 'application/json' };
   const staged = await fetch(base + '/rest/v1/rpc/gm49_admin_prepare_delete', {
