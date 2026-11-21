@@ -1,0 +1,23 @@
+# GM-48 timeout smoke. Run scripts/gm48_hosted_tick_check.py to build the
+# two-user fixture, assert the wait transition, and replay the original ACK.
+# These requests use synthetic fixtures and normal users. No admin key is needed.
+@baseUrl = http://127.0.0.1:55481
+@publicKey = REPLACE_WITH_QA_PUBLIC_KEY
+@hostToken = REPLACE_WITH_QA_HOST_JWT
+@roomId = REPLACE_WITH_TEST_ROOM_UUID
+
+### Verify waiting before the 60-second deadline, then the terminal snapshot after it
+POST {{baseUrl}}/rest/v1/rpc/dish_session
+apikey: {{publicKey}}
+Authorization: Bearer {{hostToken}}
+Content-Type: application/json
+
+{"command":"snapshot","payload":{"contractVersion":"dish-session-v4/roadmap-v2/GM-07.B-supplement","roomId":"{{roomId}}"}}
+
+### After server tick, HTTP 200 and data.status DECIDED with one submitted ballot
+POST {{baseUrl}}/rest/v1/rpc/dish_session
+apikey: {{publicKey}}
+Authorization: Bearer {{hostToken}}
+Content-Type: application/json
+
+{"command":"result","payload":{"contractVersion":"dish-session-v4/roadmap-v2/GM-07.B-supplement","roomId":"{{roomId}}"}}
