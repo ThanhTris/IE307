@@ -27,6 +27,6 @@ create trigger gm35_sync_account_display_name
   execute function gm22_private.sync_account_display_name();
 
 insert into public.schema_versions(schema_version, contract_id, food_contract_version, core_contract_version, upstream_revision)
-values ('0.31.7', 'roadmap-v2/GM-35/profile-display-name', '1.1.0', '1.1.0', 'GM-22/0022; base 0061');
+values ('0.31.9', 'roadmap-v2/GM-35/profile-display-name', '1.1.0', '1.1.0', 'GM-22/0022; base 0064');
 
 commit;

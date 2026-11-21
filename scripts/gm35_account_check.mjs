@@ -16,10 +16,10 @@ const read = async name => JSON.parse(await readFile(resolve(workdir, name), 'ut
 const [state, manifest, credentials] = await Promise.all([read('state.json'), read('manifest.json'), read('credentials.private.json')]);
 assert.equal(state.ownerUuid, manifest.ownerUuid);
 assert.equal(credentials.apiUrl, `http://127.0.0.1:${state.ports.api}`);
-assert.ok(manifest.migrationLedger.some(({ version, name }) => version === '0062' && name === 'gm35_profile_display_name'),
-  'The verified QA ledger must include migration 0062_gm35_profile_display_name.');
-assert.ok(manifest.schemaVersions.some(row => row.schema_version === '0.31.7' && row.contract_id === 'roadmap-v2/GM-35/profile-display-name'),
-  'The verified QA schema registry must include GM-35 at 0.31.7.');
+assert.ok(manifest.migrationLedger.some(({ version, name }) => version === '0066' && name === 'gm35_profile_display_name'),
+  'The verified QA ledger must include migration 0066_gm35_profile_display_name.');
+assert.ok(manifest.schemaVersions.some(row => row.schema_version === '0.31.9' && row.contract_id === 'roadmap-v2/GM-35/profile-display-name'),
+  'The verified QA schema registry must include GM-35 at 0.31.9.');
 assert.ok(Number.isInteger(state.ports.mail), 'Start QA with --mail-port.');
 const mail = `http://127.0.0.1:${state.ports.mail}`;
 const suffix = randomUUID().slice(0, 12);
