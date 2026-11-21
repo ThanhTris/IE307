@@ -1,6 +1,6 @@
 # GM-35 — Đối chiếu Figma
 
-Đã đọc design context và ảnh render của các frame tài khoản ngày 2026-11-16. Các sửa đổi Cài đặt tham chiếu ảnh export mục 16–17. Người kiểm thử xác nhận đã hoàn thành lượt kiểm Expo Go ngày 2026-11-19. Hồ sơ chưa có ảnh app, thiết bị và viewport để đối chiếu từng frame. Kích thước thiết kế tham chiếu 412dp, font scale chuẩn. Android vẽ status bar và thanh điều hướng hệ thống. Xem [CHECKS](CHECKS.md) để phân biệt kết quả tự động và lượt thử thủ công.
+Đã đọc design context và ảnh render của các frame tài khoản ngày 2026-11-16. Các sửa đổi Cài đặt tham chiếu ảnh export mục 16–17. Người kiểm thử xác nhận đã hoàn thành lượt kiểm Expo Go ngày 2026-11-19. Ảnh AVD đã có cho đăng ký, G04, một nhánh lỗi G05 và Cài đặt ở cỡ chữ lớn trên các revision trước. Kích thước thiết kế tham chiếu 412dp, font scale chuẩn. Android vẽ status bar và thanh điều hướng hệ thống. Xem [CHECKS](CHECKS.md) để phân biệt kết quả tự động và lượt thử thủ công.
 
 | Frame | Route / trạng thái | Kỳ vọng để đối chiếu trên Expo |
 | --- | --- | --- |
@@ -21,14 +21,16 @@
 
 ## Bàn giao lượt AVD cho Trí
 
-Trí thực hiện và ghi bằng chứng AVD nối Auth, REST và worker QA local trên revision cuối của PR #182. Các ca trong bảng đang chờ lượt kiểm này. Xem [cách dựng QA](HANDOFF.md#kiểm-thử-trên-expo-go-với-mã-mailpit) và [kết quả đã ghi của GM-35](CHECKS.md).
+Trí thực hiện và ghi bằng chứng AVD nối Auth, REST và worker QA local trên HEAD của PR #182 sau khi nhận code và migration `1a5d335`. Trước lượt kiểm, xác nhận Metro đã sẵn sàng và Expo Go tải được bundle, rồi xác nhận API và Mailpit của phiên QA đang chạy. Tất cả các ca trong bảng chờ bằng chứng trên revision này. [Cách dựng QA](HANDOFF.md#kiểm-thử-trên-expo-go-với-mã-mailpit) · [Kết quả đã ghi](CHECKS.md)
 
-| Hạng mục trên AVD nối QA thật | Bằng chứng cần ghi |
-| --- | --- |
-| Đăng nhập, xác minh đăng ký và recovery | Ghi SHA app, phiên Android/API, phiên Expo Go/SDK và mã lần chạy QA. Dùng thư Mailpit để xác minh và đặt lại mật khẩu, rồi đăng nhập bằng mật khẩu mới. Chụp các màn ở 412dp. |
-| G04 pending, lỗi, thử lại | Ghi đầu vào tên mới và lỗi có kiểm soát trên đường tới QA. Chụp pending, lỗi vẫn giữ tên và lần thử lại có ACK. Đối chiếu các frame G04 ở 412dp. |
-| G05 pending và lỗi | Bấm lưu lần hai khi lần đầu còn pending, kiểm một lần gửi. Khi lần đầu lỗi, chụp cả ba ô đã xóa và nút lưu hoạt động lại. Đối chiếu các frame G05 ở 412dp, giữ mật khẩu ngoài ảnh và log. |
-| 320/360dp, chữ 200%, TalkBack, bàn phím, Back | Ghi kết quả thực tế theo từng cấu hình. Kiểm trường và nút còn tới được khi cuộn, nhãn/lỗi được đọc, nút Back khi bàn phím mở và khi đang gửi, nội dung tránh thanh hệ thống. |
+| Hạng mục trên AVD nối QA thật | Bằng chứng trước khi ghép `main` | Bằng chứng cần ghi trên HEAD |
+| --- | --- | --- |
+| Đăng nhập, xác minh đăng ký và recovery | Đăng ký và xác minh OTP đã chạy. Recovery đã gửi OTP. Đăng nhập lại bằng mật khẩu và hoàn tất recovery từ UI vẫn chờ. | Đăng xuất rồi đăng nhập bằng mật khẩu. Dùng thư Mailpit để xác minh đăng ký và hoàn thành đặt lại mật khẩu từ UI, sau đó đăng nhập bằng mật khẩu mới. Ghi SHA app, thiết bị/Android/API, phiên Expo Go/SDK và run ID QA. |
+| G04 pending, lỗi, thử lại | Có ảnh pending, lỗi 503 giữ tên và lần retry cập nhật được tên trong QA. | Kiểm chặn gửi lặp, tên giữ nguyên sau lỗi có kiểm soát và lần thử lại đến GoTrue có ACK. Chụp các trạng thái đối chiếu G04 ở 412dp. |
+| G05 pending và lỗi | Đã kiểm một request trong lúc pending. Nhánh Auth từ chối mật khẩu hiện tại có ảnh cả ba ô trống. | Kiểm một request khi bấm lặp trong lúc pending. Sau lỗi API 503 ở bước ghi, chụp cả ba ô trống và nút lưu mở lại. Giữ mật khẩu ngoài ảnh và log. |
+| Ảnh đối chiếu 412dp | Đã có một số ảnh app ở 412dp. Sai khác G04 về vị trí toast và nút cần Trí xác nhận. | Ghép ảnh app với frame Figma theo từng ca tài khoản, G04 và G05. Ghi viewport theo dp và sai khác quan sát được. |
+| 320dp, 360dp, chữ 200%, bàn phím, Back và safe area | Đã kiểm riêng Cài đặt ở 320dp với chữ 200% trên `3675d42`. | Ghi 320dp và 360dp với chữ chuẩn và 200%. Kiểm trường và nút còn tới được khi cuộn, nội dung tránh thanh hệ thống, bàn phím và Back khi đang nhập hoặc chờ phản hồi. |
+| TalkBack | Chưa có kết quả. | Kiểm thứ tự focus, nhãn ô nhập, đọc lỗi và trạng thái nút cập nhật khi pending. |
 
 Lượt 19/11/2026 trên `1561d90` đã boot AVD API 37, 1080 × 2400, 420 dpi, font scale 1,0 và xác nhận Expo Go 58.0.5. Metro QA chưa mở ở `8082`; bảng ca trên vẫn **Not run** cho lượt này và chưa có ảnh app tại 412/360/320dp. Lượt Expo Go thủ công đã ghi ở trên vẫn là bằng chứng của lần kiểm trước.
 

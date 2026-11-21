@@ -73,7 +73,7 @@ Realtime đạt 22/22 khi chạy lại. Lượt đầu fail ở assertion sau kh
 
 `Medium_Phone_API_37.0` boot với Expo Go 58.0.5. Các ca tương tác trong app, G04/G05, ảnh đối chiếu và trợ năng vẫn **Not run** tại lần ghi này vì Metro QA trên cổng 8082 chưa khởi động. Merge gate với base `5bbee5d` vẫn `BLOCKED_ON_BASE` ở artifact GM-16 `mobile/src/data/auth/session.ts`. Log và ma trận local nằm trong `review-results/gm35-avd-092834100/`.
 
-## Bàn giao các mục còn chặn merge
+## Bàn giao trước khi GM-16 vào main
 
 - **GM-16.** [Patch producer](GM16_PRODUCER.patch) tách `session.ts` và hai guard Auth từ baseline `5bbee5d`. `git apply --check` đạt trên baseline. Checkout thử của producer đạt 69/69 ca `authSession` và `authTransport`, cùng TypeScript. Ca hồi quy đổi phiên trên nhánh GM-35 cũng đạt khi chạy riêng. Trí chốt ranh giới để tiếp nhận vào `main`. Sau bàn giao, chạy lại ca đổi phiên và merge gate trên revision đã đồng bộ. [HANDOFF](HANDOFF.md#bàn-giao-producer-gm-16)
 - **AVD.** Trí sẽ chạy và ghi bằng chứng trên revision cuối, gồm các luồng tài khoản, G04/G05, ảnh Figma/app ở 412dp và cấu hình trợ năng. Trạng thái chờ lượt AVD. [FIGMA_PARITY](FIGMA_PARITY.md#bàn-giao-lượt-avd-cho-trí)
@@ -94,3 +94,29 @@ App revision `3675d42` trên cùng AVD và QA. G04 trả lỗi 503 có kiểm so
 G05 với mật khẩu hiện tại cố ý sai: GoTrue từ chối bước xác thực, app báo lỗi ngay dưới ô hiện tại, xóa cả ba trường và nút lưu hoạt động lại. Lượt trước có bằng chứng riêng về chặn gửi lặp và một request ghi bị proxy trả 503. Ca xác minh cả ba trường sau 503 vẫn chờ. [Ảnh lỗi Auth](avd-20261119/avd-g05-invalid-current-412.png)
 
 Recovery trong app gửi yêu cầu tới Auth QA, Mailpit có thư cho đúng tài khoản thử. Bước lưu mật khẩu mới và đăng nhập lại trên AVD chờ thao tác trực tiếp.
+
+## Kiểm sau khi nhận GM-16 và đổi migration
+
+Ngày 21/11/2026, revision `1a5d335` gồm `main` `ebd21af` và migration mới. #183 đã merge ở `a462a8c`. `session.ts` khớp chính xác với `origin/main`. Hai conflict ở `transport.ts` và `validation.ts` giữ guard từ GM-16 và các hàm tài khoản GM-35. So sánh cây file sau merge cho thấy `historyRepository.ts` khớp `main` và phần migration của PR chỉ thêm `0066`.
+
+QA sạch `gm35-schema66-1121`, Supabase CLI `2.120.0`, Auth/REST `127.0.0.1:54481`, Mailpit `127.0.0.1:54484`. `qa:verify` đối chiếu 52 migration trong ledger với manifest và xác nhận worker có heartbeat. Ledger và schema registry của phiên QA ghi:
+
+| Migration | Schema | Contract |
+| --- | --- | --- |
+| `0061_gm45_room_realtime.sql` | `0.31.6` | `dish-session-v4/roadmap-v2/GM-45.1` |
+| `0062_gm46_has_recent_history.sql` | `0.31.7` | `dish-session-v4/roadmap-v2/GM-46.1` |
+| `0064_gm49_delete_account.sql` | `0.31.8` | `release-v1/2026-11-20/GM-49.1` |
+| `0065_gm48_hosted_tick_schedule.sql` | — | GM-48 dùng `pg_cron` trên hosted |
+| `0066_gm35_profile_display_name.sql` | `0.31.9` | `roadmap-v2/GM-35/profile-display-name` |
+
+`0062_gm35_profile_display_name.sql` và `0.31.7` trong các lượt QA trước phản ánh revision cũ. Phiên mới kiểm `0066` và `0.31.9` với `upstream_revision = 'GM-22/0022; base 0064'`.
+
+- Runner Auth/Mailpit đạt 5/5 nhóm, gồm xác minh một lần, đăng nhập bằng mật khẩu, liên kết khách giữ UUID, đổi và recovery mật khẩu. Sau ACK đổi tên, chính chủ và tài khoản bạn bè đọc tên mới. UUID, mã bạn bè, avatar seed và quan hệ giữ nguyên. Smoke GM-45 Realtime đạt 22/22 trên cùng QA. Đã dọn worker, Supabase và network của phiên thử.
+- TypeScript, `check:architecture`, 20/20 ca runner ở repo gốc, `validate_repository.py` và `task_readiness.py --check-docs` đạt. Jest tập trung đạt 115/115 ca trong `authSession`, `authTransport` và `pr155RemainingFlows`. Ca đổi phiên giữ kết quả request cũ dừng trước transport. Sau khi ghép, fixture kiểm lịch sử gần đây của GM-46 được đặt thành tài khoản đã bật lưu lịch sử để kiểm đúng đường đọc. Fixture phiên khách giữ mặc định khách cho các ca khác. Ba suite UI tài khoản/hồ sơ đạt 18/18 khi chạy lại với timeout 60 giây sau một timeout ở lượt Windows mặc định.
+- Lượt Jest toàn bộ trên Windows ghi timeout ở `liveDishResultScreen` cho ca `renders DECIDED result with Top 3 podium, winner and price`. Một lượt đối chứng chỉ chạy ca này trên checkout `main` `ebd21af` cũng timeout với giới hạn 30 giây. Kết quả CI của HEAD PR được theo dõi riêng với lượt Windows này.
+- `python scripts/task_readiness.py --task GM-35 --gate merge --base-ref origin/main --verify-outputs` đọc Project #2 và trả `READY_FOR_MERGE_REVIEW` trên `ebd21af`. Blocker `BLOCKED_ON_BASE` của GM-16 đã hết. Checker xác nhận dependency và artifact. AVD bắt buộc vẫn cần kết quả thực tế trước merge.
+- Rà trùng lặp trên base `ebd21af`: #208 đã merge với `0065`. PR #209 chỉ sửa tài liệu GM-51 và không giao nhau với file của #182. Kế hoạch GM-54 còn tham chiếu `0065_gm54_app_min_version.sql`, cần chọn số còn trống khi task đó triển khai. [Kế hoạch GM-54](../../../../tasks/backlog/GM-54.md)
+
+### Bằng chứng AVD còn thiếu trên revision cuối
+
+Trí thực hiện lượt Chặng 3A trên HEAD của PR #182 sau `1a5d335`. Các lượt AVD ở trên vẫn được lưu theo SHA đã chạy. Bằng chứng mới cần có đăng nhập lại bằng mật khẩu, xác minh và recovery hoàn chỉnh từ UI với mã Mailpit, G04 lỗi và retry, G05 chặn gửi lặp và ảnh ba ô trống sau lỗi ghi API, ảnh đối chiếu 412dp, 320/360dp, chữ 200%, TalkBack, bàn phím, Back và safe area. Các ca này đang **Not run** trên revision cuối, chờ lượt AVD của Trí. [Ma trận](FIGMA_PARITY.md#bàn-giao-lượt-avd-cho-trí)
