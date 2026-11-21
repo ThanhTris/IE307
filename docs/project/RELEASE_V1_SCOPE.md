@@ -7,6 +7,7 @@ Ngày chốt: 2026-11-20, theo chỉ dẫn của chủ dự án Trí (ThanhTris)
 - **Nền tảng:** Android và iOS. Nhóm có iPhone, máy Mac và tài khoản Apple Developer. Tài khoản Google Play là cá nhân, nên phải chạy thử kín với ít nhất 12 tester trong 14 ngày liên tục trước khi lên production (kiểm lại điều kiện hiện hành trên Play Console).
 - **Frontend dừng ở luồng tài khoản** (GM-35 của Tuấn) kèm xóa tài khoản và liên kết pháp lý (GM-53). BE làm đủ đến mức đó, gồm GM-46.
 - **Data dừng ở** GM-41 (món đa nhãn, độ phủ theo bữa, ăn vặt) và GM-47 (mô tả, ảnh có quyền), rồi phát hành catalogue production ở GM-51.
+- **Catalogue lên store (bổ sung 2026-11-21):** tối thiểu 250 món (mỗi bữa ≥ 60, ăn vặt ≥ 80, mỗi nhóm ≥ 10, mỗi miền ≥ 25, mỗi vị ≥ 15) và 100% món có ảnh có quyền dùng. GM-41 và GM-47 chuyển về Needs Update để bổ sung; GM-51 chỉ phát hành khi cả hai Done lại.
 - **Backend:** Supabase gói miễn phí, một project staging và một project production. Một workflow gọi định kỳ để project không bị tạm dừng; phần chuyển vòng khi hết giờ chạy bằng pg_cron (GM-48), không còn phụ thuộc worker chạy trên máy.
 - **Places** giữ ở mức miễn phí: khóa key theo app và API, đặt quota mỗi ngày dưới hạn mức miễn phí (GM-54, GM-59, GM-60).
 - **Bộ test case** là mục quan trọng nhất cho báo cáo: GM-55 đến GM-58.
