@@ -1,8 +1,9 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useState, useSyncExternalStore, type PropsWithChildren } from 'react';
 import { router, type Href } from 'expo-router';
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
+import { Text } from '../shared/ui/forms/ScaledText';
 import * as SecureStore from 'expo-secure-store';
-import { createAuthenticatedApiClient, createSecureSessionStorage } from '../data/auth';
+import { createAuthenticatedApiClient, createSecureSessionStorage, type AccountService } from '../data/auth';
 import type { SessionIssue, SessionSnapshot, SessionStatus } from '../features/rooms/services/sessionState';
 import type { SessionUser } from '../data/api/contracts';
 import { clearPrivateHistoryCache } from '../features/history/services/historyRepository';
@@ -20,6 +21,7 @@ import {
 
 export interface RoomRepositoryContextValue {
   repository: RoomRepository;
+  account?: AccountService;
   status: SessionStatus;
   issue: SessionIssue;
   user: SessionUser | null;
@@ -72,28 +74,29 @@ function ConfiguredRoomRepositoryProvider({
 }: RoomRepositoryProviderProps) {
   const baseUrl = customBaseUrl ?? process.env.EXPO_PUBLIC_SUPABASE_URL ?? 'http://127.0.0.1:54321';
 
-  const repository = useMemo<RoomRepository>(() => {
-    if (customRepository) return customRepository;
-    {
-      const storage = createSecureSessionStorage();
-      const { session, client } = createAuthenticatedApiClient({
-        baseUrl,
-        publicKey,
-        storage,
-        clearPrivateData: async () => {
-          clearPrivateHistoryCache();
-          try {
-            await SecureStore.deleteItemAsync(PRIVATE_CACHE_KEY);
-          } catch {
-            // SecureStore may be unavailable in test environments without native modules.
-          }
-        },
-      });
-      return Object.assign(
-        new LiveRoomRepository({ client, session, sessionStorage: storage, requestIdGenerator: createDurableRequestId }),
-        createActiveRoomReader(client.callRpc.bind(client)),
-      );
-    }
+  const { repository, account } = useMemo<{ repository: RoomRepository; account?: AccountService }>(() => {
+    if (customRepository) return { repository: customRepository };
+    const storage = createSecureSessionStorage();
+    const { session, client, account } = createAuthenticatedApiClient({
+      baseUrl,
+      publicKey,
+      storage,
+      onAccountSessionChange: (user, previous) => {
+        if (previous && previous.id !== user?.id) clearVoteSession(previous.id);
+        liveRepository.publishAccountSession(user);
+      },
+      clearPrivateData: async () => {
+        clearPrivateHistoryCache();
+        try {
+          await SecureStore.deleteItemAsync(PRIVATE_CACHE_KEY);
+        } catch {
+          // SecureStore may be unavailable in test environments without native modules.
+        }
+      },
+    });
+    const liveRepository = new LiveRoomRepository({ client, session, sessionStorage: storage, requestIdGenerator: createDurableRequestId });
+    const repository = Object.assign(liveRepository, createActiveRoomReader(client.callRpc.bind(client)));
+    return { repository, account };
   }, [customRepository, baseUrl, publicKey]);
 
   const subscribe = useCallback((listener: () => void) => repository.subscribeSession(listener), [repository]);
@@ -202,6 +205,7 @@ function ConfiguredRoomRepositoryProvider({
 
   const value = useMemo<RoomRepositoryContextValue>(() => ({
     repository,
+    account,
     status: snapshot.status,
     issue: snapshot.issue,
     user: snapshot.user,
@@ -210,7 +214,7 @@ function ConfiguredRoomRepositoryProvider({
     restoreSession,
     ensureSession,
     logout,
-  }), [repository, snapshot, isInitializing, restoreSession, ensureSession, logout]);
+  }), [repository, account, snapshot, isInitializing, restoreSession, ensureSession, logout]);
 
   const roomUpdates = useMemo(() => createRoomSubscription({
     baseUrl,

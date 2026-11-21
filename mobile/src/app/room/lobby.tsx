@@ -24,7 +24,8 @@ export default function LobbyRoute() {
       createRequestId={action => createDurableRequestId(`lobby_${action}`)}
       onStartRound={snapshot => router.replace({ pathname: '/room/vote', params: { roomId: snapshot.roomId } })}
       settingsGateway={settingsGateway}
-      autoInvite={autoInvite}
+      autoInvite={live.user?.isGuest ? undefined : autoInvite}
+      canInviteFriends={!live.user?.isGuest}
       onEditPreferences={snapshot => router.push({ pathname: '/room/setup', params: { roomId: snapshot.roomId, stage: 'preferences' } })}
     />
   </RequireActiveSession>;

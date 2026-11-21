@@ -1,6 +1,7 @@
 import { CONTAINER_STYLE } from '../layout/ScreenContainer';
 import { createContext, useCallback, useContext, useEffect, useMemo, useState, type PropsWithChildren } from 'react';
-import { Animated, Pressable, StyleSheet, Text, View } from 'react-native';
+import { Animated, Pressable, StyleSheet, View } from 'react-native';
+import { Text } from '../forms/ScaledText';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { radii, spacing, typography } from '../../theme/tokens';
 import { AppIcon } from '../icons/AppIcon';

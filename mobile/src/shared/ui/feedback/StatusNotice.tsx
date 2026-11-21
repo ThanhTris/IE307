@@ -1,4 +1,5 @@
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
+import { Text } from '../forms/ScaledText';
 import { AppButton } from '../buttons/AppButton';
 import { AppIcon } from '../icons/AppIcon';
 import type { ComponentThemeProps } from '../types';

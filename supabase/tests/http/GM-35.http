@@ -1,0 +1,83 @@
+@baseUrl = http://127.0.0.1:54385
+@anonKey = <owned-QA-publishable-key>
+@email = <new-fixture-email>
+@password = <fixture-password>
+@signupCode = <code-from-Mailpit>
+@recoveryCode = <code-from-Mailpit>
+@recoveryToken = <access-token-from-recovery-verification>
+@newPassword = <different-fixture-password>
+@ownerToken = <verified-test-account-token>
+@friendToken = <second-verified-test-account-token>
+@ownerFriendCode = <code-from-get-my-social-identity>
+
+### Register. GoTrue returns a user and sends a verification code.
+POST {{baseUrl}}/auth/v1/signup
+apikey: {{anonKey}}
+Content-Type: application/json
+
+{"email":"{{email}}","password":"{{password}}","data":{"display_name":"QA tài khoản"}}
+
+### Verify email. Read the code from the QA Mailpit inbox.
+POST {{baseUrl}}/auth/v1/verify
+apikey: {{anonKey}}
+Content-Type: application/json
+
+{"email":"{{email}}","token":"{{signupCode}}","type":"signup"}
+
+### Sign in. Before verification this request must fail with email_not_confirmed.
+POST {{baseUrl}}/auth/v1/token?grant_type=password
+apikey: {{anonKey}}
+Content-Type: application/json
+
+{"email":"{{email}}","password":"{{password}}"}
+
+### Recovery. Known and unknown email both receive an empty 200 response.
+POST {{baseUrl}}/auth/v1/recover
+apikey: {{anonKey}}
+Content-Type: application/json
+
+{"email":"{{email}}"}
+
+### Verify recovery code. Use the returned access token for the next request.
+POST {{baseUrl}}/auth/v1/verify
+apikey: {{anonKey}}
+Content-Type: application/json
+
+{"email":"{{email}}","token":"{{recoveryCode}}","type":"recovery"}
+
+### Set the new password. The old password must fail on the login route.
+PUT {{baseUrl}}/auth/v1/user
+apikey: {{anonKey}}
+Authorization: Bearer {{recoveryToken}}
+Content-Type: application/json
+
+{"password":"{{newPassword}}"}
+
+### Revoke the recovery session.
+POST {{baseUrl}}/auth/v1/logout?scope=local
+apikey: {{anonKey}}
+Authorization: Bearer {{recoveryToken}}
+
+### Rename the profile using the owner's session; expect the new user_metadata in the ACK.
+PUT {{baseUrl}}/auth/v1/user
+apikey: {{anonKey}}
+Authorization: Bearer {{ownerToken}}
+Content-Type: application/json
+
+{"data":{"display_name":"Tên QA đã cập nhật"}}
+
+### A second account with an existing friendship must see the updated name on reload.
+POST {{baseUrl}}/rest/v1/rpc/list_friends
+apikey: {{anonKey}}
+Authorization: Bearer {{friendToken}}
+Content-Type: application/json
+
+{}
+
+### The same code must resolve the new name and report the existing friendship.
+POST {{baseUrl}}/rest/v1/rpc/find_partner_by_code
+apikey: {{anonKey}}
+Authorization: Bearer {{friendToken}}
+Content-Type: application/json
+
+{"friend_code":"{{ownerFriendCode}}"}

@@ -5,9 +5,13 @@ import { PushLifecycle } from '../features/inbox/components/PushLifecycle';
 import { useShellTheme } from '../shared/lib/useShellTheme';
 
 export default function RootLayout() {
+  return <AppProviders><RootNavigation /></AppProviders>;
+}
+
+function RootNavigation() {
   const { colors, dark } = useShellTheme();
   return (
-    <AppProviders>
+    <>
       <StatusBar style={dark ? 'light' : 'dark'} />
       <PushLifecycle />
       <Stack screenOptions={{ headerShown: false, animation: 'slide_from_right', animationDuration: 260, contentStyle: { backgroundColor: colors.background } }}>
@@ -17,6 +21,6 @@ export default function RootLayout() {
         <Stack.Screen name="history" options={{ animation: 'fade', animationDuration: 200 }} />
         <Stack.Screen name="profile" options={{ animation: 'fade', animationDuration: 200 }} />
       </Stack>
-    </AppProviders>
+    </>
   );
 }

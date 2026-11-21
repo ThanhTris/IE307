@@ -1,5 +1,6 @@
 import type { ReactNode } from 'react';
-import { Animated, KeyboardAvoidingView, Modal, Platform, Pressable, StyleSheet, Text, View, type StyleProp, type ViewStyle } from 'react-native';
+import { Animated, KeyboardAvoidingView, Modal, Platform, Pressable, StyleSheet, View, type StyleProp, type ViewStyle } from 'react-native';
+import { Text } from '../forms/ScaledText';
 import { DIALOG_MAX_WIDTH } from '../layout/ScreenContainer';
 import { NotificationHost } from '../feedback/NotificationBanner';
 import { ToastHost } from '../feedback/Toast';

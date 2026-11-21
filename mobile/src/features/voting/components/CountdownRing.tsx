@@ -1,4 +1,5 @@
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
+import { Text } from '../../../shared/ui/forms/ScaledText';
 import Svg, { Circle } from 'react-native-svg';
 import type { Palette } from '../../../shared/ui';
 

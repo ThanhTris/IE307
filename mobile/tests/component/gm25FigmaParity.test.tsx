@@ -341,8 +341,8 @@ describe('GM-25 Figma UI Parity Suite (Issue #86)', () => {
       const gateway = createLiveDishSetupGateway(repo);
       const read = await gateway.read();
       expect(read.connected).toBe(true);
-      expect(read.friends).toHaveLength(1);
-      expect(read.friends[0]?.label).toBe('Linh');
+      expect(read.friends).toEqual([]);
+      expect(client.listFriends).not.toHaveBeenCalled();
 
       const reply = await gateway.write({
         kind: 'settings',

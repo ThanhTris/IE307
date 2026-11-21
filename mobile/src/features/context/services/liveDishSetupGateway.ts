@@ -148,16 +148,20 @@ export function createLiveDishSetupGateway(
       const currentUser = repository.getCurrentUser();
 
       let friends: { id: string; label: string }[] = [];
-      try {
-        const friendsRes = await repository.listFriends();
-        if (friendsRes.ok && Array.isArray(friendsRes.data)) {
-          friends = friendsRes.data.map(f => ({ id: f.friendUserId || f.id, label: f.displayName }));
+      if (!currentUser?.isGuest) {
+        try {
+          const friendsRes = await repository.listFriends();
+          if (friendsRes.ok && Array.isArray(friendsRes.data)) {
+            friends = friendsRes.data.map(f => ({ id: f.friendUserId || f.id, label: f.displayName }));
+          }
+        } catch {
+          // Friends optional in read
         }
-      } catch {
-        // Friends optional in read
       }
 
-      const consentRes = await repository.getHistoryConsent();
+      const consentRes = currentUser?.isGuest
+        ? { ok: true as const, data: { personal: false, group: false } }
+        : await repository.getHistoryConsent();
       if (!consentRes.ok) throw new Error(`Failed to read account history consent: ${consentRes.error.messageKey}`);
       const historyConsent = consentRes.data;
       let accountDefaults = emptyPreferences(historyConsent.personal);

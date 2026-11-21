@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Redirect, useRouter } from 'expo-router';
-import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { Pressable, ScrollView, StyleSheet, View } from 'react-native';
+import { Text } from '../../shared/ui/forms/ScaledText';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useShellTheme } from '../../shared/lib/useShellTheme';
 import { FinalRoundScreen } from '../../features/voting';

@@ -3,7 +3,8 @@ import Ionicons from '@expo/vector-icons/Ionicons';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import { MaterialSymbol, type MaterialSymbolName } from './MaterialSymbol';
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
-import { Image, StyleSheet, Text, type ImageSourcePropType } from 'react-native';
+import { Image, StyleSheet, type ImageSourcePropType } from 'react-native';
+import { Text } from '../forms/ScaledText';
 import { AppIcon, type AppIconName } from './AppIcon';
 
 export type FoodIconName = keyof typeof MaterialCommunityIcons.glyphMap;

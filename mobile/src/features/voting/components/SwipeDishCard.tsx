@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { Animated, Image, PanResponder, Pressable, StyleSheet, Text, View, useWindowDimensions } from 'react-native';
+import { Animated, Image, PanResponder, Pressable, StyleSheet, View, useWindowDimensions } from 'react-native';
+import { Text } from '../../../shared/ui/forms/ScaledText';
 import type { PoolDish } from '../../../data/api';
 import { AppIcon, type Palette, type VoteValue } from '../../../shared/ui';
 import { ChoiceIconView } from '../../../shared/ui/icons/ChoiceIcon';

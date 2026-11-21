@@ -21,6 +21,8 @@ test('QA ports are isolated from app ports and allow the planned alternate pair'
   assert.throws(() => validatePorts(54321, 54372), /QA_APP_PORT_FORBIDDEN/);
   assert.throws(() => validatePorts(54371, 54371), /QA_PORTS_INVALID/);
   assert.throws(() => validatePorts(80, 54372), /QA_PORTS_INVALID/);
+  assert.deepEqual(validatePorts(54361, 54362, 54364), { api: 54361, db: 54362, mail: 54364 });
+  assert.throws(() => validatePorts(54361, 54362, 54362), /QA_MAIL_PORT_INVALID/);
 });
 
 test('CLI requires explicit run id and rejects unknown flags', () => {
@@ -30,6 +32,16 @@ test('CLI requires explicit run id and rejects unknown flags', () => {
   assert.throws(() => parseArgs(['verify']), /QA_RUN_ID_REQUIRED/);
   assert.throws(() => parseArgs(['start', '--run-id', '../app']), /QA_RUN_ID_INVALID/);
   assert.throws(() => parseArgs(['status', '--run-id', 'demo', '--all']), /QA_ARGUMENT_INVALID/);
+});
+
+test('Gmail SMTP is a start-only alternative to the Mailpit port', () => {
+  const start = ['start', '--run-id', 'demo-1'];
+  const gmail = parseArgs([...start, '--gmail-smtp']);
+  assert.equal(gmail.gmailSmtp, true);
+  assert.deepEqual(gmail.ports, DEFAULT_QA_PORTS);
+  assert.equal(parseArgs([...start, '--mail-port', '54364']).ports.mail, 54364);
+  assert.throws(() => parseArgs([...start, '--gmail-smtp', '--mail-port', '54364']), /QA_EMAIL_MODES_MUTUALLY_EXCLUSIVE/);
+  assert.throws(() => parseArgs(['verify', '--run-id', 'demo-1', '--gmail-smtp']), /QA_ARGUMENT_INVALID/);
 });
 
 test('resource ownership checks require exact project, name, and workdir labels', () => {

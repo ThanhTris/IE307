@@ -16,7 +16,7 @@ export function PushLifecycle() {
     const repository = session.repository;
     const userId = repository.getCurrentUser()?.id;
     const identityRevision = (repository as typeof repository & { getIdentityRevision?: () => number }).getIdentityRevision?.() ?? 0;
-    if (!userId || repository.getSessionStatus() !== 'active') return;
+    if (!userId || session.user?.isGuest || repository.getSessionStatus() !== 'active') return;
     let active = true;
     const isIdentityCurrent = () => repository.getSessionStatus() === 'active'
       && active
@@ -36,7 +36,7 @@ export function PushLifecycle() {
     });
     const unsubscribe = service.subscribe();
     return () => { active = false; unsubscribe(); };
-  }, [router, session.repository, session.user?.id, session.status]);
+  }, [router, session.repository, session.user?.id, session.user?.isGuest, session.status]);
 
   return null;
 }

@@ -19,6 +19,6 @@ export default function WelcomePermissionsRoute() {
   }, [live.repository]);
   const done = useCallback(() => { void markPermissionsOnboarded(live.user?.id).then(() => router.replace('/')); }, [router, live.user?.id]);
   return <RequireActiveSession onHome={() => router.replace('/')}>
-    <PermissionsWelcomeScreen service={service} history={history} onDone={done} />
+    <PermissionsWelcomeScreen service={service} history={live.user?.isGuest ? undefined : history} onDone={done} />
   </RequireActiveSession>;
 }

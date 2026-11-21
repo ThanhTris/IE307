@@ -1,4 +1,5 @@
-import { Pressable, ScrollView, StyleSheet, Text } from 'react-native';
+import { Pressable, ScrollView, StyleSheet} from 'react-native';
+import { Text } from '../../../shared/ui/forms/ScaledText';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useShellTheme } from '../../../shared/lib/useShellTheme';
 import { FOCUSED_STYLE } from '../../../shared/ui/layout/ScreenContainer';

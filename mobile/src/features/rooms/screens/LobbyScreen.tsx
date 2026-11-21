@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState, type ReactNode } from 'react';
-import { BackHandler, Pressable, ScrollView, Share, StyleSheet, Text, View } from 'react-native';
+import { BackHandler, Pressable, ScrollView, Share, StyleSheet, View } from 'react-native';
+import { Text } from '../../../shared/ui/forms/ScaledText';
 import * as Clipboard from 'expo-clipboard';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import Svg, { Path } from 'react-native-svg';
@@ -34,6 +35,7 @@ export type LobbyScreenProps = {
   onEditPreferences?: (snapshot: RoomSnapshot) => void;
   /** Friends chosen while creating the room: invited once, one at a time, when the lobby is ready. */
   autoInvite?: string[];
+  canInviteFriends?: boolean;
 };
 
 /** Figma 68:429 (chủ phòng), 368:11865 (thành viên), 368:12840 (menu chủ phòng). */
@@ -48,6 +50,7 @@ export function LobbyScreen({
   settingsGateway,
   onEditPreferences,
   autoInvite,
+  canInviteFriends = true,
 }: LobbyScreenProps) {
   const { colors } = useShellTheme();
   const { textStyle } = useAppFonts();
@@ -134,7 +137,7 @@ export function LobbyScreen({
 
           <View style={styles.sectionHeader}>
             <Text accessibilityRole="header" style={[styles.sectionTitle, { color: colors.text }, textStyle(700)]}>{`Thành viên (${room.members.length})`}</Text>
-            {isHost && inLobby ? <Pressable accessibilityRole="button" accessibilityLabel="Mời thêm" disabled={busy || room.members.length >= 20} onPress={() => setInviteOpen(true)} style={styles.linkButton}>
+            {isHost && inLobby && canInviteFriends ? <Pressable accessibilityRole="button" accessibilityLabel="Mời thêm" disabled={busy || room.members.length >= 20} onPress={() => setInviteOpen(true)} style={styles.linkButton}>
               <Text style={[styles.link, { color: colors.text }, textStyle(600)]}>+  Mời thêm</Text>
             </Pressable> : null}
           </View>
@@ -177,7 +180,7 @@ export function LobbyScreen({
 
       {settingsGateway ? <LobbyMealEditor field={editField} gateway={settingsGateway} onClose={() => setEditField(null)} onSaved={reload} /> : null}
 
-      {room && isHost ? <RoomInviteSheet visible={inviteOpen} onClose={() => setInviteOpen(false)} repository={repository} snapshot={room} busy={busy} colors={colors} onInvite={partnerId => { setInviteOpen(false); void runWrite('invite', partnerId); }} onFindFriends={onNavigate ? () => { setInviteOpen(false); onNavigate('/friends?from=lobby'); } : undefined} /> : null}
+      {room && isHost && canInviteFriends ? <RoomInviteSheet visible={inviteOpen} onClose={() => setInviteOpen(false)} repository={repository} snapshot={room} busy={busy} colors={colors} onInvite={partnerId => { setInviteOpen(false); void runWrite('invite', partnerId); }} onFindFriends={onNavigate ? () => { setInviteOpen(false); onNavigate('/friends?from=lobby'); } : undefined} /> : null}
 
       <SheetDialog visible={confirm !== null} presentation="dialog" showClose={false} title={confirm === 'cancel' ? 'Xác nhận hủy phòng?' : 'Xác nhận rời phòng?'} onClose={() => setConfirm(null)} colors={colors}>
         <Text style={[styles.body, { color: colors.muted }, textStyle(400)]}>{confirm === 'cancel' ? 'Phòng sẽ đóng với mọi thành viên.' : 'Bạn có thể vào lại bằng mã phòng khi phòng còn mở.'}</Text>

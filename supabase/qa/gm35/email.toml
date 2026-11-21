@@ -1,0 +1,16 @@
+[auth.email]
+enable_signup = true
+enable_confirmations = true
+otp_length = 6
+
+[auth.email.template.confirmation]
+subject = "Xác minh email · Gì Cũng Được"
+content_path = "./supabase/templates/account-code.html"
+
+[auth.email.template.email_change]
+subject = "Liên kết email · Gì Cũng Được"
+content_path = "./supabase/templates/account-code.html"
+
+[auth.email.template.recovery]
+subject = "Đặt lại mật khẩu · Gì Cũng Được"
+content_path = "./supabase/templates/account-code.html"
