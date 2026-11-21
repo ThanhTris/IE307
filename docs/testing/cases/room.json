@@ -1,0 +1,503 @@
+{
+ "module": "ROOM",
+ "title": "Phòng, lobby và tham gia",
+ "cases": [
+  {
+   "id": "TC-ROOM-001",
+   "title": "Tạo phòng 10 món cho bữa trưa",
+   "req": [
+    "REQ-ROOM-01"
+   ],
+   "priority": "P0",
+   "type": "functional",
+   "level": "api",
+   "preconditions": "Đăng nhập; catalogue trưa có ít nhất 10 món.",
+   "steps": [
+    "Chọn Trưa, 10 món.",
+    "Xác nhận tạo phòng.",
+    "Đọc lại phòng từ server."
+   ],
+   "expected": "Phòng lưu đúng 10 món khác nhau, mã phòng 6 ký tự, không yêu cầu vị trí.",
+   "automation": [
+    "supabase/tests/http/GM-19.http",
+    "supabase/tests/http/GM-20-canonical.http",
+    "mobile/tests/component/gm25FigmaParity.test.tsx::liveDishSetupGateway creates room via canonical dish_session v4 dispatch"
+   ],
+   "env": [
+    "qa-local",
+    "ci"
+   ]
+  },
+  {
+   "id": "TC-ROOM-002",
+   "title": "Tạo phòng 20 món (giới hạn trên)",
+   "req": [
+    "REQ-ROOM-01"
+   ],
+   "priority": "P0",
+   "type": "boundary",
+   "level": "api",
+   "preconditions": "Catalogue có ít nhất 20 món cho bữa chọn.",
+   "steps": [
+    "Chọn 20 món.",
+    "Tạo phòng."
+   ],
+   "expected": "Phòng có đúng 20 món; chọn 21 món bị chặn.",
+   "automation": [
+    "supabase/tests/http/GM-19.http",
+    "supabase/tests/http/GM-20-canonical.http"
+   ],
+   "env": [
+    "qa-local"
+   ]
+  },
+  {
+   "id": "TC-ROOM-003",
+   "title": "Thiếu món: dùng 5–9 món hoặc báo không đủ",
+   "req": [
+    "REQ-ROOM-01"
+   ],
+   "priority": "P0",
+   "type": "boundary",
+   "level": "api",
+   "preconditions": "Bữa chỉ có 7 món đủ điều kiện.",
+   "steps": [
+    "Yêu cầu 10 món.",
+    "Chọn \"Dùng 7 món\".",
+    "Lặp lại với bữa chỉ có 3 món."
+   ],
+   "expected": "Hộp thoại báo số món có sẵn; 5–9 món dùng được; dưới 5 món trả INSUFFICIENT_DISHES kèm số món có sẵn, không bù món.",
+   "automation": [
+    "supabase/tests/http/GM-18.http",
+    "mobile/tests/component/dishSetupFlow.test.tsx::shortage dialog shows requested/available separately and requires an explicit confirmation",
+    "mobile/tests/component/dishSetupFlow.test.tsx::below five only offers to change the time and never creates a room",
+    "mobile/tests/component/dishSetupFlow.test.tsx::7 of 15 dishes: \"Dùng 7 món\" creates the room with 7 dishes"
+   ],
+   "env": [
+    "qa-local",
+    "ci"
+   ]
+  },
+  {
+   "id": "TC-ROOM-004",
+   "title": "Hẹn giờ và xung đột bữa ăn",
+   "req": [
+    "REQ-ROOM-01"
+   ],
+   "priority": "P1",
+   "type": "functional",
+   "level": "unit",
+   "preconditions": "Đang thiết lập phòng.",
+   "steps": [
+    "Chọn Hẹn giờ ngoài khung giờ của bữa.",
+    "Chọn từng phương án giải quyết xung đột."
+   ],
+   "expected": "App báo bữa tương ứng với giờ đó; chọn giữ giờ thì đổi bữa, giữ bữa thì đưa giờ vào khung; ăn vặt và \"ngay\" không xung đột.",
+   "automation": [
+    "mobile/tests/unit/mealTimeConflict.test.ts::an hour outside the window reports the meal that hour belongs to",
+    "mobile/tests/unit/dishSetupTimePolicy.test.ts::schedule default advances fifteen displayed minutes and rolls the date at midnight"
+   ],
+   "env": [
+    "ci"
+   ]
+  },
+  {
+   "id": "TC-ROOM-005",
+   "title": "Vào phòng bằng mã: xem trước rồi xác nhận",
+   "req": [
+    "REQ-ROOM-02"
+   ],
+   "priority": "P0",
+   "type": "functional",
+   "level": "component",
+   "preconditions": "Có phòng mở, người vào là người thứ hai.",
+   "steps": [
+    "Nhập mã phòng.",
+    "Xem màn xem trước.",
+    "Bấm xác nhận vào phòng."
+   ],
+   "expected": "Xem trước chỉ hiện số người, không đổi số thành viên; chỉ lần xác nhận mới tham gia, một lần duy nhất.",
+   "automation": [
+    "mobile/tests/component/joinRoomEntry.test.tsx::preview shows count only, ignores supplied private fields, and confirmation is the only join mutation",
+    "supabase/tests/http/GM-22.http"
+   ],
+   "env": [
+    "ci",
+    "qa-local"
+   ]
+  },
+  {
+   "id": "TC-ROOM-006",
+   "title": "Mã phòng sai định dạng hoặc không tồn tại",
+   "req": [
+    "REQ-ROOM-02"
+   ],
+   "priority": "P0",
+   "type": "negative",
+   "level": "component",
+   "preconditions": "Đang ở màn vào phòng.",
+   "steps": [
+    "Nhập mã 5 ký tự.",
+    "Nhập mã chứa ký tự 0, O, 1, I.",
+    "Nhập mã 6 ký tự không có phòng."
+   ],
+   "expected": "Không xem trước hay vào phòng; báo lỗi và giữ mã đã nhập để sửa.",
+   "automation": [
+    "mobile/tests/component/joinRoomEntry.test.tsx::invalid code %s never previews or joins",
+    "mobile/tests/component/roomCodeField.test.tsx::pasting a whole code fills all cells once, including when replacing from a middle cell",
+    "mobile/tests/unit/joinLinks.test.ts::rejects invalid room codes (wrong length or excluded chars: 0, O, 1, I)"
+   ],
+   "env": [
+    "ci"
+   ]
+  },
+  {
+   "id": "TC-ROOM-007",
+   "title": "Phòng hết hạn, đầy hoặc đã bắt đầu",
+   "req": [
+    "REQ-ROOM-02"
+   ],
+   "priority": "P0",
+   "type": "negative",
+   "level": "api",
+   "preconditions": "Ba phòng ở các trạng thái hết hạn, đủ 20 người, đã vào vòng 1.",
+   "steps": [
+    "Dùng mã của từng phòng để xem trước và vào."
+   ],
+   "expected": "Mỗi trường hợp báo lỗi riêng, rõ ràng; không ai vào được.",
+   "automation": [
+    "supabase/tests/http/GM-22.http",
+    "mobile/tests/component/gm25FigmaParity.test.tsx::displays error states for full or expired room preview",
+    "supabase/tests/database/ADR-027_room_rejoin.test.sql"
+   ],
+   "env": [
+    "qa-local",
+    "ci"
+   ]
+  },
+  {
+   "id": "TC-ROOM-008",
+   "title": "Liên kết vào phòng an toàn",
+   "req": [
+    "REQ-ROOM-02"
+   ],
+   "priority": "P0",
+   "type": "security",
+   "level": "unit",
+   "preconditions": "Có liên kết dạng gi-cung-duoc://join/ABC234 hoặc https tên miền cho phép.",
+   "steps": [
+    "Mở liên kết hợp lệ.",
+    "Mở liên kết khác tên miền, có userinfo, có token trong query."
+   ],
+   "expected": "Liên kết hợp lệ điền mã phòng (vẫn cần xác nhận); liên kết lạ bị từ chối với thông báo \"Liên kết bị chặn\" và còn đường nhập mã tay.",
+   "automation": [
+    "mobile/tests/unit/joinLinks.test.ts::parses custom scheme with path (gi-cung-duoc://join/XYZ789)",
+    "mobile/tests/unit/joinLinks.test.ts::rejects disallowed web hosts (e.g. phishing / external domain)",
+    "mobile/tests/unit/joinLinks.test.ts::rejects suspicious payloads containing tokens or passwords in query params"
+   ],
+   "env": [
+    "ci"
+   ]
+  },
+  {
+   "id": "TC-ROOM-009",
+   "title": "Quét QR vào phòng và từ chối camera",
+   "req": [
+    "REQ-ROOM-02"
+   ],
+   "priority": "P0",
+   "type": "functional",
+   "level": "e2e",
+   "preconditions": "Máy thật có camera.",
+   "steps": [
+    "Chọn quét QR và cho phép camera.",
+    "Quét mã của phòng.",
+    "Lặp lại khi từ chối quyền camera."
+   ],
+   "expected": "Quét thành công hiện màn xác nhận trước khi vào; từ chối quyền vẫn giữ ô nhập mã tay.",
+   "automation": [
+    "mobile/tests/component/joinRoomEntry.test.tsx::QR %s always retains manual entry and never auto-joins"
+   ],
+   "env": [
+    "android",
+    "ios"
+   ]
+  },
+  {
+   "id": "TC-ROOM-010",
+   "title": "Phòng đủ 20 người, người thứ 21 bị từ chối",
+   "req": [
+    "REQ-ROOM-03"
+   ],
+   "priority": "P0",
+   "type": "boundary",
+   "level": "api",
+   "preconditions": "Phòng có 20 thành viên.",
+   "steps": [
+    "Người thứ 21 xem trước và xác nhận vào."
+   ],
+   "expected": "Từ chối với lỗi phòng đầy; số thành viên giữ 20.",
+   "automation": [
+    "supabase/tests/http/GM-19.http",
+    "supabase/tests/http/GM-22.http"
+   ],
+   "env": [
+    "qa-local"
+   ]
+  },
+  {
+   "id": "TC-ROOM-011",
+   "title": "Vào trùng hai lần chỉ tính một thành viên",
+   "req": [
+    "REQ-ROOM-03"
+   ],
+   "priority": "P0",
+   "type": "negative",
+   "level": "component",
+   "preconditions": "Người dùng đã bấm xác nhận vào phòng.",
+   "steps": [
+    "Bấm xác nhận liên tiếp.",
+    "Mất mạng giữa chừng rồi thử lại cùng yêu cầu."
+   ],
+   "expected": "Chỉ một lần tham gia; thử lại dùng lại cùng request id.",
+   "automation": [
+    "mobile/tests/component/joinRoomEntry.test.tsx::unknown join retry reuses frozen input/request ID; new route code and duplicate clicks cannot replace it"
+   ],
+   "env": [
+    "ci"
+   ]
+  },
+  {
+   "id": "TC-ROOM-012",
+   "title": "Host loại một thành viên",
+   "req": [
+    "REQ-ROOM-03"
+   ],
+   "priority": "P1",
+   "type": "functional",
+   "level": "sql",
+   "preconditions": "Phòng có host và thành viên.",
+   "steps": [
+    "Host loại thành viên.",
+    "Thành viên đọc lại phòng."
+   ],
+   "expected": "Thành viên bị loại không còn đọc được dữ liệu phòng (RLS).",
+   "automation": [
+    "supabase/tests/database/GM-19_room_lifecycle.test.sql",
+    "supabase/tests/http/GM-45.http"
+   ],
+   "env": [
+    "qa-local"
+   ]
+  },
+  {
+   "id": "TC-ROOM-013",
+   "title": "Sẵn sàng: thành viên chưa lưu khẩu vị không được bắt đầu",
+   "req": [
+    "REQ-ROOM-04"
+   ],
+   "priority": "P0",
+   "type": "functional",
+   "level": "sql",
+   "preconditions": "Phòng có host và một thành viên chưa lưu khẩu vị.",
+   "steps": [
+    "Host bấm bắt đầu.",
+    "Thành viên lưu khẩu vị.",
+    "Host bấm bắt đầu lại."
+   ],
+   "expected": "Lần đầu bị từ chối MEMBERS_NOT_READY (409); lần hai bắt đầu được; host luôn sẵn sàng.",
+   "automation": [
+    "supabase/tests/database/ADR-028_lobby_ready.test.sql",
+    "mobile/tests/component/gm25FigmaParity.test.tsx::the host cannot start while a member is still choosing their taste",
+    "mobile/tests/unit/readyQueue.test.ts::ready requests for a room are sent one at a time, in the order asked"
+   ],
+   "env": [
+    "qa-local",
+    "ci"
+   ]
+  },
+  {
+   "id": "TC-ROOM-014",
+   "title": "Phòng một người không bắt đầu được",
+   "req": [
+    "REQ-ROOM-04"
+   ],
+   "priority": "P0",
+   "type": "boundary",
+   "level": "sql",
+   "preconditions": "Phòng chỉ có host.",
+   "steps": [
+    "Host bấm bắt đầu."
+   ],
+   "expected": "Từ chối NOT_ENOUGH_MEMBERS; phòng vẫn ở LOBBY.",
+   "automation": [
+    "supabase/tests/database/GM-19_room_lifecycle.test.sql",
+    "supabase/tests/http/GM-19.http"
+   ],
+   "env": [
+    "qa-local"
+   ]
+  },
+  {
+   "id": "TC-ROOM-015",
+   "title": "Chỉ host sửa thiết lập phòng",
+   "req": [
+    "REQ-ROOM-05"
+   ],
+   "priority": "P0",
+   "type": "security",
+   "level": "api",
+   "preconditions": "Phòng có host và thành viên.",
+   "steps": [
+    "Thành viên gọi sửa thiết lập.",
+    "Host sửa thiết lập."
+   ],
+   "expected": "Thành viên bị từ chối; host sửa được; màn thành viên hiện chỉ đọc kèm thông báo.",
+   "automation": [
+    "supabase/tests/http/GM-19-settings-v4.http",
+    "mobile/tests/component/memberSetupFlow.test.tsx::member starts on preferences, saves once and reaches the lobby without touching room settings"
+   ],
+   "env": [
+    "qa-local",
+    "ci"
+   ]
+  },
+  {
+   "id": "TC-ROOM-016",
+   "title": "Sửa không đổi hoặc chỉ đổi giờ giữ nguyên pool",
+   "req": [
+    "REQ-ROOM-05"
+   ],
+   "priority": "P0",
+   "type": "functional",
+   "level": "api",
+   "preconditions": "Phòng đã có pool khóa.",
+   "steps": [
+    "Host gửi sửa y hệt.",
+    "Host chỉ đổi giờ."
+   ],
+   "expected": "Pool và poolVersion không đổi; yêu cầu mới tăng version phòng; ACK replay không tăng.",
+   "automation": [
+    "supabase/tests/http/GM-19-settings-v4.http"
+   ],
+   "env": [
+    "qa-local"
+   ]
+  },
+  {
+   "id": "TC-ROOM-017",
+   "title": "Vào lại phòng ở vòng 1",
+   "req": [
+    "REQ-ROOM-06"
+   ],
+   "priority": "P1",
+   "type": "functional",
+   "level": "sql",
+   "preconditions": "Thành viên đã rời phòng đang ở vòng 1.",
+   "steps": [
+    "Mở lại app và vào lại phòng."
+   ],
+   "expected": "Vào lại được và thấy đúng vòng hiện tại; người chưa từng vào thì không vào được khi đã bắt đầu.",
+   "automation": [
+    "supabase/tests/database/ADR-027_room_rejoin.test.sql"
+   ],
+   "env": [
+    "qa-local"
+   ]
+  },
+  {
+   "id": "TC-ROOM-018",
+   "title": "Pool độc lập quán, GPS và giờ bán",
+   "req": [
+    "REQ-ROOM-01"
+   ],
+   "priority": "P0",
+   "type": "functional",
+   "level": "api",
+   "preconditions": "Người dùng từ chối vị trí.",
+   "steps": [
+    "Tạo phòng 10 món khi tắt vị trí."
+   ],
+   "expected": "Tạo được phòng; pool không lọc theo quán, vị trí hay giờ bán.",
+   "automation": [
+    "supabase/tests/http/GM-40.http",
+    "mobile/tests/component/createRoomEntry.test.tsx::entry is honest about a missing setup artifact and never asks for GPS or creates a room"
+   ],
+   "env": [
+    "qa-local",
+    "ci"
+   ]
+  },
+  {
+   "id": "TC-ROOM-019",
+   "title": "Lobby tự chuyển thành viên vào vòng 1 khi host bắt đầu",
+   "req": [
+    "REQ-ROOM-04"
+   ],
+   "priority": "P0",
+   "type": "functional",
+   "level": "component",
+   "preconditions": "Hai client trong cùng phòng.",
+   "steps": [
+    "Host bấm bắt đầu.",
+    "Quan sát màn của thành viên (không tải lại)."
+   ],
+   "expected": "Thành viên tự vào màn bình chọn một lần cho mỗi cặp phòng–tài khoản; polling bỏ phản hồi cũ.",
+   "automation": [
+    "mobile/tests/component/gm25FigmaParity.test.tsx::opens voting once when poll reads %s for a member",
+    "mobile/tests/component/gm25FigmaParity.test.tsx::opens voting once when manual reload reads %s for a member",
+    "mobile/tests/component/lobbySnapshotLifecycle.test.tsx::keeps the lobby ready when the initial load settles with a late %s"
+   ],
+   "env": [
+    "ci",
+    "avd"
+   ]
+  },
+  {
+   "id": "TC-ROOM-020",
+   "title": "Mời mã và QR hiển thị trong lobby",
+   "req": [
+    "REQ-ROOM-02"
+   ],
+   "priority": "P1",
+   "type": "functional",
+   "level": "component",
+   "preconditions": "Host ở lobby.",
+   "steps": [
+    "Mở khối chia sẻ mã.",
+    "Sao chép mã."
+   ],
+   "expected": "Hiện mã, QR và nút sao chép/chia sẻ; sao chép được mã đúng.",
+   "automation": [
+    "mobile/tests/component/gm30FigmaParity.test.tsx::renders modal title, room code badge, QR matrix, copy button and triggers actions"
+   ],
+   "env": [
+    "ci"
+   ]
+  },
+  {
+   "id": "TC-ROOM-021",
+   "title": "Hủy phòng",
+   "req": [
+    "REQ-ROOM-05"
+   ],
+   "priority": "P1",
+   "type": "functional",
+   "level": "sql",
+   "preconditions": "Host trong lobby.",
+   "steps": [
+    "Host hủy phòng.",
+    "Thành viên mở lại phòng."
+   ],
+   "expected": "Phòng ở trạng thái CANCELLED, thành viên thấy phòng đã đóng.",
+   "automation": [
+    "supabase/tests/database/GM-19_room_lifecycle.test.sql",
+    "mobile/tests/component/dishSetupRepair.test.tsx::lost cancellation acknowledgement replays the same intent and never cancels twice"
+   ],
+   "env": [
+    "qa-local",
+    "ci"
+   ]
+  }
+ ]
+}

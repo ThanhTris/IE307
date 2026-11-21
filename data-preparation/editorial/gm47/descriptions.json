@@ -1,0 +1,43 @@
+{
+  "baseDatasetVersion": "1.2.0",
+  "baseSha256": "57edc91164e953929b3868c8ea9567705af6cba96523b2350219108a69621b78",
+  "candidateDatasetVersion": "1.2.1",
+  "checkedAt": "2026-11-20T16:25:00Z",
+  "descriptions": [
+    {
+      "dishId": "4a8ac4a8-b566-5032-be38-48f00e6a53b9",
+      "name": "Bún mọc",
+      "description": "Bún chan nước dùng, ăn cùng viên mọc làm từ giò sống.",
+      "locator": "https://vnexpress.net/doi-song-cooking-bun-moc-4215257.html",
+      "note": "Công thức cho thấy bún, mọc và nước dùng. Chân giò, nấm và rau là chi tiết có thể khác giữa các phiên bản."
+    },
+    {
+      "dishId": "f9224f9d-f9e2-5b4b-a328-0db75c978c2a",
+      "name": "Cơm canh khổ qua",
+      "description": "Cơm ăn kèm canh nấu từ khổ qua, còn gọi là mướp đắng.",
+      "locator": "https://vnexpress.net/meo-nau-canh-kho-qua-khong-bi-dang-4144365.html",
+      "note": "Nguồn xác nhận khổ qua trong món canh. Phần cơm theo tên món catalogue. Công thức là một biến thể nên không gắn loại nhân."
+    },
+    {
+      "dishId": "f518af1a-6744-545a-83b4-4fa14d590a43",
+      "name": "Cơm cá kho",
+      "description": "Cơm trắng dùng với cá kho thấm gia vị.",
+      "locator": "https://vnexpress.net/nhieu-mon-ca-kho-ngon-mieng-cho-ngay-mua-2307106.html",
+      "note": "Nguồn nêu nhiều món cá kho ăn cùng cơm. Loại cá và gia vị cụ thể tùy phiên bản."
+    },
+    {
+      "dishId": "e0a99abc-3bb4-54e5-85ea-0361df2098b7",
+      "name": "Cơm tôm rim",
+      "description": "Cơm ăn cùng tôm rim đến khi gia vị bám quanh từng con tôm.",
+      "locator": "https://vnexpress.net/cach-lam-tom-rim-man-ngot-4400373.html",
+      "note": "Công thức là nguồn tham khảo cho kỹ thuật rim tôm. Phần cơm theo tên món catalogue."
+    },
+    {
+      "dishId": "9cbc5485-896f-5725-bc54-c7d637f54770",
+      "name": "Cơm đậu hủ sốt cà",
+      "description": "Cơm ăn cùng miếng đậu hũ phủ sốt cà chua.",
+      "locator": "https://monngonmoingay.com/mon-ngon-moi-ngay-khong-ngan/",
+      "note": "Mục đậu hũ sốt cà chua của nguồn mô tả đậu hũ, sốt cà và cơm. Không suy món chay hoặc thành phần dị ứng."
+    }
+  ]
+}

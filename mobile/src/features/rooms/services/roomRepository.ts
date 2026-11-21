@@ -107,6 +107,12 @@ export interface RoomRepositoryConfig {
   requestIdGenerator?: RequestIdGenerator;
 }
 
+type DefaultPreferencesRead = {
+  revision: number;
+  preferences: UserPreferences;
+  hasRecentHistory?: boolean;
+};
+
 export interface RoomRepository extends Omit<RoomEntryRepository, 'restoreSession'>, RoomSetupRepository {
   restoreSession(sessionToken?: string): Promise<ReadResult<SessionUser>>;
 
@@ -123,7 +129,7 @@ export interface RoomRepository extends Omit<RoomEntryRepository, 'restoreSessio
     version?: 'supplement' | 'baseline'
   ): Promise<{ ok: true; data: T } | { ok: false; error: ApiError }>;
 
-  getDefaultPreferences(): Promise<ReadResult<{ revision: number; preferences: UserPreferences }>>;
+  getDefaultPreferences(): Promise<ReadResult<DefaultPreferencesRead>>;
   getHistoryConsent(): Promise<ReadResult<HistoryConsent>>;
   updateHistoryConsent(scope: 'personal' | 'group', consent: boolean, requestId?: string): Promise<WriteResult<void>>;
 
@@ -579,7 +585,7 @@ export class LiveRoomRepository implements RoomRepository {
     }
   }
 
-  async getDefaultPreferences(): Promise<ReadResult<{ revision: number; preferences: UserPreferences }>> {
+  async getDefaultPreferences(): Promise<ReadResult<DefaultPreferencesRead>> {
     return this.request(async () => {
       const call = this.getRpcCaller();
       if (call) {
@@ -591,16 +597,21 @@ export class LiveRoomRepository implements RoomRepository {
             },
           })) as {
             ok?: boolean;
-            data?: { revision?: number; preferences?: UserPreferences };
+            data?: { revision?: number; preferences?: UserPreferences; hasRecentHistory?: unknown };
             error?: { messageKey?: string; code?: string; details?: Record<string, unknown> };
           };
 
           if (raw?.ok && raw.data && raw.data.preferences) {
+            const { hasRecentHistory } = raw.data;
+            if ('hasRecentHistory' in raw.data && typeof hasRecentHistory !== 'boolean') {
+              return { ok: false, error: { messageKey: 'MALFORMED_RESPONSE' } };
+            }
             return {
               ok: true,
               data: {
                 revision: raw.data.revision ?? 1,
                 preferences: raw.data.preferences,
+                ...(typeof hasRecentHistory === 'boolean' ? { hasRecentHistory } : {}),
               },
             };
           }

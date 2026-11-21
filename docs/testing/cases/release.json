@@ -1,0 +1,269 @@
+{
+ "module": "REL",
+ "title": "Phát hành và nâng cấp",
+ "cases": [
+  {
+   "id": "TC-REL-001",
+   "title": "Cài mới chạy được",
+   "req": [
+    "REQ-REL-01"
+   ],
+   "priority": "P0",
+   "type": "functional",
+   "level": "e2e",
+   "preconditions": "Máy sạch, bản release candidate.",
+   "steps": [
+    "Cài app.",
+    "Mở và vào Home bằng khách."
+   ],
+   "expected": "Mở độc lập không cần Metro, vào được Home.",
+   "automation": [
+    "manual"
+   ],
+   "env": [
+    "avd",
+    "android",
+    "ios"
+   ]
+  },
+  {
+   "id": "TC-REL-002",
+   "title": "Nâng cấp từ bản trước giữ phiên",
+   "req": [
+    "REQ-REL-01"
+   ],
+   "priority": "P0",
+   "type": "functional",
+   "level": "e2e",
+   "preconditions": "Đã cài bản trước và có phiên.",
+   "steps": [
+    "Cài bản mới đè lên.",
+    "Mở app."
+   ],
+   "expected": "Giữ phiên và dữ liệu cục bộ hợp lệ, không crash khi đổi schema SQLite.",
+   "automation": [
+    "manual"
+   ],
+   "env": [
+    "android",
+    "ios"
+   ]
+  },
+  {
+   "id": "TC-REL-003",
+   "title": "Bản app cũ thấy màn Cần cập nhật khi dưới phiên bản tối thiểu",
+   "req": [
+    "REQ-REL-02"
+   ],
+   "priority": "P0",
+   "type": "functional",
+   "level": "unit",
+   "preconditions": "Cấu hình phiên bản tối thiểu cao hơn bản đang chạy.",
+   "steps": [
+    "Mở app."
+   ],
+   "expected": "Hiện màn Cần cập nhật kèm liên kết store.",
+   "automation": [],
+   "env": [
+    "ci",
+    "staging"
+   ],
+   "gap": "Tính năng của task release v1 chưa merge; test được thêm khi task đó hoàn tất (GM-56/57)."
+  },
+  {
+   "id": "TC-REL-004",
+   "title": "Không đọc được cấu hình phiên bản thì vẫn dùng được",
+   "req": [
+    "REQ-REL-02"
+   ],
+   "priority": "P0",
+   "type": "resilience",
+   "level": "unit",
+   "preconditions": "Cấu hình phiên bản lỗi hoặc sai schema.",
+   "steps": [
+    "Mở app."
+   ],
+   "expected": "Vẫn cho dùng bình thường, không chặn người dùng.",
+   "automation": [],
+   "env": [
+    "ci"
+   ],
+   "gap": "Tính năng của task release v1 chưa merge; test được thêm khi task đó hoàn tất (GM-56/57)."
+  },
+  {
+   "id": "TC-REL-005",
+   "title": "Backend tạm ngừng khi review store",
+   "req": [
+    "REQ-REL-03"
+   ],
+   "priority": "P0",
+   "type": "resilience",
+   "level": "e2e",
+   "preconditions": "Staging bị tạm dừng hoặc mất mạng.",
+   "steps": [
+    "Mở app và thử tạo phòng."
+   ],
+   "expected": "Báo lỗi rõ, cho thử lại, không crash.",
+   "automation": [
+    "manual"
+   ],
+   "env": [
+    "android",
+    "ios"
+   ]
+  },
+  {
+   "id": "TC-REL-006",
+   "title": "Liên kết chính sách và điều khoản mở được khi chưa đăng nhập",
+   "req": [
+    "REQ-REL-04"
+   ],
+   "priority": "P0",
+   "type": "functional",
+   "level": "e2e",
+   "preconditions": "Chưa đăng nhập.",
+   "steps": [
+    "Mở liên kết chính sách, điều khoản, hỗ trợ, xóa dữ liệu từ app và từ web."
+   ],
+   "expected": "Các trang mở được công khai, đúng nội dung, có email liên hệ.",
+   "automation": [
+    "manual"
+   ],
+   "env": [
+    "android",
+    "ios"
+   ]
+  },
+  {
+   "id": "TC-REL-007",
+   "title": "Hiển thị phiên bản app",
+   "req": [
+    "REQ-REL-04"
+   ],
+   "priority": "P1",
+   "type": "functional",
+   "level": "component",
+   "preconditions": "Đang ở Hồ sơ hoặc Cài đặt.",
+   "steps": [
+    "Mở Hồ sơ."
+   ],
+   "expected": "Hiện số phiên bản app.",
+   "automation": [],
+   "env": [
+    "ci",
+    "avd"
+   ],
+   "gap": "Tính năng của task release v1 chưa merge; test được thêm khi task đó hoàn tất (GM-56/57)."
+  },
+  {
+   "id": "TC-REL-008",
+   "title": "Build release không có route dev hay nút QA",
+   "req": [
+    "REQ-REL-05"
+   ],
+   "priority": "P0",
+   "type": "security",
+   "level": "unit",
+   "preconditions": "Build production.",
+   "steps": [
+    "Mở /dev/icons và các route dev.",
+    "Mở màn thông báo đẩy."
+   ],
+   "expected": "Route dev chuyển về Home; không có nút QA; cờ giả lập vô hiệu.",
+   "automation": [],
+   "env": [
+    "ci",
+    "android",
+    "ios"
+   ],
+   "gap": "Tính năng của task release v1 chưa merge; test được thêm khi task đó hoàn tất (GM-56/57)."
+  },
+  {
+   "id": "TC-REL-009",
+   "title": "Mục thông báo đẩy ẩn khi chưa cấu hình",
+   "req": [
+    "REQ-REL-05"
+   ],
+   "priority": "P0",
+   "type": "functional",
+   "level": "component",
+   "preconditions": "Build không có EAS project ID.",
+   "steps": [
+    "Mở Hồ sơ và Cài đặt."
+   ],
+   "expected": "Không hiện mục thông báo đẩy hay lời nhắc thiếu cấu hình; hộp thư và banner vẫn dùng được.",
+   "automation": [],
+   "env": [
+    "ci",
+    "android",
+    "ios"
+   ],
+   "gap": "Tính năng của task release v1 chưa merge; test được thêm khi task đó hoàn tất (GM-56/57)."
+  },
+  {
+   "id": "TC-REL-010",
+   "title": "Phiên bản và build ghi nhận đúng",
+   "req": [
+    "REQ-REL-01"
+   ],
+   "priority": "P1",
+   "type": "functional",
+   "level": "e2e",
+   "preconditions": "Build từ EAS.",
+   "steps": [
+    "Đọc version và buildNumber/versionCode."
+   ],
+   "expected": "Khớp với hồ sơ phát hành và tăng sau mỗi build.",
+   "automation": [
+    "manual"
+   ],
+   "env": [
+    "ci"
+   ]
+  },
+  {
+   "id": "TC-REL-011",
+   "title": "Quyền camera và vị trí chỉ khi dùng, không chạy nền",
+   "req": [
+    "REQ-ENTRY-02"
+   ],
+   "priority": "P0",
+   "type": "privacy",
+   "level": "e2e",
+   "preconditions": "Build release.",
+   "steps": [
+    "Kiểm manifest và Info.plist.",
+    "Dùng app và để chạy nền."
+   ],
+   "expected": "Chỉ khai báo camera, vị trí khi dùng; không có audio, không theo dõi nền.",
+   "automation": [
+    "manual"
+   ],
+   "env": [
+    "android",
+    "ios"
+   ]
+  },
+  {
+   "id": "TC-REL-012",
+   "title": "Closed testing và hướng dẫn cho người review",
+   "req": [
+    "REQ-REL-03"
+   ],
+   "priority": "P0",
+   "type": "functional",
+   "level": "e2e",
+   "preconditions": "Hồ sơ store.",
+   "steps": [
+    "Người review làm theo ghi chú: cần hai người mới bắt đầu phòng."
+   ],
+   "expected": "Người review chơi hết một ván với tài khoản hoặc người thứ hai được chuẩn bị.",
+   "automation": [
+    "manual"
+   ],
+   "env": [
+    "staging"
+   ]
+  }
+ ]
+}

@@ -1,0 +1,225 @@
+{
+ "module": "DATA",
+ "title": "Dữ liệu món ăn",
+ "cases": [
+  {
+   "id": "TC-DATA-001",
+   "title": "Catalogue có version và hash ghim",
+   "req": [
+    "REQ-DATA-01"
+   ],
+   "priority": "P0",
+   "type": "functional",
+   "level": "unit",
+   "preconditions": "Bundle catalogue 1.1.0.",
+   "steps": [
+    "Build lại bundle hai lần.",
+    "So hash."
+   ],
+   "expected": "Hai lần build giống hệt; version và hash khớp manifest.",
+   "automation": [
+    "tests/test_dish_catalogue.py::test_two_offline_builds_identical_and_saved_artifacts_current",
+    "tests/test_catalogue_projection.py::test_two_builds_are_byte_identical_without_database"
+   ],
+   "env": [
+    "ci"
+   ]
+  },
+  {
+   "id": "TC-DATA-002",
+   "title": "Importer từ chối database không được phép",
+   "req": [
+    "REQ-DATA-01"
+   ],
+   "priority": "P0",
+   "type": "security",
+   "level": "unit",
+   "preconditions": "Cố nạp vào database ứng dụng hoặc namespace sai.",
+   "steps": [
+    "Chạy importer với DB lạ."
+   ],
+   "expected": "Bị từ chối trước khi chạy SQL, không đụng DB ứng dụng.",
+   "automation": [
+    "tests/test_dish_catalogue_import.py::test_owned_db_guards_refuse_application_and_wrong_namespace",
+    "tests/test_catalogue_projection.py::test_application_database_is_refused_before_sql"
+   ],
+   "env": [
+    "ci"
+   ]
+  },
+  {
+   "id": "TC-DATA-003",
+   "title": "Hosted import có cờ xác nhận, dry-run, rollback",
+   "req": [
+    "REQ-DATA-01"
+   ],
+   "priority": "P0",
+   "type": "functional",
+   "level": "unit",
+   "preconditions": "Project Supabase staging.",
+   "steps": [
+    "Chạy dry-run.",
+    "Chạy import có cờ xác nhận.",
+    "Rollback về bản trước."
+   ],
+   "expected": "Dry-run mặc định không ghi; import cần cờ xác nhận; kích hoạt nguyên tử; rollback được.",
+   "automation": [],
+   "env": [
+    "ci",
+    "staging"
+   ],
+   "gap": "Chức năng thuộc GM-51 chưa có; test thêm khi GM-51 hoàn tất."
+  },
+  {
+   "id": "TC-DATA-004",
+   "title": "Mỗi bữa tạo được phòng 10 món",
+   "req": [
+    "REQ-DATA-02"
+   ],
+   "priority": "P0",
+   "type": "boundary",
+   "level": "api",
+   "preconditions": "Bundle đã nạp.",
+   "steps": [
+    "Với từng bữa sáng, trưa, tối, ăn vặt tạo phòng 10 món."
+   ],
+   "expected": "Cả bốn bữa tạo được phòng 10 món không bị INSUFFICIENT_DISHES.",
+   "automation": [
+    "supabase/tests/http/GM-40.http"
+   ],
+   "env": [
+    "qa-local",
+    "staging"
+   ]
+  },
+  {
+   "id": "TC-DATA-005",
+   "title": "Món thiếu mealSlots không vào pool",
+   "req": [
+    "REQ-DATA-02"
+   ],
+   "priority": "P0",
+   "type": "negative",
+   "level": "unit",
+   "preconditions": "Món không có mealSlots.",
+   "steps": [
+    "Tạo phòng ở từng bữa."
+   ],
+   "expected": "Món không xuất hiện ở bữa nào.",
+   "automation": [
+    "tests/test_dish_catalogue.py::test_meal_enrichment_coverage_and_unknown_preserved"
+   ],
+   "env": [
+    "ci"
+   ]
+  },
+  {
+   "id": "TC-DATA-006",
+   "title": "Mã taxonomy và ID ổn định",
+   "req": [
+    "REQ-DATA-03"
+   ],
+   "priority": "P0",
+   "type": "functional",
+   "level": "unit",
+   "preconditions": "Taxonomy v2.",
+   "steps": [
+    "Kiểm ID, family và nhóm."
+   ],
+   "expected": "ID dùng đúng stable_id của pipeline, mọi family trong nhóm tồn tại, không trùng ID.",
+   "automation": [
+    "tests/test_filter_taxonomy.py::test_ids_use_the_pipeline_stable_id_and_match_the_bundle",
+    "tests/test_filter_taxonomy.py::test_every_group_family_exists_and_ids_are_unique"
+   ],
+   "env": [
+    "ci"
+   ]
+  },
+  {
+   "id": "TC-DATA-007",
+   "title": "Thiếu nguồn thì unknown, không bịa",
+   "req": [
+    "REQ-DATA-03"
+   ],
+   "priority": "P0",
+   "type": "negative",
+   "level": "unit",
+   "preconditions": "Mẫu có phân loại không nguồn.",
+   "steps": [
+    "Nạp mẫu vào validator."
+   ],
+   "expected": "Phân loại không nguồn bị từ chối; giá trị chưa biết giữ unknown/null; không ảnh hay dị ứng suy diễn.",
+   "automation": [
+    "tests/test_editorial_catalogue.py::test_reject_unsourced_classification",
+    "tests/test_editorial_catalogue.py::test_no_allergy_or_menu_image_promotion"
+   ],
+   "env": [
+    "ci"
+   ]
+  },
+  {
+   "id": "TC-DATA-008",
+   "title": "Giá giữ đủ amount, đơn vị và nguồn",
+   "req": [
+    "REQ-RES-05"
+   ],
+   "priority": "P1",
+   "type": "boundary",
+   "level": "unit",
+   "preconditions": "Món có nhiều observation giá.",
+   "steps": [
+    "Kiểm giá sau khi build."
+   ],
+   "expected": "Mọi trường giá được giữ nguyên, giá null giữ null.",
+   "automation": [
+    "tests/test_dish_catalogue.py::test_price_observations_preserve_amount_unit_and_source",
+    "tests/test_editorial_catalogue.py::test_prices_preserve_every_source_field"
+   ],
+   "env": [
+    "ci"
+   ]
+  },
+  {
+   "id": "TC-DATA-009",
+   "title": "Ảnh cần license và ghi công",
+   "req": [
+    "REQ-DATA-04"
+   ],
+   "priority": "P1",
+   "type": "functional",
+   "level": "unit",
+   "preconditions": "Ảnh ứng viên chỉ có license.",
+   "steps": [
+    "Duyệt ảnh trong pipeline."
+   ],
+   "expected": "License đơn thuần không đủ; thiếu căn cứ giữ null.",
+   "automation": [
+    "tests/test_editorial_catalogue.py::test_image_license_alone_is_insufficient"
+   ],
+   "env": [
+    "ci"
+   ]
+  },
+  {
+   "id": "TC-DATA-010",
+   "title": "Độ phủ theo bữa và nhóm sau bổ sung dữ liệu",
+   "req": [
+    "REQ-DATA-02"
+   ],
+   "priority": "P0",
+   "type": "functional",
+   "level": "unit",
+   "preconditions": "Bundle kế tiếp từ GM-41 và GM-47.",
+   "steps": [
+    "Chạy báo cáo độ phủ."
+   ],
+   "expected": "Mỗi bữa đạt ngưỡng; mỗi nhóm có đủ món; ghi rõ món chưa có nguồn.",
+   "automation": [],
+   "env": [
+    "ci",
+    "staging"
+   ],
+   "gap": "Bundle kế tiếp thuộc GM-41/GM-47 chưa có; kiểm bằng scripts/dish_filter_coverage.py khi bàn giao."
+  }
+ ]
+}

@@ -1,0 +1,506 @@
+{
+  "run": "automated-jest-20261120",
+  "commit": "08f3bc3",
+  "build": "main 08f3bc3 + GM-55 working tree, Windows, Node v24.15.0, jest-expo",
+  "date": "2026-11-20",
+  "results": [
+    {
+      "case": "TC-AUTH-001",
+      "env": "ci",
+      "status": "Pass",
+      "actual": "2 automated test(s) pass"
+    },
+    {
+      "case": "TC-AUTH-002",
+      "env": "ci",
+      "status": "Pass",
+      "actual": "2 automated test(s) pass"
+    },
+    {
+      "case": "TC-AUTH-003",
+      "env": "ci",
+      "status": "Pass",
+      "actual": "2 automated test(s) pass"
+    },
+    {
+      "case": "TC-AUTH-004",
+      "env": "ci",
+      "status": "Pass",
+      "actual": "2 automated test(s) pass"
+    },
+    {
+      "case": "TC-AUTH-005",
+      "env": "ci",
+      "status": "Pass",
+      "actual": "2 automated test(s) pass"
+    },
+    {
+      "case": "TC-AUTH-006",
+      "env": "ci",
+      "status": "Pass",
+      "actual": "2 automated test(s) pass"
+    },
+    {
+      "case": "TC-ENTRY-001",
+      "env": "ci",
+      "status": "Pass",
+      "actual": "3 automated test(s) pass"
+    },
+    {
+      "case": "TC-ENTRY-002",
+      "env": "ci",
+      "status": "Pass",
+      "actual": "3 automated test(s) pass"
+    },
+    {
+      "case": "TC-ENTRY-004",
+      "env": "ci",
+      "status": "Pass",
+      "actual": "3 automated test(s) pass"
+    },
+    {
+      "case": "TC-ENTRY-005",
+      "env": "ci",
+      "status": "Pass",
+      "actual": "3 automated test(s) pass"
+    },
+    {
+      "case": "TC-HIS-001",
+      "env": "ci",
+      "status": "Pass",
+      "actual": "2 automated test(s) pass"
+    },
+    {
+      "case": "TC-HIS-006",
+      "env": "ci",
+      "status": "Pass",
+      "actual": "2 automated test(s) pass"
+    },
+    {
+      "case": "TC-HIS-007",
+      "env": "ci",
+      "status": "Pass",
+      "actual": "1 automated test(s) pass"
+    },
+    {
+      "case": "TC-HIS-009",
+      "env": "ci",
+      "status": "Pass",
+      "actual": "1 automated test(s) pass"
+    },
+    {
+      "case": "TC-HIS-010",
+      "env": "ci",
+      "status": "Pass",
+      "actual": "1 automated test(s) pass"
+    },
+    {
+      "case": "TC-PREF-001",
+      "env": "ci",
+      "status": "Pass",
+      "actual": "2 automated test(s) pass"
+    },
+    {
+      "case": "TC-PREF-005",
+      "env": "ci",
+      "status": "Pass",
+      "actual": "1 automated test(s) pass"
+    },
+    {
+      "case": "TC-PREF-007",
+      "env": "ci",
+      "status": "Pass",
+      "actual": "1 automated test(s) pass"
+    },
+    {
+      "case": "TC-RT-003",
+      "env": "ci",
+      "status": "Pass",
+      "actual": "2 automated test(s) pass"
+    },
+    {
+      "case": "TC-RT-004",
+      "env": "ci",
+      "status": "Pass",
+      "actual": "1 automated test(s) pass"
+    },
+    {
+      "case": "TC-RT-006",
+      "env": "ci",
+      "status": "Pass",
+      "actual": "2 automated test(s) pass"
+    },
+    {
+      "case": "TC-RT-007",
+      "env": "ci",
+      "status": "Pass",
+      "actual": "2 automated test(s) pass"
+    },
+    {
+      "case": "TC-RT-008",
+      "env": "ci",
+      "status": "Pass",
+      "actual": "2 automated test(s) pass"
+    },
+    {
+      "case": "TC-RT-009",
+      "env": "ci",
+      "status": "Pass",
+      "actual": "2 automated test(s) pass"
+    },
+    {
+      "case": "TC-RT-010",
+      "env": "ci",
+      "status": "Pass",
+      "actual": "2 automated test(s) pass"
+    },
+    {
+      "case": "TC-RT-011",
+      "env": "ci",
+      "status": "Pass",
+      "actual": "2 automated test(s) pass"
+    },
+    {
+      "case": "TC-RT-012",
+      "env": "ci",
+      "status": "Pass",
+      "actual": "1 automated test(s) pass"
+    },
+    {
+      "case": "TC-RES-001",
+      "env": "ci",
+      "status": "Fail",
+      "actual": "2 automated test(s) fail"
+    },
+    {
+      "case": "TC-RES-002",
+      "env": "ci",
+      "status": "Pass",
+      "actual": "3 automated test(s) pass"
+    },
+    {
+      "case": "TC-RES-004",
+      "env": "ci",
+      "status": "Pass",
+      "actual": "3 automated test(s) pass"
+    },
+    {
+      "case": "TC-RES-005",
+      "env": "ci",
+      "status": "Pass",
+      "actual": "1 automated test(s) pass"
+    },
+    {
+      "case": "TC-RES-006",
+      "env": "ci",
+      "status": "Pass",
+      "actual": "2 automated test(s) pass"
+    },
+    {
+      "case": "TC-RES-007",
+      "env": "ci",
+      "status": "Pass",
+      "actual": "2 automated test(s) pass"
+    },
+    {
+      "case": "TC-RES-008",
+      "env": "ci",
+      "status": "Pass",
+      "actual": "3 automated test(s) pass"
+    },
+    {
+      "case": "TC-RES-009",
+      "env": "ci",
+      "status": "Pass",
+      "actual": "2 automated test(s) pass"
+    },
+    {
+      "case": "TC-RES-010",
+      "env": "ci",
+      "status": "Pass",
+      "actual": "2 automated test(s) pass"
+    },
+    {
+      "case": "TC-RES-011",
+      "env": "ci",
+      "status": "Pass",
+      "actual": "2 automated test(s) pass"
+    },
+    {
+      "case": "TC-RES-012",
+      "env": "ci",
+      "status": "Pass",
+      "actual": "1 automated test(s) pass"
+    },
+    {
+      "case": "TC-RES-013",
+      "env": "ci",
+      "status": "Pass",
+      "actual": "2 automated test(s) pass"
+    },
+    {
+      "case": "TC-RES-014",
+      "env": "ci",
+      "status": "Pass",
+      "actual": "1 automated test(s) pass"
+    },
+    {
+      "case": "TC-RES-015",
+      "env": "ci",
+      "status": "Pass",
+      "actual": "1 automated test(s) pass"
+    },
+    {
+      "case": "TC-ROOM-004",
+      "env": "ci",
+      "status": "Pass",
+      "actual": "2 automated test(s) pass"
+    },
+    {
+      "case": "TC-ROOM-006",
+      "env": "ci",
+      "status": "Pass",
+      "actual": "3 automated test(s) pass"
+    },
+    {
+      "case": "TC-ROOM-008",
+      "env": "ci",
+      "status": "Pass",
+      "actual": "3 automated test(s) pass"
+    },
+    {
+      "case": "TC-ROOM-011",
+      "env": "ci",
+      "status": "Pass",
+      "actual": "1 automated test(s) pass"
+    },
+    {
+      "case": "TC-ROOM-019",
+      "env": "ci",
+      "status": "Pass",
+      "actual": "3 automated test(s) pass"
+    },
+    {
+      "case": "TC-ROOM-020",
+      "env": "ci",
+      "status": "Pass",
+      "actual": "1 automated test(s) pass"
+    },
+    {
+      "case": "TC-SEC-005",
+      "env": "ci",
+      "status": "Pass",
+      "actual": "2 automated test(s) pass"
+    },
+    {
+      "case": "TC-SEC-007",
+      "env": "ci",
+      "status": "Pass",
+      "actual": "2 automated test(s) pass"
+    },
+    {
+      "case": "TC-SEC-008",
+      "env": "ci",
+      "status": "Pass",
+      "actual": "2 automated test(s) pass"
+    },
+    {
+      "case": "TC-SEC-011",
+      "env": "ci",
+      "status": "Pass",
+      "actual": "1 automated test(s) pass"
+    },
+    {
+      "case": "TC-SOC-004",
+      "env": "ci",
+      "status": "Pass",
+      "actual": "1 automated test(s) pass"
+    },
+    {
+      "case": "TC-SOC-009",
+      "env": "ci",
+      "status": "Pass",
+      "actual": "2 automated test(s) pass"
+    },
+    {
+      "case": "TC-SOC-011",
+      "env": "ci",
+      "status": "Pass",
+      "actual": "1 automated test(s) pass"
+    },
+    {
+      "case": "TC-SOC-013",
+      "env": "ci",
+      "status": "Pass",
+      "actual": "2 automated test(s) pass"
+    },
+    {
+      "case": "TC-UI-002",
+      "env": "ci",
+      "status": "Pass",
+      "actual": "1 automated test(s) pass"
+    },
+    {
+      "case": "TC-UI-003",
+      "env": "ci",
+      "status": "Pass",
+      "actual": "1 automated test(s) pass"
+    },
+    {
+      "case": "TC-UI-005",
+      "env": "ci",
+      "status": "Pass",
+      "actual": "2 automated test(s) pass"
+    },
+    {
+      "case": "TC-UI-006",
+      "env": "ci",
+      "status": "Pass",
+      "actual": "2 automated test(s) pass"
+    },
+    {
+      "case": "TC-UI-008",
+      "env": "ci",
+      "status": "Pass",
+      "actual": "3 automated test(s) pass"
+    },
+    {
+      "case": "TC-UI-009",
+      "env": "ci",
+      "status": "Pass",
+      "actual": "3 automated test(s) pass"
+    },
+    {
+      "case": "TC-UI-011",
+      "env": "ci",
+      "status": "Pass",
+      "actual": "2 automated test(s) pass"
+    },
+    {
+      "case": "TC-VOTE1-001",
+      "env": "ci",
+      "status": "Pass",
+      "actual": "2 automated test(s) pass"
+    },
+    {
+      "case": "TC-VOTE1-002",
+      "env": "ci",
+      "status": "Pass",
+      "actual": "1 automated test(s) pass"
+    },
+    {
+      "case": "TC-VOTE1-003",
+      "env": "ci",
+      "status": "Pass",
+      "actual": "1 automated test(s) pass"
+    },
+    {
+      "case": "TC-VOTE1-005",
+      "env": "ci",
+      "status": "Pass",
+      "actual": "1 automated test(s) pass"
+    },
+    {
+      "case": "TC-VOTE1-006",
+      "env": "ci",
+      "status": "Pass",
+      "actual": "3 automated test(s) pass"
+    },
+    {
+      "case": "TC-VOTE1-008",
+      "env": "ci",
+      "status": "Pass",
+      "actual": "2 automated test(s) pass"
+    },
+    {
+      "case": "TC-VOTE1-009",
+      "env": "ci",
+      "status": "Pass",
+      "actual": "2 automated test(s) pass"
+    },
+    {
+      "case": "TC-VOTE1-015",
+      "env": "ci",
+      "status": "Pass",
+      "actual": "3 automated test(s) pass"
+    },
+    {
+      "case": "TC-VOTE1-016",
+      "env": "ci",
+      "status": "Pass",
+      "actual": "1 automated test(s) pass"
+    },
+    {
+      "case": "TC-VOTE1-018",
+      "env": "ci",
+      "status": "Pass",
+      "actual": "1 automated test(s) pass"
+    },
+    {
+      "case": "TC-VOTE1-019",
+      "env": "ci",
+      "status": "Pass",
+      "actual": "2 automated test(s) pass"
+    },
+    {
+      "case": "TC-VOTE1-021",
+      "env": "ci",
+      "status": "Pass",
+      "actual": "2 automated test(s) pass"
+    },
+    {
+      "case": "TC-VOTE1-022",
+      "env": "ci",
+      "status": "Pass",
+      "actual": "1 automated test(s) pass"
+    },
+    {
+      "case": "TC-VOTE2-001",
+      "env": "ci",
+      "status": "Pass",
+      "actual": "2 automated test(s) pass"
+    },
+    {
+      "case": "TC-VOTE2-002",
+      "env": "ci",
+      "status": "Pass",
+      "actual": "4 automated test(s) pass"
+    },
+    {
+      "case": "TC-VOTE2-004",
+      "env": "ci",
+      "status": "Pass",
+      "actual": "3 automated test(s) pass"
+    },
+    {
+      "case": "TC-VOTE2-009",
+      "env": "ci",
+      "status": "Pass",
+      "actual": "2 automated test(s) pass"
+    },
+    {
+      "case": "TC-VOTE2-010",
+      "env": "ci",
+      "status": "Pass",
+      "actual": "1 automated test(s) pass"
+    },
+    {
+      "case": "TC-VOTE2-011",
+      "env": "ci",
+      "status": "Pass",
+      "actual": "1 automated test(s) pass"
+    },
+    {
+      "case": "TC-VOTE2-012",
+      "env": "ci",
+      "status": "Pass",
+      "actual": "2 automated test(s) pass"
+    },
+    {
+      "case": "TC-VOTE2-013",
+      "env": "ci",
+      "status": "Pass",
+      "actual": "2 automated test(s) pass"
+    }
+  ]
+}

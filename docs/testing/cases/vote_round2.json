@@ -1,0 +1,307 @@
+{
+ "module": "VOTE2",
+ "title": "Bình chọn vòng 2",
+ "cases": [
+  {
+   "id": "TC-VOTE2-001",
+   "title": "Vòng 2 liệt kê món sống sót và giới hạn loại",
+   "req": [
+    "REQ-VOTE-07"
+   ],
+   "priority": "P0",
+   "type": "functional",
+   "level": "component",
+   "preconditions": "Phòng vào vòng 2 với N món.",
+   "steps": [
+    "Mở màn vòng 2."
+   ],
+   "expected": "Chỉ hiện tên món kèm ô chọn; hiện giới hạn loại tối đa.",
+   "automation": [
+    "mobile/tests/component/roundTwoView.test.tsx::lists only dish names with an unticked box, and shows the removal limit",
+    "mobile/tests/component/votingScreens.test.tsx::Hiển thị banner Vòng 2, các món ứng viên và nút toggle đôi Giữ/Loại"
+   ],
+   "env": [
+    "ci"
+   ]
+  },
+  {
+   "id": "TC-VOTE2-002",
+   "title": "Giới hạn loại = max(1, ceil(0.30*N)) theo N",
+   "req": [
+    "REQ-VOTE-07"
+   ],
+   "priority": "P0",
+   "type": "boundary",
+   "level": "unit",
+   "preconditions": "N lần lượt 1, 3, 4, 7, 10, 11, 20.",
+   "steps": [
+    "Tính giới hạn loại cho từng N."
+   ],
+   "expected": "Giới hạn lần lượt 1, 1, 2, 3, 3, 4, 6; luôn tối thiểu 1 kể cả N=1.",
+   "automation": [
+    "mobile/tests/unit/voteRepository.test.ts::enforces cap = 1 for N = 1..3",
+    "mobile/tests/unit/voteRepository.test.ts::enforces cap = 2 for N = 4..6 (5 dishes already allow 2 removals)",
+    "mobile/tests/unit/voteRepository.test.ts::enforces cap = 3 for N = 7..10",
+    "mobile/tests/unit/voteRepository.test.ts::grows with the pool up to 20 dishes without float rounding errors"
+   ],
+   "env": [
+    "ci"
+   ]
+  },
+  {
+   "id": "TC-VOTE2-003",
+   "title": "Chọn quá giới hạn bị chặn trước khi gọi server",
+   "req": [
+    "REQ-VOTE-07"
+   ],
+   "priority": "P0",
+   "type": "negative",
+   "level": "unit",
+   "preconditions": "Giới hạn loại là 2.",
+   "steps": [
+    "Đánh dấu loại 3 món.",
+    "Gửi phiếu."
+   ],
+   "expected": "Ô còn lại bị khóa khi chạm giới hạn; gửi quá giới hạn bị từ chối ngay, server không bị gọi.",
+   "automation": [
+    "mobile/tests/unit/voteRepository.test.ts::rejects Round 2 submission before calling server when REMOVE count exceeds cap",
+    "mobile/tests/component/roundTwoView.test.tsx::ticking removes a dish; at the limit the other boxes are disabled; unticking frees one",
+    "supabase/tests/http/GM-20-canonical.http"
+   ],
+   "env": [
+    "ci",
+    "qa-local"
+   ]
+  },
+  {
+   "id": "TC-VOTE2-004",
+   "title": "N=1: vẫn mở vòng 2 và được phép loại món duy nhất",
+   "req": [
+    "REQ-VOTE-07"
+   ],
+   "priority": "P0",
+   "type": "boundary",
+   "level": "component",
+   "preconditions": "Vòng 1 còn đúng 1 món sống sót.",
+   "steps": [
+    "Mở vòng 2.",
+    "Loại món duy nhất rồi gửi."
+   ],
+   "expected": "Vòng 2 mở thật; giới hạn 1; gửi hợp lệ.",
+   "automation": [
+    "mobile/tests/component/votingScreens.test.tsx::N=1 có thể loại món duy nhất (Loại hết) và nộp phiếu hợp lệ theo Cap R2=1",
+    "mobile/tests/component/gm26FigmaParity.test.tsx::supports N=1 candidate with cap=1, allows marking ✕ ĐÃ LOẠI and submitting ALL_REMOVED",
+    "mobile/tests/unit/voteRepository.test.ts::allows Round 2 submission with N=1 and REMOVE choice (Node 638:9369)"
+   ],
+   "env": [
+    "ci"
+   ]
+  },
+  {
+   "id": "TC-VOTE2-005",
+   "title": "Không tự chốt và không tự ghi KEEP cho người chưa gửi",
+   "req": [
+    "REQ-VOTE-08"
+   ],
+   "priority": "P0",
+   "type": "functional",
+   "level": "api",
+   "preconditions": "Phòng vòng 2, một người chưa gửi.",
+   "steps": [
+    "Hết 60 giây.",
+    "Đọc kết quả."
+   ],
+   "expected": "Phiếu chưa gửi không được ghi KEEP; kết quả chỉ tính các phiếu hợp lệ đã nhận.",
+   "automation": [
+    "supabase/tests/http/GM-20-canonical.http",
+    "supabase/tests/http/DISH-POLICY-V3.http"
+   ],
+   "env": [
+    "qa-local"
+   ]
+  },
+  {
+   "id": "TC-VOTE2-006",
+   "title": "Loại hết thì NO_CONSENSUS/ALL_REMOVED",
+   "req": [
+    "REQ-VOTE-08"
+   ],
+   "priority": "P0",
+   "type": "boundary",
+   "level": "api",
+   "preconditions": "Phiếu vòng 2 loại hết các món.",
+   "steps": [
+    "Gửi phiếu loại toàn bộ."
+   ],
+   "expected": "Kết quả NO_CONSENSUS, lý do ALL_REMOVED, không bù món và không có vòng 3.",
+   "automation": [
+    "supabase/tests/http/GM-20-canonical.http",
+    "mobile/tests/component/dishResultStates.test.tsx::%s has the correct terminal reason and no winner/podium/places",
+    "mobile/tests/component/gm26FigmaParity.test.tsx::supports N=1 candidate with cap=1, allows marking ✕ ĐÃ LOẠI and submitting ALL_REMOVED"
+   ],
+   "env": [
+    "qa-local",
+    "ci"
+   ]
+  },
+  {
+   "id": "TC-VOTE2-007",
+   "title": "Còn món thì chốt theo điểm vòng 1",
+   "req": [
+    "REQ-VOTE-08"
+   ],
+   "priority": "P0",
+   "type": "functional",
+   "level": "unit",
+   "preconditions": "Vòng 2 còn nhiều món.",
+   "steps": [
+    "Gửi phiếu loại một món.",
+    "Đọc kết quả."
+   ],
+   "expected": "Winner là món điểm vòng 1 cao nhất (điểm = 2·WANT + OK) trong tập còn lại; vòng 2 không cộng điểm.",
+   "automation": [
+    "mobile/tests/dishPolicyV4.test.mjs::cutoff ties always include the seeded winner; NO/REMOVE never rank",
+    "mobile/tests/decision.test.mjs::2W+OK equals n+W; even/odd tier boundaries across 2–8 members",
+    "supabase/tests/http/GM-20-canonical.http"
+   ],
+   "env": [
+    "ci",
+    "qa-local"
+   ]
+  },
+  {
+   "id": "TC-VOTE2-008",
+   "title": "Hòa điểm xử lý một lần và ổn định",
+   "req": [
+    "REQ-RES-02"
+   ],
+   "priority": "P0",
+   "type": "boundary",
+   "level": "api",
+   "preconditions": "Hai món bằng điểm sau vòng 2.",
+   "steps": [
+    "Chốt kết quả.",
+    "Đọc lại nhiều lần."
+   ],
+   "expected": "Thứ tự và winner giống nhau mọi lần đọc.",
+   "automation": [
+    "supabase/tests/http/GM-20-canonical.http",
+    "mobile/tests/unit/podiumOrder.test.ts::keeps score order and the server order for equal scores"
+   ],
+   "env": [
+    "qa-local",
+    "ci"
+   ]
+  },
+  {
+   "id": "TC-VOTE2-009",
+   "title": "Gửi vòng 2 đi thẳng tới phòng chờ không hộp xác nhận",
+   "req": [
+    "REQ-VOTE-07"
+   ],
+   "priority": "P1",
+   "type": "functional",
+   "level": "component",
+   "preconditions": "Đã chọn món loại.",
+   "steps": [
+    "Bấm Gửi vòng 2."
+   ],
+   "expected": "Chuyển thẳng tới phòng chờ; lỗi gửi giữ các ô đã chọn kèm một nút thử lại.",
+   "automation": [
+    "mobile/tests/component/roundTwoView.test.tsx::sending goes straight to the waiting screen without a confirmation dialog",
+    "mobile/tests/component/roundTwoView.test.tsx::a failed send keeps the ticks and offers one retry button"
+   ],
+   "env": [
+    "ci"
+   ]
+  },
+  {
+   "id": "TC-VOTE2-010",
+   "title": "Cảnh báo khi loại hết mọi món",
+   "req": [
+    "REQ-VOTE-08"
+   ],
+   "priority": "P1",
+   "type": "functional",
+   "level": "component",
+   "preconditions": "Giới hạn loại cho phép loại tất cả.",
+   "steps": [
+    "Đánh dấu loại mọi món."
+   ],
+   "expected": "Hiện cảnh báo rõ ràng nhưng vẫn gửi được.",
+   "automation": [
+    "mobile/tests/component/roundTwoView.test.tsx::ticking every dish warns the person (only possible when the limit allows it)"
+   ],
+   "env": [
+    "ci"
+   ]
+  },
+  {
+   "id": "TC-VOTE2-011",
+   "title": "Vòng 2 chốt trước khi người chưa gửi nộp",
+   "req": [
+    "REQ-VOTE-06"
+   ],
+   "priority": "P0",
+   "type": "resilience",
+   "level": "component",
+   "preconditions": "Thành viên đang ở vòng 2 chưa gửi, server đã có kết quả.",
+   "steps": [
+    "Giữ màn vòng 2.",
+    "Server chốt kết quả."
+   ],
+   "expected": "App tự chuyển sang kết quả, không giữ ở màn chọn món.",
+   "automation": [
+    "mobile/tests/component/votingSnapshotLifecycle.test.tsx::observes the terminal result before the round-two caller submits"
+   ],
+   "env": [
+    "ci",
+    "avd"
+   ]
+  },
+  {
+   "id": "TC-VOTE2-012",
+   "title": "Reload giữa vòng 2 khôi phục đúng phiếu",
+   "req": [
+    "REQ-RT-03"
+   ],
+   "priority": "P0",
+   "type": "resilience",
+   "level": "unit",
+   "preconditions": "Đã gửi phiếu vòng 2 (ACK) hoặc chưa rõ kết quả.",
+   "steps": [
+    "Force-stop và mở lại."
+   ],
+   "expected": "Phiếu đã ACK không gửi lại; phiếu chưa rõ được đối chiếu server trước khi phát lại cùng request.",
+   "automation": [
+    "mobile/tests/unit/gm31Outbox.test.ts::does not submit an unknown outbox ballot when live snapshot is unavailable but cache exists",
+    "mobile/tests/component/votingSnapshotLifecycle.test.tsx::keeps the whole unknown-ACK request stable after snapshot version changes"
+   ],
+   "env": [
+    "ci"
+   ]
+  },
+  {
+   "id": "TC-VOTE2-013",
+   "title": "Nút Giữ tất cả đặt lại mọi lựa chọn",
+   "req": [
+    "REQ-VOTE-07"
+   ],
+   "priority": "P2",
+   "type": "functional",
+   "level": "component",
+   "preconditions": "Đã đánh dấu loại vài món.",
+   "steps": [
+    "Bấm Giữ tất cả hoặc Bỏ chọn."
+   ],
+   "expected": "Mọi món về KEEP, thông báo giới hạn biến mất.",
+   "automation": [
+    "mobile/tests/component/votingScreens.test.tsx::Nút Giữ tất cả đặt lại toàn bộ món về KEEP và xóa thông báo cap",
+    "mobile/tests/component/roundTwoView.test.tsx::\"Bỏ chọn\" clears every tick"
+   ],
+   "env": [
+    "ci"
+   ]
+  }
+ ]
+}

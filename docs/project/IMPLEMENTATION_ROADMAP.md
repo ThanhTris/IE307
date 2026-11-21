@@ -116,3 +116,7 @@ baseline legacy; không tạo dependency ngược từ task số nhỏ tới GM-
 phải nghiệm thu riêng trước sử dụng, không mở lại bundle/evidence GM-08. Quyết định
 hẹp không đổi vote/cap/UI; [ADR-018](../architecture/decisions/ADR-018-dish-catalogue-profile.md)
 chờ Trí duyệt trước sửa DB/API.
+
+## Release v1 — đăng store (2026-11-20)
+
+Chủ dự án chốt đợt đăng Google Play và App Store đầu tiên ở P0 kèm các mục cần thiết của P1; P2 và push từ xa hoãn. Phạm vi, task GM-41, GM-46..GM-61, checklist store và điều kiện hoàn thành nằm ở [RELEASE_V1_SCOPE](RELEASE_V1_SCOPE.md). Bộ test case theo [GM-55](../../tasks/backlog/GM-55.md) là đầu ra quan trọng nhất cho báo cáo.

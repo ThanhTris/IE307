@@ -1,0 +1,16 @@
+{
+  "run": "qa-local-e2e-20261120",
+  "commit": "028ba6a",
+  "build": "owned GM-03 QA stack gm03qa-gm57-e2e (migrations checked in at this commit, contract dish-session-v4/roadmap-v2/GM-07.B-supplement), Windows, Node v24.15.0",
+  "date": "2026-11-20",
+  "results": [
+    {
+      "case": "TC-VOTE1-010",
+      "env": "qa-local",
+      "status": "Pass",
+      "actual": "Two independent guests submitted all-WANT ballots and entered waiting; the server decided once: DECIDED, round 1, UNANIMOUS_WANT; both read the same persisted result.",
+      "evidence": "scripts/e2e/two_client_flow.mjs, 8 steps passed; report written to the ignored .work/e2e directory",
+      "tester": "Claude Code for Trí"
+    }
+  ]
+}

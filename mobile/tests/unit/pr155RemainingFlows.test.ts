@@ -72,7 +72,7 @@ const canonicalFixture = {
   canEndWaiting: false,
 };
 
-async function harness(snapshot = JSON.parse(JSON.stringify(canonicalFixture))) {
+async function harness(snapshot = JSON.parse(JSON.stringify(canonicalFixture)), defaultsFlag?: unknown) {
   const calls: { rpc: string; params: any }[] = [];
   const consent = { personal: false, group: false };
   const preferenceAcks = new Map<string, number>();
@@ -86,7 +86,8 @@ async function harness(snapshot = JSON.parse(JSON.stringify(canonicalFixture))) 
       }
       const command = params.command;
       if (command === 'getDefaultPreferences') {
-        return { ok: true, data: { revision: 1, preferences: snapshot.ownPreferences } } as T;
+        return { ok: true, data: { revision: 1, preferences: snapshot.ownPreferences,
+          ...(defaultsFlag === undefined ? {} : { hasRecentHistory: defaultsFlag }) } } as T;
       }
       if (command === 'snapshot') {
         return { ok: true, data: snapshot } as T;
@@ -124,6 +125,19 @@ async function harness(snapshot = JSON.parse(JSON.stringify(canonicalFixture))) 
 }
 
 describe('PR155 complete consumer paths after fff8b88', () => {
+  it.each([[true, true], [false, false], [undefined, false], ['true', false]])(
+    'uses the defaults history flag %s without reading the history list', async (flag, expected) => {
+      const h = await harness(undefined, flag);
+      h.consent.personal = true;
+      expect((await h.gateway.read()).hasRecentHistory).toBe(expected);
+      expect((await createLiveDishSetupGateway(h.repo).read()).hasRecentHistory).toBe(expected);
+      expect(h.calls.some(call => call.params.command === 'history')).toBe(false);
+      if (typeof flag === 'string') {
+        expect(await h.repo.getDefaultPreferences()).toMatchObject({ ok: false, error: { messageKey: 'MALFORMED_RESPONSE' } });
+      }
+    },
+  );
+
   it('lets the current real lobby repository load a schema-valid canonical room', async () => {
     const h = await harness();
     const response = await h.repo.getRoomSnapshot(h.snapshot.roomId);

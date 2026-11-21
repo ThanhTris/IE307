@@ -1,6 +1,6 @@
 # Yêu cầu dữ liệu cho bộ lọc khẩu vị
 
-Cập nhật 2026-11-13 (ADR-024, ADR-025). Áp dụng cho catalogue món (GM-40) mà backend dùng để chọn pool. Độ phủ hiện tại:
+Áp dụng ADR-024 và ADR-025 cho catalogue chọn pool. Báo cáo dưới đây đọc bundle GM-41 1.2.0. Độ phủ:
 [DISH_FILTER_COVERAGE.md](DISH_FILTER_COVERAGE.md) (sinh bởi `python scripts/dish_filter_coverage.py`). Mẫu điền:
 [`data-preparation/templates/dish_filter_enrichment.csv`](../../data-preparation/templates/dish_filter_enrichment.csv).
 
@@ -71,7 +71,7 @@ suy ra an toàn dị ứng từ tên món.
 
 - Mỗi bữa **≥ 20 món** (host chọn tối đa 20); dưới 10 chỉ tạo được qua "Dùng N món", dưới 5 thì không tạo được.
 - Mỗi nhóm món **≥ 3 món**; mỗi miền có món tiêu biểu.
-- Hiện: bữa tối 7 món, **ăn vặt 1 món (cần ≥ 24, xem mục Ăn vặt)**; 9 nhóm chưa có món nào (chi tiết trong báo cáo độ phủ). Dữ liệu 39 món hiện chỉ để test.
+- Bản GM-40 1.1.0 có 39 món test/demo, trong đó tối 7 món và ăn vặt 1 món. Xem báo cáo độ phủ để đối chiếu bản GM-41.
 
 ## Bộ món Ăn vặt (bữa `snack`)
 
@@ -79,7 +79,7 @@ suy ra an toàn dị ứng từ tên món.
 Món trộn & Cuốn, Ốc & Hải sản, Bánh ngọt, Chè & Kem, Trái cây & Đồ chua, Đồ ăn vặt khô). Backend đã nhận `snack` ở mọi
 bước (tạo phòng, chọn pool, xếp hạng theo khẩu vị); thứ còn thiếu là **dữ liệu**.
 
-- Catalogue QA đang hoạt động chỉ có **1 món** có `snack` (sáng 14, trưa 23, tối 7), nên chưa tạo được phòng Ăn vặt (cần ít nhất 5, host chọn tối đa 20).
+- Catalogue GM-40 1.1.0 có **1 món** có `snack` (sáng 14, trưa 23, tối 7). Bundle GM-41 mở rộng độ phủ cả bốn bữa.
 - Cần **ít nhất 24 món Ăn vặt**: mỗi nhóm trong 8 nhóm Ăn vặt **≥ 3 món**, và tổng ≥ 20 để host chọn được 20 món.
 - Món ăn vặt cũng là món bình thường: đủ `categoryIds`, `cuisineIds`, `flavor`, giá, nguồn (`sourceRef`) như bữa chính.
 - Một món ăn được cả bữa chính lẫn ăn vặt (bánh mì, xôi, cháo, bánh cuốn…) thì gắn **cả hai** `mealSlots` (ví dụ `breakfast snack`). Gắn thiếu thì món không vào pool của bữa còn lại.
@@ -87,6 +87,8 @@ bước (tạo phòng, chọn pool, xếp hạng theo khẩu vị); thứ còn t
 - Không bịa món, nhãn hay giá để cho đủ số lượng: món chưa có nguồn thì chưa đưa vào.
 
 ## Quy trình
+
+[Xem cách phát sinh bundle GM-41 và chạy QA](../evidence/roadmap-v2/GM-41/HANDOFF.md). Các bước dưới đây mô tả quy trình biên tập và đầu vào GM-40.
 
 1. Điền mẫu CSV (cột `fill…`, nhiều giá trị cách nhau bằng dấu cách):
    `fillFamilies` (`rice porridge`), `fillMealSlots` (`breakfast lunch dinner`), `fillRegions` (`vi_south vi_west`),
