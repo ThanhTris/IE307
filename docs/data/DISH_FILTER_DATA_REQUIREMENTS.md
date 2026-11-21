@@ -1,5 +1,7 @@
 # Yêu cầu dữ liệu cho bộ lọc khẩu vị
 
+> **Release v1 (2026-11-21):** số lượng món, mô tả và ảnh bắt buộc cho bản lên store nằm ở [RELEASE_V1_CATALOGUE_SPEC](RELEASE_V1_CATALOGUE_SPEC.md) và được kiểm bằng `python scripts/release_catalogue_check.py`. Tài liệu này giữ cách ghi trường, mã và ID.
+
 Áp dụng ADR-024 và ADR-025 cho catalogue chọn pool. Báo cáo dưới đây đọc bundle GM-41 1.2.0. Độ phủ:
 [DISH_FILTER_COVERAGE.md](DISH_FILTER_COVERAGE.md) (sinh bởi `python scripts/dish_filter_coverage.py`). Mẫu điền:
 [`data-preparation/templates/dish_filter_enrichment.csv`](../../data-preparation/templates/dish_filter_enrichment.csv).
@@ -68,6 +70,8 @@ Mỗi giá trị phân loại cần nguồn (`sourceRef`: menu, bài viết, kh�
 suy ra an toàn dị ứng từ tên món.
 
 ## Số lượng tối thiểu
+
+Ngưỡng dưới đây là mức sàn kỹ thuật để tạo phòng. Bản lên store dùng ngưỡng cao hơn trong [RELEASE_V1_CATALOGUE_SPEC](RELEASE_V1_CATALOGUE_SPEC.md) (≥ 250 món, mỗi bữa ≥ 60, ăn vặt ≥ 80, mỗi nhóm ≥ 10).
 
 - Mỗi bữa **≥ 20 món** (host chọn tối đa 20); dưới 10 chỉ tạo được qua "Dùng N món", dưới 5 thì không tạo được.
 - Mỗi nhóm món **≥ 3 món**; mỗi miền có món tiêu biểu.
