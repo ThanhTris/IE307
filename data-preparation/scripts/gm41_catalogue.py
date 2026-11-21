@@ -149,7 +149,7 @@ def build_bundle(path=INPUT):
     sources = {r['sourceRef']: r for r in entities['dataSources']}
     evidence = {(r['dishId'], r['field']): r for r in entities['fieldEvidence']}
     editorial = ft.stable_id('dataSource', 'gm41-enrichment-v1')
-    sources[editorial] = {**record(editorial), 'locator': str(INPUT.relative_to(ROOT)),
+    sources[editorial] = {**record(editorial), 'locator': INPUT.relative_to(ROOT).as_posix(),
                           'usageRights': 'unknown', 'license': None, 'attribution': None}
     updates = defaultdict(lambda: defaultdict(dict))
     for row in read_rows(path):
@@ -225,7 +225,7 @@ def outputs():
         'datasetVersion': DATASET, 'schemaVersion': CONTRACT, 'status': 'draft', 'fixtureOnly': False,
         'usageScope': 'test_demo', 'bundleSha256': dc.sha(payload), 'schemaSha256': dc.sha(schema),
         'counts': {key: len(value) for key, value in bundle['entities'].items()}, 'coverage': counts,
-        'inputs': {str(path.relative_to(ROOT)): dc.sha(path.read_bytes()) for path in
+        'inputs': {path.relative_to(ROOT).as_posix(): dc.sha(path.read_bytes()) for path in
                    (ROOT / dc.BUNDLE_PATH, ROOT / dc.MANIFEST_PATH, ft.CONFIG, ft.V1, INPUT)},
     })}
 
@@ -240,6 +240,6 @@ def run(*, write=False, input_path=None):
             path.parent.mkdir(parents=True, exist_ok=True)
             path.write_bytes(raw)
         elif not path.exists() or path.read_bytes() != raw:
-            stale.append(str(path.relative_to(ROOT)))
+            stale.append(path.relative_to(ROOT).as_posix())
     print(json.dumps({'datasetVersion': DATASET, 'stale': stale}))
     return int(bool(stale))

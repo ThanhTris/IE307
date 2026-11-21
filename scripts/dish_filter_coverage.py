@@ -82,7 +82,7 @@ def report(data, rows, bundle=BUNDLE) -> str:
     lines = [
         '# Độ phủ dữ liệu cho bộ lọc khẩu vị',
         '',
-        f'Sinh bởi `python scripts/dish_filter_coverage.py` từ `{bundle.relative_to(ROOT)}` '
+        f'Sinh bởi `python scripts/dish_filter_coverage.py` từ `{bundle.relative_to(ROOT).as_posix()}` '
         f'(dataset {data.get("datasetVersion")}, {data.get("usageScope")}). Không sửa tay; chạy lại script sau khi dữ liệu đổi.',
         '',
         '## Tổng quan',
@@ -152,7 +152,7 @@ def main() -> int:
     data, rows = build(GM41_BUNDLE)
     outputs = {REPORT: report(data, rows, GM41_BUNDLE), TEMPLATE: template(build()[1])}
     if args.check:
-        stale = [str(p.relative_to(ROOT)) for p, text in outputs.items() if not p.exists() or p.read_text(encoding='utf-8') != text]
+        stale = [p.relative_to(ROOT).as_posix() for p, text in outputs.items() if not p.exists() or p.read_text(encoding='utf-8') != text]
         if stale:
             print('out of date:', ', '.join(stale))
             return 1
@@ -161,7 +161,7 @@ def main() -> int:
     for path, text in outputs.items():
         path.parent.mkdir(parents=True, exist_ok=True)
         path.write_text(text, encoding='utf-8', newline='\n')
-        print('wrote', path.relative_to(ROOT))
+        print('wrote', path.relative_to(ROOT).as_posix())
     return 0
 
 
