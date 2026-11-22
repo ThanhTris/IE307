@@ -1,0 +1,765 @@
+{
+  "datasetVersion": "1.3.0",
+  "batches": [
+    {
+      "path": "data-preparation/editorial/release-v1/batch-01.csv",
+      "observations": 70,
+      "newDishes": [
+        {
+          "dishId": "019a510e-2f95-5726-a448-fd3d9d67731d",
+          "name": "Bánh bẻng"
+        },
+        {
+          "dishId": "3e06a97c-e583-52b6-a0a9-1f99c14f5f86",
+          "name": "Bánh bột lọc"
+        },
+        {
+          "dishId": "8d3f3d1e-d8c3-551e-96b0-3a39ae37666d",
+          "name": "Bánh cam"
+        },
+        {
+          "dishId": "b9cb052a-cf1f-5cdc-9399-7efef7f222e8",
+          "name": "Bánh chuối chiên"
+        },
+        {
+          "dishId": "03539dba-3723-5422-9f7f-d027fe06396e",
+          "name": "Bánh cống"
+        },
+        {
+          "dishId": "d68701cf-b272-5ec4-9ce3-3fc907e6a182",
+          "name": "Bánh khoái"
+        },
+        {
+          "dishId": "ae648b17-c886-5b31-abfe-47a3bf0a50e6",
+          "name": "Bánh mì que"
+        },
+        {
+          "dishId": "9b23bc0c-a8d6-5725-b84f-48e6f276d959",
+          "name": "Bánh ram ít"
+        },
+        {
+          "dishId": "f8297789-ef96-5f5f-a2db-a678dd1e09e0",
+          "name": "Bánh su kem"
+        },
+        {
+          "dishId": "31f5f811-7fcc-56f6-9862-694b2f6307e7",
+          "name": "Bánh tằm bì"
+        },
+        {
+          "dishId": "15b467a0-7614-5bda-a9f5-b6082901d6d8",
+          "name": "Bánh ép"
+        },
+        {
+          "dishId": "eaa258ec-03f6-5baa-acf4-bf90304269e6",
+          "name": "Bánh ít ngọt"
+        },
+        {
+          "dishId": "122e0939-6478-5963-90e8-5ffd10988c2c",
+          "name": "Bánh đa cua"
+        },
+        {
+          "dishId": "4035d335-acaf-5211-8e43-40d560860bec",
+          "name": "Bánh đa kê"
+        },
+        {
+          "dishId": "d76dd83a-59ba-5c06-948a-2ad55f5f5bea",
+          "name": "Bánh đúc tàu"
+        },
+        {
+          "dishId": "d6288ff5-6b55-59c0-aa5a-198b36f460d7",
+          "name": "Bánh đậu xanh"
+        },
+        {
+          "dishId": "d52b0a63-dd89-50f5-8680-d7ed53c1d1d9",
+          "name": "Bò bía ngọt"
+        },
+        {
+          "dishId": "eead5c98-e3ac-5f71-a670-c57755d70f0c",
+          "name": "Bún cá cay"
+        },
+        {
+          "dishId": "c0c7bd62-550e-5389-8500-6c86dbdbe369",
+          "name": "Bún quậy"
+        },
+        {
+          "dishId": "ced58769-a7c7-5629-82a9-e162babdcf24",
+          "name": "Bún thang"
+        },
+        {
+          "dishId": "afd8050f-e7cc-5a4a-8df3-07031cec9000",
+          "name": "Caramen hoa quả"
+        },
+        {
+          "dishId": "33cb1cfd-c0a5-5c6c-84c3-d1d646bd4173",
+          "name": "Chuối nếp nướng"
+        },
+        {
+          "dishId": "b036180a-0ff3-5e73-9e25-3732342411d9",
+          "name": "Cháo hải sản"
+        },
+        {
+          "dishId": "6e6a3c13-7da9-51f2-907d-74bd87d4ce72",
+          "name": "Cháo lòng"
+        },
+        {
+          "dishId": "e9d4bec0-677c-5af2-878b-6fa1031fb5de",
+          "name": "Cháo sườn"
+        },
+        {
+          "dishId": "a4ce2d45-80c6-54c0-bcb7-b5405a4a2f69",
+          "name": "Cháo trắng"
+        },
+        {
+          "dishId": "35c28b84-c9fe-5397-b9ed-4b1e17f070cb",
+          "name": "Chè bắp"
+        },
+        {
+          "dishId": "13439139-746e-57ca-8235-16e2b4ad720f",
+          "name": "Chè bột lọc heo quay"
+        },
+        {
+          "dishId": "75883713-cd7e-5b37-9ab9-a51f447f88da",
+          "name": "Chè chuối"
+        },
+        {
+          "dishId": "0e30745a-d1c9-5b0b-b1ec-6cafa4bb6f2b",
+          "name": "Chè khúc bạch"
+        },
+        {
+          "dishId": "d233a39a-2cf6-5c5c-b82f-f3da99116ff2",
+          "name": "Chè sương sa hạt lựu"
+        },
+        {
+          "dishId": "e63f04aa-5e31-5f38-a35f-160c345a220d",
+          "name": "Chè trôi nước"
+        },
+        {
+          "dishId": "5b4bfdd7-e841-5e6f-8580-4ff0530b8d5d",
+          "name": "Chè đỗ đen"
+        },
+        {
+          "dishId": "265809a8-986a-5c78-8199-94c45094b450",
+          "name": "Cánh gà chiên nước mắm"
+        },
+        {
+          "dishId": "e15c8cf8-34da-5d73-aced-31cd6d5eea7c",
+          "name": "Cơm cháy chà bông"
+        },
+        {
+          "dishId": "a1e6ab51-9e2e-55c2-8369-0ef075ea7813",
+          "name": "Cơm hến"
+        },
+        {
+          "dishId": "a38f84cd-f594-55c0-8d4b-77d9cf392a79",
+          "name": "Dừa dầm"
+        },
+        {
+          "dishId": "46a284ae-4fcc-506f-a657-74d5254723de",
+          "name": "Giá bể xào"
+        },
+        {
+          "dishId": "0c98fd13-c60c-59f3-b45f-6c8b815b38f7",
+          "name": "Gà nướng ống tre"
+        },
+        {
+          "dishId": "d718fef9-e8d9-5feb-9193-de22f102505c",
+          "name": "Gỏi xoài tôm khô"
+        },
+        {
+          "dishId": "8dce96d9-7896-5fc2-97d0-3ac8ab3d151c",
+          "name": "Hoa quả dầm"
+        },
+        {
+          "dishId": "00115c43-e3bd-5c0c-aaeb-86f36da99655",
+          "name": "Kem dừa"
+        },
+        {
+          "dishId": "a2e88df3-ff3a-5813-b671-d0a44003cc15",
+          "name": "Kem xôi"
+        },
+        {
+          "dishId": "ef2c9689-995e-5ef0-bfb3-60f6c8aa4f2f",
+          "name": "Kẹo cu đơ"
+        },
+        {
+          "dishId": "88ebbde4-14db-566e-aaa5-ff68691297ed",
+          "name": "Kẹo lạc"
+        },
+        {
+          "dishId": "0d270cdc-50bd-5c45-9729-548502e374d8",
+          "name": "Mè xửng"
+        },
+        {
+          "dishId": "18403411-7967-54cd-bd56-e897223c22d5",
+          "name": "Mứt gừng"
+        },
+        {
+          "dishId": "b0a7b0aa-7e88-543c-ad30-88e3de570852",
+          "name": "Nộm bò khô"
+        },
+        {
+          "dishId": "18e0d9be-0517-5cfe-b98a-cc7ea1569cc6",
+          "name": "Súp bí đỏ"
+        },
+        {
+          "dishId": "795730e2-2384-55cd-8968-5a402802229a",
+          "name": "Súp hoành thánh"
+        },
+        {
+          "dishId": "2749cd54-8b25-5d2a-9c75-d1286568d833",
+          "name": "Súp kem nấm"
+        },
+        {
+          "dishId": "a08e45c7-a6d6-58ed-a41a-c4305a7851c2",
+          "name": "Sữa chua nếp cẩm"
+        }
+      ]
+    },
+    {
+      "path": "data-preparation/editorial/release-v1/batch-02.csv",
+      "observations": 47,
+      "newDishes": [
+        {
+          "dishId": "aeb07c17-4368-5f06-bace-3e569f82925a",
+          "name": "Bánh khọt"
+        },
+        {
+          "dishId": "7cec2262-fd1b-591d-8c20-7f5ef7d5fe0a",
+          "name": "Bánh mì chảo"
+        },
+        {
+          "dishId": "c26ae9d8-fee9-5074-8ad7-5a575bf830a5",
+          "name": "Bánh mì lagu"
+        },
+        {
+          "dishId": "107f783c-7249-5c13-98ce-dc9d023247a6",
+          "name": "Bánh tráng nướng"
+        },
+        {
+          "dishId": "402f6f92-8cc8-5397-adb7-14a9a3dfe6e3",
+          "name": "Bò bía mặn"
+        },
+        {
+          "dishId": "70834c74-c730-589b-8498-4629cadbf42f",
+          "name": "Bò né"
+        },
+        {
+          "dishId": "9757f47c-4926-5ac4-af78-f5775e1d7cac",
+          "name": "Bún nước lèo"
+        },
+        {
+          "dishId": "2fa4b413-e5c2-50c8-81d0-f037bcf2d286",
+          "name": "Bún rạm"
+        },
+        {
+          "dishId": "247f0ab9-f1f4-54a3-87cd-99a635be19f6",
+          "name": "Bún tôm Bình Định"
+        },
+        {
+          "dishId": "e760bb05-c76d-5939-90de-dfe78c20691d",
+          "name": "Bưởi chấm muối tôm"
+        },
+        {
+          "dishId": "6c917fda-1e1b-5192-9bd6-167c6f97e4aa",
+          "name": "Bạch tuộc nướng"
+        },
+        {
+          "dishId": "e9081bf1-da78-55af-ad2f-08d148ee74e8",
+          "name": "Cháo yến mạch"
+        },
+        {
+          "dishId": "e9781315-3374-52b6-bee5-9c36c46ce10d",
+          "name": "Chả giò"
+        },
+        {
+          "dishId": "d65ea051-320c-5185-85e2-127743dfc038",
+          "name": "Càng ghẹ rang me"
+        },
+        {
+          "dishId": "e021804d-c80d-5058-ad4a-6a5583f623b7",
+          "name": "Cá hồi nướng"
+        },
+        {
+          "dishId": "ff96ba1b-bde3-5fd0-b91a-c2f1f0193b21",
+          "name": "Cơm hạt sen"
+        },
+        {
+          "dishId": "024b5cdf-cb07-5c94-8b34-5dcdebc0d5e4",
+          "name": "Cơm trái dừa"
+        },
+        {
+          "dishId": "c82139ab-726f-5c53-ae02-41aec6b088f2",
+          "name": "Dưa lưới cắt sẵn"
+        },
+        {
+          "dishId": "7ea6c758-aed3-5580-b579-1931a926458b",
+          "name": "Hàu nướng mỡ hành"
+        },
+        {
+          "dishId": "16f195a6-33a0-54d8-95ab-df1decd9cd10",
+          "name": "Khô cá chỉ vàng nướng"
+        },
+        {
+          "dishId": "bc569e5d-bd97-5c64-9963-6a5413199aa8",
+          "name": "Khô mực nướng"
+        },
+        {
+          "dishId": "1eeba7ab-7b12-590b-994a-06adbe47ec63",
+          "name": "Lẩu cua đồng"
+        },
+        {
+          "dishId": "b2f345e2-bc4c-5529-9c45-02e4aae11d31",
+          "name": "Lẩu vịt nấu chao"
+        },
+        {
+          "dishId": "cecd8705-eb04-5b6c-9015-014c51d36be2",
+          "name": "Mì lá đút lò"
+        },
+        {
+          "dishId": "0cc389f6-b46f-5efe-828a-fe057bc23a7d",
+          "name": "Mận Hà Nội chua ngọt"
+        },
+        {
+          "dishId": "53621685-2bea-5e48-8a59-202482acfad1",
+          "name": "Nem cua bể"
+        },
+        {
+          "dishId": "df04074c-027b-597e-a30d-dab217155801",
+          "name": "Nghêu hấp Thái"
+        },
+        {
+          "dishId": "7dc4a501-9f31-5164-956e-13338699d38d",
+          "name": "Sò lông nướng mỡ hành"
+        },
+        {
+          "dishId": "80d8acd6-a7ae-59d7-90d7-ead59f8db2e9",
+          "name": "Sườn nướng BBQ"
+        },
+        {
+          "dishId": "dec7c964-c295-5d27-9d8b-0a4744a05dde",
+          "name": "Thăn bò nướng"
+        },
+        {
+          "dishId": "3d7bf018-ab49-514b-9023-8334786f8e21",
+          "name": "Thơm chấm muối tôm"
+        },
+        {
+          "dishId": "1f60e3db-5eaa-501a-9e43-02068c1e3d94",
+          "name": "Trái cây cắt sẵn thập cẩm"
+        },
+        {
+          "dishId": "e01a3df2-6911-5635-a5b4-a82004210904",
+          "name": "Tôm hùm nướng"
+        },
+        {
+          "dishId": "8d60e0e5-e038-5441-8223-58a3de33d366",
+          "name": "Ốc giác cà ri"
+        },
+        {
+          "dishId": "693daba6-9af8-51a6-a626-16ce4ff2d330",
+          "name": "Ốc tỏi nướng muối ớt"
+        },
+        {
+          "dishId": "b5e9fc23-9da4-55fb-abb5-f31f1775e12c",
+          "name": "Ức gà nướng thảo mộc"
+        }
+      ]
+    },
+    {
+      "path": "data-preparation/editorial/release-v1/batch-03.csv",
+      "observations": 46,
+      "newDishes": [
+        {
+          "dishId": "ed6f4147-659d-5264-b6ad-41861728ed29",
+          "name": "Bánh bông lan"
+        },
+        {
+          "dishId": "07f051a6-2a48-5b63-ac86-e56ddd4fb6c4",
+          "name": "Bánh crepe ngọt"
+        },
+        {
+          "dishId": "ca3eac84-18b3-5348-86d4-73efc55369de",
+          "name": "Bánh gối"
+        },
+        {
+          "dishId": "443b19d1-73de-53a7-9812-e02ce32779c1",
+          "name": "Bánh hỏi lòng heo"
+        },
+        {
+          "dishId": "dc8822d1-e883-5b72-80c0-fda8e875a09b",
+          "name": "Bánh muffin"
+        },
+        {
+          "dishId": "c4782d39-0c86-59d9-b021-4e07a07208f7",
+          "name": "Bánh mì bò sốt vang"
+        },
+        {
+          "dishId": "3dd69296-7c7f-526a-be2a-ed684ea38f4b",
+          "name": "Bánh mì cà ri gà"
+        },
+        {
+          "dishId": "da86071b-5a71-5e12-9af5-fd462484f058",
+          "name": "Bánh mì gối"
+        },
+        {
+          "dishId": "41295125-ec27-55a4-93f2-a0cbe9c1892f",
+          "name": "Bánh mì xíu mại"
+        },
+        {
+          "dishId": "327af5af-510e-55e9-a637-e205a5eb255c",
+          "name": "Bánh sừng bò"
+        },
+        {
+          "dishId": "134ac9d7-2a52-5b47-98bd-3651f1c4f9c8",
+          "name": "Bánh trôi tàu"
+        },
+        {
+          "dishId": "e927a33d-30c0-5bd0-af08-5772aa95595a",
+          "name": "Bánh tôm"
+        },
+        {
+          "dishId": "35fa1ae5-9253-5d3d-b525-87b853b13e2c",
+          "name": "Bánh đa cá"
+        },
+        {
+          "dishId": "733d1f2f-ae6d-5d6e-b97f-7abf3e549938",
+          "name": "Bún bung"
+        },
+        {
+          "dishId": "6002075a-17c6-5752-871e-61614d33a85c",
+          "name": "Bún chả cá"
+        },
+        {
+          "dishId": "55ca326a-97d5-500d-87bd-8030cb74f63a",
+          "name": "Bún gạo xào"
+        },
+        {
+          "dishId": "d9a0c3c2-f691-5b47-9ce6-e0b1318ead05",
+          "name": "Bún ốc"
+        },
+        {
+          "dishId": "f6880a4b-b953-5e1c-ae60-ba95b046d669",
+          "name": "Cháo cá"
+        },
+        {
+          "dishId": "746c5eeb-9550-513b-9959-20f3c9be396b",
+          "name": "Cháo trai"
+        },
+        {
+          "dishId": "74456894-f456-551c-9ff1-1fd2adf21823",
+          "name": "Chè sen long nhãn"
+        },
+        {
+          "dishId": "af3f1d9b-b6d2-5781-80ac-9d56a58e0874",
+          "name": "Cá lóc nướng trui"
+        },
+        {
+          "dishId": "fba09070-e707-5f79-8b3d-5f3f4624839a",
+          "name": "Cá tầm nướng"
+        },
+        {
+          "dishId": "9d96bd31-d637-5849-98a9-d55797a7d536",
+          "name": "Cơm cuộn Hàn Quốc"
+        },
+        {
+          "dishId": "27711275-291a-5edc-8d93-46767f1b9832",
+          "name": "Cơm lam gà nướng"
+        },
+        {
+          "dishId": "13dfcadb-9b2c-5bec-9722-6dd121b8b7a2",
+          "name": "Cơm niêu"
+        },
+        {
+          "dishId": "5a5d30ce-49b1-5cab-b6f6-007fde4c33bc",
+          "name": "Gà nướng lá chanh"
+        },
+        {
+          "dishId": "f123b889-19fc-5186-8432-921a6ae6b049",
+          "name": "Hủ tiếu bò kho"
+        },
+        {
+          "dishId": "a74fa2f3-3757-5cc4-9323-a1e8577fe95e",
+          "name": "Lẩu bò Tứ Xuyên"
+        },
+        {
+          "dishId": "e9829de3-2878-5392-8c2c-e1894eacc829",
+          "name": "Lẩu ếch"
+        },
+        {
+          "dishId": "834c6de8-3a6f-5b92-9f1d-7ff5d64ce0ba",
+          "name": "Mì udon xào"
+        },
+        {
+          "dishId": "787d0dde-b75f-5a87-9afc-35c9f131ef78",
+          "name": "Mì vằn thắn"
+        },
+        {
+          "dishId": "b89909e0-7b3c-5f9e-886f-3c7f36bcf8d7",
+          "name": "Mực nướng muối ớt"
+        },
+        {
+          "dishId": "d92ae3d9-0d11-5f77-9b12-ba54fad79cd5",
+          "name": "Xôi xéo"
+        },
+        {
+          "dishId": "355961da-f261-56ea-b59a-cc4daa162f16",
+          "name": "Ốc nướng tiêu"
+        }
+      ]
+    },
+    {
+      "path": "data-preparation/editorial/release-v1/batch-04.csv",
+      "observations": 38,
+      "newDishes": [
+        {
+          "dishId": "3cfc0543-f816-583b-bfe6-27f4010aeefa",
+          "name": "Bún mắm"
+        },
+        {
+          "dishId": "f50473c3-0b6e-52b4-8218-781d74c4fc46",
+          "name": "Cháo Tiều"
+        },
+        {
+          "dishId": "8418bb13-f782-51b9-a8de-24490840ff24",
+          "name": "Cá sòng nướng"
+        },
+        {
+          "dishId": "7d4be5dd-0b8b-589c-845a-74eaf04a7a93",
+          "name": "Há cảo"
+        },
+        {
+          "dishId": "63bcbff1-5b2d-5b69-9927-274abb0c9005",
+          "name": "Hủ tiếu sa tế"
+        },
+        {
+          "dishId": "8bb425b7-6943-564a-aec0-731cf6ad9263",
+          "name": "Khô gà lá chanh"
+        },
+        {
+          "dishId": "0af7f719-4c54-55a7-a21a-8bd339e52704",
+          "name": "Lẩu bò sa tế"
+        },
+        {
+          "dishId": "5bc35095-fdc9-5b91-8b7e-e323cdb896d2",
+          "name": "Lẩu cá kèo"
+        },
+        {
+          "dishId": "08a55df5-ac1a-5cbd-a717-fd08b640a4b1",
+          "name": "Lẩu cá linh điên điển"
+        },
+        {
+          "dishId": "b2403d29-55ab-5f56-872f-e05badfb3a7a",
+          "name": "Lẩu cá thác lác khổ qua"
+        },
+        {
+          "dishId": "74b29cbc-a4f3-5011-9954-8c56e4977455",
+          "name": "Lẩu cá điêu hồng"
+        },
+        {
+          "dishId": "89ae5f2e-0f1e-55b8-8225-e230861737a6",
+          "name": "Lẩu dê"
+        },
+        {
+          "dishId": "0ca9d7a3-5140-56b0-a989-eb52516054e8",
+          "name": "Lẩu gà lá giang"
+        },
+        {
+          "dishId": "c646a7f3-59b9-503c-ae87-0faad4824dda",
+          "name": "Lẩu gà lá é"
+        },
+        {
+          "dishId": "46818c04-7d88-5314-9391-e4b46784c54b",
+          "name": "Lẩu gà ớt hiểm"
+        },
+        {
+          "dishId": "bb4dceed-9a95-5edf-b6d8-a8d7b46576a8",
+          "name": "Mì sủi cảo"
+        },
+        {
+          "dishId": "9a5ba9ec-d6c2-5925-90e5-6ab2552f34a5",
+          "name": "Mì vịt tiềm"
+        },
+        {
+          "dishId": "10b6a08e-efce-58f5-a106-b8894401f15a",
+          "name": "Mận lắc"
+        },
+        {
+          "dishId": "3ea6319a-f313-525f-a5dc-765c50993410",
+          "name": "Nhum biển nướng"
+        },
+        {
+          "dishId": "10982699-a9bc-57c7-b732-7c08011f5dc5",
+          "name": "Trái cây trộn muối ớt"
+        },
+        {
+          "dishId": "c4fa29a2-c26c-53fc-aea2-28d7bfbe767a",
+          "name": "Ốc luộc"
+        }
+      ]
+    },
+    {
+      "path": "data-preparation/editorial/release-v1/batch-05.csv",
+      "observations": 40,
+      "newDishes": [
+        {
+          "dishId": "b3890e64-97bf-54fd-a55e-b90b4a4ab966",
+          "name": "Bánh bột củ cải chiên"
+        },
+        {
+          "dishId": "ef81066f-3779-5ab3-b6ed-716b670f055d",
+          "name": "Bánh hẹ chiên"
+        },
+        {
+          "dishId": "61c304bb-3ebc-5952-8b8d-7ba9cd5b1955",
+          "name": "Bánh phồng nổ"
+        },
+        {
+          "dishId": "25ed8950-757a-5851-a8ff-12ae17f8d64a",
+          "name": "Bánh phồng tôm"
+        },
+        {
+          "dishId": "e150f612-6774-54fe-9094-da1bff83bb32",
+          "name": "Bánh phồng xứ Lạng"
+        },
+        {
+          "dishId": "f0c67e6f-9eeb-5745-9f20-f10429158e22",
+          "name": "Bánh áp chao"
+        },
+        {
+          "dishId": "7f6cff9c-e556-5e46-8cae-8ea9e9de160e",
+          "name": "Bún cá Châu Đốc"
+        },
+        {
+          "dishId": "e8904cbc-0c76-5aec-ab78-3f5d2ae12cb3",
+          "name": "Bún kèn"
+        },
+        {
+          "dishId": "20f9a023-5013-5956-a228-8ce3da13bcf5",
+          "name": "Cháo bò Tri Tôn"
+        },
+        {
+          "dishId": "e4568243-3075-5983-8a6c-b260005a2157",
+          "name": "Cháo thịt bò cải bó xôi"
+        },
+        {
+          "dishId": "3aa3fb8c-3bad-51ac-abb6-c71e64397283",
+          "name": "Cơm canh chua cá"
+        },
+        {
+          "dishId": "da9ffefd-c102-51f4-92d4-49869088636e",
+          "name": "Cơm canh gà lá giang"
+        },
+        {
+          "dishId": "f0807bce-0c65-5bc9-9091-26222bacc147",
+          "name": "Cơm canh sườn hầm bí đỏ"
+        },
+        {
+          "dishId": "fdf67f00-3830-5df5-8d76-f4debcd0c085",
+          "name": "Cơm canh sườn hầm đu đủ"
+        },
+        {
+          "dishId": "3a4021fa-454d-5b31-a8bc-49e864013dda",
+          "name": "Cơm gà kho sả ớt"
+        },
+        {
+          "dishId": "c487fe2b-3fc6-5e83-9052-5b3bb7423d52",
+          "name": "Cơm lươn xào sả ớt"
+        },
+        {
+          "dishId": "cab36f16-8235-5d43-a1c2-bf708e1f7b92",
+          "name": "Cơm mắm kho"
+        },
+        {
+          "dishId": "12719300-f165-5c44-b136-b02eb9ab668d",
+          "name": "Cơm mực rim mắm"
+        },
+        {
+          "dishId": "10432ab2-7c9d-56d1-978c-38509208921a",
+          "name": "Cơm thịt xào mắm ruốc"
+        },
+        {
+          "dishId": "535fe47b-d26a-5c05-ba94-88e5e1562df0",
+          "name": "Gà nướng lá chúc"
+        },
+        {
+          "dishId": "edbac3bb-96f3-51e1-a158-715f1fc0553c",
+          "name": "Hoành thánh chiên"
+        },
+        {
+          "dishId": "65688791-906c-59b0-8282-b9a5c8161f23",
+          "name": "Hủ tiếu mực"
+        },
+        {
+          "dishId": "3e6e96db-d3c0-59ee-a16d-2a56227ac5b2",
+          "name": "Mè láo"
+        },
+        {
+          "dishId": "e1cc98bb-34f0-5b3d-aceb-ebf5df5bd184",
+          "name": "Mực rim me"
+        },
+        {
+          "dishId": "0c62a5d8-b122-587b-b3d2-3a601dbfd956",
+          "name": "Phở cuốn"
+        },
+        {
+          "dishId": "92dcc2c3-1eb7-56af-89dd-2c6b393eef0e",
+          "name": "Sò dương nướng"
+        },
+        {
+          "dishId": "244c6669-391f-5d22-90b1-002fddf9e894",
+          "name": "Súp bồ câu tứ thần"
+        },
+        {
+          "dishId": "8c7a855f-7d09-5a3e-808b-a7a73ff9332c",
+          "name": "Súp gà đậu ván ý dĩ"
+        },
+        {
+          "dishId": "0558ef05-e416-5630-903c-31ffb30f7c99",
+          "name": "Sủi dìn"
+        },
+        {
+          "dishId": "9f12342d-c0be-559d-87a1-6ca84c307b39",
+          "name": "Tàu hũ đá sầu riêng"
+        },
+        {
+          "dishId": "5acbe28c-e04e-5c86-b337-ef48f12acf09",
+          "name": "Xíu mại hấp"
+        },
+        {
+          "dishId": "b67209be-62bf-5c9d-ac84-40a59952df3c",
+          "name": "Đậu hũ ky cuộn tôm"
+        }
+      ]
+    },
+    {
+      "path": "data-preparation/editorial/release-v1/batch-06.csv",
+      "observations": 13,
+      "newDishes": [
+        {
+          "dishId": "da94ed2a-5919-53c3-8398-813a4c444096",
+          "name": "Bánh canh ghẹ"
+        },
+        {
+          "dishId": "19f07737-1d4e-590e-8df2-18a56347803c",
+          "name": "Phở chay"
+        },
+        {
+          "dishId": "afecb2ef-01f9-58ec-b2ca-586cc7083ed7",
+          "name": "Phở hải sản"
+        },
+        {
+          "dishId": "90ac5782-622a-5545-b2f0-a369ca8e85dc",
+          "name": "Súp gà bắp"
+        },
+        {
+          "dishId": "2c8a9987-40c0-5b7c-bbf7-c700ff91ca58",
+          "name": "Súp khoai lang"
+        },
+        {
+          "dishId": "918307b3-554d-5bb0-83f5-2f1ac63de60c",
+          "name": "Súp tôm"
+        }
+      ]
+    }
+  ]
+}

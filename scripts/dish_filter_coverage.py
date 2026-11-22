@@ -1,12 +1,12 @@
 """Generate offline coverage of ADR-024/025 dish filters.
 
 Reads the catalogue bundle and writes:
-- docs/data/DISH_FILTER_COVERAGE.md: per-filter coverage of the GM-41 release;
+- docs/data/DISH_FILTER_COVERAGE.md: per-filter coverage of the release v1 candidate;
 - data-preparation/templates/dish_filter_enrichment.csv: one row per GM-40 dish with what the data has today and empty
   columns for the data team to fill (never guessed here). Validate a filled copy with
   `python data-preparation/scripts/filter_taxonomy.py --validate <csv>`.
 
-Usage: python scripts/dish_filter_coverage.py [--check]
+Usage: python scripts/dish_filter_coverage.py [--gm41] [--check]
 --check fails (exit 1) when the generated files are out of date.
 """
 from __future__ import annotations
@@ -24,6 +24,7 @@ sys.path.insert(0, str(ROOT / 'data-preparation/scripts'))
 import filter_taxonomy as ft  # noqa: E402
 BUNDLE = ROOT / 'supabase/seed/catalogue/dishes.json'
 REPORT = ROOT / 'docs/data/DISH_FILTER_COVERAGE.md'
+GM41_REPORT = ROOT / 'docs/evidence/roadmap-v2/GM-41/COVERAGE_1_2.md'
 TEMPLATE = ROOT / 'data-preparation/templates/dish_filter_enrichment.csv'
 
 # Dish groups and regions come from the single source of truth (data-preparation/scripts/filter_taxonomy.py).
@@ -70,8 +71,12 @@ def build(bundle=BUNDLE):
     return data, rows
 
 
-def report(data, rows, bundle=BUNDLE) -> str:
+def report(data, rows, bundle=BUNDLE, *, release_v1=False) -> str:
     n = len(rows)
+    command = 'python scripts/dish_filter_coverage.py' + ('' if release_v1 else ' --gm41')
+    requirement = ('Ngưỡng bản lên store xem [đặc tả release v1](RELEASE_V1_CATALOGUE_SPEC.md).'
+                   if release_v1 else
+                   'Một bữa cần ít nhất 10 món để tạo phòng bình thường (5 khi chấp nhận thiếu món).')
     def in_meal_group(row, key):
         if data['contractVersion'] == '1.0.0':
             return True
@@ -82,7 +87,7 @@ def report(data, rows, bundle=BUNDLE) -> str:
     lines = [
         '# Độ phủ dữ liệu cho bộ lọc khẩu vị',
         '',
-        f'Sinh bởi `python scripts/dish_filter_coverage.py` từ `{bundle.relative_to(ROOT).as_posix()}` '
+        f'Sinh bởi `{command}` từ `{bundle.relative_to(ROOT).as_posix()}` '
         f'(dataset {data.get("datasetVersion")}, {data.get("usageScope")}). Không sửa tay; chạy lại script sau khi dữ liệu đổi.',
         '',
         '## Tổng quan',
@@ -100,7 +105,7 @@ def report(data, rows, bundle=BUNDLE) -> str:
         f'| Ảnh có quyền dùng | {pct(sum(1 for r in rows if r["artwork"]))} | Thẻ món |',
         '',
         f'Số món theo bữa: sáng {meal["breakfast"]}, trưa {meal["lunch"]}, tối {meal["dinner"]}, ăn vặt {meal["snack"]}. '
-        'Một bữa cần ít nhất 10 món để tạo phòng bình thường (5 khi chấp nhận thiếu món).',
+        + requirement,
         '',
         '## Món theo từng mục lọc',
         '',
@@ -124,8 +129,15 @@ def report(data, rows, bundle=BUNDLE) -> str:
     multi = lambda key, minimum=2: sum(1 for r in rows if len(r[key]) >= minimum)
     lines += ['', f'Món đa nhãn (≥ 2 giá trị): bữa {multi("meals")}/{n}, nhóm món {sum(1 for r in rows if len(r["main"]) + len(r["snack"]) >= 2)}/{n}, miền {multi("regions")}/{n}. '
               'Một món được thuộc nhiều bữa, nhiều nhóm, nhiều miền và nhiều vị; ghi đủ mọi giá trị có nguồn.']
-    unmatched = [r['dish']['name'] for r in rows if not r['main'] and not r['snack']]
-    lines += ['', f'Món chưa thuộc nhóm nào: {", ".join(unmatched) or "không có"}.', '']
+    if release_v1:
+        unmatched = [r['dish']['name'] for r in rows
+                     if not ((r['main'] and in_meal_group(r, 'main'))
+                             or (r['snack'] and in_meal_group(r, 'snack')))]
+        label = 'Món chưa thuộc nhóm hiển thị khớp bữa'
+    else:
+        unmatched = [r['dish']['name'] for r in rows if not r['main'] and not r['snack']]
+        label = 'Món chưa thuộc nhóm nào'
+    lines += ['', f'{label}: {", ".join(unmatched) or "không có"}.', '']
     return '\n'.join(lines)
 
 
@@ -147,10 +159,17 @@ def template(rows) -> str:
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--check', action='store_true')
+    parser.add_argument('--gm41', action='store_true', help='Generate the historical coverage for bundle 1.2.0')
     args = parser.parse_args()
-    from gm41_catalogue import BUNDLE as GM41_BUNDLE
-    data, rows = build(GM41_BUNDLE)
-    outputs = {REPORT: report(data, rows, GM41_BUNDLE), TEMPLATE: template(build()[1])}
+    if args.gm41:
+        from gm41_catalogue import BUNDLE as report_bundle
+        path = GM41_REPORT
+    else:
+        from release_v1_catalogue import BUNDLE as report_bundle
+        path = REPORT
+    data, rows = build(report_bundle)
+    outputs = {path: report(data, rows, report_bundle, release_v1=not args.gm41),
+               TEMPLATE: template(build()[1])}
     if args.check:
         stale = [p.relative_to(ROOT).as_posix() for p, text in outputs.items() if not p.exists() or p.read_text(encoding='utf-8') != text]
         if stale:
