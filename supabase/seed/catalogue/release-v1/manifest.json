@@ -1,0 +1,32 @@
+{
+  "datasetVersion": "1.3.0",
+  "schemaVersion": "1.1.0",
+  "status": "draft",
+  "usageScope": "test_demo",
+  "fixtureOnly": false,
+  "bundleSha256": "a15b5dbe4b1982a3bf22bba07de556653b82640474943726e8f5d9db6661b3c3",
+  "schemaSha256": "9d05a9ffb4f0878cab7bf5be47d8c3d011b962876847c2ed0eb56d03af702e23",
+  "schemaPath": "supabase/seed/templates/dish-catalogue-gm41.schema.json",
+  "counts": {
+    "dishes": 253,
+    "taxonomy": 39,
+    "dataSources": 214,
+    "priceReferences": 352,
+    "fieldEvidence": 1055
+  },
+  "inputs": {
+    "supabase/seed/catalogue/gm41/dishes.json": "57edc91164e953929b3868c8ea9567705af6cba96523b2350219108a69621b78",
+    "supabase/seed/catalogue/gm41/manifest.json": "75208d8740a823605663f9d6c1d8a3d4bd84119490ec082c68d0d597995af5c0",
+    "supabase/seed/templates/dish-catalogue-gm41.schema.json": "9d05a9ffb4f0878cab7bf5be47d8c3d011b962876847c2ed0eb56d03af702e23",
+    "data-preparation/config/filter_taxonomy_v2.json": "9caa043b5a6a088fccf516f73292d65d3d5d6b47a59d2a6506225b65af9afbcd",
+    "data-preparation/config/taxonomy_v1.json": "6cb1191446b06d93bc0c2eceb9c75bc2ad0ad9c28a8b71dba0361df0cd5d8e89",
+    "data-preparation/editorial/gm47/descriptions.json": "5cc4e16ff1efb2f7899f1516410230bc744ae07c79a52914877d1f70a1d2a474",
+    "data-preparation/config/editorial_image_candidates_v1.json": "ed296a260165b5c992594dbd69a41fccedbd87e0424cea6a48bc83c2c554bba5",
+    "data-preparation/editorial/release-v1/batch-01.csv": "965bacef28fedff130fb3a009040822e4a8780b9eca19284c69a5063f450c2f6",
+    "data-preparation/editorial/release-v1/batch-02.csv": "724119ea8d220e6a86c279160cd47a47a062111ea9211a6a7dac6ae1283d0dba",
+    "data-preparation/editorial/release-v1/batch-03.csv": "6efa04d6ff5f2aff7676ae215a542b2117e750f8634a9ecd7c3fa3cc849f50e9",
+    "data-preparation/editorial/release-v1/batch-04.csv": "eaf9e029869f580c457226ba96ad5ae74de342ea4ef4092d27e36dc4dece1ecf",
+    "data-preparation/editorial/release-v1/batch-05.csv": "88d60960f7ac63fc31b73dc00157ee79236fc1c3c6a54bfcb4de1f4beea5967c",
+    "data-preparation/editorial/release-v1/batch-06.csv": "dc965fa1ee2d396831c6480a7cad35b9c64ea0382a64b11dcd07d38b018081ff"
+  }
+}

@@ -2,7 +2,7 @@
 
 > **Release v1 (2026-11-21):** số lượng món, mô tả và ảnh bắt buộc cho bản lên store nằm ở [RELEASE_V1_CATALOGUE_SPEC](RELEASE_V1_CATALOGUE_SPEC.md) và được kiểm bằng `python scripts/release_catalogue_check.py`. Tài liệu này giữ cách ghi trường, mã và ID.
 
-Áp dụng ADR-024 và ADR-025 cho catalogue chọn pool. Báo cáo dưới đây đọc bundle GM-41 1.2.0. Độ phủ:
+Áp dụng ADR-024 và ADR-025 cho catalogue chọn pool. Báo cáo dưới đây đọc bundle release v1 1.3.0. Độ phủ:
 [DISH_FILTER_COVERAGE.md](DISH_FILTER_COVERAGE.md) (sinh bởi `python scripts/dish_filter_coverage.py`). Mẫu điền:
 [`data-preparation/templates/dish_filter_enrichment.csv`](../../data-preparation/templates/dish_filter_enrichment.csv).
 

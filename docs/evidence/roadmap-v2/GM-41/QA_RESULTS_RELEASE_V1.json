@@ -1,0 +1,287 @@
+{
+  "result": "Pass",
+  "environment": "owned local QA",
+  "checkedAt": "2026-11-22T02:57:51.578101+00:00",
+  "credentialsRecorded": false,
+  "cases": [
+    {
+      "case": "sealed QA source, migrations, ACL, ownership and worker",
+      "expected": "PASS",
+      "actual": "PASS",
+      "pass": true
+    },
+    {
+      "case": "reproducible dishes.json",
+      "expected": true,
+      "actual": true,
+      "pass": true
+    },
+    {
+      "case": "reproducible manifest.json",
+      "expected": true,
+      "actual": true,
+      "pass": true
+    },
+    {
+      "case": "reproducible handoff.json",
+      "expected": true,
+      "actual": true,
+      "pass": true
+    },
+    {
+      "case": "GM18.2 projection preserves every dish identity",
+      "expected": 253,
+      "actual": 253,
+      "pass": true
+    },
+    {
+      "case": "staged bundle bytes and projected cards",
+      "expected": true,
+      "actual": true,
+      "pass": true
+    },
+    {
+      "case": "injected import failure",
+      "expected": "QA_PSQL_ERROR_P0001",
+      "actual": "QA_PSQL_ERROR_P0001",
+      "pass": true
+    },
+    {
+      "case": "failed import rolled back",
+      "expected": null,
+      "actual": null,
+      "pass": true
+    },
+    {
+      "case": "exact readback of rich cards, hash and testOnly",
+      "expected": true,
+      "actual": true,
+      "pass": true
+    },
+    {
+      "case": "reimport no-op",
+      "expected": true,
+      "actual": true,
+      "pass": true
+    },
+    {
+      "case": "real anonymous JWTs verified through GoTrue",
+      "expected": 4,
+      "actual": 4,
+      "pass": true
+    },
+    {
+      "case": "create HTTP ACK",
+      "expected": [
+        200,
+        true,
+        null
+      ],
+      "actual": [
+        200,
+        true,
+        null
+      ],
+      "pass": true
+    },
+    {
+      "case": "snapshot HTTP ACK",
+      "expected": [
+        200,
+        true,
+        null
+      ],
+      "actual": [
+        200,
+        true,
+        null
+      ],
+      "pass": true
+    },
+    {
+      "case": "breakfast/20 pinned release",
+      "expected": [
+        "dish-catalogue-v1:1.3.0:gm18.2",
+        "a15b5dbe4b1982a3bf22bba07de556653b82640474943726e8f5d9db6661b3c3"
+      ],
+      "actual": [
+        "dish-catalogue-v1:1.3.0:gm18.2",
+        "a15b5dbe4b1982a3bf22bba07de556653b82640474943726e8f5d9db6661b3c3"
+      ],
+      "pass": true
+    },
+    {
+      "case": "breakfast/20 pool ID count and meal membership",
+      "expected": true,
+      "actual": true,
+      "pass": true
+    },
+    {
+      "case": "create HTTP ACK",
+      "expected": [
+        200,
+        true,
+        null
+      ],
+      "actual": [
+        200,
+        true,
+        null
+      ],
+      "pass": true
+    },
+    {
+      "case": "snapshot HTTP ACK",
+      "expected": [
+        200,
+        true,
+        null
+      ],
+      "actual": [
+        200,
+        true,
+        null
+      ],
+      "pass": true
+    },
+    {
+      "case": "lunch/20 pinned release",
+      "expected": [
+        "dish-catalogue-v1:1.3.0:gm18.2",
+        "a15b5dbe4b1982a3bf22bba07de556653b82640474943726e8f5d9db6661b3c3"
+      ],
+      "actual": [
+        "dish-catalogue-v1:1.3.0:gm18.2",
+        "a15b5dbe4b1982a3bf22bba07de556653b82640474943726e8f5d9db6661b3c3"
+      ],
+      "pass": true
+    },
+    {
+      "case": "lunch/20 pool ID count and meal membership",
+      "expected": true,
+      "actual": true,
+      "pass": true
+    },
+    {
+      "case": "create HTTP ACK",
+      "expected": [
+        200,
+        true,
+        null
+      ],
+      "actual": [
+        200,
+        true,
+        null
+      ],
+      "pass": true
+    },
+    {
+      "case": "snapshot HTTP ACK",
+      "expected": [
+        200,
+        true,
+        null
+      ],
+      "actual": [
+        200,
+        true,
+        null
+      ],
+      "pass": true
+    },
+    {
+      "case": "dinner/20 pinned release",
+      "expected": [
+        "dish-catalogue-v1:1.3.0:gm18.2",
+        "a15b5dbe4b1982a3bf22bba07de556653b82640474943726e8f5d9db6661b3c3"
+      ],
+      "actual": [
+        "dish-catalogue-v1:1.3.0:gm18.2",
+        "a15b5dbe4b1982a3bf22bba07de556653b82640474943726e8f5d9db6661b3c3"
+      ],
+      "pass": true
+    },
+    {
+      "case": "dinner/20 pool ID count and meal membership",
+      "expected": true,
+      "actual": true,
+      "pass": true
+    },
+    {
+      "case": "create HTTP ACK",
+      "expected": [
+        200,
+        true,
+        null
+      ],
+      "actual": [
+        200,
+        true,
+        null
+      ],
+      "pass": true
+    },
+    {
+      "case": "snapshot HTTP ACK",
+      "expected": [
+        200,
+        true,
+        null
+      ],
+      "actual": [
+        200,
+        true,
+        null
+      ],
+      "pass": true
+    },
+    {
+      "case": "snack/20 pinned release",
+      "expected": [
+        "dish-catalogue-v1:1.3.0:gm18.2",
+        "a15b5dbe4b1982a3bf22bba07de556653b82640474943726e8f5d9db6661b3c3"
+      ],
+      "actual": [
+        "dish-catalogue-v1:1.3.0:gm18.2",
+        "a15b5dbe4b1982a3bf22bba07de556653b82640474943726e8f5d9db6661b3c3"
+      ],
+      "pass": true
+    },
+    {
+      "case": "snack/20 pool ID count and meal membership",
+      "expected": true,
+      "actual": true,
+      "pass": true
+    },
+    {
+      "case": "original release restored",
+      "expected": true,
+      "actual": true,
+      "pass": true
+    }
+  ],
+  "sourceSha256ByPath": {
+    "scripts/gm41_catalogue_check.py": "ae0ac5d758c833b222b9b87e5fdc39b72b49ed93a7618c0aef4c047922fca293",
+    "data-preparation/scripts/gm41_catalogue.py": "9be8de731c75193357b0b2a4a0314351e65db8b1ed1db4124dfd2c7566f5873d",
+    "data-preparation/editorial/gm41/dish_filter_enrichment.csv": "968874a208430fe473f597f4325ed01853c2408b17fba34eb88e045de38c7ed7",
+    "supabase/seed/catalogue/gm41/manifest.json": "75208d8740a823605663f9d6c1d8a3d4bd84119490ec082c68d0d597995af5c0",
+    "data-preparation/scripts/release_v1_catalogue.py": "eccd0a37d99e024acf670279f84a1a01ea8844fb068130ac3d2db7ae48a2b777",
+    "supabase/seed/catalogue/release-v1/manifest.json": "5344cd907dc09ce19143dd7c1c8a89bd3f043e66f9e84b624e63c0a611c68476",
+    "data-preparation/editorial/release-v1/batch-01.csv": "965bacef28fedff130fb3a009040822e4a8780b9eca19284c69a5063f450c2f6",
+    "data-preparation/editorial/release-v1/batch-02.csv": "724119ea8d220e6a86c279160cd47a47a062111ea9211a6a7dac6ae1283d0dba",
+    "data-preparation/editorial/release-v1/batch-03.csv": "6efa04d6ff5f2aff7676ae215a542b2117e750f8634a9ecd7c3fa3cc849f50e9",
+    "data-preparation/editorial/release-v1/batch-04.csv": "eaf9e029869f580c457226ba96ad5ae74de342ea4ef4092d27e36dc4dece1ecf",
+    "data-preparation/editorial/release-v1/batch-05.csv": "88d60960f7ac63fc31b73dc00157ee79236fc1c3c6a54bfcb4de1f4beea5967c",
+    "data-preparation/editorial/release-v1/batch-06.csv": "dc965fa1ee2d396831c6480a7cad35b9c64ea0382a64b11dcd07d38b018081ff"
+  },
+  "qa": {
+    "runId": "gm41-v1-verified",
+    "sealSha256": "cdb411d67224b2efaa85c9510d0d543e0b1e93c0ba834501cb617a80fbc4fa82",
+    "sourceRevision": "9bfd66f9ab1a1000c05d54a907dd24c3d48f98a5",
+    "functionInventorySha256": "76005764ad3329ec06ba3bb6aa08dd283bc34242996e56b5347d26e5fc4e977a",
+    "migrations": 51,
+    "releaseId": "dish-catalogue-v1:1.3.0:gm18.2",
+    "bundleSha256": "a15b5dbe4b1982a3bf22bba07de556653b82640474943726e8f5d9db6661b3c3"
+  }
+}

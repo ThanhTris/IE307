@@ -9,9 +9,11 @@ from uuid import UUID, uuid4
 from gm32_decision_boundaries import CONTRACT, PREFERENCES
 from gm40_manifest_check import AuthRest, ManifestQAContainerDB, load_manifest, p, validate_report, verify_manifest
 import gm41_catalogue as gm
+import release_v1_catalogue as release
 
 
-def exercise(read_manifest, check):
+def exercise(read_manifest, check, *, release_v1=False):
+    catalogue = release if release_v1 else gm
     manifest, state = load_manifest(read_manifest)
     verified = verify_manifest(read_manifest, manifest)
     check('sealed QA source, migrations, ACL, ownership and worker', verified['result'], 'PASS')
@@ -19,10 +21,10 @@ def exercise(read_manifest, check):
     namespace = UUID(manifest['ownerUuid'])
     p.upstream.owned(db, namespace)
 
-    for path, raw in gm.outputs().items():
+    for path, raw in catalogue.outputs().items():
         check(f'reproducible {path.name}', path.read_bytes() == raw)
-    bundle = gm.dc.load_json(gm.BUNDLE)
-    sha = gm.dc.sha(gm.BUNDLE.read_bytes())
+    bundle = gm.dc.load_json(catalogue.BUNDLE)
+    sha = gm.dc.sha(catalogue.BUNDLE.read_bytes())
     identifier = p.received.release_id(bundle)
     cards = p.received.cards(bundle)
     by_id = {card['dishId']: card for card in cards}
@@ -36,7 +38,7 @@ def exercise(read_manifest, check):
 
     with tempfile.TemporaryDirectory() as directory:
         stage = Path(directory)
-        (stage / 'bundle.json').write_bytes(gm.BUNDLE.read_bytes())
+        (stage / 'bundle.json').write_bytes(catalogue.BUNDLE.read_bytes())
         (stage / 'cards.json').write_bytes(gm.dc.encoded(cards))
         check('staged bundle bytes and projected cards', gm.dc.sha((stage / 'bundle.json').read_bytes()) == sha
               and gm.dc.load_json(stage / 'cards.json') == cards)
@@ -52,7 +54,7 @@ def exercise(read_manifest, check):
             check('exact readback of rich cards, hash and testOnly', loaded['cards'] == cards
                   and loaded['source_sha'] == sha and loaded['active'] and loaded['test_only'])
             check('reimport no-op', install() == loaded)
-            verify_rooms(db, manifest, identifier, sha, by_id, check)
+            verify_rooms(db, manifest, identifier, sha, by_id, check, release_v1=release_v1)
         finally:
             p.activate(db, namespace, previous['id'])
             check('original release restored', p.readback(db, namespace, previous['id']) == previous)
@@ -61,11 +63,12 @@ def exercise(read_manifest, check):
             'migrations': len(manifest['migrations']), 'releaseId': identifier, 'bundleSha256': sha}
 
 
-def verify_rooms(db, manifest, identifier, sha, by_id, check):
+def verify_rooms(db, manifest, identifier, sha, by_id, check, *, release_v1=False):
     auth = AuthRest(manifest)
-    for _ in range(7):
+    guest_count = len(gm.ft.MEALS) if release_v1 else 7
+    for _ in range(guest_count):
         auth.signup()
-    check('real anonymous JWTs verified through GoTrue', len(auth.tokens), 7)
+    check('real anonymous JWTs verified through GoTrue', len(auth.tokens), guest_count)
     db.psql('update gm20_canonical_private.configuration set allow_new_sessions=true where singleton;')
 
     def call(command, who, **fields):
@@ -90,6 +93,11 @@ def verify_rooms(db, manifest, identifier, sha, by_id, check):
         dish_ids = [card['dishId'] for card in pool]
         check(f'{meal}/{count} pool ID count and meal membership', len(dish_ids) == len(set(dish_ids)) == count
               and all(key in by_id and meal in by_id[key]['mealSlots'] for key in dish_ids))
+
+    if release_v1:
+        for who, meal in enumerate(gm.ft.MEALS):
+            room(meal, 20, who, PREFERENCES)
+        return
 
     for who, (meal, count) in enumerate((meal, count) for meal in gm.ft.MEALS for count in (10, 20)):
         # Two requests by one guest still stay within the real per-user quota.
@@ -126,6 +134,7 @@ def verify_rooms(db, manifest, identifier, sha, by_id, check):
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--qa-manifest', type=Path, required=True)
+    parser.add_argument('--release-v1', action='store_true', help='Verify the release v1 data candidate')
     parser.add_argument('--report', type=Path, required=True)
     args = parser.parse_args()
     report_path = validate_report(args.report)
@@ -143,9 +152,12 @@ def main():
     with lock.open('x', encoding='utf-8') as stream:
         stream.write(manifest['ownerUuid'])
     try:
-        report['sourceSha256ByPath'] = {str(path.relative_to(gm.ROOT)): gm.dc.sha(path.read_bytes())
-                                         for path in [Path(__file__), Path(gm.__file__), gm.INPUT, gm.MANIFEST]}
-        report['qa'] = exercise(args.qa_manifest, check)
+        paths = [Path(__file__), Path(gm.__file__), gm.INPUT, gm.MANIFEST]
+        if args.release_v1:
+            paths.extend([Path(release.__file__), release.MANIFEST, *sorted(release.INPUT.glob('batch-*.csv'))])
+        report['sourceSha256ByPath'] = {path.relative_to(gm.ROOT).as_posix(): gm.dc.sha(path.read_bytes())
+                                         for path in paths}
+        report['qa'] = exercise(args.qa_manifest, check, release_v1=args.release_v1)
         report['result'] = 'Pass'
     finally:
         lock.unlink()
