@@ -120,10 +120,11 @@ Nguồn hợp lệ là trang công khai truy cập lại được: menu quán (�
 
 **GM-51 phát hành khi:** lệnh kiểm PASS **toàn bộ** trên bundle production (không còn `test_demo`), quyền dùng nguồn mô tả đã xác nhận, readback trên staging khớp hash và số món.
 
-## 9. Việc chờ Trí quyết
+## 9. Quyết định của Trí (2026-11-23)
 
-- **Lưu trữ ảnh.** Đề xuất: bucket công khai trên Supabase Storage của từng môi trường (GM-52), `url` trỏ tới bucket. Khoảng 250 ảnh × 200 KB ≈ 50 MB, nằm trong gói miễn phí. Không trỏ thẳng ảnh Wikimedia vì có thể đổi hoặc chặn.
-- **Hiển thị ghi công trong app.** License CC BY và CC BY-SA yêu cầu ghi công. App hiện chỉ hiện `attribution` ở màn kết quả (WinnerCelebration); thẻ bầu chọn (SwipeDishCard) hiện ảnh mà không ghi công. Cần chọn: hiện ghi công nhỏ trên thẻ, hoặc thêm màn "Nguồn ảnh" trong Hồ sơ liệt kê ghi công mọi ảnh. Việc này là FE, chưa thuộc task nào.
+- **Lưu trữ ảnh: đã chốt.** Bucket công khai trên Supabase Storage của từng môi trường. Trí thiết lập bucket qua GM-52 (staging và production); Tâm bàn giao tệp ảnh và gắn `url` theo UUID món. Khoảng 250 ảnh × 200 KB ≈ 50 MB, nằm trong gói miễn phí. Không trỏ thẳng ảnh Wikimedia vì có thể đổi hoặc chặn. Mỗi món có ảnh đủ chất lượng theo mục 5 và một bản nhỏ cho danh sách (GM-47, GM-64).
+- **Hiển thị ghi công trong app: đã chốt.** Thêm màn "Nguồn ảnh" trong Hồ sơ liệt kê tên món, tác giả, license và nguồn của mọi ảnh; giữ ghi công sẵn có ở màn món thắng (WinnerCelebration). Người làm: Tuấn, trong [GM-64](../../tasks/backlog/GM-64.md). Không hiện ghi công trên thẻ bầu chọn.
+- **Phân việc ảnh:** Tâm giữ danh sách món thiếu ảnh và kiểm ảnh đúng món, tác giả, license; việc tìm hoặc chụp chia theo 6 lô bàn giao của Vinh trong `data-preparation/editorial/release-v1/`. Món không tìm được ảnh hợp lệ thì báo Trí quyết chụp riêng hay bỏ khỏi bản phát hành; không dùng ảnh không rõ license.
 
 ## 10. AI agent không được làm
 
