@@ -121,5 +121,5 @@ Khi đã có bản app trên store, người dùng không cập nhật cùng lú
 - Email liên hệ và tên pháp nhân hiển thị trên chính sách (GM-50); bật GitHub Pages (Settings → Pages, source GitHub Actions).
 - Tài khoản Expo của nhóm cho EAS (mời Trang và người build); quota Places trên Google Cloud; tài khoản Sentry gói miễn phí và DSN cho GM-62.
 - Hỏi thầy: chấp nhận gói nộp (AAB, APK, `.pem`, hồ sơ) và tên gói `vn.gicungduoc.mobile`; thầy có dùng Play App Signing hay giữ upload key riêng; hạn nộp.
-- Chốt ghi công ảnh trong app (ghi ngay trên thẻ hay màn "Nguồn ảnh") và chỗ lưu ảnh (xem mục 9 của `RELEASE_V1_CATALOGUE_SPEC.md`).
+- Đã chốt 2026-11-23: ảnh món lưu ở Supabase Storage (bucket công khai, GM-52) và ghi công bằng màn "Nguồn ảnh" trong Hồ sơ (GM-64); việc còn lại của Trí là tạo bucket và chia lô tìm hoặc chụp ảnh (mục 9 của `RELEASE_V1_CATALOGUE_SPEC.md`).
 - Duyệt ADR-029 (xóa tài khoản) khi GM-49 mở PR, và dependency mới nếu GM-54 cần `expo-build-properties`.
