@@ -2270,7 +2270,7 @@
     {
       "new_id": "GM-54",
       "previous_ids": [],
-      "title": "Cấu hình phát hành Android/iOS, cổng phiên bản và Places",
+      "title": "Cấu hình bản build Android, cổng phiên bản và Places",
       "track": "INTEGRATION",
       "stage": "integration",
       "outputs": [
@@ -2278,7 +2278,7 @@
         "mobile/eas.json",
         "mobile/src/features/release/services/minimumVersion.ts",
         "mobile/src/features/release/screens/UpdateRequiredScreen.tsx",
-        "supabase/migrations/0065_gm54_app_min_version.sql",
+        "supabase/migrations/0067_gm54_app_min_version.sql",
         "supabase/tests/http/GM-54.http",
         "mobile/tests/unit/minimumVersion.test.ts",
         "docs/evidence/roadmap-v2/GM-54/CHECKS.md",
@@ -2303,10 +2303,10 @@
       ],
       "verification": {
         "mode": "expo-api",
-        "tool": "Expo Go Android + unit tests, AVD nối backend QA thật; build release cục bộ.",
-        "entrypoint": "`app.config.ts`, màn Cần cập nhật, kết quả Places.",
-        "expected": "Cấu hình Android/iOS hợp lệ, bản cũ bị buộc cập nhật khi cần, Places chạy trong giới hạn.",
-        "cases": "Version thấp/bằng/cao, lỗi đọc cấu hình, quyền, ẩn push, bản đồ, quota, build release không có route dev."
+        "tool": "Expo Go Android + unit tests, AVD nối backend QA thật; build APK/AAB bằng EAS.",
+        "entrypoint": "`app.config.ts`, `eas.json`, màn Cần cập nhật, kết quả Places.",
+        "expected": "Cấu hình Android hợp lệ, build ra APK và AAB, bản cũ bị buộc cập nhật khi cần, Places chạy trong giới hạn.",
+        "cases": "Version thấp/bằng/cao, lỗi đọc cấu hình, quyền, ẩn push, bản đồ, quota, splash và icon trên APK, build release không có route dev."
       }
     },
     {
@@ -2490,22 +2490,23 @@
       ],
       "verification": {
         "mode": "qa",
-        "tool": "Thiết bị Android và iOS thật, AVD, Simulator; staging hosted.",
+        "tool": "Thiết bị Android thật, AVD; staging hosted.",
         "entrypoint": "`docs/testing/` và build release candidate.",
         "expected": "Toàn bộ ca P0 có kết quả thực tế và báo cáo cuối.",
-        "cases": "Toàn bộ 15 module, hai client, đa kích thước màn hình, trợ năng, ngoại tuyến, nâng cấp, iOS."
+        "cases": "Toàn bộ 15 module, hai client, đa kích thước màn hình, trợ năng, ngoại tuyến, nâng cấp, hiệu năng; nhóm ca iOS ghi Not applicable."
       }
     },
     {
       "new_id": "GM-59",
       "previous_ids": [],
-      "title": "Google Play: build AAB, hồ sơ store, kiểm thử kín và đăng",
+      "title": "Bàn giao bản build Android cho thầy (AAB, APK và hồ sơ store)",
       "track": "RELEASE",
       "stage": "release",
       "outputs": [
-        "docs/release/google-play/CHECKLIST.md",
-        "docs/release/google-play/LISTING.md",
-        "docs/release/google-play/REVIEW_NOTES.md",
+        "docs/release/handoff/BUILD_MANIFEST.json",
+        "docs/release/handoff/README.md",
+        "docs/release/handoff/LISTING.md",
+        "docs/release/handoff/REVIEW_NOTES.md",
         "docs/evidence/roadmap-v2/GM-59/CHECKS.md"
       ],
       "inputs": [
@@ -2532,10 +2533,10 @@
       ],
       "verification": {
         "mode": "release",
-        "tool": "EAS Build, Google Play Console (Internal, Closed, Production), thiết bị Android.",
-        "entrypoint": "`mobile/eas.json` (profile `production-android`) và `docs/release/google-play/`.",
-        "expected": "AAB được ký, qua closed testing 14 ngày và được đăng hoặc đang xét duyệt trên Google Play.",
-        "cases": "Tài khoản, build và ký, key Places, internal testing, hồ sơ store, Data safety, closed testing 14 ngày, production, staged rollout."
+        "tool": "EAS Build, Google Drive, AVD và điện thoại Android thật.",
+        "entrypoint": "`mobile/eas.json` (profile `preview`, `production`) và `docs/release/handoff/`.",
+        "expected": "AAB và APK được ký, hash khớp manifest, thầy có đủ hồ sơ để tự đăng lên Google Play.",
+        "cases": "Build, hash, chứng chỉ upload, key Places, hồ sơ store, Data safety, tài khoản review, nộp gói."
       }
     },
     {
@@ -2583,7 +2584,7 @@
     {
       "new_id": "GM-61",
       "previous_ids": [],
-      "title": "Chốt phát hành release v1 trên hai store",
+      "title": "Chốt bàn giao release v1 cho thầy đăng Google Play",
       "track": "RELEASE",
       "stage": "release",
       "outputs": [
@@ -2593,21 +2594,130 @@
       "inputs": [
         {
           "task": "GM-59",
-          "artifact": "docs/release/google-play/CHECKLIST.md",
-          "gate": "start"
-        },
-        {
-          "task": "GM-60",
-          "artifact": "docs/release/app-store/CHECKLIST.md",
+          "artifact": "docs/release/handoff/BUILD_MANIFEST.json",
           "gate": "start"
         }
       ],
       "verification": {
         "mode": "release",
-        "tool": "Play Console, App Store Connect và trang cửa hàng công khai.",
+        "tool": "Gói bàn giao trên Google Drive và trang Google Play công khai nếu thầy đã đăng.",
         "entrypoint": "`docs/release/RELEASE_V1_STATUS.md`.",
-        "expected": "Hai store có bản phát hành hoặc đang xét duyệt hợp lệ, thông tin phiên bản được ghi lại.",
-        "cases": "Link cửa hàng mở được, version khớp build đã duyệt, danh sách hoãn và kế hoạch sau phát hành."
+        "expected": "Gói bàn giao đã nộp với phiên bản và mã băm được ghi lại.",
+        "cases": "Mã băm khớp manifest, ngày nộp và nhận, link store khi có, danh sách hoãn và kế hoạch sau phát hành."
+      }
+    },
+    {
+      "new_id": "GM-62",
+      "previous_ids": [],
+      "title": "Error Boundary và báo lỗi crash (Sentry)",
+      "track": "INTEGRATION",
+      "stage": "integration",
+      "outputs": [
+        "mobile/src/shared/ui/feedback/ErrorFallback.tsx",
+        "mobile/src/shared/observability/crashReporting.ts",
+        "mobile/src/shared/observability/scrubReport.ts",
+        "mobile/tests/unit/scrubReport.test.ts",
+        "mobile/tests/component/errorFallback.test.tsx",
+        "docs/ops/CRASH_REPORTING.md",
+        "docs/evidence/roadmap-v2/GM-62/CHECKS.md",
+        "docs/evidence/roadmap-v2/GM-62/FIGMA_PARITY.md"
+      ],
+      "inputs": [
+        {
+          "task": "GM-05",
+          "artifact": "mobile/src/shared/theme/tokens.ts",
+          "gate": "start"
+        },
+        {
+          "task": "GM-54",
+          "artifact": "mobile/app.config.ts",
+          "gate": "merge"
+        }
+      ],
+      "verification": {
+        "mode": "expo-api",
+        "tool": "Jest component/unit, Android AVD nối backend QA thật, Sentry.",
+        "entrypoint": "Màn thử lại khi lỗi render và dashboard Sentry.",
+        "expected": "Lỗi được bắt và báo có ngữ cảnh đã lọc, người dùng thấy màn thử lại thay vì màn trắng.",
+        "cases": "Lỗi render, thử lại, lọc dữ liệu nhạy cảm, source map, release, không có DSN, crash native thử."
+      }
+    },
+    {
+      "new_id": "GM-63",
+      "previous_ids": [],
+      "title": "Kiểm thử E2E bằng Maestro trên APK",
+      "track": "QA",
+      "stage": "qa",
+      "outputs": [
+        "mobile/.maestro/README.md",
+        "mobile/.maestro/guest_create_room.yaml",
+        "mobile/.maestro/vote_and_result.yaml",
+        "mobile/.maestro/permissions_denied.yaml",
+        "mobile/.maestro/delete_account.yaml",
+        "docs/evidence/roadmap-v2/GM-63/CHECKS.md"
+      ],
+      "inputs": [
+        {
+          "task": "GM-56",
+          "artifact": "docs/testing/AUTOMATION_GAPS_APP.md",
+          "gate": "start"
+        },
+        {
+          "task": "GM-57",
+          "artifact": "scripts/e2e/two_client_flow.mjs",
+          "gate": "start"
+        },
+        {
+          "task": "GM-54",
+          "artifact": "mobile/app.config.ts",
+          "gate": "merge"
+        }
+      ],
+      "verification": {
+        "mode": "qa",
+        "tool": "Maestro CLI, AVD, điện thoại Android thật, backend staging.",
+        "entrypoint": "`mobile/.maestro/` và `maestro test`.",
+        "expected": "Luồng chính chạy trên APK thật, lặp lại được và có bằng chứng.",
+        "cases": "Khách, tạo phòng, khẩu vị, bỏ phiếu, kết quả, từ chối quyền, xóa tài khoản, chạy lặp."
+      }
+    },
+    {
+      "new_id": "GM-64",
+      "previous_ids": [],
+      "title": "Hiệu năng danh sách và ảnh món",
+      "track": "INTEGRATION",
+      "stage": "integration",
+      "outputs": [
+        "mobile/src/shared/ui/media/DishImage.tsx",
+        "mobile/src/shared/ui/media/index.ts",
+        "mobile/tests/component/dishListVirtualization.test.tsx",
+        "docs/evidence/roadmap-v2/GM-64/PERFORMANCE.md",
+        "docs/evidence/roadmap-v2/GM-64/CHECKS.md",
+        "docs/evidence/roadmap-v2/GM-64/FIGMA_PARITY.md"
+      ],
+      "inputs": [
+        {
+          "task": "GM-31",
+          "artifact": "mobile/src/data/local/outbox.ts",
+          "gate": "start"
+        },
+        {
+          "task": "GM-47",
+          "artifact": "docs/data/DISH_DESCRIPTIONS_ARTWORK.md",
+          "gate": "merge"
+        },
+        {
+          "task": "GM-51",
+          "artifact": "supabase/seed/import_dish_catalogue.py",
+          "gate": "merge"
+        }
+      ],
+      "verification": {
+        "mode": "expo-api",
+        "tool": "Jest component/unit, Android AVD nối backend QA thật, React Native DevTools Profiler trên bản release.",
+        "entrypoint": "Màn chọn món 253 món và thẻ món có ảnh.",
+        "expected": "Danh sách ảo hóa, ảnh có cache và ghi công, số liệu hiệu năng trước/sau.",
+        "cases": "253 món, ảnh lỗi, ảnh chưa có, ghi công, render lại, trợ năng, dark mode."
       }
     }
   ]
