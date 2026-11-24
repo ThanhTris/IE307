@@ -104,6 +104,14 @@ class ReleaseEditorialTest(unittest.TestCase):
         self.assertEqual(art['license'], photo['license'])
         self.assertEqual(report['linkedArtwork'][photo['dishId']]['thumbnailUrl'],
                          f"{receipt['bucketPublicUrl']}/{photo['thumbnail']['objectKey']}")
+        receipt['objects'][0]['storedObjectKey'] = photo['file']
+        _, report = editorial.build(artwork=artwork, storage_receipt=receipt)
+        self.assertEqual(report['linkedArtwork'][photo['dishId']]['url'],
+                         f"{receipt['bucketPublicUrl']}/{photo['file']}")
+        receipt['objects'][0]['storedObjectKey'] = f"../{photo['file']}"
+        with self.assertRaisesRegex(ValueError, 'preserve the reviewed UUID filename'):
+            editorial.build(artwork=artwork, storage_receipt=receipt)
+        receipt['objects'][0]['storedObjectKey'] = photo['file']
         receipt['objects'][1]['sha256'] = '0' * 64
         with self.assertRaisesRegex(ValueError, 'missing a verified pair'):
             editorial.build(artwork=artwork, storage_receipt=receipt)

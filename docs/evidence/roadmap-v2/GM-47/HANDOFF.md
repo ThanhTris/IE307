@@ -26,7 +26,9 @@ python data-preparation/scripts/gm47_storage_handoff.py --images .work/gm47-rele
 
 ### Sau khi Trí xác nhận upload
 
-Cần URL công khai của bucket staging, object key đã chốt, và thông tin lô đã upload. Dùng lệnh dưới để GET từng ảnh, so số byte và SHA-256. Receipt chỉ sinh khi cả cặp khớp. Có thể chọn UUID đã upload bằng `--dish-id` lặp lại khi thử theo lô.
+Cần URL công khai của bucket staging, object key đã chốt, và thông tin lô đã upload. [Runbook draft GM-52](https://github.com/ThanhTris/IE307/pull/216) ghi bucket `dish-images` và ảnh chính ở gốc dưới dạng `<dishId>.webp`. Nếu Trí xác nhận cách đó, thêm `--image-prefix ''` khi tạo receipt. Xác nhận riêng thư mục ảnh nhỏ và truyền qua `--thumbnail-prefix` nếu khác `thumbnails`.
+
+Dùng lệnh dưới để GET từng ảnh, so số byte và SHA-256. Receipt chỉ sinh khi cả cặp khớp. Có thể chọn UUID đã upload bằng `--dish-id` lặp lại khi thử theo lô.
 
 ```sh
 python data-preparation/scripts/gm47_storage_receipt.py --bucket-url "$GM47_PUBLIC_BUCKET" --candidate-version 1.4.1

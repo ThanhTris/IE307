@@ -39,6 +39,13 @@ def storage_bucket(url):
     return bucket
 
 
+def storage_object_key(key, expected):
+    if (not re.fullmatch(r'(?:[a-zA-Z0-9_-]+/)*[a-f0-9-]+\.webp', key)
+            or key.rsplit('/', 1)[-1] != expected.rsplit('/', 1)[-1]):
+        raise ValueError('Storage object key must preserve the reviewed UUID filename')
+    return key
+
+
 def attach_storage(receipt, available, dishes, sources, version):
     """Bind only objects whose bytes were verified after the upload."""
     bucket = storage_bucket(receipt['bucketPublicUrl'])
@@ -47,8 +54,9 @@ def attach_storage(receipt, available, dishes, sources, version):
             or tuple(map(int, release_version.split('.'))) <= tuple(map(int, version.split('.')))):
         raise ValueError('Storage-linked dataset version must be newer than the offline candidate')
     gm41.dc.parse_utc(receipt['checkedAt'])
-    verified = {row['objectKey']: row['sha256'] for row in receipt['objects']}
-    if not verified or len(verified) != len(receipt['objects']):
+    verified = {row['objectKey']: row for row in receipt['objects']}
+    stored = {key: storage_object_key(row.get('storedObjectKey', key), key) for key, row in verified.items()}
+    if not verified or len(verified) != len(receipt['objects']) or len(set(stored.values())) != len(verified):
         raise ValueError('Storage receipt must contain unique uploaded object keys')
 
     used = set()
@@ -58,7 +66,8 @@ def attach_storage(receipt, available, dishes, sources, version):
         thumb_key = row['thumbnail']['objectKey']
         if main_key not in verified and thumb_key not in verified:
             continue
-        if verified.get(main_key) != row['sha256'] or verified.get(thumb_key) != row['thumbnail']['sha256']:
+        if (verified.get(main_key, {}).get('sha256') != row['sha256']
+                or verified.get(thumb_key, {}).get('sha256') != row['thumbnail']['sha256']):
             raise ValueError(f'Storage receipt is missing a verified pair for {dish_id}')
         ref = gm41.ft.stable_id('source', f"gm47:artwork:{row['source']}:{row['license']}")
         sources.setdefault(ref, {
@@ -66,11 +75,11 @@ def attach_storage(receipt, available, dishes, sources, version):
             'locator': row['source'], 'usageRights': row['usageRights'],
             'license': row['license'], 'attribution': row['attribution'],
         })
-        url = f'{bucket}/{main_key}'
+        url = f'{bucket}/{stored[main_key]}'
         dishes[dish_id]['artwork'] = {key: row[key] for key in ('usageRights', 'license', 'attribution')} | {
             'url': url, 'sourceRef': ref,
         }
-        linked[dish_id] = {'url': url, 'thumbnailUrl': f'{bucket}/{thumb_key}', 'sourceRef': ref}
+        linked[dish_id] = {'url': url, 'thumbnailUrl': f'{bucket}/{stored[thumb_key]}', 'sourceRef': ref}
         used.update((main_key, thumb_key))
     if used != verified.keys():
         raise ValueError('Storage receipt contains objects outside the reviewed artwork inventory')
