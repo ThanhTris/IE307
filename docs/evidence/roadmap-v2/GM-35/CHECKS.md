@@ -136,7 +136,9 @@ Máy Android API 37 (`Medium_Phone_API_37.0`, 1080×2400, 420 dpi ≈ 412dp, ch�
 | G05 lỗi 503 ở bước ghi | Đạt: cả ba ô trống, nút mở lại | [Sau 503](avd-20261124/14_g05_after_503_412.png) |
 | Quên mật khẩu → OTP → mật khẩu mới | Đạt | [Hoàn tất](avd-20261124/19_recovery_done_412.png) |
 | Đăng nhập bằng mật khẩu mới; mật khẩu cũ bị từ chối | Đạt: UI vào Home, `POST /token` mật khẩu cũ 400, mật khẩu mới 200 | [Đăng nhập](avd-20261124/20_login_newpw_412.png) |
-| Ảnh đối chiếu Figma 412dp, 360/320dp, chữ 200%, bàn phím, Back, safe area | **Not run** đủ ma trận. Mới xem riêng 320dp với chữ 200% ở màn đăng nhập: bố cục không tràn ngang, nút còn tới được khi cuộn. Chưa có ảnh lưu. | Chờ lượt tiếp theo |
+| Ảnh đối chiếu Figma 412dp | **Not run**: chưa ghép ảnh app với frame Figma, vì chưa mở Figma trong trình duyệt. | Chờ Trí hoặc lượt tiếp theo |
+| 360dp, 320dp, chữ 200% | Đạt một phần, xem mục dưới | [Ảnh](avd-20261124/) |
+| Bàn phím, Back, safe area | **Not run** có hệ thống. Chỉ dùng Back và bàn phím trong lúc thao tác ca ở trên, chưa kiểm riêng. | Chờ lượt tiếp theo |
 | TalkBack | **Not run** | Chờ lượt tiếp theo |
 
 ### Che email, số điện thoại ở màn nhập mã (bắt buộc bảo mật)
@@ -146,3 +148,19 @@ Trước sửa, màn "Kiểm tra hộp thư" hiện nguyên địa chỉ ([ảnh
 ### Mật khẩu được băm trước khi lưu
 
 Mật khẩu chỉ đi tới GoTrue qua HTTPS. Schema `public` không có cột mật khẩu. Trên DB QA, 3/3 dòng `auth.users` có `encrypted_password` dạng bcrypt (`$2a$`, 60 ký tự). Client không ghi mật khẩu vào SecureStore, SQLite hay log.
+
+### Kích thước nhỏ và chữ 200% (đã chụp ngày 2026-11-24)
+
+Đặt bằng `adb shell wm size` và `settings put system font_scale`: 412dp (1080×2400), 360dp (945×2100), 320dp (840×1867), chữ 1,0 và 2,0. Với mỗi ảnh, `uiautomator dump` được kiểm: không có phần tử nào vượt chiều rộng màn hình.
+
+| Cấu hình | Màn đã chụp | Kết quả |
+| --- | --- | --- |
+| 412dp, chữ 1,0 | Cá nhân, Sửa hồ sơ, Đổi mật khẩu | Không tràn ngang |
+| 360dp, chữ 1,0 | Đăng nhập, Quên mật khẩu, Đăng ký, Cá nhân, Sửa hồ sơ, Đổi mật khẩu | Không tràn ngang |
+| 360dp, chữ 2,0 | Cá nhân, Sửa hồ sơ, Đổi mật khẩu | Không tràn ngang |
+| 320dp, chữ 1,0 | Đăng nhập, Quên mật khẩu, Đăng ký, Cá nhân, Sửa hồ sơ, Đổi mật khẩu | Không tràn ngang |
+| 320dp, chữ 2,0 | Cá nhân; Đăng nhập (xem bằng mắt, không lưu ảnh) | Không tràn ngang. Nội dung bẻ dòng và cuộn được. Thanh tab dưới che nửa dòng đầu của danh sách khi chưa cuộn. |
+
+**Chưa chụp:** 320dp chữ 2,0 cho Sửa hồ sơ và Đổi mật khẩu; 360dp chữ 2,0 cho Đăng nhập, Quên mật khẩu, Đăng ký (lượt tự động bị lệch vì nút gửi nằm ngoài màn khi chưa cuộn). Ảnh `rec_code_*` lượt đầu bị loại vì đổi `wm size` làm Expo Go tải lại bundle. Biểu tượng bánh răng dev chồng lên chuông thông báo ở 320dp chữ 2,0 (đã có từ trước PR này, chỉ ghi nhận).
+
+Màn Cá nhân vẫn hiện email đầy đủ của chính tài khoản đang đăng nhập; việc che chỉ áp dụng cho màn nhập mã.
