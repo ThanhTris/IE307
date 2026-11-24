@@ -1,0 +1,14 @@
+{
+  "result": "Pass",
+  "scope": "isolated PostgreSQL catalogue storage DDL (0019 helper and 0026 catalogue), SQL only",
+  "postgresVersion": "17.11",
+  "checkedAt": "2026-11-24T03:40:33.245434+00:00",
+  "releaseId": "dish-catalogue-v1:1.4.0:gm18.2",
+  "candidateSha256": "b92534ad67f996e7d2d40424eac33ea7850ab8ed8f5ab844441466a48f23c95d",
+  "cardCount": 253,
+  "exactReadback": true,
+  "idempotent": true,
+  "activeReleaseUnchanged": true,
+  "testOnly": true,
+  "temporaryContainerRemoved": true
+}

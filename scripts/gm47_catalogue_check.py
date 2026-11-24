@@ -7,20 +7,27 @@ from uuid import UUID
 
 from gm40_manifest_check import ManifestQAContainerDB, load_manifest, p, verify_manifest
 from gm47_catalogue import build, gm41
+import gm47_release_editorial as release_editorial
 
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--qa-manifest', type=Path, required=True)
+    parser.add_argument('--release-editorial', action='store_true',
+                        help='Check the GM-47 editorial overlay against the GM-41 release bundle')
     args = parser.parse_args()
-    bundle, report = build()
+    if args.release_editorial:
+        base, _ = release_editorial.load_baseline()
+        bundle, report = release_editorial.build()
+    else:
+        base = gm41.dc.load_json(gm41.BUNDLE)
+        bundle, report = build()
     manifest, state = load_manifest(args.qa_manifest)
     verify_manifest(args.qa_manifest, manifest)
     db = ManifestQAContainerDB(args.qa_manifest, state['worker']['nonce'])
     owner = UUID(manifest['ownerUuid'])
     p.upstream.owned(db, owner)
 
-    base = gm41.dc.load_json(gm41.BUNDLE)
     old_cards = {card['dishId']: card for card in p.received.cards(base)}
     cards = p.received.cards(bundle)
     changes = report['descriptionSourceRefs']
@@ -28,7 +35,8 @@ def main():
     for card in cards:
         old = old_cards[card['dishId']]
         diff = {key for key in card if card[key] != old[key]}
-        assert diff == ({'description'} if card['dishId'] in changes else set()), card['dishId']
+        expected = {'description'} if card['dishId'] in changes and card['description'] != old['description'] else set()
+        assert diff == expected, card['dishId']
     assert all(card['artwork'] is None for card in cards)
     active_before = db.psql('select id from dish_v3_private.catalogues where active;')
     release = p.received.release_id(bundle)
@@ -43,7 +51,9 @@ def main():
         'result': 'Pass', 'checkedAt': datetime.now(timezone.utc).isoformat(),
         'repositoryRevision': manifest['sourceRevision'], 'qaSealSha256': manifest['sealSha256'],
         'releaseId': release, 'candidateSha256': digest, 'cardCount': len(cards),
-        'changedDescriptions': len(changes), 'selectedArtwork': 0,
+        'editorialDescriptions': len(changes),
+        'changedDescriptions': sum(card['description'] != old_cards[card['dishId']]['description'] for card in cards),
+        'selectedArtwork': 0,
         'exactReadback': True, 'activeReleaseUnchanged': True, 'testOnly': True,
     }
     print(json.dumps(result, ensure_ascii=False, indent=2))
