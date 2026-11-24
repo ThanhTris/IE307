@@ -1,4 +1,5 @@
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
+import { Text } from '../forms/ScaledText';
 import { radii, spacing, typography } from '../../theme/tokens';
 import type { ComponentThemeProps } from '../types';
 

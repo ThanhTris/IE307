@@ -1,5 +1,6 @@
 import { Redirect } from 'expo-router';
-import { ScrollView, StyleSheet, Text, View } from 'react-native';
+import { ScrollView, StyleSheet, View } from 'react-native';
+import { Text } from '../../shared/ui/forms/ScaledText';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useShellTheme } from '../../shared/lib/useShellTheme';
 import { ChoiceIconView, type ChoiceIcon } from '../../shared/ui/icons/ChoiceIcon';

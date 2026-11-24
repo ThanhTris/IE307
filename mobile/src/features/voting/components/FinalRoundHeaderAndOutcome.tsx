@@ -1,4 +1,5 @@
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { Pressable, StyleSheet, View } from 'react-native';
+import { Text } from '../../../shared/ui/forms/ScaledText';
 import type { RoomResult, SubmissionReceipt } from '../../../data/api';
 import { AppButton, StatusNotice, WaitingSummary, type Palette } from '../../../shared/ui';
 import type { FinalScreenScenario } from '../fixtures';

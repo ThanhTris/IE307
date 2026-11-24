@@ -1,0 +1,8 @@
+[auth.email.smtp]
+enabled = true
+host = "smtp.gmail.com"
+port = 587
+user = "uit.gicungduoc@gmail.com"
+pass = "env(GM35_GMAIL_APP_PASSWORD)"
+admin_email = "uit.gicungduoc@gmail.com"
+sender_name = "Gì Cũng Được"

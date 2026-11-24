@@ -1,8 +1,8 @@
 import type { ApiError, SessionUser } from '../api/contracts';
-import type { AuthPort, StoredSession } from './types';
+import type { AccountCodeType, AccountCredentials, AccountProfile, AuthPort, StoredSession } from './types';
 import { AuthFailure } from './types';
 import { isRecord, isSessionUser } from '../api/responseGuards';
-import { validDisplayName } from './validation';
+import { normalizeEmail, validDisplayName, validEmail, validNewPassword } from './validation';
 
 export interface AuthHttpConfig {
   baseUrl: string;
@@ -37,6 +37,27 @@ function userDto(value: unknown): SessionUser {
   return user;
 }
 
+function accountDto(value: unknown): AccountProfile {
+  const user = userDto(value);
+  if (user.isGuest || !isRecord(value) || typeof value.email !== 'string' || !validEmail(value.email)) {
+    throw new AuthFailure({ messageKey: 'MALFORMED_RESPONSE' });
+  }
+  return { user, email: value.email };
+}
+
+// Only expose known provider categories. Never forward raw messages or response fields.
+const accountErrors = new Set(['email_exists', 'user_already_exists', 'email_not_confirmed', 'otp_expired',
+  'email_provider_disabled', 'signup_disabled', 'invalid_credentials', 'weak_password', 'same_password',
+  'current_password_invalid', 'reauthentication_needed']);
+
+function credentials(input: AccountCredentials, isNew = true): AccountCredentials {
+  const email = normalizeEmail(input.email);
+  if (!validEmail(email) || !(isNew ? validNewPassword(input.password) : input.password.length > 0)) {
+    throw new AuthFailure({ messageKey: 'INVALID_INPUT' });
+  }
+  return { email, password: input.password };
+}
+
 /** GoTrue owns token creation/verification. No userId or service key accepted. */
 export class AuthHttpTransport implements AuthPort {
   private readonly config: AuthHttpConfig;
@@ -68,11 +89,10 @@ export class AuthHttpTransport implements AuthPort {
         },
         ...(body === undefined ? {} : { body: JSON.stringify(body) }),
       });
-      if (!response.ok) {
-        let errorBody: unknown;
-        try { errorBody = await response.json(); } catch { /* Do not expose raw body. */ }
-        const providerCode = isRecord(errorBody)
-          ? typeof errorBody.error_code === 'string' ? errorBody.error_code : errorBody.code
+      const reject = (errorBody: unknown) => {
+        const failure = isRecord(errorBody) && errorBody.ok === false ? errorBody.error : errorBody;
+        const providerCode = isRecord(failure)
+          ? typeof failure.error_code === 'string' ? failure.error_code : failure.code
           : undefined;
         const authRejected = path.startsWith('token') && typeof providerCode === 'string'
           && ['refresh_token_not_found', 'refresh_token_already_used', 'session_not_found',
@@ -80,16 +100,27 @@ export class AuthHttpTransport implements AuthPort {
         const messageKey: ApiError['messageKey'] = response.status === 429 ? 'RATE_LIMITED'
           : response.status === 401 || response.status === 403 || authRejected ? 'AUTH_REQUIRED'
             : response.status >= 500 ? 'NETWORK_ERROR'
-              : response.status === 400 || response.status === 422 ? 'INVALID_INPUT' : 'UNKNOWN_ERROR';
+              : response.status === 409 ? 'VERSION_CONFLICT'
+                : response.status === 400 || response.status === 422 ? 'INVALID_INPUT' : 'UNKNOWN_ERROR';
         const retryHeader = response.headers.get('Retry-After');
         const seconds = retryHeader === null ? NaN : Number(retryHeader);
         const delay = Number.isFinite(seconds) ? seconds * 1000
           : retryHeader ? Date.parse(retryHeader) - (this.config.now ?? Date.now)() : NaN;
-        throw new AuthFailure({ messageKey }, Number.isFinite(delay) ? Math.max(0, delay) : undefined);
+        throw new AuthFailure({ messageKey,
+          ...(typeof providerCode === 'string' && accountErrors.has(providerCode) ? { details: { reason: providerCode } } : {}),
+        }, Number.isFinite(delay) ? Math.max(0, delay) : undefined);
+      };
+      if (!response.ok) {
+        let errorBody: unknown;
+        try { errorBody = await response.json(); } catch { /* Do not expose raw body. */ }
+        reject(errorBody);
       }
       if (response.status === 204) return null;
-      try { return await response.json(); }
+      let value: unknown;
+      try { value = await response.json(); }
       catch { throw new AuthFailure({ messageKey: 'MALFORMED_RESPONSE' }); }
+      if (isRecord(value) && value.ok === false) reject(value);
+      return value;
     } catch (error) {
       if (error instanceof AuthFailure) throw error;
       throw new AuthFailure({ messageKey: controller.signal.aborted ? 'TIMEOUT' : 'NETWORK_ERROR' });
@@ -119,6 +150,60 @@ export class AuthHttpTransport implements AuthPort {
     const session = this.tokens(await this.request('signup', 'POST', { data: { display_name: displayName.trim() } }));
     if (!session.user.isGuest) throw new AuthFailure({ messageKey: 'MALFORMED_RESPONSE' });
     return session;
+  }
+
+  async signIn(input: AccountCredentials): Promise<StoredSession> {
+    return this.accountTokens(await this.request('token?grant_type=password', 'POST', credentials(input, false)));
+  }
+
+  async signUp(input: AccountCredentials & { displayName: string }): Promise<void> {
+    if (!validDisplayName(input.displayName)) throw new AuthFailure({ messageKey: 'INVALID_INPUT' });
+    // Confirmation is mandatory even if a provider is misconfigured to return a session.
+    const value = await this.request('signup', 'POST', { ...credentials(input), data: { display_name: input.displayName.trim() } });
+    accountDto(value);
+    if (isRecord(value) && value.email_confirmed_at != null) throw new AuthFailure({ messageKey: 'MALFORMED_RESPONSE' });
+  }
+
+  async sendCode(emailInput: string, kind: 'signup' | 'recovery'): Promise<void> {
+    const email = normalizeEmail(emailInput);
+    if (!validEmail(email)) throw new AuthFailure({ messageKey: 'INVALID_INPUT' });
+    const value = await this.request(kind === 'signup' ? 'resend' : 'recover', 'POST',
+      kind === 'signup' ? { email, type: kind } : { email });
+    if (!isRecord(value) || Object.keys(value).length !== 0) throw new AuthFailure({ messageKey: 'MALFORMED_RESPONSE' });
+  }
+
+  async verifyCode(emailInput: string, code: string, kind: AccountCodeType): Promise<StoredSession> {
+    const email = normalizeEmail(emailInput);
+    if (!validEmail(email) || !/^\d{6}$/.test(code)) throw new AuthFailure({ messageKey: 'INVALID_INPUT' });
+    return this.accountTokens(await this.request('verify', 'POST', { email, token: code, type: kind }));
+  }
+
+  async linkEmail(token: string, emailInput: string): Promise<SessionUser> {
+    const email = normalizeEmail(emailInput);
+    if (!validEmail(email)) throw new AuthFailure({ messageKey: 'INVALID_INPUT' });
+    return userDto(await this.request('user', 'PUT', { email }, token));
+  }
+
+  async accountProfile(token: string): Promise<AccountProfile> {
+    return accountDto(await this.request('user', 'GET', undefined, token));
+  }
+
+  async saveProfile(token: string, displayName: string): Promise<SessionUser> {
+    if (!validDisplayName(displayName)) throw new AuthFailure({ messageKey: 'INVALID_INPUT' });
+    return userDto(await this.request('user', 'PUT', { data: { display_name: displayName.trim() } }, token));
+  }
+
+  async updatePassword(token: string, password: string, currentPassword?: string): Promise<SessionUser> {
+    if (!validNewPassword(password)) throw new AuthFailure({ messageKey: 'INVALID_INPUT' });
+    return accountDto(await this.request('user', 'PUT', {
+      password, ...(currentPassword === undefined ? {} : { current_password: currentPassword }),
+    }, token)).user;
+  }
+
+  private accountTokens(value: unknown): StoredSession {
+    if (!isRecord(value)) throw new AuthFailure({ messageKey: 'MALFORMED_RESPONSE' });
+    accountDto(value.user);
+    return this.tokens(value);
   }
   async verify(accessToken: string): Promise<SessionUser> {
     if (!accessToken) throw new AuthFailure({ messageKey: 'AUTH_REQUIRED' });

@@ -6,12 +6,29 @@ import { HomeScreen, type HomeLiveSession } from '../../src/features/home/screen
 import { ContinueSessionScreen } from '../../src/features/home/screens/ContinueSessionScreen';
 import { GuestSessionExpiredScreen } from '../../src/features/home/screens/GuestSessionExpiredScreen';
 
-const user: SessionUser = { id: 'gm09-home-test-user', displayName: 'Minh', isGuest: true, createdAt: '2026-11-01T00:00:00Z' };
+const user: SessionUser = { id: 'gm09-home-test-user', displayName: 'Minh', isGuest: false, createdAt: '2026-11-01T00:00:00Z' };
 const receipt = { roomId: 'room_mock_001', code: MOCK_DEFAULT_ROOM_CODE, version: 1, role: 'host' as const };
 const client = () => createMockApiClient({ currentUser: user, delayMs: 0 });
 const session = (): HomeLiveSession => ({ status: 'active', issue: 'none', user, isInitializing: false, ensureSession: jest.fn(), restoreSession: jest.fn(), logout: jest.fn() });
 const press = async (label: string) => { await fireEvent.press(screen.getByRole('button', { name: label })); };
 function deferred<T>() { let resolve!: (result: T) => void; const promise = new Promise<T>(done => { resolve = done; }); return { promise, resolve }; }
+
+test('guests see footer tabs and can enter rooms without loading quick-invite friends', async () => {
+  const repository = client();
+  const friends = jest.spyOn(repository, 'listFriends');
+  const guest = { ...session(), user: { ...user, isGuest: true } };
+  const openFriends = jest.fn();
+  await render(<HomeScreen repository={repository} liveSession={guest}
+    onCreate={jest.fn()} onJoin={jest.fn()} onResume={jest.fn()} onFriends={openFriends} />);
+  expect(screen.getByText('Đăng nhập để mở kèo nhanh với bạn bè.')).toBeOnTheScreen();
+  expect(screen.queryByRole('button', { name: 'Tất cả bạn bè' })).toBeNull();
+  expect(screen.getByRole('button', { name: 'Tạo phòng' })).toBeEnabled();
+  expect(screen.getByRole('button', { name: 'Tham gia phòng' })).toBeEnabled();
+  expect(screen.getByText('Lịch sử')).toBeOnTheScreen();
+  await fireEvent.press(screen.getByText('Bạn bè'));
+  expect(openFriends).toHaveBeenCalledTimes(1);
+  expect(friends).not.toHaveBeenCalled();
+});
 
 test.each(['loading', 'error', 'empty'] as const)('friends %s does not block create/join or invent presence', async state => {
   const repository = client();

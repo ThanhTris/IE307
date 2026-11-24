@@ -9,7 +9,7 @@ import { CONTAINER_STYLE, CONTAINER_GUTTER } from './ScreenContainer';
 
 export type ApiFeature = 'friends' | 'inbox' | 'history' | 'profile';
 
-export function ApiFeatureFrame({ active, title, onNavigate, onHome, onBack, headerAction, children }: {
+export function ApiFeatureFrame({ active, title, onNavigate, onHome, onBack, headerAction, topBar, children }: {
   active: ApiFeature;
   title: string;
   onNavigate: (path: string) => void;
@@ -18,6 +18,7 @@ export function ApiFeatureFrame({ active, title, onNavigate, onHome, onBack, hea
   onBack?: () => void;
   /** Short text action on the right of the header (back-style headers only). */
   headerAction?: { label: string; icon?: AppIconName; onPress: () => void; disabled?: boolean };
+  topBar?: ReactNode;
   children: ReactNode;
 }) {
   const { colors } = useShellTheme();
@@ -36,7 +37,7 @@ export function ApiFeatureFrame({ active, title, onNavigate, onHome, onBack, hea
     <SafeAreaView edges={['top']} style={[styles.root, { backgroundColor: colors.background }]}>
       {standalone ? (
         <AppHeader variant="back" title={title} centeredTitle hideDivider rightAction={headerAction} allowTitleWrap={largeText} onPressBack={onBack ?? onHome} showFriends={false} showInbox={false} showProfile={false} colors={{ ...colors, surface: colors.background }} />
-      ) : null}
+      ) : topBar}
       <ScrollView testID="screen-content" showsVerticalScrollIndicator={false} contentContainerStyle={styles.content} keyboardShouldPersistTaps="handled">
         {children}
       </ScrollView>

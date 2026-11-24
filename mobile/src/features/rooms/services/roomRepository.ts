@@ -247,6 +247,13 @@ export class LiveRoomRepository implements RoomRepository {
     }
   }
 
+  publishAccountSession(user: SessionUser | null) {
+    ++this.identityRevision;
+    this.updateSessionSnapshot(user
+      ? { status: 'active', user, issue: 'none' }
+      : { status: 'blocked', user: null, issue: 'storage-unavailable' });
+  }
+
   async createGuestSession(displayName: string, requestId?: string): Promise<WriteResult<SessionResponse>> {
     const rid = requestId ?? this.nextRequestId('guest');
     const req: CreateGuestSessionRequest = { displayName: displayName.trim(), requestId: rid };
@@ -786,6 +793,7 @@ export class LiveRoomRepository implements RoomRepository {
 
   private async request<T>(operation: () => Promise<T>): Promise<T> {
     const revision = this.identityRevision;
+    const generation = this.session?.getGeneration();
     if (this.session && this.sessionSnapshot.status !== 'active') {
       return authRequiredResult() as T;
     }
@@ -797,7 +805,7 @@ export class LiveRoomRepository implements RoomRepository {
     const sameIdentity = Boolean(userAtStart)
       && this.sessionSnapshot.status === 'active'
       && this.sessionSnapshot.user?.id === userAtStart;
-    if (this.session && revision !== this.identityRevision && !sameIdentity) {
+    if (this.session && revision !== this.identityRevision && (generation !== this.session.getGeneration() || !sameIdentity)) {
       return authRequiredResult(result) as T;
     }
     if (!response.ok && response.error?.messageKey === 'AUTH_REQUIRED' && this.session && this.sessionSnapshot.status === 'active') {

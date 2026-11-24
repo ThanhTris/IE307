@@ -1,4 +1,5 @@
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { Pressable, StyleSheet, View } from 'react-native';
+import { Text } from '../../../shared/ui/forms/ScaledText';
 import type { RoomSnapshot } from '../../../data/api/contracts';
 import { useShellTheme } from '../../../shared/lib/useShellTheme';
 import { AppIcon, StatusNotice } from '../../../shared/ui';

@@ -1,5 +1,6 @@
 import { useState } from 'react';
-import { Pressable, SectionList, StyleSheet, Text, TextInput, View, useWindowDimensions } from 'react-native';
+import { Pressable, SectionList, StyleSheet, View, useWindowDimensions } from 'react-native';
+import { Text, TextInput } from '../../../shared/ui/forms/ScaledText';
 import { AppButton, AppIcon, SheetDialog } from '../../../shared/ui';
 import { useShellTheme } from '../../../shared/lib/useShellTheme';
 import { useAppFonts } from '../../../bootstrap/AppFontProvider';

@@ -1,4 +1,5 @@
-import { ScrollView, StyleSheet, Text, View, type ImageSourcePropType } from 'react-native';
+import { ScrollView, StyleSheet, View, type ImageSourcePropType } from 'react-native';
+import { Text } from '../forms/ScaledText';
 import { radii, spacing, typography } from '../../theme/tokens';
 import type { ComponentThemeProps } from '../types';
 import { ResultPodiumGraphic } from './ResultPodiumGraphic';

@@ -27,8 +27,9 @@ enabled = true
 [studio]
 enabled = false
 
-[inbucket]
+[local_smtp]
 enabled = false
+port = 54324
 
 [storage]
 enabled = false
@@ -41,7 +42,7 @@ jwt_expiry = 3600
 enable_signup = true
 enable_anonymous_sign_ins = true
 
-# GM-16 local guest Auth. No email/password or account linking in core.
+# The account QA runner opts in to the GM-35 email provider configuration.
 [auth.email]
 enable_signup = false
 

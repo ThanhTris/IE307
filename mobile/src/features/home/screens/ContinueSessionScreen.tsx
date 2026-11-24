@@ -1,4 +1,5 @@
-import { Text, View, StyleSheet } from 'react-native';
+import { View, StyleSheet } from 'react-native';
+import { Text } from '../../../shared/ui/forms/ScaledText';
 import type { ErrorCode, RoomSnapshot } from '../../../data/api/contracts';
 import { useAppFonts } from '../../../bootstrap/AppFontProvider';
 import { useShellTheme } from '../../../shared/lib/useShellTheme';

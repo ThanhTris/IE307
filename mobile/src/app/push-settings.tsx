@@ -7,6 +7,7 @@ export default function PushSettingsRoute() {
   const session = useRoomRepository();
   if (session.isInitializing) return null;
   if (!session.user || session.status !== 'active') return <Redirect href="/welcome" />;
+  if (session.user.isGuest) return <Redirect href="/profile" />;
   return <PushSettingsScreen
     repository={session.repository}
     onHome={() => router.replace('/')}

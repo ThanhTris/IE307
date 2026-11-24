@@ -169,7 +169,7 @@ describe('GM-25 Review Feedback Regression Suite', () => {
     await renderLiveEntry(repository);
 
     expect(await screen.findByRole('button', { name: 'Tạo phòng' })).toBeEnabled();
-    expect(await screen.findByText('Mời bạn để bắt đầu kèo nhanh.')).toBeOnTheScreen();
+    expect(await screen.findByText('Đăng nhập để mở kèo nhanh với bạn bè.')).toBeOnTheScreen();
     expect(screen.getByRole('button', { name: 'Tham gia phòng' })).toBeEnabled();
     expect(repository.getSessionSnapshot()).toMatchObject({ status: 'active', user: { displayName: 'Trí Thanh' } });
     expect(fixture.auth.createGuest).not.toHaveBeenCalled();

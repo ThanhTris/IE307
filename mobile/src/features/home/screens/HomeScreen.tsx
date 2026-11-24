@@ -1,6 +1,7 @@
 import { useCallback, useRef, useState } from 'react';
 import { ReturnToRoomCard } from '../../rooms/components/ReturnToRoomCard';
-import { Pressable, ScrollView, StyleSheet, Text, View, useWindowDimensions } from 'react-native';
+import { Pressable, ScrollView, StyleSheet, View, useWindowDimensions } from 'react-native';
+import { Text } from '../../../shared/ui/forms/ScaledText';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useAppFonts } from '../../../bootstrap/AppFontProvider';
 import type { RoomSnapshot, SessionUser } from '../../../data/api/contracts';
@@ -65,6 +66,7 @@ export function HomeScreen({ repository, liveSession, activeRoom, onReturnToRoom
   const [guestBusy, setGuestBusy] = useState(false);
   const guestLock = useRef(false);
   const sessionUser = liveSession.user;
+  const isGuest = sessionUser?.isGuest === true;
   const sessionLoading = liveSession.isInitializing;
   const sessionReady = !!sessionUser && !sessionLoading && liveSession.status === 'active' && liveSession.issue === 'none';
   const room = useHomeRoom(repository, activeRoom, sessionUser?.id, sessionReady, roomRevision);
@@ -72,7 +74,7 @@ export function HomeScreen({ repository, liveSession, activeRoom, onReturnToRoom
     if (!sessionUser) return { ok: false as const, error: { messageKey: 'AUTH_REQUIRED' as const } };
     return repository.listFriends();
   }, [repository, sessionUser]);
-  const friends = useRead(loadFriends, sessionReady && !guestDestination);
+  const friends = useRead(loadFriends, sessionReady && !isGuest && !guestDestination);
   const openFriends = onFriends ?? (() => setPanel('Bạn bè'));
   const openInbox = onInbox ?? (() => setPanel('Thông báo'));
   const openHistory = onHistory ?? (() => setPanel('Lịch sử'));
@@ -152,7 +154,7 @@ export function HomeScreen({ repository, liveSession, activeRoom, onReturnToRoom
   }
 
   return <SafeAreaView edges={['top', 'left', 'right']} style={[homeStyles.root, { backgroundColor: colors.background }]}>
-    <AppHeader colors={colors} onInbox={openInbox} inboxBadge={unreadInbox} showFriends={false} showInbox showProfile={false} allowTitleWrap hideDivider brandTextStyle={textStyle(700)} />
+    <AppHeader colors={colors} onInbox={openInbox} inboxBadge={unreadInbox} showFriends={false} showInbox={!isGuest} showProfile={false} allowTitleWrap hideDivider brandTextStyle={textStyle(700)} />
     <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={homeStyles.content}>
       {sessionNotice}
       {room.loading ? <StatusNotice title="Đang kiểm tra phòng đã lưu…" colors={colors} /> : null}
@@ -201,14 +203,16 @@ export function HomeScreen({ repository, liveSession, activeRoom, onReturnToRoom
         <View style={homeStyles.quickHeading}>
           <AppIcon name="lightning" size={16} color={colors.text} />
           <Text style={[homeStyles.quickTitle, { color: colors.text }, textStyle(700)]}>KÈO NHANH VỚI BẠN THÂN</Text>
-          <Pressable accessibilityRole="button" accessibilityLabel="Tất cả bạn bè" onPress={openFriends} style={homeStyles.allFriends}>
+          {!isGuest ? <Pressable accessibilityRole="button" accessibilityLabel="Tất cả bạn bè" onPress={openFriends} style={homeStyles.allFriends}>
             <Text style={[homeStyles.allFriendsText, { color: colors.text }, textStyle(500)]}>{friends.data ? `Tất cả (${quickFriends.length}) ›` : 'Tất cả ›'}</Text>
-          </Pressable>
+          </Pressable> : null}
         </View>
+        {isGuest ? <Text style={[homeStyles.emptyFriends, { color: colors.muted }, textStyle(400)]}>Đăng nhập để mở kèo nhanh với bạn bè.</Text> : <>
         {friends.loading ? <LoadingState label="Đang tải bạn bè" colors={colors} /> : null}
         {friends.error ? <StatusNotice title="Chưa tải được bạn bè" message={errorCopy[friends.error]} actionLabel="Tải lại bạn bè" onAction={friends.retry} tone="error" colors={colors} /> : null}
         {friends.data && sessionReady && quickFriends.length === 0 ? <Text style={[homeStyles.emptyFriends, { color: colors.muted }, textStyle(400)]}>Mời bạn để bắt đầu kèo nhanh.</Text> : null}
         {sessionReady && !friends.loading && !friends.error ? <AvatarRow items={quickFriends.slice(0, 4).map(friend => ({ id: friend.friendUserId, label: friend.displayName }))} onAdd={openFriends} onSelect={onQuickInvite} labelTextStyle={textStyle(600)} colors={colors} /> : null}
+        </>}
       </View>
 
       {onDevResult ? <Pressable accessibilityRole="button" onPress={onDevResult} style={homeStyles.devLink}><Text style={[homeStyles.devLinkText, { color: colors.muted }, textStyle(500)]}>Xem thử giao diện kết quả (chỉ bản dev)</Text></Pressable> : null}

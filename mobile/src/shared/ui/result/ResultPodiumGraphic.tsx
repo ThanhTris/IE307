@@ -1,5 +1,6 @@
 import { useState } from 'react';
-import { StyleSheet, Text, View, useWindowDimensions } from 'react-native';
+import { StyleSheet, View, useWindowDimensions } from 'react-native';
+import { Text } from '../forms/ScaledText';
 import { lightColors, spacing, typography } from '../../theme/tokens';
 import type { ComponentThemeProps } from '../types';
 import type { PodiumDish } from './ResultPodium';

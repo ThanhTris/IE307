@@ -1,4 +1,5 @@
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { Pressable, StyleSheet, View } from 'react-native';
+import { Text } from '../../../shared/ui/forms/ScaledText';
 import { AppIcon, SwipeToDeleteRow } from '../../../shared/ui';
 import type { useShellTheme } from '../../../shared/lib/useShellTheme';
 

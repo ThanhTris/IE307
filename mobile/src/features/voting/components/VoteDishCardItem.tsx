@@ -1,4 +1,5 @@
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { Pressable, StyleSheet, View } from 'react-native';
+import { Text } from '../../../shared/ui/forms/ScaledText';
 import type { PoolDish } from '../../../data/api';
 import { DishCard, type DishCardData, type Palette, type VoteValue } from '../../../shared/ui';
 import { formatDishPrice } from '../services/priceLabel';

@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
-import { PanResponder, Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
+import { PanResponder, Pressable, StyleSheet, View } from 'react-native';
+import { Text, TextInput } from './ScaledText';
 import { radii, spacing, typography } from '../../theme/tokens';
 import { AppIcon } from '../icons/AppIcon';
 import type { ComponentThemeProps } from '../types';

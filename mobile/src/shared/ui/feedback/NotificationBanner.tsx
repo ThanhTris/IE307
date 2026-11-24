@@ -1,7 +1,9 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useState, type PropsWithChildren } from 'react';
-import { Animated, PanResponder, Pressable, StyleSheet, Text, View } from 'react-native';
+import { Animated, PanResponder, Pressable, StyleSheet, View } from 'react-native';
+import { Text } from '../forms/ScaledText';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useShellTheme } from '../../lib/useShellTheme';
+import { useAppPreferences } from '../../lib/AppPreferences';
 import { radii, spacing, typography } from '../../theme/tokens';
 import { AppIcon, type AppIconName } from '../icons/AppIcon';
 import { CONTAINER_STYLE } from '../layout/ScreenContainer';
@@ -37,21 +39,25 @@ const MAX_WAITING = 5;
 let nextId = 0;
 
 export function NotificationProvider({ children }: PropsWithChildren) {
-  const [queue, setQueue] = useState<NotificationItem[]>([]);
+  const { notifications, ready } = useAppPreferences();
+  const enabled = ready && notifications;
+  const [queue, setQueue] = useState<NotificationItem[] | null>(enabled ? [] : null);
+  if (enabled !== (queue !== null)) setQueue(enabled ? [] : null);
   const notify = useCallback((input: NotificationInput) => {
-    setQueue(current => input.key && current.some(item => item.key === input.key)
+    setQueue(current => !current || (input.key && current.some(item => item.key === input.key))
       ? current
       : [...current.slice(-(MAX_WAITING - 1)), { ...input, id: ++nextId }]);
   }, []);
-  const done = useCallback((id: number) => setQueue(current => current.filter(item => item.id !== id)), []);
-  const api = useMemo(() => ({ notify }), [notify]);
+  const done = useCallback((id: number) => setQueue(current => current?.filter(item => item.id !== id) ?? null), []);
+  const api = useMemo(() => enabled ? { notify } : null, [enabled, notify]);
   const [hosts, setHosts] = useState<number[]>([]);
   const register = useCallback((id: number) => {
     setHosts(list => [...list, id]);
     return () => setHosts(list => list.filter(host => host !== id));
   }, []);
   const top = hosts.length ? hosts[hosts.length - 1]! : ROOT_HOST;
-  const shared = useMemo(() => ({ current: queue[0], waiting: queue.length - 1, done, top, register }), [queue, done, top, register]);
+  const shared = useMemo(() => ({ current: enabled ? queue?.[0] : undefined, waiting: Math.max(0, (queue?.length ?? 0) - 1), done, top, register }),
+    [enabled, queue, done, top, register]);
   return <NotificationContext.Provider value={api}><NotificationHostsContext.Provider value={shared}>
     {children}
     <NotificationLayer hostId={ROOT_HOST} />

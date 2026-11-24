@@ -43,7 +43,8 @@ export default function DishSetupRoute() {
         requestId={generateRequestId}
         onExit={back}
         onLobby={toLobby}
-        initialInvitees={invitees}
+        initialInvitees={live.user?.isGuest ? undefined : invitees}
+        canInviteFriends={!live.user?.isGuest}
       />
     </RequireActiveSession>
   );

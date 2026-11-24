@@ -2,13 +2,15 @@ import { SessionManager } from '../../src/data/auth/session';
 import { AuthFailure, type AuthPort, type SessionStorage, type StoredSession } from '../../src/data/auth/types';
 import { createSecureSessionStorage } from '../../src/data/auth/storage';
 import { ApiClientImpl } from '../../src/data/api/client';
+import { createAccountService } from '../../src/data/auth/account';
+import { LiveRoomRepository } from '../../src/features/rooms/services/roomRepository';
 
 jest.mock('expo-secure-store', () => ({ WHEN_UNLOCKED_THIS_DEVICE_ONLY: 'device-only' }));
 
 const now = Date.parse('2026-10-11T10:00:00Z');
 const user = { id: '00000000-0000-4000-8000-000000000001', displayName: 'Trí', isGuest: true, createdAt: '2026-10-11T09:00:00Z' };
 const initial: StoredSession = { accessToken: 'fixture-access', refreshToken: 'fixture-refresh', expiresAt: new Date(now + 3600000).toISOString(), user };
-function setup(saved: StoredSession | null = null) {
+function setup(saved: StoredSession | null = null, onAccountSessionChange?: (user: StoredSession['user'] | null) => void) {
   let record = saved ? structuredClone(saved) : null;
   const storage = {
     load: jest.fn(async () => record ? structuredClone(record) : null),
@@ -24,7 +26,7 @@ function setup(saved: StoredSession | null = null) {
   const clearPrivateData = jest.fn(async () => undefined);
   const onTokenChange = jest.fn();
   const sleep = jest.fn(async (_ms: number) => undefined);
-  const session = new SessionManager({ auth, storage, clearPrivateData, onTokenChange, sleep, now: () => now, random: () => 0 });
+  const session = new SessionManager({ auth, storage, clearPrivateData, onTokenChange, onAccountSessionChange, sleep, now: () => now, random: () => 0 });
   return { session, auth, storage, clearPrivateData, onTokenChange, sleep };
 }
 function deferred<T>() {
@@ -32,6 +34,111 @@ function deferred<T>() {
   const promise = new Promise<T>(accept => { resolve = accept; });
   return { promise, resolve };
 }
+
+const accountSession = { ...initial, accessToken: 'fixture-email-access', user: { ...user, isGuest: false } };
+
+function accountSetup(onAccountSessionChange?: (user: StoredSession['user'] | null) => void) {
+  const s = setup(initial, onAccountSessionChange);
+  const transport = {
+    signIn: jest.fn(async () => accountSession),
+    signUp: jest.fn(async () => undefined),
+    sendCode: jest.fn(async () => undefined),
+    verifyCode: jest.fn(async () => accountSession),
+    linkEmail: jest.fn(async () => user),
+    accountProfile: jest.fn(async () => ({ user: accountSession.user, email: 'tester@example.test' })),
+    saveProfile: jest.fn(async () => accountSession.user),
+    updatePassword: jest.fn(async () => accountSession.user),
+    logout: s.auth.logout,
+  };
+  return { ...s, transport, account: createAccountService(transport, s.session) };
+}
+
+test('consent started while guest cleanup is paused never uses the incoming account token', async () => {
+  const s = accountSetup(next => repository.publishAccountSession(next));
+  const invoke = jest.fn().mockResolvedValue({ ok: true });
+  const client = new ApiClientImpl({ authSession: s.session, transport: { invoke } });
+  const repository = new LiveRoomRepository({ client, session: s.session, sessionStorage: s.storage });
+  await repository.restoreSession();
+
+  const cleanupStarted = deferred<void>();
+  const cleanup = deferred<undefined>();
+  s.clearPrivateData.mockImplementationOnce(() => { cleanupStarted.resolve(); return cleanup.promise; });
+  const member = { ...accountSession, user: { ...accountSession.user, id: '00000000-0000-4000-8000-000000000002' } };
+  s.transport.signIn.mockResolvedValueOnce(member);
+  const switching = s.account.signIn({ email: 'tester@example.test', password: 'Fixture!123' });
+  await cleanupStarted.promise;
+  expect(repository.getCurrentUser()).toEqual(user);
+  const stale = repository.updateHistoryConsent('personal', true, 'old-consent');
+  expect(invoke).not.toHaveBeenCalled();
+  cleanup.resolve(undefined);
+
+  expect(await switching).toMatchObject({ ok: true });
+  expect(await stale).toMatchObject({ ok: false, error: { messageKey: 'AUTH_REQUIRED' } });
+  expect(repository.getCurrentUser()).toEqual(member.user);
+  expect(invoke).not.toHaveBeenCalled();
+  expect(await repository.updateHistoryConsent('personal', true, 'new-consent')).toMatchObject({ ok: true });
+  expect(invoke).toHaveBeenCalledTimes(1);
+  expect(invoke).toHaveBeenCalledWith('update_history_consent', expect.objectContaining({ requestId: 'new-consent' }),
+    expect.objectContaining({ token: member.accessToken }));
+});
+
+test('email linking preserves guest UUID and advances the identity epoch', async () => {
+  const s = accountSetup();
+  await s.session.restoreSession();
+  const before = s.session.getGeneration();
+  const proof = new AbortController().signal;
+  expect(await s.account.verifyCode('tester@example.test', '012345', 'email_change', proof)).toMatchObject({ ok: true });
+  expect(s.session.getGeneration()).toBeGreaterThan(before);
+  expect(s.clearPrivateData).not.toHaveBeenCalled();
+  expect(await s.storage.load()).toMatchObject({ user: { id: user.id, isGuest: false } });
+  expect(await s.account.setPassword('Fixture!123', proof)).toMatchObject({ ok: true });
+});
+
+test('account recovery only sends to the authenticated account email', async () => {
+  const s = accountSetup();
+  await s.session.restoreSession();
+  expect(await s.account.sendAccountRecoveryCode('tester@example.test')).toMatchObject({ ok: false });
+  expect(s.transport.sendCode).not.toHaveBeenCalled();
+  expect(await s.account.signIn({ email: 'tester@example.test', password: 'Fixture!123' })).toMatchObject({ ok: true });
+  expect(await s.account.sendAccountRecoveryCode('different@example.test')).toMatchObject({
+    ok: false, error: { details: { reason: 'recovery_email_mismatch' } },
+  });
+  expect(s.transport.sendCode).not.toHaveBeenCalled();
+  expect(await s.account.sendAccountRecoveryCode(' Tester@EXAMPLE.TEST ')).toMatchObject({ ok: true });
+  expect(s.transport.sendCode).toHaveBeenCalledTimes(1);
+  expect(s.transport.sendCode).toHaveBeenCalledWith('tester@example.test', 'recovery');
+});
+
+test('link mismatch never adopts another user and logout supersedes an in-flight sign-in', async () => {
+  const s = accountSetup();
+  await s.session.restoreSession();
+  s.transport.verifyCode.mockResolvedValueOnce({ ...accountSession, user: { ...accountSession.user, id: 'foreign-user' } });
+  expect(await s.account.verifyCode('tester@example.test', '012345', 'email_change', new AbortController().signal))
+    .toMatchObject({ ok: false, error: { messageKey: 'MALFORMED_RESPONSE' } });
+  expect(await s.storage.load()).toMatchObject({ user });
+  const started = deferred<void>();
+  const signInResponse = deferred<StoredSession>();
+  s.transport.signIn.mockImplementationOnce(() => { started.resolve(); return signInResponse.promise; });
+  const signIn = s.account.signIn({ email: 'tester@example.test', password: 'Fixture!123' });
+  await started.promise;
+  const logout = s.session.logout();
+  signInResponse.resolve(accountSession);
+  expect(await signIn).toMatchObject({ ok: false, error: { messageKey: 'AUTH_REQUIRED' } });
+  await logout;
+  expect(await s.storage.load()).toBeNull();
+});
+
+test('recovery token only authorizes a password change and never replaces the guest session', async () => {
+  const s = accountSetup();
+  await s.session.restoreSession();
+  const signal = new AbortController().signal;
+  await s.account.verifyCode('tester@example.test', '012345', 'recovery', signal);
+  expect(await s.account.setPassword('Fixture!123', new AbortController().signal)).toMatchObject({ ok: false });
+  expect(await s.account.setPassword('Fixture!123', signal)).toMatchObject({ ok: true });
+  expect(s.transport.updatePassword).toHaveBeenCalledWith(accountSession.accessToken, 'Fixture!123');
+  expect(s.transport.logout).toHaveBeenCalledWith(accountSession.accessToken);
+  expect(await s.storage.load()).toEqual(initial);
+});
 
 test('guest is persisted before becoming active; returned user cannot mutate stored identity', async () => {
   const s = setup();

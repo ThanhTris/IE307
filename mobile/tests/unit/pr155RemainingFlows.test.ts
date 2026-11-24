@@ -72,7 +72,10 @@ const canonicalFixture = {
   canEndWaiting: false,
 };
 
-async function harness(snapshot = JSON.parse(JSON.stringify(canonicalFixture)), defaultsFlag?: unknown) {
+async function harness(
+  snapshot = JSON.parse(JSON.stringify(canonicalFixture)),
+  { defaultsFlag, isGuest = true }: { defaultsFlag?: unknown; isGuest?: boolean } = {},
+) {
   const calls: { rpc: string; params: any }[] = [];
   const consent = { personal: false, group: false };
   const preferenceAcks = new Map<string, number>();
@@ -115,7 +118,7 @@ async function harness(snapshot = JSON.parse(JSON.stringify(canonicalFixture)), 
     data: {
       id: snapshot.hostUserId,
       displayName: 'Review Host',
-      isGuest: true,
+      isGuest,
       createdAt: '2026-11-05T00:00:00Z',
     },
   });
@@ -127,7 +130,7 @@ async function harness(snapshot = JSON.parse(JSON.stringify(canonicalFixture)), 
 describe('PR155 complete consumer paths after fff8b88', () => {
   it.each([[true, true], [false, false], [undefined, false], ['true', false]])(
     'uses the defaults history flag %s without reading the history list', async (flag, expected) => {
-      const h = await harness(undefined, flag);
+      const h = await harness(undefined, { defaultsFlag: flag, isGuest: false });
       h.consent.personal = true;
       expect((await h.gateway.read()).hasRecentHistory).toBe(expected);
       expect((await createLiveDishSetupGateway(h.repo).read()).hasRecentHistory).toBe(expected);
@@ -331,7 +334,7 @@ describe('PR155 complete consumer paths after fff8b88', () => {
   });
 
   it('restores account consent from the API when the setup gateway is reopened', async () => {
-    const h = await harness();
+    const h = await harness(undefined, { isGuest: false });
     await h.repo.updateHistoryConsent('personal', true, 'review-account-personal-consent');
     await h.repo.updateHistoryConsent('group', false, 'review-account-group-consent');
 

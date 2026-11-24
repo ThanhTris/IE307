@@ -1,10 +1,10 @@
 import {
   Pressable,
   StyleSheet,
-  Text,
   View,
   type TextStyle,
 } from 'react-native';
+import { Text } from '../forms/ScaledText';
 import { spacing, typography } from '../../theme/tokens';
 import { AppIcon, type AppIconName } from '../icons/AppIcon';
 import type { ComponentThemeProps } from '../types';

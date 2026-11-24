@@ -4,11 +4,11 @@ import {
   Pressable,
   ScrollView,
   StyleSheet,
-  Text,
   View,
   type ImageSourcePropType,
   type ImageStyle,
 } from 'react-native';
+import { Text } from '../forms/ScaledText';
 import { radii, spacing, typography, type ThemeColors } from '../../theme/tokens';
 import { Chip } from '../buttons/Chip';
 import type { ComponentThemeProps } from '../types';

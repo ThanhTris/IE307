@@ -1,5 +1,6 @@
 import { useState } from 'react';
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { Pressable, StyleSheet, View } from 'react-native';
+import { Text } from '../../../shared/ui/forms/ScaledText';
 import type { PoolDish } from '../../../data/api';
 import { AppButton, AppIcon, SheetDialog, type Palette, type VoteValue } from '../../../shared/ui';
 import { RoundHeader } from './RoundHeader';
