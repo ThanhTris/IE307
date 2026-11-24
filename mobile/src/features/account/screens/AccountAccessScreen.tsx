@@ -15,6 +15,7 @@ import { AccountFormFrame } from '../components/AccountFormFrame';
 import { PasswordField } from '../components/PasswordField';
 import { useAccountAction } from '../hooks/useAccountAction';
 import { accountErrorMessage, newPasswordError } from '../services/accountMessages';
+import { maskContact } from '../services/maskContact';
 
 export type AccountAccessFlow = 'sign-in' | 'sign-up' | 'link' | 'recovery';
 type Stage = 'details' | 'code' | 'password' | 'done';
@@ -224,7 +225,7 @@ export function AccountAccessScreen({ flow, account, isGuest, recoveryForCurrent
           <Mail size={34} color="#043B22" style={styles.badgeIcon} />
         </View>
         <Text accessibilityRole="header" style={[typography.titleMedium, { color: colors.text }]}>Kiểm tra hộp thư</Text>
-        <Text style={[typography.body, styles.center, { color: colors.muted }]}>Nhập mã 6 chữ số trong email gửi tới {email}.</Text>
+        <Text style={[typography.body, styles.center, { color: colors.muted }]}>Nhập mã 6 chữ số trong email gửi tới {maskContact(email)}.</Text>
       </View>
       <FormField label="Mã xác minh" value={code} error={codeError} maxLength={6}
         onChangeText={text => { setCode(text.replace(/\D/g, '')); setCodeError(undefined); }}

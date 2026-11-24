@@ -63,7 +63,7 @@ test('email confirmation puts an incomplete code under the input and clears the 
   await fireEvent.press(screen.getByRole('button', { name: 'Tạo tài khoản' }));
 
   expect(signUp).toHaveBeenCalledTimes(1);
-  expect(screen.getByText('Nhập mã 6 chữ số trong email gửi tới tuan@example.test.')).toBeOnTheScreen();
+  expect(screen.getByText('Nhập mã 6 chữ số trong email gửi tới ••••n@example.test.')).toBeOnTheScreen();
   await fireEvent.changeText(screen.getByLabelText('Mã xác minh'), '12345');
   await fireEvent.press(screen.getByRole('button', { name: 'Xác minh mã' }));
   expectFieldError('Mã xác minh', 'Nhập đủ 6 chữ số');

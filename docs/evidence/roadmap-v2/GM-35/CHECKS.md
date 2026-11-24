@@ -121,3 +121,28 @@ QA sạch `gm35-schema66-1121`, Supabase CLI `2.120.0`, Auth/REST `127.0.0.1:544
 ### Bằng chứng AVD còn thiếu trên revision cuối
 
 Trí thực hiện lượt Chặng 3A trên HEAD của PR #182 sau `1a5d335`. Các lượt AVD ở trên vẫn được lưu theo SHA đã chạy. Bằng chứng mới cần có đăng nhập lại bằng mật khẩu, xác minh và recovery hoàn chỉnh từ UI với mã Mailpit, G04 lỗi và retry, G05 chặn gửi lặp và ảnh ba ô trống sau lỗi ghi API, ảnh đối chiếu 412dp, 320/360dp, chữ 200%, TalkBack, bàn phím, Back và safe area. Các ca này đang **Not run** trên revision cuối, chờ lượt AVD của Trí. [Ma trận](FIGMA_PARITY.md#bàn-giao-lượt-avd-cho-trí)
+
+## Lượt AVD Chặng 3A trên `de8f018` (2026-11-24) và che email ở màn nhập mã
+
+Máy Android API 37 (`Medium_Phone_API_37.0`, 1080×2400, 420 dpi ≈ 412dp, chữ 1,0), Expo Go 58.0.5 / SDK 58, QA sạch `gm35-avd3a-1124-2123` (Supabase CLI 2.120.0, `qa:verify` PASS với 52 migration, worker heartbeat, `gm35_account_check.mjs` 5/5 nhóm Auth/Mailpit). App nối QA qua proxy loopback chỉ giả lỗi 503 cho `PUT /auth/v1/user` khi có tệp cờ. Tài khoản và mật khẩu là giá trị thử, không ghi vào log hay ảnh.
+
+| Ca | Kết quả | Bằng chứng |
+| --- | --- | --- |
+| Đăng ký email, OTP từ Mailpit, xác minh, vào app | Đạt | [Form](avd-20261124/03_signup_filled_412.png), [Nhập mã](avd-20261124/04_verify_412.png) |
+| G04 bấm lặp khi pending | Đạt: ba lần bấm, proxy ghi đúng một request | [Đang lưu](avd-20261124/09_g04_pending_412.png) |
+| G04 lỗi 503 giữ tên, nút mở lại | Đạt | [Sau lỗi](avd-20261124/10_g04_error_412.png) |
+| G04 thử lại có ACK | Đạt: request được chuyển tới GoTrue, đọc lại DB QA ra tên mới | [Sau thử lại](avd-20261124/11_g04_retry_ok_412.png) |
+| G05 bấm lặp khi pending | Đạt: ba lần bấm, một request | [Đang cập nhật](avd-20261124/13_g05_pending_412.png) |
+| G05 lỗi 503 ở bước ghi | Đạt: cả ba ô trống, nút mở lại | [Sau 503](avd-20261124/14_g05_after_503_412.png) |
+| Quên mật khẩu → OTP → mật khẩu mới | Đạt | [Hoàn tất](avd-20261124/19_recovery_done_412.png) |
+| Đăng nhập bằng mật khẩu mới; mật khẩu cũ bị từ chối | Đạt: UI vào Home, `POST /token` mật khẩu cũ 400, mật khẩu mới 200 | [Đăng nhập](avd-20261124/20_login_newpw_412.png) |
+| Ảnh đối chiếu Figma 412dp, 360/320dp, chữ 200%, bàn phím, Back, safe area | **Not run** đủ ma trận. Mới xem riêng 320dp với chữ 200% ở màn đăng nhập: bố cục không tràn ngang, nút còn tới được khi cuộn. Chưa có ảnh lưu. | Chờ lượt tiếp theo |
+| TalkBack | **Not run** | Chờ lượt tiếp theo |
+
+### Che email, số điện thoại ở màn nhập mã (bắt buộc bảo mật)
+
+Trước sửa, màn "Kiểm tra hộp thư" hiện nguyên địa chỉ ([ảnh trước sửa](avd-20261124/17_recovery_masked_412.png)). Sau sửa, `mobile/src/features/account/services/maskContact.ts` chỉ cho thấy phần cuối: bốn dấu chấm cố định (không lộ độ dài), ký tự cuối của tên khi tên từ 4 ký tự, và phần miền. Số điện thoại chỉ còn ba số cuối. Trên AVD hiện `••••a@example.test` ([ảnh](avd-20261124/21_recovery_code_masked_412.png)). `mobile/tests/unit/maskContact.test.ts` 5/5; `accountAccessScreen.test.tsx` kiểm đúng chuỗi đã che. TypeScript và ESLint các tệp đã sửa đạt.
+
+### Mật khẩu được băm trước khi lưu
+
+Mật khẩu chỉ đi tới GoTrue qua HTTPS. Schema `public` không có cột mật khẩu. Trên DB QA, 3/3 dòng `auth.users` có `encrypted_password` dạng bcrypt (`$2a$`, 60 ký tự). Client không ghi mật khẩu vào SecureStore, SQLite hay log.
