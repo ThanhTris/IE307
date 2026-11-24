@@ -26,7 +26,19 @@ Owner Trí, reviewer Trí. Contract `release-v1/2026-11-20/GM-52.1`. Ngày 2026-
 | Edge Function `delete-account` ACTIVE, `verify_jwt=false` | Pass | Pass |
 | Catalogue, `allow_new_sessions` | 0 món, cờ tắt (chờ GM-51) | 0 món, cờ tắt |
 
-Lần đầu so hash, bốn schema lệch. Tách riêng thì ACL và metadata khớp, chỉ chữ định nghĩa lệch vài ký tự mỗi hàm, đúng bằng số ký tự `` (QA giữ `` của checkout Windows). Bỏ `` trước khi băm thì cả 17 schema khớp; script đã chuẩn hóa như vậy. Báo cáo JSON ở `.work/gm52/parity-staging.json` và `parity-production.json` (không commit).
+Kiểm trực tiếp trên **staging** ngày 2026-11-24 (chỉ staging; production chưa kiểm phần này):
+
+| Kiểm | Kết quả |
+| --- | --- |
+| Bucket `dish-images`: công khai, giới hạn 1 MiB, chỉ WebP/JPEG/PNG, tạo bằng SQL `storage.buckets` (không cần secret key) | Pass. Không có policy ghi trên `storage.objects`; upload bằng publishable key bị từ chối (HTTP 400) |
+| Đăng nhập ẩn danh (`POST /auth/v1/signup`) | Pass (HTTP 200) |
+| `delete-account` trên khách vừa tạo: xóa, replay cùng `requestId`, token cũ | Pass: 200 `deleted:true`, replay 200 cùng ACK, token cũ 403 |
+| Smoke hai client, Realtime, cron đóng vòng | Not run: staging còn 0 món và `allow_new_sessions` tắt, chờ GM-51 |
+
+Lần đầu so hash, bốn schema lệch. Tách riêng thì ACL và metadata khớp, chỉ chữ định nghĩa lệch vài ký tự mỗi hàm, đúng bằng số ký tự `
+` (QA giữ `
+` của checkout Windows). Bỏ `
+` trước khi băm thì cả 17 schema khớp; script đã chuẩn hóa như vậy. Báo cáo JSON ở `.work/gm52/parity-staging.json` và `parity-production.json` (không commit).
 
 ## Acceptance criteria trên hosted## Acceptance criteria trên hosted
 
@@ -41,7 +53,7 @@ Lần đầu so hash, bốn schema lệch. Tách riêng thì ACL và metadata kh
 | Mỗi profile EAS nối đúng một project | Bảng ánh xạ trong [runbook](../../../ops/SUPABASE_HOSTED_RUNBOOK.md) và biến EAS thật | Bảng đã viết; biến EAS Not run |
 | Giải nén APK/AAB: chỉ URL và publishable key | `gm52_bundle_scan.mjs` | Not run (chờ GM-54) |
 | Runbook ghi biến EAS của Sentry và cách xoay khóa | [Runbook](../../../ops/SUPABASE_HOSTED_RUNBOOK.md), mục bí mật và đổi khóa | Pass (tài liệu) |
-| Bucket ảnh công khai ở staging và production, quy tắc đặt tên | `gm52_storage_bucket.mjs` trên từng project | Script và quy tắc đã viết; Not run trên hosted |
+| Bucket ảnh công khai ở staging và production, quy tắc đặt tên | Bucket + thử upload | Staging: Pass (xem trên). Production: Not run |
 | Keepalive và backup chạy, backup giải mã được | `workflow_dispatch` một lần, tải artifact, giải mã thử | Not run |
 
 Hồ sơ này không ghi khóa, token, chuỗi kết nối hay phiếu thật.

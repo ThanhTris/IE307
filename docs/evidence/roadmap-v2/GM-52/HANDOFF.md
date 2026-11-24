@@ -12,7 +12,8 @@ Trí thực hiện, Trí review. Contract `release-v1/2026-11-20/GM-52.1`. Khôn
 | URL | `https://cijknqhnmzdsturkzyiz.supabase.co` | `https://ijkuoizconywuddokdhh.supabase.co` |
 | Commit đã triển khai | `2ef58d3e` | `2ef58d3e` (trùng staging) |
 | Parity `Pass` ngày | 2026-11-24 | 2026-11-24 |
-| Smoke `Pass` ngày | _chưa_ | _chưa_ |
+| Bucket `dish-images` | Đã tạo 2026-11-24 | _chưa_ |
+| Smoke `Pass` ngày | _chưa_ (chờ GM-51) | _chưa_ |
 | Publishable key | Đặt trong EAS và GitHub secrets, không ghi ở đây | như trái |
 
 ## Đầu vào cho task khác
