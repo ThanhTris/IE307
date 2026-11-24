@@ -90,6 +90,18 @@ Mỗi món một ảnh **đúng món đó** (nhìn ra được món, không ph�
 
 **Không được dùng:** ảnh không rõ license; ảnh có điều kiện NC (phi thương mại) hoặc ND (không chỉnh sửa, vì app sẽ cắt và nén); ảnh từ Google Images, Foody, ShopeeFood, GrabFood, trang quán hay mạng xã hội khi chưa có văn bản cho phép; ảnh do AI tạo.
 
+**Không dùng ảnh do AI tạo (bắt buộc, Trí chốt 2026-11-25).** Mọi ảnh trong catalogue phải là ảnh chụp thật của món: không dùng ảnh do AI tạo, và không dùng ảnh đã chỉnh bằng AI làm đổi món hoặc thêm chi tiết không có thật (cắt, xoay, chỉnh sáng, nén vẫn được). Luật này áp dụng cho mọi ảnh, gồm ảnh Wikimedia, ảnh từ nguồn khác và ảnh nhóm tự chụp. Người kiểm ảnh ghi kết quả vào trường `aiCheck` của từng ảnh trong hồ sơ ảnh của GM-47:
+
+| Trường `aiCheck` | Nội dung |
+| --- | --- |
+| `cameraExif` | Ảnh gốc có EXIF máy ảnh hay điện thoại không (`true`/`false`) |
+| `uploadedAt` | Ngày tải lên nguồn (ngày upload trên Commons, hoặc ngày chụp với ảnh tự chụp) |
+| `aiCategory` | Trang nguồn có danh mục hoặc nhãn AI-generated không (với Commons: danh mục và template của file) |
+| `verdict` | `real_photo` khi đạt; ảnh không đạt thì không đưa vào bundle |
+| `checkedBy`, `checkedAt` | Người kiểm và thời điểm |
+
+Từ chối ảnh thuộc danh mục AI-generated, ảnh không rõ nguồn gốc, ảnh có dấu hiệu AI (chữ méo, vật thể biến dạng, chi tiết lặp bất thường) và khung hình cắt từ video khi không xác minh được người đăng là chủ video. Ảnh không có EXIF thì kiểm thêm người tải lên và trang nguồn; còn nghi ngờ thì thay ảnh khác. Ảnh nhóm tự chụp phải giữ file gốc có EXIF làm bằng chứng trong `permissionEvidence`.
+
 **Kỹ thuật:** cạnh ngắn ≥ 600 px, tỉ lệ gần 4:3, xuất WebP hoặc JPEG ≤ 200 KB mỗi ảnh. Ghi tổng dung lượng trong CHECKS.
 
 **Món không tìm được ảnh hợp lệ:** báo Trí trước khi phát hành để quyết chụp riêng hay bỏ món. Không đưa món thiếu ảnh vào bundle production.
@@ -128,7 +140,7 @@ Nguồn hợp lệ là trang công khai truy cập lại được: menu quán (�
 
 ## 10. AI agent không được làm
 
-- Không tự tạo món, nhãn, giá, mô tả hay ảnh khi không có nguồn để đủ số lượng.
+- Không tự tạo món, nhãn, giá, mô tả hay ảnh khi không có nguồn để đủ số lượng. Không tạo hay đề xuất ảnh món bằng AI.
 - Không hạ ngưỡng trong `scripts/release_catalogue_check.py` để qua kiểm tra; đổi ngưỡng cần Trí xác nhận và sửa cả tài liệu này.
 - Không sửa bundle hay manifest đã merge, không import vào DB ứng dụng hay production; chỉ QA cô lập theo runbook GM-03.
 - Không tự chuyển GM-41, GM-47 hay GM-51 sang Done.
