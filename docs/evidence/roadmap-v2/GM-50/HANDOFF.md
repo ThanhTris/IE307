@@ -11,6 +11,8 @@ Branch: `codex/gm50-legal-pages` from `origin/main` at `d9332f7`.
 - `docs/legal/index.md`, `support.md`, `_config.yml` — static public page source with stable routes.
 - `.github/workflows/legal-pages.yml` — PR build and main-branch GitHub Pages deployment workflow. It holds deployment if publisher/contact information is missing.
 
+The Pages Jekyll build passed on PR #219 at `ce83a4d` (run `45449357823`). Deployment was skipped for the PR event as configured.
+
 ## Required before publication or review completion
 
 1. Publisher name **Nguyễn Thanh Trí** and public privacy/support email `23521645@gm.uit.edu.vn` were supplied on 2026-11-24.
