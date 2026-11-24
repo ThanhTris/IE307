@@ -1,0 +1,63 @@
+name: Legal pages
+
+on:
+  pull_request:
+    paths:
+      - 'docs/legal/**'
+      - '.github/workflows/legal-pages.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'docs/legal/**'
+      - '.github/workflows/legal-pages.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: legal-pages-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    outputs:
+      publishable: ${{ steps.contact.outputs.publishable }}
+    steps:
+      - uses: actions/checkout@v6
+      - name: Check required publisher and contact details
+        id: contact
+        shell: bash
+        run: |
+          if grep -R -nE 'LEGAL_ENTITY_REQUIRED|CONTACT_EMAIL_REQUIRED' docs/legal; then
+            echo 'publishable=false' >> "$GITHUB_OUTPUT"
+            echo 'Pages deployment is blocked until publisher and contact details are supplied.'
+          else
+            echo 'publishable=true' >> "$GITHUB_OUTPUT"
+          fi
+      - uses: actions/jekyll-build-pages@v1
+        with:
+          source: ./docs/legal
+          destination: ./_site
+          # The project site is served below /IE307 on GitHub Pages.
+          args: -b /IE307
+      - uses: actions/upload-pages-artifact@v4
+        with:
+          path: ./_site
+
+  deploy:
+    if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main' && needs.build.outputs.publishable == 'true'
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4
