@@ -46,7 +46,7 @@ def main():
         files[main_key] = original
         files[thumbnail['objectKey']] = derivative
         credits.extend([f"## {row['name']} ({row['dishId']})", '', row['attribution'], '',
-                        f"- [Trang ảnh gốc]({row['source']})",
+                        f"- [Nguồn ảnh]({row['source']})",
                         f"- [Giấy phép {row['license']}]({row['licenseUrl']})", ''])
 
     _, report = build(artwork=artwork)

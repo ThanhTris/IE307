@@ -7,6 +7,7 @@ on:
       - 'data-preparation/editorial/gm47-release/**'
       - 'data-preparation/scripts/gm47_catalogue.py'
       - 'data-preparation/scripts/gm47_release_editorial.py'
+      - 'data-preparation/scripts/gm47_storage_receipt.py'
       - 'data-preparation/scripts/release_v1_catalogue.py'
       - 'supabase/seed/catalogue/release-v1/**'
       - 'scripts/gm47_catalogue_check.py'
@@ -42,4 +43,5 @@ jobs:
             ${{ runner.temp }}/gm47-readback.json
             .work/gm47-release-editorial/editorial-report.json
             .work/gm47-release-editorial/manifest.json
+            .work/gm47-release-editorial/description-rights-review.csv
           include-hidden-files: true

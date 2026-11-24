@@ -1,17 +1,44 @@
 {
-  "checkedAt": "2026-11-23T02:25:10Z",
+  "checkedAt": "2026-11-24T16:31:44Z",
   "baseDatasetVersion": "1.3.0",
   "status": "prepared_pending_storage",
   "notes": "Kiểm đúng món trên ảnh cắt; URL tệp gốc chỉ để truy xuất và ghi công, không dùng làm URL ảnh trong app.",
   "processing": "Pillow 13.0.0, EXIF transpose, crop giữa 4:3, LANCZOS và WebP",
-  "totalBytes": 5083210,
+  "totalBytes": 6127352,
   "coverage": {
-    "breakfast": 23,
-    "lunch": 20,
-    "dinner": 15,
-    "snack": 29
+    "breakfast": 29,
+    "lunch": 26,
+    "dinner": 20,
+    "snack": 33
   },
   "images": [
+    {
+      "dishId": "00115c43-e3bd-5c0c-aaeb-86f36da99655",
+      "name": "Kem dừa",
+      "source": "https://commons.wikimedia.org/wiki/File:Kem_sua_dua_Trang_Tien.jpg",
+      "upstreamImage": "https://upload.wikimedia.org/wikipedia/commons/2/2d/Kem_sua_dua_Trang_Tien.jpg",
+      "author": "Northern Vietnam",
+      "license": "CC BY-SA 4.0",
+      "file": "00115c43-e3bd-5c0c-aaeb-86f36da99655.webp",
+      "originalWidth": 1944,
+      "originalHeight": 2592,
+      "width": 1000,
+      "height": 750,
+      "bytes": 46226,
+      "sha256": "1917a5cf8ac6d54c020a9216d6873caf2d3d2071c4457d7736bf54f7a35c4e5f",
+      "checkedAt": "2026-11-24T16:30:32Z",
+      "usageRights": "licensed",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/",
+      "attribution": "Ảnh: Northern Vietnam / Wikimedia Commons, CC BY-SA 4.0 (đã cắt và nén).",
+      "objectKey": "images/00115c43-e3bd-5c0c-aaeb-86f36da99655.webp",
+      "thumbnail": {
+        "objectKey": "thumbnails/00115c43-e3bd-5c0c-aaeb-86f36da99655.webp",
+        "width": 400,
+        "height": 300,
+        "bytes": 10322,
+        "sha256": "9574e3f4306687d8ffd8ac359877f09f09915b20110cd47649c524e027b27618"
+      }
+    },
     {
       "dishId": "00cf348d-3c93-5940-b6ab-4fff39bcc886",
       "name": "Bánh mì",
@@ -148,6 +175,33 @@
       }
     },
     {
+      "dishId": "18e0d9be-0517-5cfe-b98a-cc7ea1569cc6",
+      "name": "Súp bí đỏ",
+      "source": "https://commons.wikimedia.org/wiki/File:Pumpkin_soup_.jpg",
+      "upstreamImage": "https://upload.wikimedia.org/wikipedia/commons/2/25/Pumpkin_soup_.jpg",
+      "author": "Emnamizouni",
+      "license": "CC BY-SA 4.0",
+      "file": "18e0d9be-0517-5cfe-b98a-cc7ea1569cc6.webp",
+      "originalWidth": 2487,
+      "originalHeight": 3086,
+      "width": 1000,
+      "height": 750,
+      "bytes": 77068,
+      "sha256": "2d81d440b2e6ae0cbecc082ac6355dc8b9b8e38160632d0a05088f8a2030f3a1",
+      "checkedAt": "2026-11-24T16:30:26Z",
+      "usageRights": "licensed",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/",
+      "attribution": "Ảnh: Emnamizouni / Wikimedia Commons, CC BY-SA 4.0 (đã cắt và nén).",
+      "objectKey": "images/18e0d9be-0517-5cfe-b98a-cc7ea1569cc6.webp",
+      "thumbnail": {
+        "objectKey": "thumbnails/18e0d9be-0517-5cfe-b98a-cc7ea1569cc6.webp",
+        "width": 400,
+        "height": 300,
+        "bytes": 14822,
+        "sha256": "9c56f1b153ae13e64f13fd9303d5e8e1e84497945764c03419e38c7bcc8a861f"
+      }
+    },
+    {
       "dishId": "1fdae49f-b6da-5574-82b6-4b7fc1cf09cd",
       "name": "Xôi",
       "source": "https://commons.wikimedia.org/wiki/File:X%C3%B4i_g%C3%A0.jpg",
@@ -172,6 +226,33 @@
         "height": 300,
         "bytes": 25256,
         "sha256": "04f639e46f5bdf6e9a0f0c78653ccf342e38eec3d81ab57665012c5d9f86b4d8"
+      }
+    },
+    {
+      "dishId": "327af5af-510e-55e9-a637-e205a5eb255c",
+      "name": "Bánh sừng bò",
+      "source": "https://commons.wikimedia.org/wiki/File:APileOfCroissants.jpg",
+      "upstreamImage": "https://upload.wikimedia.org/wikipedia/commons/c/c1/APileOfCroissants.jpg",
+      "author": "Raysonho @ Open Grid Scheduler / Grid Engine",
+      "license": "CC0 1.0",
+      "file": "327af5af-510e-55e9-a637-e205a5eb255c.webp",
+      "originalWidth": 4928,
+      "originalHeight": 3264,
+      "width": 1000,
+      "height": 750,
+      "bytes": 94376,
+      "sha256": "08533b554a6c519e034003b09cb4b2c882a93c8b8bc6f00ed89464a919cce924",
+      "checkedAt": "2026-11-24T16:30:12Z",
+      "usageRights": "public_domain",
+      "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+      "attribution": "Ảnh: Raysonho @ Open Grid Scheduler / Grid Engine / Wikimedia Commons, CC0 1.0 (đã cắt và nén).",
+      "objectKey": "images/327af5af-510e-55e9-a637-e205a5eb255c.webp",
+      "thumbnail": {
+        "objectKey": "thumbnails/327af5af-510e-55e9-a637-e205a5eb255c.webp",
+        "width": 400,
+        "height": 300,
+        "bytes": 18332,
+        "sha256": "204201acb4deec070c73f2b8d251582b3cf01291f4c2f513b130d13c038e20d5"
       }
     },
     {
@@ -253,6 +334,33 @@
         "height": 300,
         "bytes": 10026,
         "sha256": "ac634e221826b2d3e3675c26bcdf35e2f044fadfc5a69b799a2385318f77ef80"
+      }
+    },
+    {
+      "dishId": "3cfc0543-f816-583b-bfe6-27f4010aeefa",
+      "name": "Bún mắm",
+      "source": "https://commons.wikimedia.org/wiki/File:B%C3%BAn_m%E1%BA%AFm.jpg",
+      "upstreamImage": "https://upload.wikimedia.org/wikipedia/commons/8/80/B%C3%BAn_m%E1%BA%AFm.jpg",
+      "author": "SauceSupreme",
+      "license": "CC BY 2.0",
+      "file": "3cfc0543-f816-583b-bfe6-27f4010aeefa.webp",
+      "originalWidth": 3072,
+      "originalHeight": 2304,
+      "width": 1000,
+      "height": 750,
+      "bytes": 110008,
+      "sha256": "5e6c320af757d6dfe8fca67140e7d57657a55bab5b75cf1e4978d57f43d7a9ac",
+      "checkedAt": "2026-11-24T16:30:18Z",
+      "usageRights": "licensed",
+      "licenseUrl": "https://creativecommons.org/licenses/by/2.0/",
+      "attribution": "Ảnh: SauceSupreme / Wikimedia Commons, CC BY 2.0 (đã cắt và nén).",
+      "objectKey": "images/3cfc0543-f816-583b-bfe6-27f4010aeefa.webp",
+      "thumbnail": {
+        "objectKey": "thumbnails/3cfc0543-f816-583b-bfe6-27f4010aeefa.webp",
+        "width": 400,
+        "height": 300,
+        "bytes": 22476,
+        "sha256": "7e38356893ea1b42c96ab9a77df70e006fae1107feb38ede3b583a745f6bf7c7"
       }
     },
     {
@@ -445,6 +553,33 @@
       }
     },
     {
+      "dishId": "620d6a2f-02a2-532f-b254-c37f3713ba04",
+      "name": "Bánh ướt",
+      "source": "https://commons.wikimedia.org/wiki/File:Typical_serving_of_B%C3%A1nh_%C6%B0%E1%BB%9Bt.jpg",
+      "upstreamImage": "https://upload.wikimedia.org/wikipedia/commons/2/25/Typical_serving_of_B%C3%A1nh_%C6%B0%E1%BB%9Bt.jpg",
+      "author": "Stran",
+      "license": "CC BY-SA 3.0",
+      "file": "620d6a2f-02a2-532f-b254-c37f3713ba04.webp",
+      "originalWidth": 1280,
+      "originalHeight": 1280,
+      "width": 1000,
+      "height": 750,
+      "bytes": 77606,
+      "sha256": "568f65200362902fbd55a9c6c84441c7f3c5540a59b38f3920c05f3e29aeebf2",
+      "checkedAt": "2026-11-24T16:30:10Z",
+      "usageRights": "licensed",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0/",
+      "attribution": "Ảnh: Stran / Wikimedia Commons, CC BY-SA 3.0 (đã cắt và nén).",
+      "objectKey": "images/620d6a2f-02a2-532f-b254-c37f3713ba04.webp",
+      "thumbnail": {
+        "objectKey": "thumbnails/620d6a2f-02a2-532f-b254-c37f3713ba04.webp",
+        "width": 400,
+        "height": 300,
+        "bytes": 16416,
+        "sha256": "b453a68af0bd7d2bbabf26db3bb112b8fe92084bb3ac1265d24256f65e7fef65"
+      }
+    },
+    {
       "dishId": "635faa01-a1c7-5659-82b9-ae6e8755e10a",
       "name": "Bánh xèo",
       "source": "https://commons.wikimedia.org/wiki/File:B%C3%A1nh_x%C3%A8o_with_pork_sausage_and_shrimp_served_with_various_garnishes.jpg",
@@ -496,6 +631,60 @@
         "height": 300,
         "bytes": 20914,
         "sha256": "63b46671db49694e0a083ccf70105c147d424dbed1a013b2e96afc634bae7bc1"
+      }
+    },
+    {
+      "dishId": "787d0dde-b75f-5a87-9afc-35c9f131ef78",
+      "name": "Mì vằn thắn",
+      "source": "https://commons.wikimedia.org/wiki/File:M%C3%AC_v%E1%BA%B1n_th%E1%BA%AFn.jpg",
+      "upstreamImage": "https://upload.wikimedia.org/wikipedia/commons/3/32/M%C3%AC_v%E1%BA%B1n_th%E1%BA%AFn.jpg",
+      "author": "Hoangkid",
+      "license": "CC BY-SA 4.0",
+      "file": "787d0dde-b75f-5a87-9afc-35c9f131ef78.webp",
+      "originalWidth": 3264,
+      "originalHeight": 2448,
+      "width": 1000,
+      "height": 750,
+      "bytes": 85706,
+      "sha256": "f68f4e483401d378b5a89f8b26e5d475de89e062946baf3dea1f8d0a4ef50f03",
+      "checkedAt": "2026-11-24T16:30:31Z",
+      "usageRights": "licensed",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/",
+      "attribution": "Ảnh: Hoangkid / Wikimedia Commons, CC BY-SA 4.0 (đã cắt và nén).",
+      "objectKey": "images/787d0dde-b75f-5a87-9afc-35c9f131ef78.webp",
+      "thumbnail": {
+        "objectKey": "thumbnails/787d0dde-b75f-5a87-9afc-35c9f131ef78.webp",
+        "width": 400,
+        "height": 300,
+        "bytes": 16888,
+        "sha256": "1c2085e4839b4fde18ae6b1bc17bcaee85f43c766abb009d0ca673be1fb8143a"
+      }
+    },
+    {
+      "dishId": "79c72911-92fc-5af0-9f7f-b8c476542e7f",
+      "name": "Bún riêu",
+      "source": "https://commons.wikimedia.org/wiki/File:Bun_Rieu.jpg",
+      "upstreamImage": "https://upload.wikimedia.org/wikipedia/commons/d/df/Bun_Rieu.jpg",
+      "author": "Sohini.sen",
+      "license": "CC BY-SA 4.0",
+      "file": "79c72911-92fc-5af0-9f7f-b8c476542e7f.webp",
+      "originalWidth": 3264,
+      "originalHeight": 1836,
+      "width": 1000,
+      "height": 750,
+      "bytes": 181624,
+      "sha256": "7c4a306e4d8d7ed711a928e4a4e199a7de50d4d1a040a03a9db94ed195f9325f",
+      "checkedAt": "2026-11-24T16:30:15Z",
+      "usageRights": "licensed",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/",
+      "attribution": "Ảnh: Sohini.sen / Wikimedia Commons, CC BY-SA 4.0 (đã cắt và nén).",
+      "objectKey": "images/79c72911-92fc-5af0-9f7f-b8c476542e7f.webp",
+      "thumbnail": {
+        "objectKey": "thumbnails/79c72911-92fc-5af0-9f7f-b8c476542e7f.webp",
+        "width": 400,
+        "height": 300,
+        "bytes": 29786,
+        "sha256": "f1b061fcaabe47017fdbb0efd897dbb2d3af94c52598ff6374eb416b130beae3"
       }
     },
     {
@@ -658,6 +847,33 @@
         "height": 300,
         "bytes": 26702,
         "sha256": "b104333e6e1f36b9ccf31c7ff44e868cd45e37d319c6a4a596ccf2d17fe5e3c6"
+      }
+    },
+    {
+      "dishId": "a1e6ab51-9e2e-55c2-8369-0ef075ea7813",
+      "name": "Cơm hến",
+      "source": "https://commons.wikimedia.org/wiki/File:Com_Hen_at_Hue_Vietnam.JPG",
+      "upstreamImage": "https://upload.wikimedia.org/wikipedia/commons/9/97/Com_Hen_at_Hue_Vietnam.JPG",
+      "author": "Tonbi ko",
+      "license": "CC BY-SA 3.0",
+      "file": "a1e6ab51-9e2e-55c2-8369-0ef075ea7813.webp",
+      "originalWidth": 1200,
+      "originalHeight": 904,
+      "width": 1000,
+      "height": 750,
+      "bytes": 73142,
+      "sha256": "cbf33aada61bbe029944e30db6788a165597c0e5b85172cb83a2da3c5aa38bca",
+      "checkedAt": "2026-11-24T16:30:29Z",
+      "usageRights": "licensed",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0/",
+      "attribution": "Ảnh: Tonbi ko / Wikimedia Commons, CC BY-SA 3.0 (đã cắt và nén).",
+      "objectKey": "images/a1e6ab51-9e2e-55c2-8369-0ef075ea7813.webp",
+      "thumbnail": {
+        "objectKey": "thumbnails/a1e6ab51-9e2e-55c2-8369-0ef075ea7813.webp",
+        "width": 400,
+        "height": 300,
+        "bytes": 16570,
+        "sha256": "c60656c244b8dda7ad8f5ce4d8f4361b0c56b6cab23255f2af3cd0f144ee8d32"
       }
     },
     {
@@ -955,6 +1171,33 @@
         "height": 300,
         "bytes": 8854,
         "sha256": "da426023f47d7284cec1b6dddcd6117c2e92a1114e67748972adf0c67fd718f7"
+      }
+    },
+    {
+      "dishId": "cecd8705-eb04-5b6c-9015-014c51d36be2",
+      "name": "Mì lá đút lò",
+      "source": "https://commons.wikimedia.org/wiki/File:Lasagne_piece.jpg",
+      "upstreamImage": "https://upload.wikimedia.org/wikipedia/commons/0/06/Lasagne_piece.jpg",
+      "author": "Donna Alvita",
+      "license": "CC BY-SA 4.0",
+      "file": "cecd8705-eb04-5b6c-9015-014c51d36be2.webp",
+      "originalWidth": 3024,
+      "originalHeight": 4032,
+      "width": 1000,
+      "height": 750,
+      "bytes": 68484,
+      "sha256": "5ad94f8bcc73be7222b47144b92ec15bebc8ea61d2971400d82c0d0c71959d6c",
+      "checkedAt": "2026-11-24T16:30:21Z",
+      "usageRights": "licensed",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/",
+      "attribution": "Ảnh: Donna Alvita / Wikimedia Commons, CC BY-SA 4.0 (đã cắt và nén).",
+      "objectKey": "images/cecd8705-eb04-5b6c-9015-014c51d36be2.webp",
+      "thumbnail": {
+        "objectKey": "thumbnails/cecd8705-eb04-5b6c-9015-014c51d36be2.webp",
+        "width": 400,
+        "height": 300,
+        "bytes": 11056,
+        "sha256": "34bbc1b6364b4baaede2f65e58ae04ba8871648d4765ae325a9d010053ad4b71"
       }
     },
     {
@@ -1309,6 +1552,60 @@
       }
     },
     {
+      "dishId": "edbac3bb-96f3-51e1-a158-715f1fc0553c",
+      "name": "Hoành thánh chiên",
+      "source": "https://commons.wikimedia.org/wiki/File:Fried_wontons.jpg",
+      "upstreamImage": "https://upload.wikimedia.org/wikipedia/commons/a/a6/Fried_wontons.jpg",
+      "author": "Fumikas Sagisavas",
+      "license": "CC0 1.0",
+      "file": "edbac3bb-96f3-51e1-a158-715f1fc0553c.webp",
+      "originalWidth": 3000,
+      "originalHeight": 3000,
+      "width": 1000,
+      "height": 750,
+      "bytes": 163480,
+      "sha256": "18ec43fc8fe1d344cd87f5b7a25881842559dcf002caedfed53dad1f66b5a690",
+      "checkedAt": "2026-11-24T16:30:24Z",
+      "usageRights": "public_domain",
+      "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+      "attribution": "Ảnh: Fumikas Sagisavas / Wikimedia Commons, CC0 1.0 (đã cắt và nén).",
+      "objectKey": "images/edbac3bb-96f3-51e1-a158-715f1fc0553c.webp",
+      "thumbnail": {
+        "objectKey": "thumbnails/edbac3bb-96f3-51e1-a158-715f1fc0553c.webp",
+        "width": 400,
+        "height": 300,
+        "bytes": 29216,
+        "sha256": "ec0131e9d822bda0deb63bd84c98f4181c8fa279bf3a909ba64969ccb80ef015"
+      }
+    },
+    {
+      "dishId": "f123b889-19fc-5186-8432-921a6ae6b049",
+      "name": "Hủ tiếu bò kho",
+      "source": "https://commons.wikimedia.org/wiki/File:H%E1%BB%A7_ti%E1%BA%BFu_b%C3%B2_kho.jpg",
+      "upstreamImage": "https://upload.wikimedia.org/wikipedia/commons/8/8a/H%E1%BB%A7_ti%E1%BA%BFu_b%C3%B2_kho.jpg",
+      "author": "Tonbi ko",
+      "license": "CC BY-SA 4.0",
+      "file": "f123b889-19fc-5186-8432-921a6ae6b049.webp",
+      "originalWidth": 1200,
+      "originalHeight": 881,
+      "width": 1000,
+      "height": 750,
+      "bytes": 66422,
+      "sha256": "09a7e1adc00e940fd297948c0e2c0d01c887cfedb3628e9239f797b5137b0f0a",
+      "checkedAt": "2026-11-24T16:30:17Z",
+      "usageRights": "licensed",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/",
+      "attribution": "Ảnh: Tonbi ko / Wikimedia Commons, CC BY-SA 4.0 (đã cắt và nén).",
+      "objectKey": "images/f123b889-19fc-5186-8432-921a6ae6b049.webp",
+      "thumbnail": {
+        "objectKey": "thumbnails/f123b889-19fc-5186-8432-921a6ae6b049.webp",
+        "width": 400,
+        "height": 300,
+        "bytes": 15738,
+        "sha256": "942964f49bb1c951f1aad8514d83920c65a02f31f1282f429d57489495760118"
+      }
+    },
+    {
       "dishId": "f3a24a4b-3ecd-5339-bb76-32d454dc2d58",
       "name": "Bánh nậm",
       "source": "https://commons.wikimedia.org/wiki/File:B%C3%A1nh_N%E1%BA%ADm.jpg",
@@ -1418,11 +1715,6 @@
     }
   ],
   "awaitingImage": [
-    {
-      "dishId": "00115c43-e3bd-5c0c-aaeb-86f36da99655",
-      "name": "Kem dừa",
-      "reason": "no_selected_image"
-    },
     {
       "dishId": "019a510e-2f95-5726-a448-fd3d9d67731d",
       "name": "Bánh bẻng",
@@ -1560,11 +1852,6 @@
       "reason": "no_selected_image"
     },
     {
-      "dishId": "18e0d9be-0517-5cfe-b98a-cc7ea1569cc6",
-      "name": "Súp bí đỏ",
-      "reason": "no_selected_image"
-    },
-    {
       "dishId": "19f07737-1d4e-590e-8df2-18a56347803c",
       "name": "Phở chay",
       "reason": "no_selected_image"
@@ -1650,11 +1937,6 @@
       "reason": "no_selected_image"
     },
     {
-      "dishId": "327af5af-510e-55e9-a637-e205a5eb255c",
-      "name": "Bánh sừng bò",
-      "reason": "no_selected_image"
-    },
-    {
       "dishId": "355961da-f261-56ea-b59a-cc4daa162f16",
       "name": "Ốc nướng tiêu",
       "reason": "no_selected_image"
@@ -1682,11 +1964,6 @@
     {
       "dishId": "3aa3fb8c-3bad-51ac-abb6-c71e64397283",
       "name": "Cơm canh chua cá",
-      "reason": "no_selected_image"
-    },
-    {
-      "dishId": "3cfc0543-f816-583b-bfe6-27f4010aeefa",
-      "name": "Bún mắm",
       "reason": "no_selected_image"
     },
     {
@@ -1795,11 +2072,6 @@
       "reason": "no_selected_image"
     },
     {
-      "dishId": "620d6a2f-02a2-532f-b254-c37f3713ba04",
-      "name": "Bánh ướt",
-      "reason": "no_selected_image"
-    },
-    {
       "dishId": "63bcbff1-5b2d-5b69-9927-274abb0c9005",
       "name": "Hủ tiếu sa tế",
       "reason": "no_selected_image"
@@ -1866,18 +2138,8 @@
       "reason": "no_selected_image"
     },
     {
-      "dishId": "787d0dde-b75f-5a87-9afc-35c9f131ef78",
-      "name": "Mì vằn thắn",
-      "reason": "no_selected_image"
-    },
-    {
       "dishId": "795730e2-2384-55cd-8968-5a402802229a",
       "name": "Súp hoành thánh",
-      "reason": "no_selected_image"
-    },
-    {
-      "dishId": "79c72911-92fc-5af0-9f7f-b8c476542e7f",
-      "name": "Bún riêu",
       "reason": "no_selected_image"
     },
     {
@@ -2022,12 +2284,6 @@
       "reason": "no_selected_image"
     },
     {
-      "dishId": "a1e6ab51-9e2e-55c2-8369-0ef075ea7813",
-      "name": "Cơm hến",
-      "reason": "visual_review_not_selected",
-      "candidate": "https://commons.wikimedia.org/wiki/File:Com-hen-hue.jpg"
-    },
-    {
       "dishId": "a2e88df3-ff3a-5813-b671-d0a44003cc15",
       "name": "Kem xôi",
       "reason": "no_selected_image"
@@ -2165,11 +2421,6 @@
     {
       "dishId": "cab36f16-8235-5d43-a1c2-bf708e1f7b92",
       "name": "Cơm mắm kho",
-      "reason": "no_selected_image"
-    },
-    {
-      "dishId": "cecd8705-eb04-5b6c-9015-014c51d36be2",
-      "name": "Mì lá đút lò",
       "reason": "no_selected_image"
     },
     {
@@ -2339,11 +2590,6 @@
       "reason": "no_selected_image"
     },
     {
-      "dishId": "edbac3bb-96f3-51e1-a158-715f1fc0553c",
-      "name": "Hoành thánh chiên",
-      "reason": "no_selected_image"
-    },
-    {
       "dishId": "eead5c98-e3ac-5f71-a670-c57755d70f0c",
       "name": "Bún cá cay",
       "reason": "no_selected_image"
@@ -2366,11 +2612,6 @@
     {
       "dishId": "f0c67e6f-9eeb-5745-9f20-f10429158e22",
       "name": "Bánh áp chao",
-      "reason": "no_selected_image"
-    },
-    {
-      "dishId": "f123b889-19fc-5186-8432-921a6ae6b049",
-      "name": "Hủ tiếu bò kho",
       "reason": "no_selected_image"
     },
     {

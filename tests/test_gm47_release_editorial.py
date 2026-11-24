@@ -19,6 +19,8 @@ class ReleaseEditorialTest(unittest.TestCase):
         self.assertEqual(candidate['usageScope'], 'test_demo')
         self.assertEqual(report['missingDescription'], [])
         self.assertEqual(len(report['descriptionSourceRefs']), 253)
+        self.assertEqual(sum(len(row['dishIds']) for row in report['descriptionRightsReview']), 253)
+        self.assertTrue(all(row['status'] == 'needs_confirmation' for row in report['descriptionRightsReview']))
         self.assertEqual(len(report['missingArtwork']) + report['preparedArtwork'], 253)
         self.assertEqual(len(report['artworkBatches']), 7)
         self.assertEqual(sum(batch['pending'] for batch in report['artworkBatches'].values()),
@@ -83,6 +85,28 @@ class ReleaseEditorialTest(unittest.TestCase):
         artwork['images'][0]['thumbnail']['objectKey'] = artwork['images'][1]['thumbnail']['objectKey']
         with self.assertRaisesRegex(ValueError, 'Invalid or stale GM-47 artwork evidence'):
             editorial.build(artwork=artwork)
+
+    def test_storage_receipt_links_only_verified_pairs(self):
+        artwork = editorial.gm41.dc.load_json(editorial.ARTWORK)
+        photo = artwork['images'][0]
+        receipt = {
+            'bucketPublicUrl': 'https://staging.example.invalid/storage/v1/object/public/catalogue',
+            'candidateDatasetVersion': '1.4.1',
+            'checkedAt': '2026-11-24T14:00:00Z',
+            'objects': [{key: row[key] for key in ('objectKey', 'sha256')} for row in (photo, photo['thumbnail'])],
+        }
+        candidate, report = editorial.build(artwork=artwork, storage_receipt=receipt)
+        self.assertEqual(candidate['datasetVersion'], '1.4.1')
+        attached = {row['id']: row['artwork'] for row in candidate['entities']['dishes'] if row['artwork'] is not None}
+        self.assertEqual(set(attached), {photo['dishId']})
+        art = attached[photo['dishId']]
+        self.assertEqual(art['url'], f"{receipt['bucketPublicUrl']}/{photo['objectKey']}")
+        self.assertEqual(art['license'], photo['license'])
+        self.assertEqual(report['linkedArtwork'][photo['dishId']]['thumbnailUrl'],
+                         f"{receipt['bucketPublicUrl']}/{photo['thumbnail']['objectKey']}")
+        receipt['objects'][1]['sha256'] = '0' * 64
+        with self.assertRaisesRegex(ValueError, 'missing a verified pair'):
+            editorial.build(artwork=artwork, storage_receipt=receipt)
 
 
 if __name__ == '__main__':

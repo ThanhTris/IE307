@@ -1,0 +1,15 @@
+{
+  "result": "Pass",
+  "checkedAt": "2026-11-24T05:04:19.729793+00:00",
+  "repositoryRevision": "e49c67e24b8b48d7846e9e70150769a2a67ff994",
+  "qaSealSha256": "101eb99c6ddfc403fc1c7453a01d560155a0cd402d5602570b1f67bb7050861f",
+  "releaseId": "dish-catalogue-v1:1.4.0:gm18.2",
+  "candidateSha256": "b92534ad67f996e7d2d40424eac33ea7850ab8ed8f5ab844441466a48f23c95d",
+  "cardCount": 253,
+  "editorialDescriptions": 253,
+  "changedDescriptions": 253,
+  "selectedArtwork": 0,
+  "exactReadback": true,
+  "activeReleaseUnchanged": true,
+  "testOnly": true
+}

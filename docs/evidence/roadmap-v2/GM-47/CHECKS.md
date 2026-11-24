@@ -2,20 +2,21 @@
 
 ## Lô release v1 ngày 24/11/2026
 
-Nhánh `codex/gm-47-release-editorial` dựa trên `origin/main` tại `2ef58d3` và [GM-41 #210](https://github.com/ThanhTris/IE307/pull/210). Live start gate trả `READY_TO_CLAIM` lúc 10:37 ICT. Áp dụng yêu cầu ảnh danh sách, Storage và ghi công từ #214 và #215.
+Nhánh `codex/gm-47-release-editorial` đã cập nhật theo `origin/main` tại `d9332f7` và giữ [GM-41 #210](https://github.com/ThanhTris/IE307/pull/210) làm đầu vào dữ liệu. Checker merge trả `READY_FOR_MERGE_REVIEW` lúc 23:28 ICT cho dependency và artifact. Các AC còn thiếu được ghi theo [review của Trí](https://github.com/ThanhTris/IE307/pull/217#issuecomment-7133694276).
 
 | Kiểm thử | Kết quả và bằng chứng |
 | --- | --- |
 | Baseline 1.3.0 và biên tập mô tả | Pass. Dựng lại GM-41 khớp artifact đã merge. 253/253 mô tả dài 101–145 ký tự, khớp UUID và có URL/evidence. Gộp 72 UUID đã soạn và 181 UUID mới. |
 | Projection offline | Pass. Cùng 253 ID, chỉ trường mô tả trên card thay đổi, projection thử qua schema poolDish B-supplement đạt. Chưa chạy room/API. |
-| Ảnh chính và ảnh danh sách | 52 cặp WebP, gồm 52 ảnh nhỏ 400×300 px. Đối chiếu cả 104 SHA, kích thước và định dạng trong ZIP. Ảnh chính 5.083.210 byte, ảnh nhỏ 935.464 byte. [Hồ sơ ảnh](../../../../data-preparation/editorial/gm47-release/artwork-candidates.json). |
-| Danh sách chia lô | 201 UUID duy nhất chưa có ảnh, tách nhóm baseline và sáu lô GM-41. ZIP chứa `artwork-assignments.csv`. |
+| Ảnh chính và ảnh danh sách | 63 cặp WebP, tăng 11 món. 126 tệp đối chiếu định dạng, kích thước và SHA. Ảnh chính 6.127.352 byte, ảnh nhỏ 400×300 px 1.137.086 byte. [Hồ sơ ảnh](../../../../data-preparation/editorial/gm47-release/artwork-candidates.json). |
+| Danh sách chia lô | 190 UUID chưa có ảnh, tách nhóm baseline và sáu lô GM-41. ZIP chứa `artwork-assignments.csv`. |
 | Release catalogue checker | 32/33 mục Pass, gồm mô tả 253/253. Mục ảnh Fail 0/253 trong bundle vì ảnh chưa được tải lên bucket và gắn URL. |
 | PostgreSQL import/readback | Pass trên PostgreSQL 17.11 cô lập, không mở mạng/cổng. Dùng DDL catalogue từ migration 0026 và helper UUID từ 0019. Cùng SQL importer đọc lại đúng 253 thẻ và hash, chạy lại không tạo bản trùng, giữ nguyên bản active. [Kết quả SQL](qa-sql-readback-1.4.0.json). |
-| Supabase GM-03 QA | Not run cho 1.4.0. Run macOS trước đó dừng ở `QA_HOST_BINDING_NOT_LOOPBACK` và đã dọn môi trường. Workflow Linux chạy khi mở PR, còn cần kiểm lại trên bundle gắn ảnh. |
-| Quyền dùng nguồn và ghi công | GM-52 phụ trách bucket, GM-64 phụ trách màn Nguồn ảnh. Quyền dùng nguồn mô tả cho production vẫn cần xác nhận. |
+| Supabase GM-03 QA | Pass với candidate 1.4.0 chưa gắn ảnh, đúng 253 thẻ và hash, giữ nguyên bản active. [Evidence JSON](qa-supabase-readback-1.4.0.json) và [lượt CI đầu của PR #217](https://github.com/ThanhTris/IE307/actions/runs/45330545230). Còn lượt kiểm trên bản đã gắn ảnh. |
+| Kiểm receipt và gắn URL | Unit với bucket giả lập pass. Gắn đúng một cặp đã khớp hash, lưu URL nhỏ riêng, từ chối SHA sai. Phép kiểm công khai trên bucket thật chờ Trí cung cấp URL và xác nhận upload. |
+| Quyền dùng nguồn và ghi công | Báo cáo `description-rights-review.csv` gom 183 URL và 253 UUID để xác nhận quyền dùng. Hiện 183 nguồn cần xác nhận, chưa có nguồn được đánh dấu duyệt production. Ưu tiên rà 98 mô tả có nguồn VnExpress/Ngôi Sao, 34 mô tả Vietnam Tourism và 23 mô tả từ beFood. Nếu không có căn cứ dùng, thay nguồn và viết lại các UUID liên quan. [Điều khoản VnExpress](https://vnexpress.net/dieu-khoan-su-dung) · [Điều khoản Vietnam Tourism](https://vietnam.travel/term-conditions/) |
 
-Candidate `1.4.0`, `test_demo`, SHA-256 `b92534ad67f996e7d2d40424eac33ea7850ab8ed8f5ab844441466a48f23c95d`. 6 ca riêng GM-47 pass. Validator repo, task indexes và diff đạt.
+Candidate `1.4.0`, `test_demo`, SHA-256 `b92534ad67f996e7d2d40424eac33ea7850ab8ed8f5ab844441466a48f23c95d`. 7 ca riêng GM-47 pass. Validator repo, task indexes và diff đạt.
 
 ## Lô ngày 20/11/2026
 

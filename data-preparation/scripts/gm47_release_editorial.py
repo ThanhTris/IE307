@@ -1,4 +1,7 @@
 """Build a test-demo editorial candidate without changing the merged bundles."""
+import argparse
+import csv
+from pathlib import Path
 import re
 from urllib.parse import urlsplit
 
@@ -26,7 +29,55 @@ def load_baseline():
     return bundle, digest
 
 
-def build(*, artwork=None):
+def storage_bucket(url):
+    bucket = url.rstrip('/')
+    locator = urlsplit(bucket)
+    if (locator.scheme != 'https' or not locator.hostname or locator.username is not None
+            or locator.password is not None or locator.query or locator.fragment
+            or re.search(r'\s', url) or not re.fullmatch(r'/storage/v1/object/public/[a-zA-Z0-9_-]+', locator.path)):
+        raise ValueError('Expected an HTTPS public Supabase Storage bucket URL')
+    return bucket
+
+
+def attach_storage(receipt, available, dishes, sources, version):
+    """Bind only objects whose bytes were verified after the upload."""
+    bucket = storage_bucket(receipt['bucketPublicUrl'])
+    release_version = receipt['candidateDatasetVersion']
+    if (not re.fullmatch(r'(0|[1-9][0-9]*)(\.(0|[1-9][0-9]*)){2}', release_version)
+            or tuple(map(int, release_version.split('.'))) <= tuple(map(int, version.split('.')))):
+        raise ValueError('Storage-linked dataset version must be newer than the offline candidate')
+    gm41.dc.parse_utc(receipt['checkedAt'])
+    verified = {row['objectKey']: row['sha256'] for row in receipt['objects']}
+    if not verified or len(verified) != len(receipt['objects']):
+        raise ValueError('Storage receipt must contain unique uploaded object keys')
+
+    used = set()
+    linked = {}
+    for dish_id, row in available.items():
+        main_key = row['objectKey']
+        thumb_key = row['thumbnail']['objectKey']
+        if main_key not in verified and thumb_key not in verified:
+            continue
+        if verified.get(main_key) != row['sha256'] or verified.get(thumb_key) != row['thumbnail']['sha256']:
+            raise ValueError(f'Storage receipt is missing a verified pair for {dish_id}')
+        ref = gm41.ft.stable_id('source', f"gm47:artwork:{row['source']}:{row['license']}")
+        sources.setdefault(ref, {
+            **gm41.record(ref), 'enteredBy': 'gm47-editorial', 'checkedAt': row['checkedAt'],
+            'locator': row['source'], 'usageRights': row['usageRights'],
+            'license': row['license'], 'attribution': row['attribution'],
+        })
+        url = f'{bucket}/{main_key}'
+        dishes[dish_id]['artwork'] = {key: row[key] for key in ('usageRights', 'license', 'attribution')} | {
+            'url': url, 'sourceRef': ref,
+        }
+        linked[dish_id] = {'url': url, 'thumbnailUrl': f'{bucket}/{thumb_key}', 'sourceRef': ref}
+        used.update((main_key, thumb_key))
+    if used != verified.keys():
+        raise ValueError('Storage receipt contains objects outside the reviewed artwork inventory')
+    return release_version, linked
+
+
+def build(*, artwork=None, storage_receipt=None):
     bundle, digest = load_baseline()
     edit = gm41.dc.load_json(INPUT)
     if artwork is None:
@@ -85,6 +136,9 @@ def build(*, artwork=None):
     for row in artwork['images']:
         dish_id = row['dishId']
         dish = dishes.get(dish_id)
+        source = urlsplit(row['source'])
+        valid_source = (source.scheme == 'https' and source.netloc == 'commons.wikimedia.org'
+                        and source.path.startswith('/wiki/File:'))
         license_match = re.fullmatch(r'CC (BY|BY-SA) ([234]\.0)', row['license'])
         if license_match:
             rights = 'licensed'
@@ -95,10 +149,16 @@ def build(*, artwork=None):
         elif row['license'] == 'Public domain (author release)':
             rights = 'public_domain'
             license_url = row['source']
+        elif row['license'] == 'Ảnh nhóm tự chụp':
+            rights = 'granted'
+            license_url = row['permissionEvidence']
+            permission = urlsplit(license_url)
+            valid_source = all(link.scheme == 'https' and link.hostname
+                               and link.username is None and link.password is None
+                               for link in (source, permission))
         else:
             raise ValueError(f'Unsupported GM-47 artwork license for {dish_id}')
         gm41.dc.parse_utc(row['checkedAt'])
-        source = urlsplit(row['source'])
         thumbnail = row['thumbnail']
         if (dish_id in available_artwork or dish is None or dish['name'] != row['name']
                 or row['file'] != f'{dish_id}.webp' or not row['author'] or not row['attribution']
@@ -109,8 +169,7 @@ def build(*, artwork=None):
                 or not re.fullmatch(r'[a-f0-9]{64}', thumbnail['sha256'])
                 or min(row['width'], row['height']) < 600 or not 0 < row['bytes'] <= 200_000
                 or row['width'] * 3 != row['height'] * 4 or not re.fullmatch(r'[a-f0-9]{64}', row['sha256'])
-                or source.scheme != 'https' or source.netloc != 'commons.wikimedia.org'
-                or not source.path.startswith('/wiki/File:')
+                or not valid_source
                 or row['usageRights'] != rights or row['licenseUrl'] != license_url):
             raise ValueError(f'Invalid or stale GM-47 artwork evidence for {dish_id}')
         available_artwork[dish_id] = row
@@ -136,6 +195,12 @@ def build(*, artwork=None):
                        for dish_id in sorted(ids & pending.keys())]
 
     bundle['datasetVersion'] = edit['candidateDatasetVersion']
+    linked = {}
+    if storage_receipt is not None:
+        bundle['datasetVersion'], linked = attach_storage(
+            storage_receipt, available_artwork, dishes, sources, bundle['datasetVersion']
+        )
+        entities['dataSources'] = list(sources.values())
     upstream.validate(bundle)
     coverage = {}
     for meal in gm41.ft.MEALS:
@@ -152,6 +217,7 @@ def build(*, artwork=None):
         'usageScope': bundle['usageScope'], 'descriptionSourceRefs': description_refs, 'coverage': coverage,
         'preparedArtwork': len(available_artwork), 'preparedArtworkBytes': total_bytes,
         'thumbnailBytes': sum(row['thumbnail']['bytes'] for row in available_artwork.values()),
+        'linkedArtwork': linked,
         'artworkBatches': {
             name: {'dishes': len(ids), 'prepared': len(ids & available_artwork.keys()),
                    'pending': len(ids & pending.keys())}
@@ -163,14 +229,32 @@ def build(*, artwork=None):
         ],
         'missingArtwork': missing_artwork,
     }
+    rights = {}
+    for dish_id, ref in description_refs.items():
+        source = sources[ref]
+        locator = source['locator']
+        if locator not in rights:
+            rights[locator] = {'locator': locator, 'dishIds': [], 'status': 'needs_confirmation'}
+        rights[locator]['dishIds'].append(dish_id)
+    report['descriptionRightsReview'] = list(rights.values())
     return bundle, report
 
 
 if __name__ == '__main__':
-    candidate, report = build()
-    OUTPUT.mkdir(parents=True, exist_ok=True)
-    (OUTPUT / 'dishes.json').write_bytes(gm41.dc.encoded(candidate))
-    (OUTPUT / 'editorial-report.json').write_bytes(gm41.dc.encoded(report))
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument('--storage-receipt', type=Path, help='Use a receipt from the public Storage verification step')
+    args = parser.parse_args()
+    receipt = gm41.dc.load_json(args.storage_receipt) if args.storage_receipt else None
+    candidate, report = build(storage_receipt=receipt)
+    output = OUTPUT / 'with-storage' if receipt else OUTPUT
+    output.mkdir(parents=True, exist_ok=True)
+    (output / 'dishes.json').write_bytes(gm41.dc.encoded(candidate))
+    (output / 'editorial-report.json').write_bytes(gm41.dc.encoded(report))
+    with (output / 'description-rights-review.csv').open('w', encoding='utf-8-sig', newline='') as stream:
+        writer = csv.writer(stream)
+        writer.writerow(('locator', 'dish_count', 'dish_ids', 'status'))
+        for row in sorted(report['descriptionRightsReview'], key=lambda item: item['locator']):
+            writer.writerow((row['locator'], len(row['dishIds']), ' '.join(row['dishIds']), row['status']))
     paths = (upstream.BUNDLE, upstream.MANIFEST, gm41.SCHEMA, INPUT, ARTWORK, HANDOFF)
     manifest = {
         'schemaVersion': candidate['contractVersion'], 'datasetVersion': candidate['datasetVersion'],
@@ -180,6 +264,8 @@ if __name__ == '__main__':
         'counts': {name: len(rows) for name, rows in candidate['entities'].items()},
         'inputs': {path.relative_to(ROOT).as_posix(): gm41.dc.sha(path.read_bytes()) for path in paths},
     }
-    (OUTPUT / 'manifest.json').write_bytes(gm41.dc.encoded(manifest))
+    if args.storage_receipt:
+        manifest['storageReceiptSha256'] = gm41.dc.sha(args.storage_receipt.read_bytes())
+    (output / 'manifest.json').write_bytes(gm41.dc.encoded(manifest))
     print(f"GM-47 candidate {candidate['datasetVersion']}: "
           f"{len(report['descriptionSourceRefs'])} description edits, SHA {report['candidateSha256']}")
