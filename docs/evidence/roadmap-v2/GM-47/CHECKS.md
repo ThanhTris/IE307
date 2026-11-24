@@ -1,5 +1,18 @@
 # GM-47 · Kiểm thử
 
+## Rà nguồn và xác minh ảnh theo quyết định 25/11/2026
+
+Candidate `1.4.2` có 253 mô tả, dùng SHA-256 `7ca0d2ef9bba03c4bee025f597c2c7bc52de580471d97f9ddcb12463188942d7`. Start gate đạt. Merge gate đối chiếu dependency và artifact trên `origin/main` `6cd5e1a` lúc 00:21 ICT. [Quyết định của Trí](https://github.com/ThanhTris/IE307/pull/217#issuecomment-7138729659) · [Spec ảnh #218](https://github.com/ThanhTris/IE307/pull/218)
+
+| Kiểm thử | Kết quả và bằng chứng |
+| --- | --- |
+| Lời mô tả và quyền nguồn | Đối chiếu 62/253 mô tả theo URL và lưu dữ kiện, người kiểm, thời điểm cùng SHA của URL và câu đã rà. 13/184 URL đạt `team_authored_fact_reference`. 171 URL vẫn `needs_confirmation`, gồm 6 URL đã đối chiếu một phần. Bảng từng tên miền ở dưới ghi tình trạng v1.4.1 trước khi rà. |
+| Quy tắc dùng làm tham chiếu | Trí chọn lời nhóm tự viết, dùng URL để đối chiếu dữ kiện. Với thương hiệu và video, chỉ giữ tên món và dữ kiện cơ bản. Nếu nguồn thiếu dữ kiện về cách nấu hoặc phục vụ, tìm nguồn thay hoặc để trạng thái chờ. `usageRights` của văn bản tại nguồn vẫn `unknown`. |
+| Nguồn ảnh gốc | Đã xem 72 ảnh đã chuẩn bị và đối chiếu metadata tệp gốc trên Commons. 62 có EXIF máy ảnh, 10 có ghi chú xác minh bổ sung về tác giả và nguồn. Không phát hiện nhãn AI-generated trong danh mục hoặc template Commons của ảnh đã chọn. Công cụ từ chối bản ghi thiếu `aiCheck`, có nhãn AI hoặc ảnh nhóm tự chụp thiếu EXIF. |
+| Chuối nếp nướng | Đã thay ảnh của Hồ Đức Hải do chưa xác minh được nguồn gốc. Dùng ảnh của Tri Nguyen chụp bằng Nikon D700 năm 2012, bản Commons được đối chiếu quyền từ Flickr. Bản cắt giữ dòng ghi công trong ảnh. [Ảnh và giấy phép CC BY 2.0](https://commons.wikimedia.org/wiki/File:A_chu%E1%BB%91i_n%C6%B0%E1%BB%9Bng_b%E1%BB%8Dc_n%E1%BA%BFp_(grilled_banana_wrapped_in_sticky_rice)_food_stand.jpg) |
+| Gói ảnh bàn giao | Thêm Cơm chiên và Burger. Có 72 cặp, 144 tệp, 6.915.318 byte ảnh chính và 1.272.362 byte ảnh nhỏ. Còn 181 UUID trong `artwork-assignments.csv`. |
+| Kiểm catalogue và QA | Checker đạt 32/33 mục ở candidate chưa gắn ảnh. Mục ảnh trong bundle 0/253. Readback ở revision mới lưu trong CI của PR #217. Readback sau khi gắn ảnh chờ upload và receipt Storage thật. |
+
 ## Rà theo review PR #217 ngày 24/11/2026
 
 Candidate `1.4.1` có 253 mô tả dài 101–145 ký tự. Đã viết lại Gà nướng ống tre, Cơm trái dừa, Bánh bẻng, Phở cuốn và Kem dừa. Với Gà nướng ống tre, nguồn thay từ menu Hyatt sang bài ghi nhận cách ướp và nướng thực tế. SHA-256 của bundle `test_demo` là `c8a8f72e6c3a8edd1a113629c4544125f6eb78c6e45a27e27a13d5c43423e3a6`.

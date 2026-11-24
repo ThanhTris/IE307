@@ -1,8 +1,8 @@
 # GM-47 · Bàn giao bổ sung biên tập
 
-## Lô release v1 ngày 24/11/2026
+## Lô release v1 ngày 25/11/2026
 
-Nhận [GM-41 bundle 1.3.0](../GM-41/HANDOFF.md) qua #210, gồm 253 UUID, trên target `d9332f7`. [Nguồn mô tả](../../../../data-preparation/editorial/gm47-release/descriptions.json) và [hồ sơ ảnh](../../../../data-preparation/editorial/gm47-release/artwork-candidates.json) được ghim vào SHA-256 của bundle đầu vào. Dựng candidate QA `1.4.1` vào `.work/gm47-release-editorial/` cùng manifest, báo cáo và danh sách nguồn mô tả cần xác nhận.
+Nhận [GM-41 bundle 1.3.0](../GM-41/HANDOFF.md) qua #210, gồm 253 UUID, trên target `6cd5e1a`. [Nguồn mô tả](../../../../data-preparation/editorial/gm47-release/descriptions.json) và [hồ sơ ảnh](../../../../data-preparation/editorial/gm47-release/artwork-candidates.json) được ghim vào SHA-256 của bundle đầu vào. Dựng candidate QA `1.4.2` vào `.work/gm47-release-editorial/` cùng manifest, báo cáo và danh sách nguồn mô tả.
 
 ```sh
 python data-preparation/scripts/gm47_release_editorial.py
@@ -14,17 +14,17 @@ Checker hiện đạt 32/33 mục. Kiểm readback trên [QA GM-03](../GM-03/RUN
 
 ### Gói ảnh cho Trí và Tuấn
 
-Gói cục bộ `.work/gm47-release-editorial/gm47-storage-handoff.zip` có 70 ảnh chính và 70 ảnh nhỏ, tổng 8.064.250 byte ảnh. Có thể tái tạo từ các ảnh chính đã kiểm bằng Python có Pillow 13.0.0 và WebP encoder cùng bản. Lệnh kiểm SHA nguồn, xuất gói và từ chối metadata không khớp.
+Gói cục bộ `.work/gm47-release-editorial/gm47-storage-handoff.zip` có 72 ảnh chính và 72 ảnh nhỏ, tổng 8.187.680 byte ảnh. Có thể tái tạo từ các ảnh chính đã kiểm bằng Python có Pillow 13.0.0 và WebP encoder cùng bản. Lệnh kiểm SHA nguồn, xuất gói và từ chối metadata không khớp.
 
 ```sh
 python data-preparation/scripts/gm47_storage_handoff.py --images .work/gm47-release-editorial/images
 ```
 
 - `images/<dishId>.webp` là ảnh chính. `thumbnails/<dishId>.webp` là ảnh danh sách 400×300 px. Đây là object key đề xuất để Trí dùng trong bucket công khai GM-52. Mỗi URL đích là URL gốc công khai của bucket tại môi trường tương ứng cộng object key. Xác nhận URL gốc và tải tệp trước khi gắn `artwork.url` và bàn giao URL ảnh nhỏ cho Tuấn. URL tệp Commons trong metadata dùng làm bằng chứng nguồn.
-- Gói kèm `artwork-candidates.json` có tác giả, giấy phép, kích thước, số byte và SHA của từng tệp, cùng `ATTRIBUTION.md` để Tuấn triển khai màn Nguồn ảnh trong GM-64. Giữ giấy phép và ghi công cho cả hai bản dẫn xuất.
-- `artwork-assignments.csv` chia 183 món thiếu ảnh theo sáu batch GM-41 và nhóm UUID ban đầu. Trí chia việc tìm hoặc chụp, Tâm kiểm ảnh, tác giả và license. Ảnh nhóm tự chụp cần nguồn ảnh và đường dẫn xác nhận cho phép dùng (`permissionEvidence`).
+- Gói kèm `artwork-candidates.json` có tác giả, giấy phép, kích thước, số byte, SHA và `aiCheck` của từng tệp, cùng `ATTRIBUTION.md` để Tuấn triển khai màn Nguồn ảnh trong GM-64. Giữ giấy phép và ghi công cho cả hai bản dẫn xuất. Ảnh Chuối nếp nướng đã đổi SHA và tác giả. Nếu từng nhận gói cũ, chọn bản hiện tại khi upload.
+- `artwork-assignments.csv` chia 181 món thiếu ảnh theo sáu batch GM-41 và nhóm UUID ban đầu. Trí chia việc tìm hoặc chụp, Tâm kiểm ảnh, tác giả, license và nguồn gốc ảnh thật. Với ảnh nhóm tự chụp, giữ bản gốc có EXIF và đường dẫn xác nhận cho phép dùng (`permissionEvidence`).
 
-Bảng rà quyền nguồn mô tả theo tên miền và các mẫu đã đối chiếu nằm trong [CHECKS](CHECKS.md). Trí chốt đề xuất giữ hay thay nguồn theo URL.
+Bàn giao cho GM-51 theo quyết định của Trí ngày 25/11. Dùng mô tả do nhóm biên tập và URL để tham chiếu dữ kiện. `description-rights-review.csv` chỉ ghi `team_authored_fact_reference` khi toàn bộ mô tả dùng URL đó đã được đối chiếu. Cột `reviewed_dish_ids`, `checked_by` và `checked_at` ghi phạm vi và người kiểm. Nếu thay URL hoặc câu đã rà, phải rà lại bản ghi `factReview` tương ứng. Trạng thái của 171 URL còn (gồm cả URL đã đối chiếu một phần) là `needs_confirmation`. Xem [CHECKS](CHECKS.md).
 
 ### Sau khi Trí xác nhận upload
 
@@ -33,7 +33,7 @@ Cần URL công khai của bucket staging, object key đã chốt, và thông ti
 Dùng lệnh dưới để GET từng ảnh, so số byte và SHA-256. Receipt chỉ sinh khi cả cặp khớp. Có thể chọn UUID đã upload bằng `--dish-id` lặp lại khi thử theo lô.
 
 ```sh
-python data-preparation/scripts/gm47_storage_receipt.py --bucket-url "$GM47_PUBLIC_BUCKET" --candidate-version 1.4.2
+python data-preparation/scripts/gm47_storage_receipt.py --bucket-url "$GM47_PUBLIC_BUCKET" --candidate-version 1.4.3
 python data-preparation/scripts/gm47_release_editorial.py --storage-receipt .work/gm47-release-editorial/storage-receipt.json
 python scripts/release_catalogue_check.py --bundle .work/gm47-release-editorial/with-storage/dishes.json
 python scripts/gm47_catalogue_check.py --qa-manifest "$GM47_QA_MANIFEST" --release-editorial --storage-receipt .work/gm47-release-editorial/storage-receipt.json

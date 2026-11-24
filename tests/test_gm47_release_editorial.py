@@ -15,12 +15,14 @@ class ReleaseEditorialTest(unittest.TestCase):
         candidate, report = editorial.build()
         self.assertEqual(report['baseSha256'], digest)
         self.assertEqual(base['datasetVersion'], '1.3.0')
-        self.assertEqual(candidate['datasetVersion'], '1.4.1')
+        self.assertEqual(candidate['datasetVersion'], '1.4.2')
         self.assertEqual(candidate['usageScope'], 'test_demo')
         self.assertEqual(report['missingDescription'], [])
         self.assertEqual(len(report['descriptionSourceRefs']), 253)
         self.assertEqual(sum(len(row['dishIds']) for row in report['descriptionRightsReview']), 253)
-        self.assertTrue(all(row['status'] == 'needs_confirmation' for row in report['descriptionRightsReview']))
+        for row in report['descriptionRightsReview']:
+            fully_reviewed = row['dishIds'] == row['reviewedDishIds']
+            self.assertEqual(row['status'], editorial.FACT_REFERENCE if fully_reviewed else 'needs_confirmation')
         self.assertEqual(len(report['missingArtwork']) + report['preparedArtwork'], 253)
         self.assertEqual(len(report['artworkBatches']), 7)
         self.assertEqual(sum(batch['pending'] for batch in report['artworkBatches'].values()),
@@ -67,6 +69,32 @@ class ReleaseEditorialTest(unittest.TestCase):
             with self.assertRaisesRegex(ValueError, 'Invalid release description'):
                 editorial.build()
 
+    def test_shared_source_stays_pending_with_an_unreviewed_description(self):
+        load = editorial.gm41.dc.load_json
+        locator = 'https://vietnam.travel/vi/things-to-do/15-dreamy-desserts-try-vietnam/'
+
+        def partial_review(path):
+            result = load(path)
+            if path == editorial.INPUT:
+                row = next(row for row in result['descriptions'] if row['locator'] == locator)
+                del row['factReview']
+            return result
+
+        _, report = editorial.build()
+        complete = next(row for row in report['descriptionRightsReview'] if row['locator'] == locator)
+        self.assertEqual(complete['status'], editorial.FACT_REFERENCE)
+        with patch.object(editorial.gm41.dc, 'load_json', side_effect=partial_review):
+            _, report = editorial.build()
+        pending = next(row for row in report['descriptionRightsReview'] if row['locator'] == locator)
+        self.assertEqual(pending['status'], 'needs_confirmation')
+        self.assertEqual(len(pending['reviewedDishIds']), len(pending['dishIds']) - 1)
+
+    def test_rejects_description_review_after_text_changes(self):
+        row = next(row for row in editorial.gm41.dc.load_json(editorial.INPUT)['descriptions'] if 'factReview' in row)
+        row['description'] += ' Nội dung thay đổi.'
+        with self.assertRaisesRegex(ValueError, 'stale GM-47 description review'):
+            editorial.description_review(row)
+
     def test_rejects_artwork_for_a_different_base(self):
         load = editorial.gm41.dc.load_json
 
@@ -86,17 +114,31 @@ class ReleaseEditorialTest(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, 'Invalid or stale GM-47 artwork evidence'):
             editorial.build(artwork=artwork)
 
+    def test_rejects_missing_or_flagged_photo_origin(self):
+        artwork = editorial.gm41.dc.load_json(editorial.ARTWORK)
+        row = artwork['images'][0]
+        review = row.pop('aiCheck')
+        with self.assertRaisesRegex(ValueError, 'GM-47 photo origin review'):
+            editorial.build(artwork=artwork)
+        row['aiCheck'] = {**review, 'aiCategory': True}
+        with self.assertRaisesRegex(ValueError, 'GM-47 photo origin review'):
+            editorial.build(artwork=artwork)
+        row['aiCheck'] = {**review, 'cameraExif': False}
+        row['license'] = 'Ảnh nhóm tự chụp'
+        with self.assertRaisesRegex(ValueError, 'GM-47 photo origin review'):
+            editorial.build(artwork=artwork)
+
     def test_storage_receipt_links_only_verified_pairs(self):
         artwork = editorial.gm41.dc.load_json(editorial.ARTWORK)
         photo = artwork['images'][0]
         receipt = {
             'bucketPublicUrl': 'https://staging.example.invalid/storage/v1/object/public/catalogue',
-            'candidateDatasetVersion': '1.4.2',
+            'candidateDatasetVersion': '1.4.3',
             'checkedAt': '2026-11-24T14:00:00Z',
             'objects': [{key: row[key] for key in ('objectKey', 'sha256')} for row in (photo, photo['thumbnail'])],
         }
         candidate, report = editorial.build(artwork=artwork, storage_receipt=receipt)
-        self.assertEqual(candidate['datasetVersion'], '1.4.2')
+        self.assertEqual(candidate['datasetVersion'], '1.4.3')
         attached = {row['id']: row['artwork'] for row in candidate['entities']['dishes'] if row['artwork'] is not None}
         self.assertEqual(set(attached), {photo['dishId']})
         art = attached[photo['dishId']]
