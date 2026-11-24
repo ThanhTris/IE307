@@ -1,0 +1,52 @@
+# GM-52 hosted smoke, manual version. The automated run is scripts/gm52_hosted_smoke.mjs.
+# Use a hosted project (staging first). baseUrl is https://<ref>.supabase.co. Only the publishable key is used here:
+# never paste a service_role or secret key into this file. Tokens come from step 1 and 2; delete the guests at the end.
+@baseUrl = https://REPLACE_WITH_PROJECT_REF.supabase.co
+@publishableKey = REPLACE_WITH_PUBLISHABLE_KEY
+@hostToken = REPLACE_WITH_HOST_ACCESS_TOKEN
+@memberToken = REPLACE_WITH_MEMBER_ACCESS_TOKEN
+@roomId = REPLACE_WITH_ROOM_UUID
+
+### 1. Auth is up and anonymous sign-in is on (HTTP 200 with access_token)
+POST {{baseUrl}}/auth/v1/signup
+apikey: {{publishableKey}}
+Content-Type: application/json
+
+{"data":{"display_name":"GM52 host"}}
+
+### 2. Catalogue reachable through REST (HTTP 200; keepalive uses this request)
+GET {{baseUrl}}/rest/v1/dishes?select=id&limit=1
+apikey: {{publishableKey}}
+
+### 3. Create a lunch room as the host (HTTP 200, data.code six characters)
+POST {{baseUrl}}/rest/v1/rpc/dish_session
+apikey: {{publishableKey}}
+Authorization: Bearer {{hostToken}}
+Content-Type: application/json
+
+{"command":"create","payload":{"contractVersion":"dish-session-v4/roadmap-v2/GM-07.B-supplement","requestId":"gm52-create-1","displayName":"GM52 host","settings":{"dishCount":10,"mealSlot":"lunch","desiredAt":null},"preferences":{"cuisineIds":[],"categoryIds":[],"temperature":null,"flavor":null,"budget":null,"avoidRecent":false}}}
+
+### 4. After one ballot and waiting, wait past 60 seconds with no worker running, then read the room
+# Expect data.result or round 2, roster still two members (pg_cron job ie307-gm48-tick).
+POST {{baseUrl}}/rest/v1/rpc/dish_session
+apikey: {{publishableKey}}
+Authorization: Bearer {{hostToken}}
+Content-Type: application/json
+
+{"command":"snapshot","payload":{"contractVersion":"dish-session-v4/roadmap-v2/GM-07.B-supplement","roomId":"{{roomId}}"}}
+
+### 5. Public image bucket answers without a key once an image is uploaded (HTTP 200); the publishable key cannot upload (400/401/403)
+GET {{baseUrl}}/storage/v1/object/public/dish-images/REPLACE_WITH_DISH_UUID.webp
+
+### 6. Delete the host account (HTTP 200, data.deleted true); repeating the same requestId is acknowledged again
+POST {{baseUrl}}/functions/v1/delete-account
+apikey: {{publishableKey}}
+Authorization: Bearer {{hostToken}}
+Content-Type: application/json
+
+{"requestId":"REPLACE_WITH_A_NEW_UUID"}
+
+### 7. The deleted token no longer works (401/403/404)
+GET {{baseUrl}}/auth/v1/user
+apikey: {{publishableKey}}
+Authorization: Bearer {{hostToken}}
