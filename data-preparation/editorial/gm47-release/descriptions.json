@@ -1,14 +1,14 @@
 {
   "baseDatasetVersion": "1.3.0",
   "baseSha256": "a15b5dbe4b1982a3bf22bba07de556653b82640474943726e8f5d9db6661b3c3",
-  "candidateDatasetVersion": "1.4.0",
+  "candidateDatasetVersion": "1.4.1",
   "descriptions": [
     {
       "dishId": "00115c43-e3bd-5c0c-aaeb-86f36da99655",
       "name": "Kem dừa",
       "locator": "https://vietnam.travel/vi/things-to-do/15-dreamy-desserts-try-vietnam/",
-      "checkedAt": "2026-11-22T02:34:21Z",
-      "description": "Kem có vị dừa, được dùng lạnh bằng thìa. Một cách trình bày là múc kem vào phần vỏ dừa để ăn cùng các phần rắc nếu có."
+      "checkedAt": "2026-11-24T16:58:31Z",
+      "description": "Kem vị dừa có thể dọn thành từng viên trong nửa trái dừa. Phần kem mềm tương phản với đồ rắc giòn như lạc hoặc bánh quy."
     },
     {
       "dishId": "00cf348d-3c93-5940-b6ab-4fff39bcc886",
@@ -21,8 +21,8 @@
       "dishId": "019a510e-2f95-5726-a448-fd3d9d67731d",
       "name": "Bánh bẻng",
       "locator": "https://ngoisao.vnexpress.net/me-cung-am-thuc-o-hai-phong-4722239.html",
-      "checkedAt": "2026-11-22T02:34:21Z",
-      "description": "Bánh bẻng là món bánh chiên của Hải Phòng, có dáng gợi nhớ bánh tiêu. Bánh được ăn từng chiếc như một món quà vặt."
+      "checkedAt": "2026-11-24T16:58:31Z",
+      "description": "Bánh bẻng Hải Phòng là loại bánh chiên bản rộng với ruột xốp. Khi bánh còn nóng, có thể bẻ từng miếng và chấm sữa đặc."
     },
     {
       "dishId": "01e12db6-8014-5e84-bc53-398af27ad314",
@@ -35,8 +35,8 @@
       "dishId": "024b5cdf-cb07-5c94-8b34-5dcdebc0d5e4",
       "name": "Cơm trái dừa",
       "locator": "https://vnexpress.net/mon-an-nhat-dinh-phai-thu-khi-du-lich-mien-tay-4941682.html",
-      "checkedAt": "2026-11-22T02:39:00Z",
-      "description": "Cơm được nấu trong trái dừa cho hạt cơm thơm. Khi dọn, có thể múc cơm trực tiếp từ trái và ăn cùng tép rang theo kiểu miền Tây."
+      "checkedAt": "2026-11-24T16:58:31Z",
+      "description": "Hạt gạo ngâm nước dừa rồi hấp ngay trong trái dừa. Kiểu Bến Tre thường dọn cơm kèm tép rang, thêm vị mặn bên cạnh vị ngọt nhẹ của cơm."
     },
     {
       "dishId": "03539dba-3723-5422-9f7f-d027fe06396e",
@@ -84,15 +84,15 @@
       "dishId": "0c62a5d8-b122-587b-b3d2-3a601dbfd956",
       "name": "Phở cuốn",
       "locator": "https://www.vietnam.travel/vi/things-to-do/10-delicious-vietnamese-rolls",
-      "checkedAt": "2026-11-22T02:50:00Z",
-      "description": "Tấm bánh phở mềm được dùng để cuộn phần nhân và rau. Có thể cầm từng cuốn chấm vào nước chấm rồi ăn như món nhẹ."
+      "checkedAt": "2026-11-24T16:58:31Z",
+      "description": "Mỗi cuốn dùng nguyên tấm bánh phở mềm để bọc nhân. Một kiểu ở Trúc Bạch có thịt bò nướng, ăn kèm nước mắm ớt pha nước quất."
     },
     {
       "dishId": "0c98fd13-c60c-59f3-b45f-6c8b815b38f7",
       "name": "Gà nướng ống tre",
-      "locator": "https://www.hyatt.com/content/dam/hotel/propertysites/assets/regency/danhr/documents/en_us/dining/beach-house/DANHRBeachHouseVietnameseSetDinnerMenu.pdf",
-      "checkedAt": "2026-11-22T02:34:21Z",
-      "description": "Gà được chế biến theo kiểu nướng ống tre, rồi lấy ra dọn thành món chính. Có thể chia phần gà để ăn cùng các món khác trong bữa."
+      "locator": "https://vntravel.org.vn/doc-dao-mon-ga-nuong-trong-ong-tre-khungtai-tphcm-a2701.html",
+      "checkedAt": "2026-11-24T16:58:31Z",
+      "description": "Gà ướp sả, gừng và lá chanh được cho vào ống tre rồi nướng trên than. Khi nướng, người làm xoay ống để hơi nóng lan đều quanh phần thịt."
     },
     {
       "dishId": "0ca9d7a3-5140-56b0-a989-eb52516054e8",
