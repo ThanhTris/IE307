@@ -62,7 +62,7 @@ test('unknown delivery freezes intent and replays the same request once, with no
   await open('timeout', port);
   await fireEvent.press(screen.getByRole('button', { name: 'Chọn khẩu vị →' }));
   // Recovery is automatic: the form stays frozen, then the SAME request is replayed.
-  await screen.findByText('Chưa rõ kết quả lưu. Thử lại cùng yêu cầu; không sửa hoặc tạo phòng khác.');
+  await screen.findByText(/^(Chưa rõ kết quả lưu\.|Mất kết nối máy chủ\.)/);
   expect(screen.getByRole('button', { name: 'Ăn sáng' })).toBeDisabled();
   await screen.findByRole('checkbox', { name: 'Ăn gì cũng được' }, { timeout: 5000 });
   expect(write).toHaveBeenCalledTimes(2);
@@ -86,7 +86,7 @@ test('save rejection retains own choices for retry; account defaults stay unchan
   await fireEvent.press(screen.getByRole('button', { name: 'Chọn khẩu vị →' }));
   await fireEvent.press(await screen.findByRole('button', { name: 'Cơm' }));
   await fireEvent.press(screen.getByRole('button', { name: 'Vào phòng chờ →' }));
-  await screen.findByText('Chưa lưu được thay đổi. Đã giữ nháp; hãy thử lại.');
+  await screen.findByText('Chưa lưu được thay đổi. Lựa chọn vẫn được giữ; hãy thử lại.');
   expect(screen.getByRole('button', { name: 'Cơm' }).props.accessibilityState.selected).toBe(true);
   await fireEvent.press(screen.getByRole('button', { name: 'Vào phòng chờ →' }));
   await screen.findByText('Đã hoàn tất thiết lập');

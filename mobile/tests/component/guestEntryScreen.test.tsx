@@ -84,8 +84,11 @@ test('failure keeps the name for explicit retry and Back does not submit', async
   expect(onContinue).toHaveBeenCalledTimes(2);
 });
 
-test('a server error says what happened, keeps the field clean, offers retry and a way to report it', async () => {
-  const onContinue = jest.fn().mockResolvedValueOnce({ messageKey: 'NETWORK_ERROR' }).mockResolvedValue(true);
+test('a server error stays clean on first failure, then offers report help after 2 consecutive failures', async () => {
+  const onContinue = jest.fn()
+    .mockResolvedValueOnce({ messageKey: 'NETWORK_ERROR' })
+    .mockResolvedValueOnce({ messageKey: 'NETWORK_ERROR' })
+    .mockResolvedValue(true);
   const onComplete = jest.fn();
   await render(<GuestEntryScreen onContinue={onContinue} onComplete={onComplete} />);
   await openName();
@@ -94,6 +97,10 @@ test('a server error says what happened, keeps the field clean, offers retry and
   expect(await screen.findByText('Không kết nối được máy chủ')).toBeOnTheScreen();
   expect(screen.queryByTestId('error-recovery')).toBeNull();
   expect(screen.queryByText(/phiên cục bộ/i)).toBeNull();
+  expect(screen.queryByRole('button', { name: 'Báo lỗi hoặc cần trợ giúp' })).toBeNull();
+
+  await fireEvent.press(screen.getByRole('button', { name: 'Thử lại' }));
+  expect(await screen.findByRole('button', { name: 'Báo lỗi hoặc cần trợ giúp' })).toBeOnTheScreen();
   await fireEvent.press(screen.getByRole('button', { name: 'Báo lỗi hoặc cần trợ giúp' }));
   expect(screen.getByRole('header', { name: 'Báo lỗi' })).toBeOnTheScreen();
   expect(screen.getByText('Mã lỗi: NETWORK_ERROR · Chạm để sao chép')).toBeOnTheScreen();
@@ -131,12 +138,12 @@ test('a response after unmount never navigates', async () => {
 test.each([
   ['restore-unavailable', 'Thử lại'], ['session-recovery-required', 'Thử lại'],
   ['session-revoked', 'Bắt đầu lại'], ['storage-unavailable', 'Bắt đầu lại'],
-] as const)('session issue %s blocks a replacement guest and offers one next step', async (issue, action) => {
+] as const)('session issue %s blocks a replacement guest and offers one clean next step without help clutter', async (issue, action) => {
   const session = { ...idleSession(), status: 'lost' as const, issue };
   const onContinue = jest.fn();
   await render(<GuestEntryScreen session={session} onContinue={onContinue} onComplete={jest.fn()} />);
   expect(screen.getByRole('button', { name: guestLabel })).toBeDisabled();
-  expect(screen.getByRole('button', { name: 'Báo lỗi hoặc cần trợ giúp' })).toBeOnTheScreen();
+  expect(screen.queryByRole('button', { name: 'Báo lỗi hoặc cần trợ giúp' })).toBeNull();
   await fireEvent.press(screen.getByRole('button', { name: action }));
   expect(action === 'Thử lại' ? session.restoreSession : session.logout).toHaveBeenCalledTimes(1);
   expect(onContinue).not.toHaveBeenCalled();
@@ -152,7 +159,7 @@ test('after an unknown signup result, only an explicit retry drops it and create
   await fireEvent.press(screen.getByRole('button', { name: 'Tiếp tục' }));
   await result.rerender(<GuestEntryScreen {...props} session={{ ...session, status: 'blocked', issue: 'signup-uncertain' }} />);
   expect(screen.getByText('Máy chủ phản hồi quá lâu')).toBeOnTheScreen();
-  expect(screen.getByRole('button', { name: 'Báo lỗi hoặc cần trợ giúp' })).toBeOnTheScreen();
+  expect(screen.queryByRole('button', { name: 'Báo lỗi hoặc cần trợ giúp' })).toBeNull();
   expect(screen.getByLabelText('Tên khách').props.value).toBe('Minh');
   expect(session.logout).not.toHaveBeenCalled();
   expect(onContinue).toHaveBeenCalledTimes(1);
@@ -170,12 +177,15 @@ test('restoring a saved session disables guest entry without auto signup', async
   expect(onContinue).not.toHaveBeenCalled();
 });
 
-test('failed session recovery stays visible on welcome and never creates a replacement guest', async () => {
+test('failed session recovery stays visible on welcome and reveals help pill on 2nd failure', async () => {
   const session = { ...idleSession(), status: 'lost' as const, issue: 'restore-unavailable' as const, restoreSession: jest.fn().mockRejectedValue(new Error('offline')) };
   const onContinue = jest.fn();
   await render(<GuestEntryScreen session={session} onContinue={onContinue} onComplete={jest.fn()} />);
   await fireEvent.press(screen.getByRole('button', { name: 'Thử lại' }));
   expect(await screen.findByText('Vẫn chưa được')).toBeOnTheScreen();
+  expect(screen.queryByRole('button', { name: 'Báo lỗi hoặc cần trợ giúp' })).toBeNull();
+  await fireEvent.press(screen.getByRole('button', { name: 'Thử lại' }));
+  expect(await screen.findByRole('button', { name: 'Báo lỗi hoặc cần trợ giúp' })).toBeOnTheScreen();
   expect(screen.getByRole('button', { name: guestLabel })).toBeDisabled();
   expect(onContinue).not.toHaveBeenCalled();
 });

@@ -34,6 +34,7 @@ export type Incident = {
   destination: Extract<Destination, 'home' | 'signIn'>;
   title: string;
   message: string;
+  tone?: 'info' | 'warning' | 'error';
   /** Present only when reporting makes sense. Built from screen ids, never from addresses or room codes. */
   report?: ReportContext;
 };
@@ -43,11 +44,18 @@ const UNEXPECTED: readonly ErrorCode[] = ['ROOM_NOT_FOUND', 'CONTRACT_MISMATCH']
 
 export function incidentFor(exit: FailureExit, destination: Incident['destination'], screen: string): Incident {
   const description = describeError({ messageKey: exit.code });
-  const reportable = exit.reportable ?? UNEXPECTED.includes(exit.code);
+  const unexpected = UNEXPECTED.includes(exit.code);
+  const reportable = exit.reportable ?? unexpected;
+  const tone: Incident['tone'] = destination === 'signIn' || exit.code === 'AUTH_REQUIRED'
+    ? 'warning'
+    : unexpected
+      ? 'error'
+      : 'info';
   return {
     destination,
     title: exit.title ?? description.title,
     message: exit.message ?? (destination === 'signIn' ? 'Đăng nhập lại để tiếp tục.' : description.message),
+    tone,
     ...(reportable ? { report: { errorCode: exit.code, screen, action: 'leave_screen', occurredAt: new Date().toISOString() } } : {}),
   };
 }

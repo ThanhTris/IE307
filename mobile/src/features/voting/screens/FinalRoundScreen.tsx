@@ -1,5 +1,6 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import {
+  BackHandler,
   Pressable,
   ScrollView,
   StyleSheet,
@@ -7,13 +8,16 @@ import {
 } from 'react-native';
 import { Text } from '../../../shared/ui/forms/ScaledText';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import type { ApiClient, PoolDish, RoomResult } from '../../../data/api';
+import type { ApiClient, ErrorCode, PoolDish, RoomResult } from '../../../data/api';
 import {
   AppButton,
-  StatusNotice,
+  ErrorRecovery,
   AppHeader,
   SheetDialog,
 } from '../../../shared/ui';
+import { describeError } from '../../../shared/errors/describeError';
+import type { FailureExit } from '../../../shared/errors/failure';
+import { useHelp } from '../../../shared/help/HelpContext';
 import { useShellTheme } from '../../../shared/lib/useShellTheme';
 import {
   FIXTURE_ROUND_TWO_CANDIDATES,
@@ -47,6 +51,7 @@ export type FinalRoundScreenProps = {
   onGoToResult?: (result: RoomResult) => void;
   onGoToNoConsensus?: (result?: RoomResult) => void;
   onBack?: () => void;
+  onExit?: (exit: FailureExit) => void;
 };
 
 export function FinalRoundScreen({
@@ -67,8 +72,11 @@ export function FinalRoundScreen({
   onGoToResult,
   onGoToNoConsensus,
   onBack,
+  onExit,
 }: FinalRoundScreenProps) {
   const { colors } = useShellTheme();
+  const help = useHelp();
+  const [confirmExit, setConfirmExit] = useState(false);
   const shouldShowScenarioPicker = showScenarioPicker ?? !repository;
 
   const {
@@ -100,6 +108,9 @@ export function FinalRoundScreen({
     canHostEarlyFinish,
     isLoadingSnapshot,
     snapshotError,
+    snapshotRetryCount,
+    submitFailureCode,
+    submitRetryCount,
     candidates: effectiveCandidates,
     fetchSnapshot,
     handleHostEarlyFinish,
@@ -123,9 +134,31 @@ export function FinalRoundScreen({
     onFinish,
     onGoToResult,
     onGoToNoConsensus,
+    onExit,
   });
 
   const candidates = effectiveCandidates;
+
+  useEffect(() => {
+    if (!repository || shouldShowScenarioPicker || !onBack) return;
+    // Round 2 never navigates back to Round 1; hardware Back asks to return home.
+    const subscription = BackHandler.addEventListener('hardwareBackPress', () => {
+      if (confirmExit) { setConfirmExit(false); return true; }
+      setConfirmExit(true);
+      return true;
+    });
+    return () => subscription.remove();
+  }, [repository, shouldShowScenarioPicker, onBack, confirmExit]);
+
+  const leaveDialog = onBack ? (
+    <SheetDialog visible={confirmExit} presentation="dialog" showClose={false} title="Rời màn hình bình chọn?" onClose={() => setConfirmExit(false)} colors={colors}>
+      <Text style={[styles.leaveBody, { color: colors.muted }]}>Bạn đang ở Vòng 2 và không thể quay lại Vòng 1. Bạn có muốn về Trang chủ không?</Text>
+      <View style={styles.leaveActions}>
+        <AppButton label="Ở lại" variant="secondary" onPress={() => setConfirmExit(false)} colors={colors} style={styles.leaveButton} />
+        <AppButton label="Về trang chủ" variant="danger" onPress={() => { setConfirmExit(false); onBack(); }} colors={colors} style={styles.leaveButton} />
+      </View>
+    </SheetDialog>
+  ) : null;
 
   if (isLoadingSnapshot) {
     return (
@@ -136,12 +169,25 @@ export function FinalRoundScreen({
   }
 
   if (snapshotError && candidates.length === 0) {
+    const desc = describeError({ messageKey: snapshotError as ErrorCode });
+    const showHelp = help && desc.reportable && (snapshotRetryCount >= 2 || desc.code === 'MALFORMED_RESPONSE' || desc.code === 'CONTRACT_MISMATCH');
     return (
       <SafeAreaView style={[styles.root, { backgroundColor: colors.background }]}>
-        <AppHeader variant="back" title="Vòng 2" centeredTitle hideDivider onPressBack={onBack} colors={colors} />
+        <AppHeader variant="back" title="Vòng 2" centeredTitle hideDivider onPressBack={() => setConfirmExit(true)} colors={colors} />
         <View style={styles.loadingContainer}>
-          <StatusNotice title="Không thể tải dữ liệu Vòng 2" message={`Lỗi: ${snapshotError}. Vui lòng kiểm tra lại kết nối mạng.`} tone="error" actionLabel="Thử lại tải phòng" onAction={() => void fetchSnapshot()} colors={colors} />
+          <ErrorRecovery
+            variant="empty"
+            heading="Không thể tải dữ liệu Vòng 2"
+            title={desc.title}
+            message={desc.message}
+            note={desc.message}
+            actionLabel="Thử lại tải phòng"
+            onAction={() => void fetchSnapshot()}
+            onHelp={showHelp ? () => help.open({ errorCode: desc.code, screen: 'room/final-round', action: 'load_round_two' }) : undefined}
+            colors={colors}
+          />
         </View>
+        {leaveDialog}
       </SafeAreaView>
     );
   }
@@ -150,9 +196,19 @@ export function FinalRoundScreen({
   if (!shouldShowScenarioPicker) {
     const sent = submissionState === 'pending' || submissionState === 'ack';
     const failed = submissionState === 'error';
+    const showSubmitHelp = Boolean(failed && help && submitFailureCode && describeError({ messageKey: submitFailureCode }).reportable
+      && (submitRetryCount >= 2 || submitFailureCode === 'MALFORMED_RESPONSE' || submitFailureCode === 'CONTRACT_MISMATCH'));
     return (
       <SafeAreaView style={[styles.root, { backgroundColor: colors.background }]}>
-        {failed && errorMessage ? <ToastNotice title="Chưa gửi được phiếu" message={errorMessage} tone="error" /> : null}
+        {failed && errorMessage ? <ToastNotice
+          title="Chưa gửi được phiếu"
+          message={errorMessage}
+          tone="error"
+          triggerKey={submitRetryCount}
+          actionLabel={showSubmitHelp ? 'Báo lỗi' : undefined}
+          actionAccessibilityLabel={showSubmitHelp ? 'Báo lỗi hoặc cần trợ giúp' : undefined}
+          onAction={showSubmitHelp ? () => help!.open({ errorCode: submitFailureCode!, screen: 'room/final-round', action: 'submit_ballot' }) : undefined}
+        /> : null}
         {waitingError ? <ToastNotice title={waitingError} tone="error" /> : null}
         {sent ? (
           <>
@@ -189,6 +245,7 @@ export function FinalRoundScreen({
             colors={colors}
           />
         )}
+        {leaveDialog}
       </SafeAreaView>
     );
   }
@@ -331,7 +388,7 @@ export function FinalRoundScreen({
           <Text style={[styles.modalText, { color: colors.text }]}>
             Bạn đã chọn:
           </Text>
-          <View style={styles.modalSummaryBox}>
+          <View style={[styles.modalSummaryBox, { backgroundColor: colors.soft }]}>
             <Text style={[styles.summaryItem, { color: colors.primary }]}>
               ✓ Giữ lại: <Text style={{ fontWeight: '800' }}>{keptCount}</Text> món
             </Text>
@@ -342,7 +399,7 @@ export function FinalRoundScreen({
 
           {allRemoved ? (
             <Text style={[styles.modalWarning, { color: colors.danger }]}>
-              ⚠ Chú ý: Bạn đang chọn LOẠI TẤT CẢ các món. Nếu cả nhóm cùng loại hết, phiên sẽ kết thúc không tìm thấy món đồng thuận (ALL_REMOVED).
+              ⚠ Chú ý: Bạn đang chọn loại tất cả các món. Nếu cả nhóm cùng loại hết, phiên sẽ kết thúc mà chưa chốt được món.
             </Text>
           ) : (
             <Text style={[styles.modalHint, { color: colors.muted }]}>
@@ -372,6 +429,10 @@ export function FinalRoundScreen({
 const styles = StyleSheet.create({
   root: { flex: 1 },
   sentButton: { marginHorizontal: 24, marginBottom: 24 },
+  helpFooter: { paddingBottom: 16, alignItems: 'center' },
+  leaveBody: { fontSize: 14, lineHeight: 20 },
+  leaveActions: { flexDirection: 'row', gap: 10 },
+  leaveButton: { flex: 1 },
   content: { padding: CONTAINER_GUTTER, gap: 16, ...CONTAINER_STYLE },
   loadingContainer: { flex: 1, justifyContent: 'center', alignItems: 'center', padding: 24, gap: 16 },
   loadingText: { fontSize: 14, fontWeight: '600', textAlign: 'center' },

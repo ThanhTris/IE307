@@ -9,7 +9,6 @@ import type { ErrorCode, Friend, RoomSnapshot } from '../../../data/api';
 import { AppButton, AppIcon, LoadingState, SheetDialog, StatusNotice, SwipeToDeleteRow, type AppIconName } from '../../../shared/ui';
 import { ChoiceIconView } from '../../../shared/ui/icons/ChoiceIcon';
 import { useShellTheme } from '../../../shared/lib/useShellTheme';
-import { errorCopy } from '../services/roomEntry';
 import { createJoinRoomShareMessage } from '../services/joinLinks';
 import { createJoinRoomOpenLink } from '../services/joinLinkUrl';
 import { lobbyMealSummary, lobbyPreferenceRows } from '../services/lobbyPresentation';
@@ -18,7 +17,7 @@ import { RoomQrModal } from '../components/RoomQrModal';
 import { LobbyMealEditor, type MealField } from '../components/LobbyMealEditor';
 import type { DishSetupGateway } from '../../context/services/dishSetupGateway';
 import { ToastNotice } from '../../../shared/ui/feedback/Toast';
-import { ErrorRecovery, HelpLink } from '../../../shared/ui/feedback/ErrorRecovery';
+import { ErrorRecovery } from '../../../shared/ui/feedback/ErrorRecovery';
 import { useHelp } from '../../../shared/help/HelpContext';
 import { describeError } from '../../../shared/errors/describeError';
 import type { FailureExit } from '../../../shared/errors/failure';
@@ -116,7 +115,7 @@ export function LobbyScreen({
 
       <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.content}>
         {loadState === 'loading' ? <LoadingState label="Đang tải phòng" colors={colors} /> : null}
-        {loadState === 'error' ? <LoadFailure code={loadError as ErrorCode} onRetry={reload} colors={colors} /> : null}
+        {loadState === 'error' ? <LoadFailure code={loadError as ErrorCode} failureCount={lobby.loadFailureCount} onRetry={reload} colors={colors} /> : null}
         {room && loadState === 'ready' && !viewer ? (
           <StatusNotice
             title={currentUserId ? 'Bạn không thuộc phòng này' : 'Chưa xác định được danh tính phiên'}
@@ -170,9 +169,16 @@ export function LobbyScreen({
 
           <PreferencesCard room={room} disabled={busy || !inLobby || !onEditPreferences} onEdit={() => onEditPreferences?.(room)} colors={colors} />
 
-          {notice ? <ToastNotice title={notice.split(' · ')[0]!} message={notice.split(' · ').slice(1).join(' · ') || undefined} tone={lobby.noticeTone} /> : null}
-          {lobby.actionFailure && help ? <HelpLink onPress={() => help.open(lobby.actionFailure)} colors={colors} /> : null}
-          {eligibilityError ? <ToastNotice title="Chưa thể bắt đầu" message={errorCopy[eligibilityError as ErrorCode] ?? 'Chưa đủ món để bắt đầu. Hãy kiểm tra thiết lập phòng rồi thử lại.'} tone="error" /> : null}
+          {notice ? <ToastNotice
+            title={notice.split(' · ')[0]!}
+            message={notice.split(' · ').slice(1).join(' · ') || undefined}
+            tone={lobby.noticeTone}
+            triggerKey={lobby.actionFailureCount}
+            actionLabel={lobby.actionFailure && help && (lobby.actionFailureCount >= 2 || lobby.actionFailure.errorCode === 'MALFORMED_RESPONSE' || lobby.actionFailure.errorCode === 'CONTRACT_MISMATCH') ? 'Báo lỗi' : undefined}
+            actionAccessibilityLabel="Báo lỗi hoặc cần trợ giúp"
+            onAction={lobby.actionFailure && help ? () => help.open(lobby.actionFailure) : undefined}
+          /> : null}
+          {eligibilityError ? <ToastNotice title="Chưa thể bắt đầu" message={describeError({ messageKey: eligibilityError as ErrorCode }).message} tone="error" /> : null}
         </> : null}
       </ScrollView>
 
@@ -202,14 +208,14 @@ export function LobbyScreen({
   );
 }
 
-/** The lobby could not be read: stay here, offer the one next step, and report only server-side problems. */
-function LoadFailure({ code, onRetry, colors }: { code: ErrorCode; onRetry: () => void; colors: Colors }) {
+/** The lobby could not be read: stay here, offer the one next step, and report only after repeated server problems. */
+function LoadFailure({ code, failureCount, onRetry, colors }: { code: ErrorCode; failureCount: number; onRetry: () => void; colors: Colors }) {
   const help = useHelp();
   const description = describeError({ messageKey: code });
-  return <ErrorRecovery title={description.title} message={description.message}
-    note={`Không tải được phòng. ${description.message}`} actionLabel="Thử lại" onAction={onRetry}
-    onHelp={description.reportable && help
-      ? () => help.open({ errorCode: description.code, screen: 'room/lobby', action: 'load_room' }) : undefined}
+  const showHelp = description.reportable && help && (failureCount >= 2 || code === 'MALFORMED_RESPONSE' || code === 'CONTRACT_MISMATCH');
+  return <ErrorRecovery variant="empty" heading="Không tải được phòng" title={description.title} message={description.message}
+    note={description.message} actionLabel="Thử lại" onAction={onRetry}
+    onHelp={showHelp ? () => help.open({ errorCode: description.code, screen: 'room/lobby', action: 'load_room' }) : undefined}
     colors={colors} />;
 }
 

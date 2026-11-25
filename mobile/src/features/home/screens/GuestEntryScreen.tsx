@@ -4,10 +4,11 @@ import { Text } from '../../../shared/ui/forms/ScaledText';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useAppFonts } from '../../../bootstrap/AppFontProvider';
 import { useShellTheme } from '../../../shared/lib/useShellTheme';
-import { AppButton, ErrorRecovery, FormField, HelpLink, SheetDialog, StatusNotice } from '../../../shared/ui';
+import { AppButton, ErrorRecovery, FormField, SheetDialog, StatusNotice } from '../../../shared/ui';
 import type { ApiError, ErrorCode } from '../../../data/api/contracts';
 import { describeError } from '../../../shared/errors/describeError';
 import type { ReportContext } from '../../../shared/errors/errorReport';
+import { recordLastFailure } from '../../../shared/errors/incident';
 import { ToastNotice } from '../../../shared/ui/feedback/Toast';
 import { ReportErrorSheet } from '../../support/components/ReportErrorSheet';
 import { spacing, typography } from '../../../shared/theme/tokens';
@@ -35,6 +36,7 @@ export function GuestEntryScreen({ onContinue, onComplete, session, onSignIn, on
   /** Mistake in the typed name only; server failures live in `failure`. */
   const [error, setError] = useState('');
   const [failure, setFailure] = useState<ReportContext & { errorCode: ErrorCode }>();
+  const [failureCount, setFailureCount] = useState(0);
   const [report, setReport] = useState<ReportContext>();
   const [busy, setBusy] = useState(false);
   const [accepted, setAccepted] = useState(false);
@@ -50,9 +52,18 @@ export function GuestEntryScreen({ onContinue, onComplete, session, onSignIn, on
   const uncertain = session?.issue === 'signup-uncertain';
   const blocked = !!session && (session.isInitializing || (!uncertain && (session.status !== 'empty' || session.issue !== 'no-session')));
   const disabled = busy || accepted || recoveryBusy;
-  const back = () => { if (!locked.current && !recoveryLocked.current) { setStep('welcome'); setError(''); setFailure(undefined); } };
-  const failed = (errorCode: ErrorCode, action = 'create_guest') =>
-    setFailure({ errorCode, screen: 'guest_entry', action, occurredAt: new Date().toISOString() });
+  const back = () => { if (!locked.current && !recoveryLocked.current) { setStep('welcome'); setError(''); setFailure(undefined); setFailureCount(0); } };
+  const failed = (errorCode: ErrorCode, action = 'create_guest') => {
+    const next: ReportContext & { errorCode: ErrorCode } = {
+      errorCode,
+      screen: 'guest_entry',
+      action,
+      occurredAt: new Date().toISOString(),
+    };
+    if (describeError({ messageKey: errorCode }).reportable) recordLastFailure(next);
+    setFailure(next);
+    setFailureCount(count => count + 1);
+  };
   useEffect(() => {
     const subscription = BackHandler.addEventListener('hardwareBackPress', () => {
       if (locked.current || recoveryLocked.current) return true;
@@ -79,7 +90,7 @@ export function GuestEntryScreen({ onContinue, onComplete, session, onSignIn, on
       const outcome = await onContinue(name.trim());
       if (!mounted.current) return;
       confirmed = outcome === true;
-      if (confirmed) { setAccepted(true); onComplete(); }
+      if (confirmed) { setAccepted(true); setFailureCount(0); onComplete(); }
       else if (typeof outcome === 'object' && outcome.messageKey === 'INVALID_INPUT') setError('Máy chủ không nhận tên này. Thử một tên khác.');
       else failed(typeof outcome === 'object' ? outcome.messageKey : 'UNKNOWN_ERROR');
     } catch {
@@ -108,6 +119,8 @@ export function GuestEntryScreen({ onContinue, onComplete, session, onSignIn, on
 
   const needsRestore = session?.issue === 'restore-unavailable' || session?.issue === 'session-recovery-required';
   const description = failure ? describeError({ messageKey: failure.errorCode }) : undefined;
+  const showProgressiveHelp = (code?: ErrorCode) =>
+    code === 'MALFORMED_RESPONSE' || code === 'CONTRACT_MISMATCH' || failureCount >= 2;
   const blockedContext: ReportContext = failure
     ?? { errorCode: needsRestore ? 'NETWORK_ERROR' : 'AUTH_REQUIRED', screen: 'guest_entry', action: 'restore_session' };
   const notice = session?.isInitializing
@@ -116,14 +129,24 @@ export function GuestEntryScreen({ onContinue, onComplete, session, onSignIn, on
       ? <ErrorRecovery
         title={failure ? 'Vẫn chưa được' : undefined} message={failure ? 'Kiểm tra mạng rồi thử lại.' : undefined}
         note={needsRestore ? 'Chưa mở được tài khoản đã lưu. Thông tin đăng nhập vẫn còn trên máy.'
-          : 'Phiên đăng nhập cũ không còn dùng được. Bắt đầu lại sẽ xóa dữ liệu của phiên đó trên máy.'}
+          : 'Phiên đăng nhập cũ không còn dùng được. Bắt đầu lại để tiếp tục.'}
         actionLabel={needsRestore ? 'Thử lại' : 'Bắt đầu lại'} busy={recoveryBusy}
-        onAction={() => { void recover(!needsRestore); }} onHelp={() => setReport(blockedContext)} colors={colors} />
+        onAction={() => { void recover(!needsRestore); }}
+        onHelp={showProgressiveHelp(failure?.errorCode) ? () => setReport(blockedContext) : undefined} colors={colors} />
       : null;
-  const guestHelp: ReportContext | undefined = failure && description?.reportable ? failure
-    : uncertain && !failure ? { errorCode: 'NETWORK_ERROR', screen: 'guest_entry', action: 'create_guest' } : undefined;
+  const guestHelp: ReportContext | undefined = failure && description?.reportable && showProgressiveHelp(failure.errorCode)
+    ? failure
+    : undefined;
   const failureToast = failure && description && !blocked
-    ? <ToastNotice title={description.title} message={description.message} tone="error" /> : null;
+    ? <ToastNotice
+      title={description.title}
+      message={description.message}
+      tone="error"
+      triggerKey={failureCount}
+      actionLabel={guestHelp ? 'Báo lỗi' : undefined}
+      actionAccessibilityLabel={guestHelp ? 'Báo lỗi hoặc cần trợ giúp' : undefined}
+      onAction={guestHelp ? () => setReport(guestHelp) : undefined}
+    /> : null;
   const retrying = !blocked && (uncertain || description?.action === 'retry');
   const reportSheet = <ReportErrorSheet context={report} onClose={() => setReport(undefined)}
     onRetry={blocked ? undefined : () => { if (step === 'name') void submit(); else setStep('name'); }} colors={colors} />;
@@ -150,11 +173,10 @@ export function GuestEntryScreen({ onContinue, onComplete, session, onSignIn, on
         <Text accessibilityRole="header" style={[styles.question, { color: '#FFFFFF' }, textStyle(700)]}>Bạn tên gì?</Text>
         <Text style={[styles.description, { color: '#FFFFFF' }, textStyle(400)]}>Tên của bạn sẽ hiện trong phòng ăn.</Text>
         <View style={[styles.card, { backgroundColor: colors.background }]}>
-          <FormField label="Tên khách" hideLabel value={name} onChangeText={value => { setName(value); setError(''); }} editable={!disabled} placeholder="Nhập tên của bạn" error={error || undefined} autoCorrect={false} inputStyle={[styles.input, { backgroundColor: dark ? colors.surface : colors.onPrimary }, textStyle(500)]} colors={colors} />
+          <FormField label="Tên khách" hideLabel value={name} onChangeText={value => { setName(value); setError(''); setFailureCount(0); }} editable={!disabled} placeholder="Nhập tên của bạn" error={error || undefined} autoCorrect={false} inputStyle={[styles.input, { backgroundColor: dark ? colors.surface : colors.onPrimary }, textStyle(500)]} colors={colors} />
           {notice}
           {failureToast}
           <AppButton label={accepted ? 'Đã tiếp tục' : retrying ? 'Thử lại' : 'Tiếp tục'} onPress={() => { void submit(); }} loading={busy} disabled={disabled || blocked} style={styles.continueButton} textStyle={{ fontSize: 17, lineHeight: 24, ...textStyle(600) }} colors={colors} />
-          {guestHelp && !blocked && !busy ? <HelpLink onPress={() => setReport(guestHelp)} colors={colors} /> : null}
           <Pressable accessibilityRole="button" accessibilityLabel="Đã có tài khoản? Đăng nhập" accessibilityState={{ disabled }} disabled={disabled} onPress={signIn} style={styles.signIn}>
             <Text style={[styles.signInLabel, { color: dark ? colors.text : '#08765F' }, textStyle(700)]}>Đã có tài khoản? Đăng nhập</Text>
           </Pressable>

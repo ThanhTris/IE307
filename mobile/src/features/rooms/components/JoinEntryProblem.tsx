@@ -3,24 +3,31 @@ import { Text } from '../../../shared/ui/forms/ScaledText';
 import type { ErrorCode } from '../../../data/api/contracts';
 import { useAppFonts } from '../../../bootstrap/AppFontProvider';
 import { useShellTheme } from '../../../shared/lib/useShellTheme';
-import { AppButton, AppIcon, type AppIconName } from '../../../shared/ui';
-import { errorCopy } from '../services/roomEntry';
+import { AppButton, AppIcon, HelpLink, type AppIconName } from '../../../shared/ui';
+import { describeError } from '../../../shared/errors/describeError';
+import { useHelp } from '../../../shared/help/HelpContext';
 
 /** Only these can change on their own, so only these get a retry button. */
-const RETRYABLE: ErrorCode[] = ['NETWORK_ERROR', 'TIMEOUT', 'RATE_LIMITED', 'UNKNOWN_ERROR', 'ROOM_FULL', 'INVALID_ROOM_STATE'];
+const RETRYABLE: ErrorCode[] = ['NETWORK_ERROR', 'TIMEOUT', 'RATE_LIMITED', 'UNKNOWN_ERROR', 'MALFORMED_RESPONSE', 'ROOM_FULL', 'INVALID_ROOM_STATE'];
 
 function copyFor(error: ErrorCode): { title: string; body: string; icon: AppIconName } {
+  const description = describeError({ messageKey: error });
   if (error === 'ROOM_FULL') return { title: 'Phòng đã đủ 20 người', body: 'Bạn chưa thể tham gia phòng này.', icon: 'friends' };
   if (error === 'ROOM_EXPIRED') return { title: 'Phòng đã hết hạn', body: 'Xin mã phòng mới từ người tạo phòng.', icon: 'hourglass' };
   if (error === 'ROOM_TERMINAL') return { title: 'Phòng đã kết thúc', body: 'Phòng này không còn nhận thành viên.', icon: 'close' };
-  if (error === 'NETWORK_ERROR' || error === 'TIMEOUT') return { title: 'Chưa kết nối được', body: errorCopy[error], icon: 'warning' };
-  return { title: 'Không vào được phòng', body: errorCopy[error], icon: 'warning' };
+  if (error === 'NETWORK_ERROR' || error === 'TIMEOUT') return { title: description.title, body: description.message, icon: 'warning' };
+  return { title: description.title || 'Không vào được phòng', body: description.message, icon: 'warning' };
 }
 
-export function JoinEntryProblem({ code, error, busy, onRetry, onEdit, onHome }: { code: string; error: ErrorCode; busy: boolean; onRetry: () => void; onEdit: () => void; onHome: () => void }) {
+export function JoinEntryProblem({ code, error, busy, retryCount = 0, onRetry, onEdit, onHome }: {
+  code: string; error: ErrorCode; busy: boolean; retryCount?: number; onRetry: () => void; onEdit: () => void; onHome: () => void;
+}) {
   const { colors } = useShellTheme(), { textStyle } = useAppFonts();
+  const help = useHelp();
   const copy = copyFor(error);
+  const description = describeError({ messageKey: error });
   const retryable = RETRYABLE.includes(error);
+  const showHelp = description.reportable && help && (retryCount >= 2 || error === 'MALFORMED_RESPONSE' || error === 'CONTRACT_MISMATCH');
   return <>
     <View accessibilityLiveRegion="polite" style={styles.message}>
       <View style={[styles.symbol, { backgroundColor: colors.warm }]}><AppIcon name={copy.icon} size={32} color={colors.text} /></View>
@@ -38,6 +45,7 @@ export function JoinEntryProblem({ code, error, busy, onRetry, onEdit, onHome }:
         : null}
       <AppButton label="Nhập mã khác" variant={retryable ? 'secondary' : 'primary'} disabled={busy} onPress={onEdit} colors={colors} singleLine />
       {retryable ? null : <AppButton label="Về trang chủ" variant="quiet" disabled={busy} onPress={onHome} colors={colors} singleLine />}
+      {showHelp ? <HelpLink onPress={() => help.open({ errorCode: error, screen: 'room/join', action: 'preview_room' })} colors={colors} /> : null}
     </View>
   </>;
 }

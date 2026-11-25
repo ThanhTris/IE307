@@ -2,7 +2,10 @@ import { useState } from 'react';
 import { Pressable, StyleSheet, View } from 'react-native';
 import { Text } from '../../../shared/ui/forms/ScaledText';
 import type { PoolDish } from '../../../data/api';
-import { AppButton, AppIcon, SheetDialog, type Palette, type VoteValue } from '../../../shared/ui';
+import { AppButton, AppIcon, HelpLink, SheetDialog, type Palette, type VoteValue } from '../../../shared/ui';
+import type { ErrorCode } from '../../../data/api/contracts';
+import { describeError } from '../../../shared/errors/describeError';
+import { useHelp } from '../../../shared/help/HelpContext';
 import { RoundHeader } from './RoundHeader';
 import { SwipeDishCard } from './SwipeDishCard';
 import { CONTAINER_GUTTER, CONTAINER_STYLE } from '../../../shared/ui/layout/ScreenContainer';
@@ -11,14 +14,18 @@ import { CONTAINER_GUTTER, CONTAINER_STYLE } from '../../../shared/ui/layout/Scr
  * Round 1 as a single flashcard deck: header (title, undo and help on the right), progress bar and the card centred
  * in the remaining space. Answering the last card sends the ballot by itself; `retry` only shows when sending failed.
  */
-export function FlashcardRoundView({ pool, votes, index, retry, locked, canUndo, onVote, onUndo, onRetry, colors }: {
+export function FlashcardRoundView({ pool, votes, index, retry, locked, canUndo, failureCode, retryCount = 0, onVote, onUndo, onRetry, colors }: {
   pool: PoolDish[]; votes: Record<string, VoteValue>; index: number; retry: boolean; locked: boolean; canUndo: boolean;
+  failureCode?: ErrorCode; retryCount?: number;
   onVote: (dish: PoolDish, vote: VoteValue) => void; onUndo: () => void; onRetry: () => void; colors: Palette;
 }) {
   const [help, setHelp] = useState(false);
   const [flipNext, setFlipNext] = useState(false);
+  const supportHelp = useHelp();
   const voted = pool.filter(dish => votes[dish.roundDishId]).length;
   const dish = pool[index];
+  const failureDesc = failureCode ? describeError({ messageKey: failureCode }) : undefined;
+  const showSupport = Boolean(supportHelp && failureCode && failureDesc?.reportable && (retryCount >= 2 || failureCode === 'MALFORMED_RESPONSE' || failureCode === 'CONTRACT_MISMATCH'));
   const iconButton = (label: string, name: 'undo' | 'help', onPress: () => void, disabled = false) => (
     <Pressable accessibilityRole="button" accessibilityLabel={label} accessibilityState={{ disabled }} disabled={disabled} hitSlop={6} onPress={onPress}
       style={({ pressed }) => [styles.iconButton, { backgroundColor: pressed ? colors.soft : 'transparent', opacity: disabled ? 0.35 : 1 }]}>
@@ -38,9 +45,13 @@ export function FlashcardRoundView({ pool, votes, index, retry, locked, canUndo,
 
     <View style={styles.deck}>
       {retry || !dish ? <View style={[styles.retry, { backgroundColor: colors.surface, borderColor: colors.line }]}>
-        <Text style={[styles.retryTitle, { color: colors.text }]}>Chưa gửi được phiếu</Text>
+        <View style={[styles.retryBadge, { backgroundColor: colors.warm }]}>
+          <AppIcon name="warning" size={26} color={colors.warning} />
+        </View>
+        <Text style={[styles.retryTitle, { color: colors.text }]}>{failureDesc?.title ?? 'Chưa gửi được phiếu'}</Text>
         <Text style={[styles.retryBody, { color: colors.muted }]}>Phiếu của bạn đã được giữ lại, hãy thử gửi lại.</Text>
         <AppButton label="Thử lại" onPress={onRetry} loading={locked} colors={colors} style={styles.retryButton} />
+        {showSupport ? <HelpLink onPress={() => supportHelp!.open({ errorCode: failureCode!, screen: 'room/vote', action: 'submit_ballot' })} colors={colors} /> : null}
       </View> : <View style={styles.stack}>
         <SwipeDishCard key={dish.roundDishId} dish={dish} currentVote={votes[dish.roundDishId]} disabled={locked} enterFlip={flipNext} onVote={vote => { setFlipNext(vote === 'WANT'); onVote(dish, vote); }} colors={colors} />
       </View>}
@@ -68,6 +79,7 @@ const styles = StyleSheet.create({
   deck: { flex: 1, justifyContent: 'center' },
   stack: { justifyContent: 'center' },
   retry: { borderWidth: 1, borderRadius: 24, padding: 24, alignItems: 'center', gap: 10 },
+  retryBadge: { width: 56, height: 56, borderRadius: 28, alignItems: 'center', justifyContent: 'center', marginBottom: 4 },
   retryTitle: { fontFamily: 'InterBold', fontSize: 18, lineHeight: 26, textAlign: 'center' },
   retryBody: { fontFamily: 'InterRegular', fontSize: 14, lineHeight: 20, textAlign: 'center' },
   retryButton: { alignSelf: 'stretch', marginTop: 6 },

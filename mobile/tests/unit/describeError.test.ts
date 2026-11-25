@@ -1,4 +1,4 @@
-import { ACTION_LABEL, ERROR_CODES, describeError } from '../../src/shared/errors/describeError';
+import { ACTION_LABEL, ERROR_CODES, describeError, shouldOfferHelp } from '../../src/shared/errors/describeError';
 
 describe('describeError', () => {
   it('gives every error code plain copy and a usable next step', () => {
@@ -33,5 +33,16 @@ describe('describeError', () => {
   it('falls back for an unknown or missing code, including inherited object keys', () => {
     expect(describeError(undefined).code).toBe('UNKNOWN_ERROR');
     expect(describeError({ messageKey: 'toString' as never }).code).toBe('UNKNOWN_ERROR');
+  });
+
+  it('offers progressive help only after >= 2 reportable failures or immediately for structural bugs', () => {
+    expect(shouldOfferHelp('MALFORMED_RESPONSE', 1)).toBe(true);
+    expect(shouldOfferHelp('CONTRACT_MISMATCH', 1)).toBe(true);
+    expect(shouldOfferHelp('NETWORK_ERROR', 1)).toBe(false);
+    expect(shouldOfferHelp('NETWORK_ERROR', 2)).toBe(true);
+    expect(shouldOfferHelp('TIMEOUT', 1)).toBe(false);
+    expect(shouldOfferHelp('TIMEOUT', 2)).toBe(true);
+    expect(shouldOfferHelp('INVALID_INPUT', 5)).toBe(false);
+    expect(shouldOfferHelp('ROOM_FULL', 5)).toBe(false);
   });
 });

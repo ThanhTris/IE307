@@ -2,10 +2,14 @@ import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react
 import {
   type ApiClient,
   type BallotVoteItem,
+  type ErrorCode,
   type PoolDish,
   type RoomResult,
   type SubmissionReceipt,
 } from '../../../data/api';
+import { describeError } from '../../../shared/errors/describeError';
+import { destinationFor, type FailureExit } from '../../../shared/errors/failure';
+import { recordLastFailure } from '../../../shared/errors/incident';
 import {
   FIXTURE_ROUND_TWO_ALL_REMOVED_RESULT,
   FIXTURE_ROUND_TWO_CONSENSUS_RESULT,
@@ -53,6 +57,7 @@ export interface UseRoundTwoVotingParams {
   onFinish?: (result: RoomResult) => void;
   onGoToResult?: (result: RoomResult) => void;
   onGoToNoConsensus?: (result: RoomResult) => void;
+  onExit?: (exit: FailureExit) => void;
 }
 
 interface InFlightIntentR2 {
@@ -82,6 +87,7 @@ export function useRoundTwoVoting({
   onFinish,
   onGoToResult,
   onGoToNoConsensus,
+  onExit,
 }: UseRoundTwoVotingParams) {
   const initialScope: VoteScope = { identityId, roomId, round: 2, poolVersion: 2 };
   const [localCandidates, setLocalCandidates] = useState<PoolDish[]>(initialCandidates || []);
@@ -89,6 +95,9 @@ export function useRoundTwoVoting({
     Boolean(repository && (!initialCandidates || initialCandidates.length === 0))
   );
   const [snapshotError, setSnapshotError] = useState<string | null>(null);
+  const [submitFailureCode, setSubmitFailureCode] = useState<ErrorCode | undefined>();
+  const [submitRetryCount, setSubmitRetryCount] = useState(0);
+  const [snapshotRetryCount, setSnapshotRetryCount] = useState(0);
 
   const [choices, setChoices] = useState<Record<string, FinalChoice>>(() =>
     initialChoices ?? (getVoteDraft(initialScope) as Record<string, FinalChoice> | null) ?? {}
@@ -131,12 +140,26 @@ export function useRoundTwoVoting({
   const onFinishRef = useRef(onFinish);
   const onGoToResultRef = useRef(onGoToResult);
   const onGoToNoConsensusRef = useRef(onGoToNoConsensus);
+  const onExitRef = useRef(onExit);
+  const exitedRoomRef = useRef<string | null>(null);
 
   useEffect(() => {
     onFinishRef.current = onFinish;
     onGoToResultRef.current = onGoToResult;
     onGoToNoConsensusRef.current = onGoToNoConsensus;
-  }, [onFinish, onGoToResult, onGoToNoConsensus]);
+    onExitRef.current = onExit;
+  }, [onFinish, onGoToResult, onGoToNoConsensus, onExit]);
+
+  const leaveIfGone = useCallback((code: ErrorCode, customTitle?: string): boolean => {
+    const dest = destinationFor(code, 'room');
+    if (dest !== 'home' && dest !== 'signIn') return false;
+    if (!onExitRef.current) return false;
+    if (exitedRoomRef.current !== roomId) {
+      exitedRoomRef.current = roomId;
+      onExitRef.current({ code, ...(customTitle ? { title: customTitle } : {}) });
+    }
+    return true;
+  }, [roomId]);
 
   // R5: Guard against duplicate outcome navigation
   const navigatedOutcomeRef = useRef<string | null>(null);
@@ -285,6 +308,17 @@ export function useRoundTwoVoting({
       return;
     }
 
+    if (snap.state === 'CANCELLED' || snap.state === 'EXPIRED') {
+      clearBallotIntent(snapshotScope);
+      clearVoteDraft(snapshotScope);
+      clearWaitingIntent(snapshotScope);
+      leaveIfGone(
+        snap.state === 'EXPIRED' ? 'ROOM_EXPIRED' : 'ROOM_TERMINAL',
+        snap.state === 'EXPIRED' ? 'Phòng đã hết hạn' : (snap.hostUserId === identityId ? 'Phòng đã bị hủy' : 'Chủ phòng đã hủy phòng'),
+      );
+      return;
+    }
+
     // R2: Caller ACK separation for Round 2
     const hasCompleteBallot = Array.isArray(snap.ownBallot)
       && snap.ownBallot.length > 0
@@ -346,7 +380,7 @@ export function useRoundTwoVoting({
       }
       setIsWaitingForMembers(false);
     }
-  }, [computeRemainingFromDeadline, identityId, roomId]);
+  }, [computeRemainingFromDeadline, identityId, roomId, leaveIfGone]);
 
   // Snapshot fetching method (R1: only depends on repository and roomId)
   const fetchSnapshot = useCallback(async (shouldApply?: () => boolean) => {
@@ -360,22 +394,33 @@ export function useRoundTwoVoting({
       applySnapshot(res.data);
       setIsLoadingSnapshot(false);
       setSnapshotError(null);
+      setSnapshotRetryCount(0);
       return res.data;
     } else {
       if (snapshotOrderRef.current.isLatest(ticket)) {
         setIsLoadingSnapshot(false);
-        setSnapshotError(res.error.messageKey);
+        if (!leaveIfGone(res.error.messageKey)) {
+          if (describeError(res.error).reportable) {
+            recordLastFailure({ errorCode: res.error.messageKey, screen: 'room/final-round', action: 'load_round_two' });
+          }
+          setSnapshotError(res.error.messageKey);
+          setSnapshotRetryCount(count => count + 1);
+        }
       }
       return null;
     }
-  }, [repository, roomId, applySnapshot, captureContext, isCurrentContext]);
+  }, [repository, roomId, applySnapshot, captureContext, isCurrentContext, leaveIfGone]);
 
   // Initial mount load (stable, runs once)
   useEffect(() => {
     if (!repository || (initialCandidates && initialCandidates.length > 0)) {
       return;
     }
-    void fetchSnapshot();
+    let cancelled = false;
+    void Promise.resolve().then(() => {
+      if (!cancelled) void fetchSnapshot(() => !cancelled);
+    });
+    return () => { cancelled = true; };
   }, [repository, roomId, initialCandidates, fetchSnapshot]);
 
   // Countdown timer in waiting state (F3, R6).
@@ -415,9 +460,10 @@ export function useRoundTwoVoting({
     isCurrent: () => !navigatedOutcomeRef.current,
     read: guard => submissionState === 'pending' ? Promise.resolve(null) : fetchSnapshot(guard),
     onError: error => {
+      if (leaveIfGone(error.messageKey)) return;
+      if (localCandidates.length > 0) return;
       setSnapshotError(error.messageKey);
       setIsLoadingSnapshot(false);
-      setLocalCandidates([]);
     },
   });
 
@@ -467,16 +513,17 @@ export function useRoundTwoVoting({
             await send(fresh.version, false);
             return;
           }
-          if (!fresh) setWaitingError('Không thể xác nhận trạng thái phòng. Tải lại rồi thử vào hàng chờ.');
+          if (!fresh) setWaitingError('Chưa xác nhận được trạng thái phòng. Thử lại sau giây lát.');
           else if ((fresh.state === 'ROUND_2' || fresh.state === 'WAITING_2') && fresh.poolVersion === scope.poolVersion && !fresh.ownWaiting) {
-            setWaitingError('Snapshot chưa xác nhận đủ phiếu đã ACK. Hãy tải lại trạng thái rồi thử tiếp; không cần gửi lại phiếu.');
+            setWaitingError('Phiếu của bạn đã được ghi nhận. Bấm thử lại để vào hàng chờ.');
           }
           return;
         }
-        setWaitingError(`Không thể vào hàng chờ Vòng 2: ${waitRes.error.messageKey}`);
+        if (leaveIfGone(waitRes.error.messageKey)) return;
+        setWaitingError(describeError(waitRes.error).message);
       } catch {
         if (isCurrentContext(requestedContext)) {
-          setWaitingError('Lỗi kết nối khi vào hàng chờ Vòng 2. Vui lòng thử lại.');
+          setWaitingError('Chưa kết nối được máy chủ. Vui lòng thử lại.');
         }
       }
     };
@@ -486,7 +533,7 @@ export function useRoundTwoVoting({
     } finally {
       if (isCurrentContext(requestedContext)) setIsRetryingWaiting(false);
     }
-  }, [repository, activeScope, roomVersion, fetchSnapshot, computeRemainingFromDeadline, captureContext, isCurrentContext]);
+  }, [repository, activeScope, roomVersion, fetchSnapshot, computeRemainingFromDeadline, captureContext, isCurrentContext, leaveIfGone]);
 
   useEffect(() => {
     if (!repository || !needsWaitingTransition) return;
@@ -504,7 +551,7 @@ export function useRoundTwoVoting({
       const currentRemovedCount = Object.values(choicesRef.current).filter(value => value === 'REMOVE').length;
       if (currentDishChoice !== 'REMOVE' && currentRemovedCount >= eliminationCap) {
         setCapNotice(
-          `Bạn chỉ được loại tối đa ${eliminationCap} món ở Vòng 2 (Quy tắc Cap 30% theo ADR-019). Vui lòng đổi món đã loại thành "Giữ" trước khi loại thêm.`
+          `Bạn chỉ được loại tối đa ${eliminationCap} món ở Vòng 2. Vui lòng đổi một món đã loại thành "Giữ" trước khi loại thêm.`
         );
         return;
       }
@@ -543,7 +590,8 @@ export function useRoundTwoVoting({
         void fetchSnapshot();
         return;
       } else {
-        setErrorMessage(`Không thể kết thúc chờ: ${res.error.messageKey}`);
+        if (leaveIfGone(res.error.messageKey)) return;
+        setErrorMessage(describeError(res.error).message);
         return;
       }
     }
@@ -627,6 +675,8 @@ export function useRoundTwoVoting({
         if (res.ok) {
           clearBallotIntent(scope);
           clearVoteDraft(scope);
+          setSubmitFailureCode(undefined);
+          setSubmitRetryCount(0);
           setSubmissionState('ack');
           const acknowledgedReceipt = res.data.receipt ?? {
             round: 2,
@@ -644,10 +694,19 @@ export function useRoundTwoVoting({
             return;
           }
           setNeedsWaitingTransition(true);
+        } else if (leaveIfGone(res.error.messageKey)) {
+          clearBallotIntent(scope);
+          clearVoteDraft(scope);
+          return;
         } else {
           // The identity/room/round/pool scoped intent remains available for an identical retry.
           setSubmissionState('error');
-          setErrorMessage(res.error.message || `Lỗi từ server: ${res.error.messageKey}`);
+          setSubmitFailureCode(res.error.messageKey);
+          setSubmitRetryCount(count => count + 1);
+          if (describeError(res.error).reportable) {
+            recordLastFailure({ errorCode: res.error.messageKey, screen: 'room/final-round', action: 'submit_ballot', requestId: intent.requestId });
+          }
+          setErrorMessage(res.error.message || describeError(res.error).message);
         }
       } else if (api) {
         const req = {
@@ -666,6 +725,8 @@ export function useRoundTwoVoting({
         if (res.ok) {
           clearBallotIntent(scope);
           clearVoteDraft(scope);
+          setSubmitFailureCode(undefined);
+          setSubmitRetryCount(0);
           setSubmissionState('ack');
           const acknowledgedReceipt = res.data.receipt ?? {
             round: 2,
@@ -770,7 +831,10 @@ export function useRoundTwoVoting({
       if (!isCurrentContext(requestedContext)) return;
       setSubmitting(false);
       setSubmissionState('error');
-      setErrorMessage('Đã xảy ra lỗi không xác định khi nộp lựa chọn Vòng 2.');
+      setSubmitFailureCode('NETWORK_ERROR');
+      setSubmitRetryCount(count => count + 1);
+      recordLastFailure({ errorCode: 'NETWORK_ERROR', screen: 'room/final-round', action: 'submit_ballot' });
+      setErrorMessage('Không kết nối được máy chủ. Vui lòng thử lại.');
     }
   };
 
@@ -806,6 +870,9 @@ export function useRoundTwoVoting({
     candidates,
     isLoadingSnapshot,
     snapshotError,
+    snapshotRetryCount,
+    submitFailureCode,
+    submitRetryCount,
     fetchSnapshot,
     handleToggleChoice,
     handleSetAllKeep,

@@ -49,14 +49,23 @@ export function NearbyPlacesSection({ result, state, renderMap, actions }: { res
 }
 /** Places status: a failed request is a red toast, offline an amber toast, the rest (permission, nothing found) a caption. */
 function PlacesStatus({ status, withMap = false }: { status: NearbyStatus; withMap?: boolean }) {
-  const { colors } = useShellTheme(), { textStyle } = useAppFonts();
+  const { colors, dark } = useShellTheme(), { textStyle } = useAppFonts();
   if (status === 'error') return <ToastNotice title={copy.error} tone="error" />;
   if (status === 'offline') return <ToastNotice title={copy.offline} tone="warning" />;
   // The embedded map already answers "where to eat": no caption for an unsupported list or an empty one.
   if (withMap && (status === 'unsupported' || status === 'ready' || status === 'empty')) return null;
+  if (status === 'permission' || status === 'denied' || status === 'blocked' || status === 'location-off') {
+    const isBlocked = status === 'blocked' || status === 'location-off';
+    return <View style={[styles.callout, {
+      backgroundColor: isBlocked ? (dark ? '#2B2214' : '#FFF7ED') : colors.soft,
+      borderColor: isBlocked ? colors.warning : colors.line,
+    }]}>
+      <Text style={[styles.message, { color: colors.text }, textStyle(500)]}>{copy[status]}</Text>
+    </View>;
+  }
   return <Text style={[styles.message, { color: colors.muted }, textStyle(400)]}>{copy[status]}</Text>;
 }
-const styles = StyleSheet.create({ group: { gap: 12 }, heading: { fontSize: 18, lineHeight: 26 }, subheading: { fontSize: 15, lineHeight: 22, marginTop: 4 }, notice: { justifyContent: 'center', gap: 12 }, dishName: { fontSize: 14, lineHeight: 22 }, message: { fontSize: 14, lineHeight: 22, textAlign: 'center' }, caption: { fontSize: 11, lineHeight: 17 }, social: { flexDirection: 'row', flexWrap: 'wrap', gap: 12 }, button: { flexGrow: 1, flexBasis: 130 }, list: { gap: 8 }, place: { minHeight: 48, maxWidth: 240, borderWidth: 1, borderRadius: 12, padding: 12, justifyContent: 'center' } });
+const styles = StyleSheet.create({ group: { gap: 12 }, heading: { fontSize: 18, lineHeight: 26 }, subheading: { fontSize: 15, lineHeight: 22, marginTop: 4 }, notice: { justifyContent: 'center', gap: 12 }, dishName: { fontSize: 14, lineHeight: 22 }, message: { fontSize: 14, lineHeight: 22, textAlign: 'center' }, callout: { borderRadius: 14, borderWidth: 1, paddingHorizontal: 14, paddingVertical: 10 }, caption: { fontSize: 11, lineHeight: 17 }, social: { flexDirection: 'row', flexWrap: 'wrap', gap: 12 }, button: { flexGrow: 1, flexBasis: 130 }, list: { gap: 8 }, place: { minHeight: 48, maxWidth: 240, borderWidth: 1, borderRadius: 12, padding: 12, justifyContent: 'center' } });
 
 function LinkButton({ label, icon, primary, disabled, onPress, colors, style }: { label: string; icon: React.ReactNode; primary?: boolean; disabled?: boolean; onPress: () => void; colors: ReturnType<typeof useShellTheme>['colors']; style?: object }) {
   const { textStyle } = useAppFonts();

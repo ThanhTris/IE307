@@ -1,6 +1,9 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import type { ImageSourcePropType } from 'react-native';
+import type { ErrorCode } from '../../../data/api/contracts';
 import { useRoomRepository } from '../../../bootstrap/RoomRepositoryProvider';
+import { destinationFor, type FailureExit } from '../../../shared/errors/failure';
+import { recordLastFailure } from '../../../shared/errors/incident';
 import { DishResultFlow } from './DishResultFlow';
 import {
   type NearbyState,
@@ -36,6 +39,7 @@ export interface LiveDishResultScreenProps {
   placesRepository?: PlacesRepository;
   placesConfig?: PlacesConfig;
   onHome: () => void;
+  onExit?: (exit: FailureExit) => void;
   onNewSession: () => void;
   onOtherScreen?: () => void;
   artworkSources?: Readonly<Record<string, ImageSourcePropType>>;
@@ -50,6 +54,7 @@ export function LiveDishResultScreen({
   placesRepository: customPlacesRepository,
   placesConfig,
   onHome,
+  onExit,
   onNewSession,
   onOtherScreen,
   artworkSources,
@@ -124,6 +129,8 @@ export function LiveDishResultScreen({
   const [currentResultId, setCurrentResultId] = useState(resultId);
   const [input, setInput] = useState<ResultInput | null>(null);
   const [readState, setReadState] = useState<ResultReadState>(roomId ? 'loading' : 'error');
+  const [errorCode, setErrorCode] = useState<ErrorCode>();
+  const [retryCount, setRetryCount] = useState(0);
   const [members, setMembers] = useState<readonly ResultCompanion[]>([]);
   const [nearby, setNearby] = useState<NearbyState | undefined>();
   const [refreshIndex, setRefreshIndex] = useState(0);
@@ -131,6 +138,8 @@ export function LiveDishResultScreen({
   const isContextChanged = roomId !== currentRoomId || (resultId !== undefined && resultId !== currentResultId);
   const effectiveInput = isContextChanged ? null : input;
   const effectiveReadState = isContextChanged ? (roomId ? 'loading' : 'error') : readState;
+  const effectiveErrorCode = isContextChanged ? undefined : errorCode;
+  const effectiveRetryCount = isContextChanged ? 0 : retryCount;
   const effectiveMembers = isContextChanged ? [] : members;
   const effectiveNearby = isContextChanged ? undefined : nearby;
 
@@ -200,12 +209,15 @@ export function LiveDishResultScreen({
           if (resultId && res.data.result.resultId !== resultId) {
             setCurrentRoomId(roomId);
             setCurrentResultId(resultId);
+            setErrorCode('CONTRACT_MISMATCH');
             setReadState('error');
+            recordLastFailure({ errorCode: 'CONTRACT_MISMATCH', screen: 'room/result', action: 'verify_result_id', occurredAt: new Date().toISOString() });
             return;
           }
 
           setCurrentRoomId(roomId);
           setCurrentResultId(resultId);
+          setErrorCode(undefined);
           setInput(res.data);
           setReadState('ready');
 
@@ -235,7 +247,8 @@ export function LiveDishResultScreen({
         } else {
           setCurrentRoomId(roomId);
           setCurrentResultId(resultId);
-          if (res.error?.messageKey === 'NOT_READY') {
+          const code = res.error?.messageKey ?? 'UNKNOWN_ERROR';
+          if (code === 'NOT_READY') {
             setReadState('finalizing');
             if (pollAttempts < maxPollAttempts) {
               pollAttempts++;
@@ -246,16 +259,27 @@ export function LiveDishResultScreen({
                 }
               }, delay);
             } else {
+              setErrorCode('TIMEOUT');
               setReadState('error');
+              recordLastFailure({ errorCode: 'TIMEOUT', screen: 'room/result', action: 'poll_result', occurredAt: new Date().toISOString() });
             }
           } else {
+            const destination = destinationFor(code, 'result', { isGuest: live.user?.isGuest === true });
+            if (onExit && (destination === 'home' || destination === 'signIn')) {
+              onExit({ code });
+              return;
+            }
+            setErrorCode(code);
             setReadState('error');
+            recordLastFailure({ errorCode: code, screen: 'room/result', action: 'get_result', occurredAt: new Date().toISOString() });
           }
         }
       }).catch(() => {
         if (!cancelled && activeRoomIdRef.current === roomId && currentSeq === fetchSeqRef.current) {
           setCurrentRoomId(roomId);
+          setErrorCode('NETWORK_ERROR');
           setReadState('error');
+          recordLastFailure({ errorCode: 'NETWORK_ERROR', screen: 'room/result', action: 'get_result', occurredAt: new Date().toISOString() });
         }
       });
     };
@@ -268,9 +292,11 @@ export function LiveDishResultScreen({
         clearTimeout(pollTimer);
       }
     };
-  }, [roomId, resultId, repository, placesFetcher, refreshIndex, toNearbyError, pollIntervalMs]);
+  }, [roomId, resultId, repository, placesFetcher, refreshIndex, toNearbyError, pollIntervalMs, live.user?.isGuest, onExit]);
 
   const handleRetryResult = useCallback(() => {
+    setRetryCount(prev => prev + 1);
+    setErrorCode(undefined);
     setReadState('loading');
     setRefreshIndex(prev => prev + 1);
   }, []);
@@ -321,6 +347,8 @@ export function LiveDishResultScreen({
     <DishResultFlow
       input={effectiveInput}
       readState={effectiveReadState}
+      errorCode={effectiveErrorCode}
+      retryCount={effectiveRetryCount}
       members={effectiveMembers}
       nearby={effectiveNearby}
       artworkSources={artworkSources}

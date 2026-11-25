@@ -2,10 +2,12 @@ import { Pressable, StyleSheet, View } from 'react-native';
 import { Text } from '../../../shared/ui/forms/ScaledText';
 import type { RoomSnapshot } from '../../../data/api/contracts';
 import { useShellTheme } from '../../../shared/lib/useShellTheme';
-import { AppIcon, StatusNotice } from '../../../shared/ui';
+import { AppIcon } from '../../../shared/ui';
+import { ToastNotice } from '../../../shared/ui/feedback/Toast';
+import { describeError } from '../../../shared/errors/describeError';
 import { useHomeRoom } from '../../home/hooks/useHomeRoom';
 import { activeRoomBackendCopy, useActiveRoom } from '../hooks/useActiveRoom';
-import { errorCopy, type RoomEntryRepository } from '../services/roomEntry';
+import type { RoomEntryRepository } from '../services/roomEntry';
 
 /**
  * "Quay lại phòng": a highlighted card for this account's last room while it can still be entered (lobby or round 1).
@@ -20,9 +22,13 @@ export function ReturnToRoomCard({ repository, userId, enabled = true, revision 
   const state = room.data?.state;
   const secondRound = state === 'ROUND_2' || state === 'WAITING_2';
   const error = lookup.error ?? room.error;
-  if (error) return <StatusNotice title="Chưa kiểm tra được phòng"
-    message={error === 'CONTRACT_MISMATCH' ? activeRoomBackendCopy : errorCopy[error]}
-    actionLabel="Kiểm tra lại phòng" onAction={lookup.retry} tone="error" colors={colors} />;
+  if (error) return <ToastNotice
+    title="Chưa kiểm tra được phòng"
+    message={error === 'CONTRACT_MISMATCH' ? activeRoomBackendCopy : describeError({ messageKey: error }).message}
+    actionLabel="Kiểm tra lại phòng"
+    onAction={lookup.retry}
+    tone="error"
+  />;
   if (!room.data) return null;
   if (secondRound) {
     return <View accessibilityRole="summary" style={[styles.card, { backgroundColor: colors.surface, borderColor: colors.line }]}>

@@ -5,6 +5,7 @@ import { RequireActiveSession } from '../features/auth/components/RequireActiveS
 import { createInboxRepository } from '../features/inbox/services/inboxRepository';
 import { NotificationPermissionNudge } from '../features/permissions/components/NotificationPermissionNudge';
 import { createPermissionService } from '../features/permissions/services/appPermissions';
+import { leaveAfterFailure } from '../features/support/leaveAfterFailure';
 import { InboxScreen } from '../features/inbox/screens/InboxScreen';
 
 export default function InboxRoute() {
@@ -29,13 +30,19 @@ export default function InboxRoute() {
   const validReturnTo = returnTo === 'friends' ? '/friends' : returnTo === 'history' ? '/history' : undefined;
   const back = () => validReturnTo ? router.replace(validReturnTo as Href) : router.canGoBack() ? router.back() : home();
   if (live.status === 'active' && live.user?.isGuest) return <Redirect href="/profile" />;
-  return <RequireActiveSession onHome={home}>
+  return <RequireActiveSession
+    onHome={home}
+    onSignIn={() => {
+      void live.logout().then(() => router.replace({ pathname: '/account/[flow]', params: { flow: 'sign-in' } }));
+    }}
+  >
     <InboxScreen
       key={live.user?.id ?? 'unknown'}
       repository={repository}
       displayName={live.user?.displayName ?? ''}
       onNavigate={navigate}
       onHome={back}
+      onAuthExpired={() => leaveAfterFailure(router, { code: 'AUTH_REQUIRED' }, { screen: 'inbox', scope: 'social', isGuest: false })}
       topNotice={<NotificationPermissionNudge service={permissions} />}
       isSessionCurrent={isSessionCurrent}
       openEventId={typeof openEventId === 'string' ? openEventId : undefined}

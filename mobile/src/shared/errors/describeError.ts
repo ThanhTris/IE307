@@ -65,6 +65,12 @@ export function describeError(error: Pick<ApiError, 'messageKey'> | null | undef
   return { code, title, message, action, reportable };
 }
 
+/** Show inline/banner help pill only for structural bugs or after >= 2 consecutive reportable failures. */
+export function shouldOfferHelp(code: ErrorCode, failureCount = 1): boolean {
+  if (code === 'MALFORMED_RESPONSE' || code === 'CONTRACT_MISMATCH') return true;
+  return describeError({ messageKey: code }).reportable && failureCount >= 2;
+}
+
 const CONNECTION_STEPS = [
   'Kiểm tra Wi-Fi hoặc dữ liệu di động đang bật.',
   'Mở thử một trang web để chắc điện thoại có mạng.',

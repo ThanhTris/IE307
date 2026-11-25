@@ -655,6 +655,29 @@ describe('GM-30 joinLinks — Native QR, Links, Allowlist & Resolvers', () => {
       expect(isRoomJoinUrlOrPath('https://gicungduoc.vn/inbox')).toBe(false);
     });
 
+    test('subscribeToJoinLinks ignores benign Expo/app launch URLs while still rejecting malicious payloads', async () => {
+      const onJoinCode = jest.fn();
+      const onError = jest.fn();
+      let handler: ((e: { url: string }) => void) | undefined;
+      jest.spyOn(Linking, 'getInitialURL').mockResolvedValueOnce('exp://127.0.0.1:8081');
+      jest.spyOn(Linking, 'addEventListener').mockImplementation((_type, cb) => {
+        handler = cb as (e: { url: string }) => void;
+        return { remove: jest.fn() } as any;
+      });
+      resetConsumedInitialUrlForTesting();
+      const stop = subscribeToJoinLinks({ onJoinCode, onError });
+      await new Promise(resolve => setTimeout(resolve, 0));
+      handler?.({ url: 'gi-cung-duoc:///' });
+      expect(onJoinCode).not.toHaveBeenCalled();
+      expect(onError).not.toHaveBeenCalled();
+
+      handler?.({ url: 'javascript:alert(1)' });
+      expect(onError).toHaveBeenCalledWith('DISALLOWED_SCHEME', 'javascript:alert(1)', 'warm');
+      handler?.({ url: 'gi-cung-duoc://qa-user:secret@room/join?code=GCD234' });
+      expect(onError).toHaveBeenCalledWith('SUSPICIOUS_PAYLOAD', 'gi-cung-duoc://room/join?error=SUSPICIOUS_PAYLOAD', 'warm');
+      stop();
+    });
+
   });
 
 });

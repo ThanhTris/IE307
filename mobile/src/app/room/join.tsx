@@ -6,6 +6,7 @@ import { JoinRoomScreen } from '../../features/rooms/screens/JoinRoomScreen';
 import { QrCameraScanner } from '../../features/rooms/components/QrCameraScanner';
 import { useRoomRepository } from '../../bootstrap/RoomRepositoryProvider';
 import { RequireActiveSession } from '../../features/auth/components/RequireActiveSession';
+import { leaveAfterFailure } from '../../features/support/leaveAfterFailure';
 import {
   isSuspiciousSearchParams,
   NativeQrScannerAdapter,
@@ -98,6 +99,8 @@ export default function JoinRoomRoute() {
       initialDisplayName={live.user?.displayName}
       initialCode={activeCode}
       linkError={effectiveError ?? undefined}
+      onClearLinkError={() => setLinkError(null)}
+      onExit={exit => leaveAfterFailure(router, exit, { screen: 'room/join', scope: 'entry', isGuest: live.user?.isGuest === true })}
       onBack={() => (router.canGoBack() ? router.back() : router.replace('/'))}
       returnToRoom={<ReturnToRoomCard repository={live.repository} userId={live.user?.id} revision={roomRevision} onReturn={room => router.replace(resumeHref(room))} />}
       onEntered={room => {

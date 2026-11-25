@@ -2,9 +2,9 @@ import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react
 import type { ApiClient, ErrorCode, RoomSnapshot } from '../../../data/api';
 import { describeError } from '../../../shared/errors/describeError';
 import { destinationFor, type FailureExit } from '../../../shared/errors/failure';
+import { recordLastFailure } from '../../../shared/errors/incident';
 import type { ReportContext } from '../../../shared/errors/errorReport';
 import { createDurableRequestId } from '../services/roomRepository';
-import { errorCopy } from '../services/roomEntry';
 import { useRoomUpdates } from './useRoomUpdates';
 
 export type LobbyRepository = Pick<ApiClient, 'getRoomSnapshot' | 'listFriends' | 'startRound' | 'updateContext' | 'leaveRoom' | 'cancelRoom' | 'inviteToRoom'> & Partial<Pick<ApiClient, 'removeRoomMember'>> & {
@@ -47,8 +47,10 @@ export function useLobby({
   // Green for a done create/edit/delete, red for a server problem.
   const [noticeTone, setNoticeTone] = useState<'success' | 'error'>('error');
   const [busy, setBusy] = useState(false);
-  /** A failed action worth reporting; the screen offers "Báo lỗi" next to it. */
+  /** A failed action worth reporting; the screen offers "Báo lỗi" only after repeated failures. */
   const [actionFailure, setActionFailure] = useState<ReportContext>();
+  const [actionFailureCount, setActionFailureCount] = useState(0);
+  const [loadFailureCount, setLoadFailureCount] = useState(0);
   const [realRevision, setRealRevision] = useState(0);
   const [eligibilityError, setEligibilityError] = useState<string | null>(null);
   const busyRef = useRef(false);
@@ -129,16 +131,23 @@ export function useLobby({
       if (result.ok) {
         setSnapshot(previous => previous?.roomId === result.data.roomId && previous.version > result.data.version ? previous : result.data);
         setLoadError('');
+        setLoadFailureCount(0);
         void checkEligibility(result.data, isCurrent);
       } else {
         setSnapshot(null);
         setLoadError(result.error.messageKey);
+        if (describeError(result.error).reportable) {
+          recordLastFailure({ errorCode: result.error.messageKey, screen: 'room/lobby', action: 'load_room' });
+        }
+        setLoadFailureCount(count => count + 1);
         if (leavesLobby(result.error.messageKey)) leaveBecause({ code: result.error.messageKey });
       }
     }).catch(() => {
       if (!isCurrent()) return;
       setLoadedKey(loadKey);
       setLoadError('NETWORK_ERROR');
+      recordLastFailure({ errorCode: 'NETWORK_ERROR', screen: 'room/lobby', action: 'load_room' });
+      setLoadFailureCount(count => count + 1);
     });
     return () => { active = false; };
   }, [api, activeRoomId, loadKey, checkEligibility, leaveBecause]);
@@ -257,12 +266,14 @@ export function useLobby({
     selfExitRef.current = action === 'leave' || action === 'cancel';
     const showFailure = (code: ErrorCode) => {
       const description = describeError({ messageKey: code });
-      const message = code === 'NOT_ENOUGH_MEMBERS' || code === 'MEMBERS_NOT_READY' ? errorCopy[code]
-        : destinationFor(code, 'room') === 'reload' ? 'Phòng đã được cập nhật. Hãy thử lại.' : description.message;
+      const message = destinationFor(code, 'room') === 'reload' ? 'Phòng đã được cập nhật. Hãy thử lại.' : description.message;
       const title = code === 'NOT_ENOUGH_MEMBERS' || code === 'MEMBERS_NOT_READY' ? 'Chưa thực hiện được' : description.title;
       setNotice(`${title} · ${message}`); setNoticeTone('error');
       if (description.reportable) {
-        setActionFailure({ errorCode: code, screen: 'room/lobby', action, occurredAt: new Date().toISOString() });
+        const failureContext: ReportContext = { errorCode: code, screen: 'room/lobby', action, occurredAt: new Date().toISOString() };
+        recordLastFailure(failureContext);
+        setActionFailure(failureContext);
+        setActionFailureCount(count => count + 1);
       }
     };
     const requestId = getRequestId(action, snapshot.version, partnerId);
@@ -304,6 +315,7 @@ export function useLobby({
         return;
       }
       pendingIntentRef.current = null;
+      setActionFailureCount(0);
       if (action === 'context') {
         await refreshSnapshot(snapshot.roomId);
         setNotice('Thiết lập phòng đã được cập nhật.'); setNoticeTone('success');
@@ -356,5 +368,7 @@ export function useLobby({
     refreshSnapshot,
     runWrite,
     actionFailure,
+    actionFailureCount,
+    loadFailureCount,
   };
 }

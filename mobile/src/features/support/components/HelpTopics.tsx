@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Pressable, StyleSheet, View } from 'react-native';
 import { Text } from '../../../shared/ui/forms/ScaledText';
+import { AppIcon } from '../../../shared/ui';
 import { spacing, typography } from '../../../shared/theme/tokens';
 import type { ThemeColors } from '../../../shared/theme/tokens';
 
@@ -16,13 +17,15 @@ export const HELP_TOPICS: readonly (readonly [question: string, answer: string])
 export function HelpTopics({ colors }: { colors: ThemeColors }) {
   const [open, setOpen] = useState<string>();
   return <View>
-    {HELP_TOPICS.map(([question, answer]) => {
+    {HELP_TOPICS.map(([question, answer], index) => {
       const expanded = open === question;
-      return <View key={question} style={[styles.topic, { borderColor: colors.line }]}>
+      return <View key={question} style={[index > 0 && styles.topic, { borderColor: colors.line }]}>
         <Pressable accessibilityRole="button" accessibilityLabel={question} accessibilityState={{ expanded }}
           onPress={() => setOpen(expanded ? undefined : question)} style={styles.question}>
           <Text style={[typography.body, styles.questionText, { color: colors.text }]}>{question}</Text>
-          <Text accessible={false} style={[typography.titleMedium, { color: colors.muted }]}>{expanded ? '−' : '+'}</Text>
+          <View style={expanded ? styles.chevronOpen : undefined}>
+            <AppIcon name="down" size={18} color={colors.muted} />
+          </View>
         </Pressable>
         {expanded ? <Text style={[typography.body, styles.answer, { color: colors.muted }]}>{answer}</Text> : null}
       </View>;
@@ -32,7 +35,8 @@ export function HelpTopics({ colors }: { colors: ThemeColors }) {
 
 const styles = StyleSheet.create({
   topic: { borderTopWidth: StyleSheet.hairlineWidth },
-  question: { minHeight: 52, flexDirection: 'row', alignItems: 'center', gap: spacing.md, paddingVertical: spacing.sm },
+  question: { minHeight: 48, flexDirection: 'row', alignItems: 'center', gap: spacing.md, paddingVertical: spacing.xs },
   questionText: { flex: 1 },
+  chevronOpen: { transform: [{ rotate: '180deg' }] },
   answer: { paddingBottom: spacing.md },
 });

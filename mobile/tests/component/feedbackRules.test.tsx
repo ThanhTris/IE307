@@ -1,10 +1,15 @@
-import { fireEvent, render, screen } from '@testing-library/react-native';
+import { useState } from 'react';
+import { fireEvent, render, screen, waitFor } from '@testing-library/react-native';
 import { Text } from 'react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { StatusNotice } from '../../src/shared/ui/feedback/StatusNotice';
+import { FailureNotice } from '../../src/shared/ui/feedback/FailureNotice';
 import { RequestBanner } from '../../src/shared/ui/feedback/RequestBanner';
-import { ToastProvider } from '../../src/shared/ui/feedback/Toast';
+import { ToastNotice, ToastProvider } from '../../src/shared/ui/feedback/Toast';
 import { NotificationProvider, useNotifications } from '../../src/shared/ui/feedback/NotificationBanner';
+import { HelpProvider } from '../../src/features/support/HelpProvider';
+import { incidentFor } from '../../src/shared/errors/failure';
+import { clearIncident, setIncident } from '../../src/shared/errors/incident';
 import { getThemeColors } from '../../src/shared/theme/tokens';
 
 const colors = getThemeColors('light');
@@ -52,4 +57,52 @@ test('the same notification key is not stacked twice and later ones queue behind
   await fireEvent.press(screen.getByText('gửi hai'));
   expect(screen.getAllByTestId('notification-banner')).toHaveLength(1);
   expect(screen.getByText('+1')).toBeOnTheScreen();
+});
+
+test('FailureNotice floats via Toast with zero inline layout element and closes cleanly', async () => {
+  clearIncident();
+  setIncident(incidentFor({ code: 'ROOM_TERMINAL', title: 'Chủ phòng đã hủy phòng' }, 'home', 'room/lobby'));
+  await wrap(<HelpProvider segments={['']}><FailureNotice destination="home" colors={colors} /></HelpProvider>);
+  expect(screen.queryByTestId('failure-callout')).toBeNull();
+  expect(screen.getByTestId('toast-info')).toBeOnTheScreen();
+  expect(screen.getByText('Chủ phòng đã hủy phòng')).toBeOnTheScreen();
+  expect(screen.queryByRole('button', { name: 'Báo lỗi hoặc cần trợ giúp' })).toBeNull();
+  await fireEvent.press(screen.getByRole('button', { name: 'Đóng thông báo' }));
+  await waitFor(() => expect(screen.queryByTestId('toast-info')).toBeNull());
+});
+
+test('FailureNotice attaches Báo lỗi action inside the floating Toast for unexpected exits', async () => {
+  clearIncident();
+  setIncident(incidentFor({ code: 'ROOM_NOT_FOUND' }, 'home', 'room/lobby'));
+  await wrap(<HelpProvider segments={['']}><FailureNotice destination="home" colors={colors} /></HelpProvider>);
+  expect(screen.queryByTestId('failure-callout')).toBeNull();
+  expect(screen.getByTestId('toast-error')).toBeOnTheScreen();
+  expect(screen.getByRole('button', { name: 'Báo lỗi hoặc cần trợ giúp' })).toBeOnTheScreen();
+});
+
+function UpgradeToastHarness({ onHelp }: { onHelp: () => void }) {
+  const [count, setCount] = useState(1);
+  return <>
+    <ToastNotice
+      title="Không kết nối được máy chủ"
+      message="Kiểm tra mạng rồi thử lại."
+      tone="error"
+      triggerKey={count}
+      actionLabel={count >= 2 ? 'Báo lỗi' : undefined}
+      actionAccessibilityLabel="Báo lỗi hoặc cần trợ giúp"
+      onAction={onHelp}
+    />
+    <Text onPress={() => setCount(c => c + 1)}>retry-again</Text>
+  </>;
+}
+
+test('ToastProvider upgrades an active Toast in-place on 2nd failure with Báo lỗi chip without stacking', async () => {
+  const onHelp = jest.fn();
+  await wrap(<UpgradeToastHarness onHelp={onHelp} />);
+  expect(screen.getAllByTestId('toast-error')).toHaveLength(1);
+  expect(screen.queryByRole('button', { name: 'Báo lỗi hoặc cần trợ giúp' })).toBeNull();
+  await fireEvent.press(screen.getByText('retry-again'));
+  expect(screen.getAllByTestId('toast-error')).toHaveLength(1);
+  await fireEvent.press(screen.getByRole('button', { name: 'Báo lỗi hoặc cần trợ giúp' }));
+  expect(onHelp).toHaveBeenCalledTimes(1);
 });

@@ -6,6 +6,8 @@ import { useRoomRepository } from '../../src/bootstrap/RoomRepositoryProvider';
 import { ProfileScreen } from '../../src/features/account/screens/ProfileScreen';
 import { ProfileSettings } from '../../src/features/account/components/ProfileSettings';
 import { AppPreferencesProvider } from '../../src/shared/lib/AppPreferences';
+import { HelpProvider } from '../../src/features/support/HelpProvider';
+import { clearLastFailure, recordLastFailure } from '../../src/shared/errors/incident';
 import { lightColors } from '../../src/shared/theme/tokens';
 
 jest.mock('expo-router', () => ({ Redirect: jest.fn(() => null), useRouter: () => ({}) }));
@@ -117,4 +119,18 @@ test('profile settings save real preferences, update personal consent and confir
   await fireEvent.press(screen.getByRole('button', { name: 'Xóa' }));
   expect(history.deletePersonal).toHaveBeenCalledTimes(1);
   expect(screen.getByText('Đã xóa lịch sử cá nhân')).toBeOnTheScreen();
+});
+
+test('ProfileScreen hides standalone report buttons and moves Help entry into ProfileSettings with optional recent incident', async () => {
+  clearLastFailure();
+  recordLastFailure({ errorCode: 'NETWORK_ERROR', screen: 'room/lobby', action: 'start' });
+  await render(<HelpProvider segments={['profile']}><AppPreferencesProvider>
+    <ProfileScreen user={guest} onNavigate={jest.fn()} onHome={jest.fn()} onLogout={jest.fn()} />
+  </AppPreferencesProvider></HelpProvider>);
+
+  expect(screen.queryByRole('button', { name: 'Báo lỗi' })).toBeNull();
+  await fireEvent.press(screen.getByRole('button', { name: 'Trợ giúp & Báo lỗi' }));
+  expect(screen.getByRole('header', { name: 'Báo lỗi' })).toBeOnTheScreen();
+  expect(screen.getByText('Đính kèm sự cố vừa gặp')).toBeOnTheScreen();
+  clearLastFailure();
 });

@@ -4,11 +4,14 @@ import { Text } from '../../../shared/ui/forms/ScaledText';
 import { useAppFonts } from '../../../bootstrap/AppFontProvider';
 import { useShellTheme } from '../../../shared/lib/useShellTheme';
 import { AppButton, AppIcon, FormField, StatusNotice } from '../../../shared/ui';
+import { describeError } from '../../../shared/errors/describeError';
+import { destinationFor, type FailureExit } from '../../../shared/errors/failure';
+import { recordLastFailure } from '../../../shared/errors/incident';
 import { HomeFlowFrame } from '../../home/components/HomeFlowFrame';
 import { RoomCodeField } from '../components/RoomCodeField';
 import { JoinEntryProblem } from '../components/JoinEntryProblem';
 import { useJoinRoomEntry } from '../hooks/useJoinRoomEntry';
-import { errorCopy, validDisplayName, validRoomCode, type CameraAction, type RequestIdFactory, type RoomEntryReceipt, type RoomEntryRepository } from '../services/roomEntry';
+import { validDisplayName, validRoomCode, type CameraAction, type RequestIdFactory, type RoomEntryReceipt, type RoomEntryRepository } from '../services/roomEntry';
 import type { JoinRoomPreviewPort } from '../services/joinPreview';
 import type { QrScannerAdapter } from '../services/joinLinks';
 import { ToastNotice } from '../../../shared/ui/feedback/Toast';
@@ -22,8 +25,10 @@ export type JoinRoomEntryProps = {
   qrScannerAdapter?: QrScannerAdapter;
   onEntered: (room: RoomEntryReceipt) => void;
   onBack: () => void;
+  onExit?: (exit: FailureExit) => void;
   createRequestId?: RequestIdFactory;
   linkError?: string;
+  onClearLinkError?: () => void;
   /** Shown above the code entry: a way back into the room this account was last in (ADR-027). */
   returnToRoom?: ReactNode;
   /** Live camera view; receives each scanned QR payload. Omitted in tests / when no camera is available. */
@@ -34,11 +39,30 @@ export function JoinRoomScreen(props: JoinRoomEntryProps) {
   const { colors, dark } = useShellTheme();
   const { textStyle } = useAppFonts();
   const [simulatedInput, setSimulatedInput] = useState('');
+  const [retryCount, setRetryCount] = useState(0);
   const flow = useJoinRoomEntry(props);
   const { summary, submitted } = flow;
   // Check the room as soon as a full, valid code is in: no extra "continue" tap.
   const checked = useRef('');
+  const exited = useRef(false);
   const { code: enteredCode, name: enteredName, read: readRoom } = flow;
+  const activeError = flow.readError ?? submitted.error;
+
+  useEffect(() => {
+    if (!activeError || !props.onExit || exited.current) return;
+    if (destinationFor(activeError, 'entry') === 'signIn' || activeError === 'AUTH_REQUIRED') {
+      exited.current = true;
+      props.onExit({ code: activeError });
+    }
+  }, [activeError, props]);
+
+  useEffect(() => {
+    if (!activeError) return;
+    if (describeError({ messageKey: activeError }).reportable) {
+      recordLastFailure({ errorCode: activeError, screen: 'room/join', action: summary ? 'join_room' : 'preview_room' });
+    }
+  }, [activeError, summary]);
+
   const idle = !flow.camera && !flow.summary && !flow.readBusy && !flow.readError && !flow.mutationLocked;
   useEffect(() => {
     if (!props.preview || !idle || enteredCode.length !== 6 || checked.current === enteredCode) return;
@@ -46,7 +70,7 @@ export function JoinRoomScreen(props: JoinRoomEntryProps) {
     checked.current = enteredCode;
     void readRoom();
   }, [props.preview, idle, enteredCode, enteredName, readRoom]);
-  const problem = flow.readError && !['ROOM_NOT_FOUND', 'INVALID_INPUT'].includes(flow.readError) ? flow.readError : undefined;
+  const problem = flow.readError && !['ROOM_NOT_FOUND', 'INVALID_INPUT', 'AUTH_REQUIRED'].includes(flow.readError) ? flow.readError : undefined;
 
   const handleOpenSettings = async () => {
     try {
@@ -153,10 +177,10 @@ export function JoinRoomScreen(props: JoinRoomEntryProps) {
               <Text style={[styles.value, { color: colors.text }, textStyle(600)]}>{`${summary.memberCount}/${summary.capacity} thành viên`}</Text>
             </View>
           </View>
-          {submitted.error ? <ToastNotice title="Chưa vào được phòng" message={errorCopy[submitted.error]} tone="error" /> : null}
+          {submitted.error ? <ToastNotice title={describeError({ messageKey: submitted.error }).title} message={describeError({ messageKey: submitted.error }).message} tone="error" /> : null}
           <View style={styles.spacer} />
           <View style={styles.actions}>
-            <AppButton label="Nhập mã khác" variant="secondary" disabled={flow.disabled} onPress={flow.edit} colors={colors} />
+            <AppButton label="Nhập mã khác" variant="secondary" disabled={flow.disabled} onPress={() => { setRetryCount(0); flow.edit(); }} colors={colors} />
             <AppButton
               label={submitted.uncertain ? 'Thử lại cùng yêu cầu vào phòng' : submitted.accepted ? 'Đã vào phòng' : 'Xác nhận vào phòng'}
               loading={submitted.busy}
@@ -167,22 +191,24 @@ export function JoinRoomScreen(props: JoinRoomEntryProps) {
           </View>
         </>
       ) : problem ? (
-        <JoinEntryProblem code={flow.code} error={problem} busy={flow.readBusy} onRetry={() => { void flow.read(); }} onEdit={() => { flow.edit(); flow.editCode(''); checked.current = ''; }} onHome={props.onBack} />
+        <JoinEntryProblem code={flow.code} error={problem} busy={flow.readBusy} retryCount={retryCount}
+          onRetry={() => { setRetryCount(c => c + 1); void flow.read(); }}
+          onEdit={() => { setRetryCount(0); flow.edit(); flow.editCode(''); checked.current = ''; }}
+          onHome={props.onBack} />
       ) : (
         <>
           {props.returnToRoom}
           {props.linkError ? (
-            <StatusNotice
+            <ToastNotice
               title="Liên kết bị chặn"
               message="Liên kết chứa tham số không an toàn hoặc không hợp lệ. Bạn có thể nhập mã phòng bằng tay để tiếp tục."
               tone="warning"
-              colors={colors}
             />
           ) : null}
           {!validDisplayName(props.initialDisplayName ?? '') ? (
             <FormField label="Tên của bạn" value={flow.name} onChangeText={flow.editName} editable={!flow.disabled} colors={colors} />
           ) : null}
-          <RoomCodeField value={flow.code} onChange={flow.editCode} disabled={flow.disabled} error={flow.validation ?? (flow.readError ? errorCopy[flow.readError] : undefined)} />
+          <RoomCodeField value={flow.code} onChange={value => { if (props.linkError && value !== flow.code) props.onClearLinkError?.(); setRetryCount(0); flow.editCode(value); }} disabled={flow.disabled} error={flow.validation ?? (flow.readError ? describeError({ messageKey: flow.readError }).message : undefined)} />
           <Pressable
             accessibilityRole="button"
             accessibilityLabel="Quét mã QR"

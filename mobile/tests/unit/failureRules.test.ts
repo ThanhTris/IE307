@@ -1,6 +1,8 @@
 import { destinationFor, incidentFor } from '../../src/shared/errors/failure';
 import { ERROR_CODES } from '../../src/shared/errors/describeError';
-import { clearIncident, peekIncident, setIncident } from '../../src/shared/errors/incident';
+import {
+  clearIncident, clearLastFailure, peekIncident, peekLastFailure, recordLastFailure, setIncident,
+} from '../../src/shared/errors/incident';
 
 describe('where a failure takes the person', () => {
   it('sends a room that is gone home instead of offering a pointless retry', () => {
@@ -27,18 +29,27 @@ describe('where a failure takes the person', () => {
 
   it('offers reporting only for exits the person could not have caused, without any room data', () => {
     expect(incidentFor({ code: 'ROOM_TERMINAL', title: 'Chủ phòng đã hủy phòng' }, 'home', 'room/lobby'))
-      .toEqual({ destination: 'home', title: 'Chủ phòng đã hủy phòng', message: 'Về trang chủ để tạo hoặc vào phòng khác.' });
+      .toEqual({ destination: 'home', tone: 'info', title: 'Chủ phòng đã hủy phòng', message: 'Về trang chủ để tạo hoặc vào phòng khác.' });
     const unexpected = incidentFor({ code: 'ROOM_NOT_FOUND' }, 'home', 'room/lobby');
+    expect(unexpected.tone).toBe('error');
     expect(unexpected.report).toMatchObject({ errorCode: 'ROOM_NOT_FOUND', screen: 'room/lobby' });
     expect(Object.keys(unexpected.report!).sort()).toEqual(['action', 'errorCode', 'occurredAt', 'screen']);
-    expect(incidentFor({ code: 'AUTH_REQUIRED' }, 'signIn', 'room/lobby').message).toBe('Đăng nhập lại để tiếp tục.');
+    const auth = incidentFor({ code: 'AUTH_REQUIRED' }, 'signIn', 'room/lobby');
+    expect(auth.tone).toBe('warning');
+    expect(auth.message).toBe('Đăng nhập lại để tiếp tục.');
   });
 
-  it('keeps the reason until it is dismissed', () => {
+  it('keeps the reason until it is dismissed and remembers latest reportable failure in memory', () => {
+    clearLastFailure();
     const incident = incidentFor({ code: 'ROOM_EXPIRED' }, 'home', 'room/lobby');
     setIncident(incident);
     expect(peekIncident()).toBe(incident);
     clearIncident();
     expect(peekIncident()).toBeUndefined();
+
+    recordLastFailure({ errorCode: 'NETWORK_ERROR', screen: 'room/lobby', action: 'start' });
+    expect(peekLastFailure()).toMatchObject({ errorCode: 'NETWORK_ERROR', screen: 'room/lobby', action: 'start' });
+    clearLastFailure();
+    expect(peekLastFailure()).toBeUndefined();
   });
 });

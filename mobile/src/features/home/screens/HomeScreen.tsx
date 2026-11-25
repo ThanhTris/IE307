@@ -7,12 +7,13 @@ import { useAppFonts } from '../../../bootstrap/AppFontProvider';
 import type { RoomSnapshot, SessionUser } from '../../../data/api/contracts';
 import { useInboxBadge } from '../../../shared/lib/inboxBadge';
 import { FailureNotice } from '../../../shared/ui/feedback/FailureNotice';
+import { describeError } from '../../../shared/errors/describeError';
 import { useShellTheme } from '../../../shared/lib/useShellTheme';
 import { ToastNotice } from '../../../shared/ui/feedback/Toast';
 import { AppBottomNavigation, AppButton, AppHeader, AppIcon, AvatarRow, BrandBanner, FormField, LoadingState, SheetDialog, StatusNotice } from '../../../shared/ui';
 import { radii, spacing, typography } from '../../../shared/theme/tokens';
 import { useRead } from '../../rooms/hooks/useRoomEntry';
-import { errorCopy, validDisplayName, type RoomEntryReceipt, type RoomEntryRepository } from '../../rooms/services/roomEntry';
+import { validDisplayName, type RoomEntryReceipt, type RoomEntryRepository } from '../../rooms/services/roomEntry';
 import type { SessionIssue, SessionStatus } from '../../rooms/services/sessionState';
 import { useHomeRoom } from '../hooks/useHomeRoom';
 import { GuestSessionExpiredScreen } from './GuestSessionExpiredScreen';
@@ -126,17 +127,17 @@ export function HomeScreen({ repository, liveSession, activeRoom, onReturnToRoom
   };
   const sessionNotice = !liveSession.isInitializing && !sessionReady
     ? liveSession.issue === 'no-session'
-      ? <StatusNotice title="Chưa có phiên" message="Chọn Tạo phòng hoặc Tham gia phòng để bắt đầu phiên khách bằng tên của bạn." colors={colors} />
+      ? <StatusNotice title="Chưa có phiên" message="Chọn Tạo phòng hoặc Tham gia phòng để bắt đầu với tên của bạn." colors={colors} />
       : liveSession.issue === 'session-recovery-required'
-        ? <StatusNotice title="Phiên cần khôi phục" message="Máy chủ từ chối phiên hiện tại. Hãy làm mới phiên trước khi tiếp tục; nếu phiên đã bị thu hồi, bạn có thể xóa phiên cục bộ rồi bắt đầu phiên mới." actionLabel="Thử khôi phục phiên" onAction={() => { void liveSession.restoreSession(); }} tone="error" colors={colors} />
+        ? <ToastNotice title="Cần mở lại phiên làm việc" message="Máy chủ chưa xác nhận phiên hiện tại. Thử kết nối lại để tiếp tục." actionLabel="Thử kết nối lại" onAction={() => { void liveSession.restoreSession(); }} tone="error" />
         : liveSession.issue === 'restore-unavailable'
-          ? <StatusNotice title="Chưa khôi phục được phiên" message="Thông tin phiên đã lưu được giữ nguyên. Kiểm tra kết nối rồi thử lại." actionLabel="Thử khôi phục phiên" onAction={() => { void liveSession.restoreSession(); }} tone="warning" colors={colors} />
+          ? <ToastNotice title="Chưa kết nối được máy chủ" message="Thông tin tài khoản vẫn được giữ trên máy. Kiểm tra mạng rồi thử lại." actionLabel="Thử lại" onAction={() => { void liveSession.restoreSession(); }} tone="warning" />
           : liveSession.issue === 'session-revoked' || liveSession.status === 'lost'
-            ? <StatusNotice title="Phiên đã hết hạn hoặc bị thu hồi" message="Xóa phiên cũ trên thiết bị trước khi bắt đầu một phiên mới." actionLabel="Xóa phiên cục bộ" onAction={() => { void liveSession.logout(); }} tone="warning" colors={colors} />
+            ? <ToastNotice title="Phiên đăng nhập đã hết hạn" message="Bắt đầu lại để tiếp tục sử dụng ứng dụng." actionLabel="Bắt đầu lại" onAction={() => { void liveSession.logout(); }} tone="warning" />
             : liveSession.issue === 'storage-unavailable' || liveSession.issue === 'unknown-error'
-              ? <StatusNotice title="Không thể kiểm tra phiên đã lưu" message="Không tạo phiên thay thế khi chưa đọc được phiên trên thiết bị. Thử xóa dữ liệu phiên cục bộ rồi bắt đầu lại." actionLabel="Xóa phiên cục bộ" onAction={() => { void liveSession.logout(); }} tone="error" colors={colors} />
+              ? <ToastNotice title="Không đọc được phiên đã lưu" message="Bắt đầu lại để tiếp tục sử dụng ứng dụng." actionLabel="Bắt đầu lại" onAction={() => { void liveSession.logout(); }} tone="error" />
               : liveSession.issue === 'signup-uncertain' || liveSession.status === 'blocked'
-                ? <StatusNotice title="Chưa xác định được kết quả tạo phiên" message="Để tránh tạo khách trùng, hãy xóa phiên cục bộ trước khi thử lại." actionLabel="Xóa phiên cục bộ" onAction={() => { void liveSession.logout(); }} tone="error" colors={colors} />
+                ? <ToastNotice title="Chưa xác nhận được lần tạo trước" message="Bắt đầu lại để tiếp tục mà không bị trùng tài khoản." actionLabel="Bắt đầu lại" onAction={() => { void liveSession.logout(); }} tone="error" />
                 : null
     : null;
   const entryDisabled = sessionLoading
@@ -150,7 +151,7 @@ export function HomeScreen({ repository, liveSession, activeRoom, onReturnToRoom
     { id: 'profile', label: 'Cá nhân', icon: 'profile' as const, onPress: openProfile },
   ];
 
-  if (liveSession.issue === 'session-revoked' && !liveSession.isInitializing && dismissedExpiry !== liveSession) {
+  if (liveSession.issue === 'session-revoked' && !liveSession.isInitializing && liveSession.user?.isGuest !== false && dismissedExpiry !== liveSession) {
     return <GuestSessionExpiredScreen onReset={liveSession.logout} onHome={() => setDismissedExpiry(liveSession)} />;
   }
 
@@ -161,8 +162,8 @@ export function HomeScreen({ repository, liveSession, activeRoom, onReturnToRoom
       {sessionNotice}
       {room.loading ? <StatusNotice title="Đang kiểm tra phòng đã lưu…" colors={colors} /> : null}
       {room.active && room.data ? <StatusNotice title={`Phòng #${room.data.code}`} message="Bạn có thể tiếp tục phiên hiện tại." actionLabel="Quay lại phòng" onAction={onResume} colors={colors} /> : null}
-      {room.error ? <StatusNotice title={room.unavailable ? 'Không thể tiếp tục phòng đã lưu' : 'Chưa kiểm tra được phòng đã lưu'} message={errorCopy[room.error]} actionLabel={room.unavailable ? undefined : 'Kiểm tra lại phòng'} onAction={room.unavailable ? undefined : room.retry} tone={room.unavailable ? undefined : 'error'} colors={colors} /> : null}
-      {room.data && !room.active ? <StatusNotice title={room.data.state === 'EXPIRED' ? 'Phòng đã hết hạn' : 'Phòng đã kết thúc'} message="Bạn có thể tạo hoặc tham gia một phòng khác." colors={colors} /> : null}
+      {room.error ? <ToastNotice title={room.unavailable ? 'Không thể tiếp tục phòng đã lưu' : 'Chưa kiểm tra được phòng đã lưu'} message={describeError({ messageKey: room.error }).message} actionLabel={room.unavailable ? undefined : 'Kiểm tra lại phòng'} onAction={room.unavailable ? undefined : room.retry} tone={room.unavailable ? 'info' : 'error'} /> : null}
+      {room.data && !room.active ? <ToastNotice title={room.data.state === 'EXPIRED' ? 'Phòng đã hết hạn' : 'Phòng đã kết thúc'} message="Bạn có thể tạo hoặc tham gia một phòng khác." tone="info" /> : null}
 
       <View style={homeStyles.intro}>
         <Text accessibilityRole="header" style={[homeStyles.title, { color: colors.text }, textStyle(700)]}>{'Hôm nay\ncả nhóm ăn gì?'}</Text>
@@ -211,7 +212,7 @@ export function HomeScreen({ repository, liveSession, activeRoom, onReturnToRoom
         </View>
         {isGuest ? <Text style={[homeStyles.emptyFriends, { color: colors.muted }, textStyle(400)]}>Đăng nhập để mở kèo nhanh với bạn bè.</Text> : <>
         {friends.loading ? <LoadingState label="Đang tải bạn bè" colors={colors} /> : null}
-        {friends.error ? <StatusNotice title="Chưa tải được bạn bè" message={errorCopy[friends.error]} actionLabel="Tải lại bạn bè" onAction={friends.retry} tone="error" colors={colors} /> : null}
+        {friends.error ? <StatusNotice title="Chưa tải được bạn bè" message={describeError({ messageKey: friends.error }).message} actionLabel="Tải lại bạn bè" onAction={friends.retry} tone="error" colors={colors} /> : null}
         {friends.data && sessionReady && quickFriends.length === 0 ? <Text style={[homeStyles.emptyFriends, { color: colors.muted }, textStyle(400)]}>Mời bạn để bắt đầu kèo nhanh.</Text> : null}
         {sessionReady && !friends.loading && !friends.error ? <AvatarRow items={quickFriends.slice(0, 4).map(friend => ({ id: friend.friendUserId, label: friend.displayName }))} onAdd={openFriends} onSelect={onQuickInvite} labelTextStyle={textStyle(600)} colors={colors} /> : null}
         </>}
@@ -231,7 +232,7 @@ export function HomeScreen({ repository, liveSession, activeRoom, onReturnToRoom
       {guestError ? <ToastNotice title={guestError} tone="error" /> : null}
       <AppButton label={guestDestination === 'join' ? 'Tạo phiên rồi nhập mã' : 'Tạo phiên rồi tạo phòng'} onPress={() => { void startGuest(); }} loading={guestBusy} colors={colors} />
       {(liveSession.issue === 'signup-uncertain' || liveSession.issue === 'storage-unavailable' || liveSession.issue === 'unknown-error' || liveSession.status === 'blocked')
-        ? <AppButton label="Xóa phiên cục bộ rồi thử lại" variant="danger" disabled={guestBusy} onPress={() => { void liveSession.logout(); setGuestError(''); }} colors={colors} />
+        ? <AppButton label="Bắt đầu lại" variant="danger" disabled={guestBusy} onPress={() => { void liveSession.logout(); setGuestError(''); }} colors={colors} />
         : null}
     </SheetDialog>
     <SheetDialog visible={!!panel} title={panel ?? 'Thông tin'} onClose={() => setPanel(undefined)} colors={colors}>

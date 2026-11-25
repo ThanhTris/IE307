@@ -11,7 +11,6 @@ import { useAccountAction } from '../hooks/useAccountAction';
 import { accountErrorMessage } from '../services/accountMessages';
 import type { PersonalHistorySettings } from '../services/profileHistorySettings';
 import { ProfileSettings } from '../components/ProfileSettings';
-import { useHelp } from '../../../shared/help/HelpContext';
 
 type Props = {
   user: SessionUser;
@@ -24,7 +23,6 @@ type Props = {
 
 export function ProfileScreen({ user, account, historySettings, onNavigate, onHome, onLogout }: Props) {
   const { colors } = useShellTheme();
-  const help = useHelp();
   const [confirmLogout, setConfirmLogout] = useState(false);
   const [profile, setProfile] = useState<ReadResult<AccountProfile>>();
   const [profileRequest, setProfileRequest] = useState(0);
@@ -67,7 +65,6 @@ export function ProfileScreen({ user, account, historySettings, onNavigate, onHo
       <AppButton label="Liên kết email" variant="secondary" onPress={() => onNavigate('/account/link')} colors={colors} />
       <Text style={[typography.caption, { color: colors.muted }]}>Bạn vẫn có thể tạo hoặc tham gia phòng với tư cách khách.</Text>
       <ProfileSettings />
-      {help ? <AppButton label="Báo lỗi" variant="secondary" onPress={() => help.open()} colors={colors} /> : null}
     </> : <>
       <Text accessibilityRole="header" style={[typography.titleMedium, { color: colors.text }]}>Tài khoản</Text>
       <View style={[styles.rows, { backgroundColor: colors.surface, borderColor: colors.line }]}>
@@ -81,8 +78,7 @@ export function ProfileScreen({ user, account, historySettings, onNavigate, onHo
           <Text accessible={false} style={[typography.titleMedium, { color: colors.text }]}>›</Text>
         </Pressable>
       </View>
-      {historySettings ? <ProfileSettings history={historySettings} /> : null}
-      {help ? <AppButton label="Báo lỗi" variant="secondary" onPress={() => help.open()} colors={colors} /> : null}
+      {historySettings ? <ProfileSettings history={historySettings} /> : <ProfileSettings />}
       <AppButton label="Đăng xuất" variant="secondary" onPress={() => setConfirmLogout(true)} colors={colors} />
     </>}
     <SheetDialog visible={confirmLogout} title="Đăng xuất?" showClose={false}
