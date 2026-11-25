@@ -1,15 +1,15 @@
 {
-  "checkedAt": "2026-11-25T05:13:52Z",
+  "checkedAt": "2026-11-25T07:55:29Z",
   "baseDatasetVersion": "1.3.0",
   "status": "prepared_pending_storage",
   "notes": "Kiểm đúng món trên ảnh cắt; URL tệp gốc chỉ để truy xuất và ghi công, không dùng làm URL ảnh trong app.",
   "processing": "Pillow 13.0.0, EXIF transpose, crop giữa 4:3, LANCZOS và WebP",
-  "totalBytes": 11057400,
+  "totalBytes": 12446204,
   "coverage": {
-    "breakfast": 41,
-    "lunch": 42,
+    "breakfast": 43,
+    "lunch": 43,
     "dinner": 31,
-    "snack": 52
+    "snack": 61
   },
   "images": [
     {
@@ -93,6 +93,46 @@
       }
     },
     {
+      "dishId": "01e12db6-8014-5e84-bc53-398af27ad314",
+      "name": "Cơm cá chiên",
+      "source": "https://commons.wikimedia.org/wiki/File:Fried_Fish_and_Rice_Platter.JPG",
+      "upstreamImage": "https://upload.wikimedia.org/wikipedia/commons/e/e3/Fried_Fish_and_Rice_Platter.JPG",
+      "author": "Fatimahope",
+      "license": "CC BY-SA 4.0",
+      "file": "01e12db6-8014-5e84-bc53-398af27ad314.webp",
+      "originalWidth": 2592,
+      "originalHeight": 1944,
+      "width": 1000,
+      "height": 750,
+      "bytes": 190100,
+      "sha256": "78ee126eaba6e82919274c3a01eb2b40bdafdf084f0e5a3d3e3edae5a2a7a615",
+      "checkedAt": "2026-11-25T07:53:14Z",
+      "usageRights": "licensed",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/",
+      "attribution": "Ảnh: Fatimahope / Wikimedia Commons, CC BY-SA 4.0 (đã cắt và nén).",
+      "aiCheck": {
+        "cameraExif": true,
+        "uploadedAt": "2015-06-10T17:53:00Z",
+        "aiCategory": false,
+        "verdict": "pending_human_review",
+        "checkedBy": null,
+        "checkedAt": null,
+        "provenance": "Tệp gốc ghi đĩa cá chiên và cơm. Khung thấy cả phần cá và cơm.",
+        "assistance": {
+          "tool": "Codex",
+          "checkedAt": "2026-11-25T07:53:14Z"
+        }
+      },
+      "objectKey": "images/01e12db6-8014-5e84-bc53-398af27ad314.webp",
+      "thumbnail": {
+        "objectKey": "thumbnails/01e12db6-8014-5e84-bc53-398af27ad314.webp",
+        "width": 400,
+        "height": 300,
+        "bytes": 27350,
+        "sha256": "f8dbda6028116ccaf0f8290896738c59092ac6e7c954e60ec8fb0f16b0b97346"
+      }
+    },
+    {
       "dishId": "03539dba-3723-5422-9f7f-d027fe06396e",
       "name": "Bánh cống",
       "source": "https://commons.wikimedia.org/wiki/File:B%C3%A1nh_c%E1%BB%91ng_de_C%E1%BA%A7n_Th%C6%A1.jpg",
@@ -129,6 +169,46 @@
         "assistance": {
           "tool": "Codex",
           "checkedAt": "2026-11-24T17:27:46Z"
+        }
+      }
+    },
+    {
+      "dishId": "07f051a6-2a48-5b63-ac86-e56ddd4fb6c4",
+      "name": "Bánh crepe ngọt",
+      "source": "https://commons.wikimedia.org/wiki/File:Cr%C3%AApe_with_Strawberry_Ice_Cream.JPG",
+      "upstreamImage": "https://upload.wikimedia.org/wikipedia/commons/8/84/Cr%C3%AApe_with_Strawberry_Ice_Cream.JPG",
+      "author": "FlipTable",
+      "license": "CC BY-SA 3.0",
+      "file": "07f051a6-2a48-5b63-ac86-e56ddd4fb6c4.webp",
+      "originalWidth": 1527,
+      "originalHeight": 1145,
+      "width": 1000,
+      "height": 750,
+      "bytes": 57792,
+      "sha256": "fa86a4d996c43b484cea37db84368deb13c3e4aaec031a45ab6d1748cdf826c4",
+      "checkedAt": "2026-11-24T16:59:15Z",
+      "usageRights": "licensed",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0/",
+      "attribution": "Ảnh: FlipTable / Wikimedia Commons, CC BY-SA 3.0 (đã cắt và nén).",
+      "objectKey": "images/07f051a6-2a48-5b63-ac86-e56ddd4fb6c4.webp",
+      "thumbnail": {
+        "objectKey": "thumbnails/07f051a6-2a48-5b63-ac86-e56ddd4fb6c4.webp",
+        "width": 400,
+        "height": 300,
+        "bytes": 10442,
+        "sha256": "fc3cc3846d7ef613673e1236144cd2a75a1687f762dd5ba171d4440605cc883f"
+      },
+      "aiCheck": {
+        "cameraExif": true,
+        "uploadedAt": "2014-04-11T12:59:57Z",
+        "aiCategory": false,
+        "verdict": "pending_human_review",
+        "checkedBy": null,
+        "checkedAt": null,
+        "provenance": "FlipTable ghi ảnh tự chụp năm 2014. Commons API và JPEG gốc cùng có EXIF Make=HTC. Trường Model trống.",
+        "assistance": {
+          "tool": "Codex",
+          "checkedAt": "2026-11-25T01:49:13Z"
         }
       }
     },
@@ -213,6 +293,46 @@
       }
     },
     {
+      "dishId": "107f783c-7249-5c13-98ce-dc9d023247a6",
+      "name": "Bánh tráng nướng",
+      "source": "https://commons.wikimedia.org/wiki/File:Banh_trang_nuong_dalat.jpg",
+      "upstreamImage": "https://upload.wikimedia.org/wikipedia/commons/9/92/Banh_trang_nuong_dalat.jpg",
+      "author": "Blueconcorde",
+      "license": "CC0 1.0",
+      "file": "107f783c-7249-5c13-98ce-dc9d023247a6.webp",
+      "originalWidth": 6240,
+      "originalHeight": 4160,
+      "width": 1000,
+      "height": 750,
+      "bytes": 92090,
+      "sha256": "80d24ea1eb8a82df408bb4b0ca6e1f3031cd73ab0d11f1787fa3cfba99bb030b",
+      "checkedAt": "2026-11-25T07:54:01Z",
+      "usageRights": "public_domain",
+      "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+      "attribution": "Ảnh: Blueconcorde / Wikimedia Commons, CC0 1.0 (đã cắt và nén).",
+      "aiCheck": {
+        "cameraExif": true,
+        "uploadedAt": "2026-11-08T08:33:26Z",
+        "aiCategory": false,
+        "verdict": "pending_human_review",
+        "checkedBy": null,
+        "checkedAt": null,
+        "provenance": "Tệp ghi cách chuẩn bị bánh tráng nướng ở Đà Lạt. Đã cắt tập trung vào phần bánh trên đĩa.",
+        "assistance": {
+          "tool": "Codex",
+          "checkedAt": "2026-11-25T07:54:01Z"
+        }
+      },
+      "objectKey": "images/107f783c-7249-5c13-98ce-dc9d023247a6.webp",
+      "thumbnail": {
+        "objectKey": "thumbnails/107f783c-7249-5c13-98ce-dc9d023247a6.webp",
+        "width": 400,
+        "height": 300,
+        "bytes": 17330,
+        "sha256": "51c90af46b1b53b477567dcd54fa4a4b6b7ba63597513c14c1b6229ae97d4b9a"
+      }
+    },
+    {
       "dishId": "122e0939-6478-5963-90e8-5ffd10988c2c",
       "name": "Bánh đa cua",
       "source": "https://commons.wikimedia.org/wiki/File:B%C3%A1nh_%C4%91a_cua_H%E1%BA%A3i_Ph%C3%B2ng_(27.2_(4).jpg",
@@ -290,6 +410,46 @@
           "tool": "Codex",
           "checkedAt": "2026-11-24T17:27:46Z"
         }
+      }
+    },
+    {
+      "dishId": "18403411-7967-54cd-bd56-e897223c22d5",
+      "name": "Mứt gừng",
+      "source": "https://commons.wikimedia.org/wiki/File:Tr%C3%A0_v%C3%A0_M%E1%BB%A9t_g%E1%BB%ABng_v%C3%A0_nh%C3%A0_c%E1%BA%ADu_C%E1%BA%A3m,_01_T%E1%BA%BFt_2018_(2).jpg",
+      "upstreamImage": "https://upload.wikimedia.org/wikipedia/commons/9/9b/Tr%C3%A0_v%C3%A0_M%E1%BB%A9t_g%E1%BB%ABng_v%C3%A0_nh%C3%A0_c%E1%BA%ADu_C%E1%BA%A3m%2C_01_T%E1%BA%BFt_2018_%282%29.jpg",
+      "author": "Phương Huy",
+      "license": "Public domain (author release)",
+      "file": "18403411-7967-54cd-bd56-e897223c22d5.webp",
+      "originalWidth": 3120,
+      "originalHeight": 3653,
+      "width": 1000,
+      "height": 750,
+      "bytes": 150528,
+      "sha256": "e3ff60b758c050c1d0fa10f35282c2451465df3726460de86b8d0d37cdf4b300",
+      "checkedAt": "2026-11-25T07:53:14Z",
+      "usageRights": "public_domain",
+      "licenseUrl": "https://commons.wikimedia.org/wiki/File:Tr%C3%A0_v%C3%A0_M%E1%BB%A9t_g%E1%BB%ABng_v%C3%A0_nh%C3%A0_c%E1%BA%ADu_C%E1%BA%A3m,_01_T%E1%BA%BFt_2018_(2).jpg",
+      "attribution": "Ảnh: Phương Huy / Wikimedia Commons, Public domain (author release) (đã cắt và nén).",
+      "aiCheck": {
+        "cameraExif": true,
+        "uploadedAt": "2018-05-31T13:24:52Z",
+        "aiCategory": false,
+        "verdict": "pending_human_review",
+        "checkedBy": null,
+        "checkedAt": null,
+        "provenance": "Lát gừng áo đường thấy rõ trong đĩa; nguồn do người chụp công bố. Commons ghi Template:PD-self.",
+        "assistance": {
+          "tool": "Codex",
+          "checkedAt": "2026-11-25T07:53:14Z"
+        }
+      },
+      "objectKey": "images/18403411-7967-54cd-bd56-e897223c22d5.webp",
+      "thumbnail": {
+        "objectKey": "thumbnails/18403411-7967-54cd-bd56-e897223c22d5.webp",
+        "width": 400,
+        "height": 300,
+        "bytes": 27960,
+        "sha256": "e20febba2226717c1f2a06a62fb3cd0787f57794a935ece51f24b4ee509875c9"
       }
     },
     {
@@ -450,6 +610,46 @@
           "tool": "Codex",
           "checkedAt": "2026-11-24T17:27:46Z"
         }
+      }
+    },
+    {
+      "dishId": "25ed8950-757a-5851-a8ff-12ae17f8d64a",
+      "name": "Bánh phồng tôm",
+      "source": "https://commons.wikimedia.org/wiki/File:Deep-fried_prawn_crackers.jpg",
+      "upstreamImage": "https://upload.wikimedia.org/wikipedia/commons/d/d0/Deep-fried_prawn_crackers.jpg",
+      "author": "Susan Slater",
+      "license": "CC BY-SA 4.0",
+      "file": "25ed8950-757a-5851-a8ff-12ae17f8d64a.webp",
+      "originalWidth": 1871,
+      "originalHeight": 1475,
+      "width": 1000,
+      "height": 750,
+      "bytes": 136020,
+      "sha256": "60d3b0a352c0835ef3e2762ae672bfd98807f26b7d95ad93178d8179acac6a4a",
+      "checkedAt": "2026-11-25T07:53:14Z",
+      "usageRights": "licensed",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/",
+      "attribution": "Ảnh: Susan Slater / Wikimedia Commons, CC BY-SA 4.0 (đã cắt và nén).",
+      "aiCheck": {
+        "cameraExif": true,
+        "uploadedAt": "2017-11-07T04:01:56Z",
+        "aiCategory": false,
+        "verdict": "pending_human_review",
+        "checkedBy": null,
+        "checkedAt": null,
+        "provenance": "Tệp gốc ghi bánh phồng tôm đã chiên. Khung cắt giữ khay bánh.",
+        "assistance": {
+          "tool": "Codex",
+          "checkedAt": "2026-11-25T07:53:14Z"
+        }
+      },
+      "objectKey": "images/25ed8950-757a-5851-a8ff-12ae17f8d64a.webp",
+      "thumbnail": {
+        "objectKey": "thumbnails/25ed8950-757a-5851-a8ff-12ae17f8d64a.webp",
+        "width": 400,
+        "height": 300,
+        "bytes": 19560,
+        "sha256": "a9e381b88098d01dfe1974db00fc48da6fd0a63f92e0e7bc6b725e2b95425a29"
       }
     },
     {
@@ -1533,6 +1733,46 @@
       }
     },
     {
+      "dishId": "6c917fda-1e1b-5192-9bd6-167c6f97e4aa",
+      "name": "Bạch tuộc nướng",
+      "source": "https://commons.wikimedia.org/wiki/File:Grilled_octopus_-_Other_Mama_-_March_2019_02.jpg",
+      "upstreamImage": "https://upload.wikimedia.org/wikipedia/commons/7/71/Grilled_octopus_-_Other_Mama_-_March_2019_02.jpg",
+      "author": "T.Tseng",
+      "license": "CC BY 2.0",
+      "file": "6c917fda-1e1b-5192-9bd6-167c6f97e4aa.webp",
+      "originalWidth": 4032,
+      "originalHeight": 3024,
+      "width": 1000,
+      "height": 750,
+      "bytes": 86934,
+      "sha256": "6e7a452bc25bfc9e056187703bb541e0ee411534fd6e9b1e6c672472122612bd",
+      "checkedAt": "2026-11-25T07:53:14Z",
+      "usageRights": "licensed",
+      "licenseUrl": "https://creativecommons.org/licenses/by/2.0/",
+      "attribution": "Ảnh: T.Tseng / Wikimedia Commons, CC BY 2.0 (đã cắt và nén).",
+      "aiCheck": {
+        "cameraExif": true,
+        "uploadedAt": "2019-05-27T02:43:26Z",
+        "aiCategory": false,
+        "verdict": "pending_human_review",
+        "checkedBy": null,
+        "checkedAt": null,
+        "provenance": "Ảnh gốc trên Flickr của T.Tseng được ghi là bạch tuộc nướng, khung thấy phần xúc tu đã nướng.",
+        "assistance": {
+          "tool": "Codex",
+          "checkedAt": "2026-11-25T07:53:14Z"
+        }
+      },
+      "objectKey": "images/6c917fda-1e1b-5192-9bd6-167c6f97e4aa.webp",
+      "thumbnail": {
+        "objectKey": "thumbnails/6c917fda-1e1b-5192-9bd6-167c6f97e4aa.webp",
+        "width": 400,
+        "height": 300,
+        "bytes": 14402,
+        "sha256": "be87ebea275dde73fbd056d38aa524b369802de9adc2a04ba3eadc2e89db1e73"
+      }
+    },
+    {
       "dishId": "6e6a3c13-7da9-51f2-907d-74bd87d4ce72",
       "name": "Cháo lòng",
       "source": "https://commons.wikimedia.org/wiki/File:Ch%C3%A1o_l%C3%B2ng.jpg",
@@ -2333,6 +2573,46 @@
       }
     },
     {
+      "dishId": "a08e45c7-a6d6-58ed-a41a-c4305a7851c2",
+      "name": "Sữa chua nếp cẩm",
+      "source": "https://commons.wikimedia.org/wiki/File:S%E1%BB%AFa_chua_n%E1%BA%BFp_c%E1%BA%A9m.jpg",
+      "upstreamImage": "https://upload.wikimedia.org/wikipedia/commons/9/9c/S%E1%BB%AFa_chua_n%E1%BA%BFp_c%E1%BA%A9m.jpg",
+      "author": "Buileducanh",
+      "license": "CC BY-SA 3.0",
+      "file": "a08e45c7-a6d6-58ed-a41a-c4305a7851c2.webp",
+      "originalWidth": 1536,
+      "originalHeight": 2486,
+      "width": 1000,
+      "height": 750,
+      "bytes": 46490,
+      "sha256": "31f574fe44d9864a71199e1d1ed133ab7175b44f79ae18380fa7959e1a5eeaea",
+      "checkedAt": "2026-11-25T07:54:00Z",
+      "usageRights": "licensed",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0/",
+      "attribution": "Ảnh: Buileducanh / Wikimedia Commons, CC BY-SA 3.0 (đã cắt và nén).",
+      "aiCheck": {
+        "cameraExif": true,
+        "uploadedAt": "2017-12-25T15:24:37Z",
+        "aiCategory": false,
+        "verdict": "pending_human_review",
+        "checkedBy": null,
+        "checkedAt": null,
+        "provenance": "Tệp ghi hũ sữa chua nếp cẩm. Đã cắt lại để phần nếp màu tím và lớp sữa chua cùng hiện rõ.",
+        "assistance": {
+          "tool": "Codex",
+          "checkedAt": "2026-11-25T07:54:00Z"
+        }
+      },
+      "objectKey": "images/a08e45c7-a6d6-58ed-a41a-c4305a7851c2.webp",
+      "thumbnail": {
+        "objectKey": "thumbnails/a08e45c7-a6d6-58ed-a41a-c4305a7851c2.webp",
+        "width": 400,
+        "height": 300,
+        "bytes": 5068,
+        "sha256": "2170552583f7c680155c09662d6362fd13d7a873b44c3d7ba09f1691ab6af1ae"
+      }
+    },
+    {
       "dishId": "a1e48572-6948-5fb3-8886-8b65c41fa26f",
       "name": "Bánh tráng trộn",
       "source": "https://commons.wikimedia.org/wiki/File:Mixed_rice_paper.jpg",
@@ -2490,6 +2770,46 @@
           "tool": "Codex",
           "checkedAt": "2026-11-24T17:27:46Z"
         }
+      }
+    },
+    {
+      "dishId": "aa59b2ad-3c15-5133-bad9-122a8d2fe93b",
+      "name": "Nui",
+      "source": "https://commons.wikimedia.org/wiki/File:Soup_Macaroni_in_Hong_Kong.jpg",
+      "upstreamImage": "https://upload.wikimedia.org/wikipedia/commons/2/26/Soup_Macaroni_in_Hong_Kong.jpg",
+      "author": "hamron",
+      "license": "CC BY-SA 2.0",
+      "file": "aa59b2ad-3c15-5133-bad9-122a8d2fe93b.webp",
+      "originalWidth": 1280,
+      "originalHeight": 1280,
+      "width": 1000,
+      "height": 750,
+      "bytes": 171108,
+      "sha256": "54756cb12a0822a550cd3f04cd119970aea3605afae7137dac13e6c7a2d99271",
+      "checkedAt": "2026-11-25T07:53:14Z",
+      "usageRights": "licensed",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/2.0/",
+      "attribution": "Ảnh: hamron / Wikimedia Commons, CC BY-SA 2.0 (đã cắt và nén).",
+      "aiCheck": {
+        "cameraExif": true,
+        "uploadedAt": "2010-09-12T08:34:25Z",
+        "aiCategory": false,
+        "verdict": "pending_human_review",
+        "checkedBy": null,
+        "checkedAt": null,
+        "provenance": "Khung giữ tô nui ống trong nước súp kiểu Hong Kong. Nguồn ghi macaroni soup. Phiên bản này dùng thịt nguội, cần Tâm xem cho catalogue.",
+        "assistance": {
+          "tool": "Codex",
+          "checkedAt": "2026-11-25T07:53:14Z"
+        }
+      },
+      "objectKey": "images/aa59b2ad-3c15-5133-bad9-122a8d2fe93b.webp",
+      "thumbnail": {
+        "objectKey": "thumbnails/aa59b2ad-3c15-5133-bad9-122a8d2fe93b.webp",
+        "width": 400,
+        "height": 300,
+        "bytes": 19440,
+        "sha256": "0cb00cc42a12fe122e2960a57762d7659ba5a24916c9a906632360c81849ada6"
       }
     },
     {
@@ -2693,6 +3013,46 @@
       }
     },
     {
+      "dishId": "b036180a-0ff3-5e73-9e25-3732342411d9",
+      "name": "Cháo hải sản",
+      "source": "https://commons.wikimedia.org/wiki/File:Ch%C3%A1o_h%C3%A0o_Nguy%E1%BB%85n_Nh%E1%BB%AF_L%C3%A3m,_T4_n%C4%83m_2018_(1).jpg",
+      "upstreamImage": "https://upload.wikimedia.org/wikipedia/commons/f/fe/Ch%C3%A1o_h%C3%A0o_Nguy%E1%BB%85n_Nh%E1%BB%AF_L%C3%A3m%2C_T4_n%C4%83m_2018_%281%29.jpg",
+      "author": "Phương Huy",
+      "license": "Public domain (author release)",
+      "file": "b036180a-0ff3-5e73-9e25-3732342411d9.webp",
+      "originalWidth": 3120,
+      "originalHeight": 3605,
+      "width": 1000,
+      "height": 750,
+      "bytes": 79208,
+      "sha256": "b70898db0021e59c9b34065c92c1dd2c29d4b580eb95cee149ebf3ac0a366b37",
+      "checkedAt": "2026-11-25T07:53:14Z",
+      "usageRights": "public_domain",
+      "licenseUrl": "https://commons.wikimedia.org/wiki/File:Ch%C3%A1o_h%C3%A0o_Nguy%E1%BB%85n_Nh%E1%BB%AF_L%C3%A3m,_T4_n%C4%83m_2018_(1).jpg",
+      "attribution": "Ảnh: Phương Huy / Wikimedia Commons, Public domain (author release) (đã cắt và nén).",
+      "aiCheck": {
+        "cameraExif": true,
+        "uploadedAt": "2018-09-05T12:15:47Z",
+        "aiCategory": false,
+        "verdict": "pending_human_review",
+        "checkedBy": null,
+        "checkedAt": null,
+        "provenance": "Tệp gốc ghi cháo hàu. Khung thấy cháo gạo và hàu, một kiểu cháo hải sản; cần Tâm xác nhận khi duyệt. Commons ghi Template:PD-self.",
+        "assistance": {
+          "tool": "Codex",
+          "checkedAt": "2026-11-25T07:53:14Z"
+        }
+      },
+      "objectKey": "images/b036180a-0ff3-5e73-9e25-3732342411d9.webp",
+      "thumbnail": {
+        "objectKey": "thumbnails/b036180a-0ff3-5e73-9e25-3732342411d9.webp",
+        "width": 400,
+        "height": 300,
+        "bytes": 13692,
+        "sha256": "395fb0dd533aa15fbd77f3f46d0b92bcbd319545639dad90dde089af2b86d117"
+      }
+    },
+    {
       "dishId": "b115bf23-4277-5a5d-a439-002b0ceda3ce",
       "name": "Cơm gà",
       "source": "https://commons.wikimedia.org/wiki/File:Com_ga_Viet_Nam_voi_ga_luoc_com_vang_va_nuoc_cham.jpg",
@@ -2770,6 +3130,46 @@
           "tool": "Codex",
           "checkedAt": "2026-11-24T17:27:46Z"
         }
+      }
+    },
+    {
+      "dishId": "b3890e64-97bf-54fd-a55e-b90b4a4ab966",
+      "name": "Bánh bột củ cải chiên",
+      "source": "https://commons.wikimedia.org/wiki/File:Turnip_cake.jpg",
+      "upstreamImage": "https://upload.wikimedia.org/wikipedia/commons/a/a9/Turnip_cake.jpg",
+      "author": "Edsel Little",
+      "license": "CC BY-SA 2.0",
+      "file": "b3890e64-97bf-54fd-a55e-b90b4a4ab966.webp",
+      "originalWidth": 1200,
+      "originalHeight": 675,
+      "width": 900,
+      "height": 675,
+      "bytes": 147964,
+      "sha256": "958ca109b59ff6c0c38b01df993594bbb39b41449d9314badcec531ce5220ca5",
+      "checkedAt": "2026-11-25T07:53:14Z",
+      "usageRights": "licensed",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/2.0/",
+      "attribution": "Ảnh: Edsel Little / Wikimedia Commons, CC BY-SA 2.0 (đã cắt và nén).",
+      "aiCheck": {
+        "cameraExif": true,
+        "uploadedAt": "2015-09-28T11:49:12Z",
+        "aiCategory": false,
+        "verdict": "pending_human_review",
+        "checkedBy": null,
+        "checkedAt": null,
+        "provenance": "Nguồn ghi turnip cake. Khung thấy các miếng bánh củ cải đã áp chảo.",
+        "assistance": {
+          "tool": "Codex",
+          "checkedAt": "2026-11-25T07:53:14Z"
+        }
+      },
+      "objectKey": "images/b3890e64-97bf-54fd-a55e-b90b4a4ab966.webp",
+      "thumbnail": {
+        "objectKey": "thumbnails/b3890e64-97bf-54fd-a55e-b90b4a4ab966.webp",
+        "width": 400,
+        "height": 300,
+        "bytes": 26312,
+        "sha256": "d1d14bae9610c4f2949edd34632d258bd68f15a4683206985b0d9274b4500a2c"
       }
     },
     {
@@ -3130,6 +3530,46 @@
           "tool": "Codex",
           "checkedAt": "2026-11-24T17:27:46Z"
         }
+      }
+    },
+    {
+      "dishId": "d40885b2-eb15-5b6d-9d47-d5b4c5a8c3a9",
+      "name": "Nem lụi",
+      "source": "https://commons.wikimedia.org/wiki/File:L%E1%BB%85_h%E1%BB%99i_%E1%BA%A9m_th%E1%BB%B1c_C%E1%BB%ADa_Vi%E1%BB%87t_th4n2023_%C4%91%E1%BA%B7c_s%E1%BA%A3n_nem_l%E1%BB%A5i_n%C6%B0%E1%BB%9Bng_Nha_Trang_(4).jpg",
+      "upstreamImage": "https://upload.wikimedia.org/wikipedia/commons/d/d8/L%E1%BB%85_h%E1%BB%99i_%E1%BA%A9m_th%E1%BB%B1c_C%E1%BB%ADa_Vi%E1%BB%87t_th4n2023_%C4%91%E1%BA%B7c_s%E1%BA%A3n_nem_l%E1%BB%A5i_n%C6%B0%E1%BB%9Bng_Nha_Trang_%284%29.jpg",
+      "author": "Phương Huy",
+      "license": "CC BY-SA 4.0",
+      "file": "d40885b2-eb15-5b6d-9d47-d5b4c5a8c3a9.webp",
+      "originalWidth": 3024,
+      "originalHeight": 4032,
+      "width": 1000,
+      "height": 750,
+      "bytes": 171058,
+      "sha256": "8dd58e3a54cbcb964123b54de714dd88b201c3722eb9d583569567dfb9755d63",
+      "checkedAt": "2026-11-25T07:53:14Z",
+      "usageRights": "licensed",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/",
+      "attribution": "Ảnh: Phương Huy / Wikimedia Commons, CC BY-SA 4.0 (đã cắt và nén).",
+      "aiCheck": {
+        "cameraExif": true,
+        "uploadedAt": "2023-08-05T03:05:41Z",
+        "aiCategory": false,
+        "verdict": "pending_human_review",
+        "checkedBy": null,
+        "checkedAt": null,
+        "provenance": "Tệp ghi nem lụi nướng Nha Trang. Khung thấy các que nem đã nướng.",
+        "assistance": {
+          "tool": "Codex",
+          "checkedAt": "2026-11-25T07:53:14Z"
+        }
+      },
+      "objectKey": "images/d40885b2-eb15-5b6d-9d47-d5b4c5a8c3a9.webp",
+      "thumbnail": {
+        "objectKey": "thumbnails/d40885b2-eb15-5b6d-9d47-d5b4c5a8c3a9.webp",
+        "width": 400,
+        "height": 300,
+        "bytes": 34750,
+        "sha256": "8d4767e0bf5e69d7c2911ada25ddfdbdef7a0331f8ea329c3cd6cec520ced551"
       }
     },
     {
@@ -3853,6 +4293,46 @@
       }
     },
     {
+      "dishId": "ed6f4147-659d-5264-b6ad-41861728ed29",
+      "name": "Bánh bông lan",
+      "source": "https://commons.wikimedia.org/wiki/File:Classic_sponge_cake_from_Bangka.jpg",
+      "upstreamImage": "https://upload.wikimedia.org/wikipedia/commons/0/04/Classic_sponge_cake_from_Bangka.jpg",
+      "author": "Cun Cun",
+      "license": "CC BY-SA 4.0",
+      "file": "ed6f4147-659d-5264-b6ad-41861728ed29.webp",
+      "originalWidth": 2592,
+      "originalHeight": 1944,
+      "width": 1000,
+      "height": 750,
+      "bytes": 59512,
+      "sha256": "063dd640f25938b84ebd7fa30e3da5f46b80c126a61fc528d03dea3e7601f5b4",
+      "checkedAt": "2026-11-25T07:53:14Z",
+      "usageRights": "licensed",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/",
+      "attribution": "Ảnh: Cun Cun / Wikimedia Commons, CC BY-SA 4.0 (đã cắt và nén).",
+      "aiCheck": {
+        "cameraExif": true,
+        "uploadedAt": "2026-10-13T01:17:21Z",
+        "aiCategory": false,
+        "verdict": "pending_human_review",
+        "checkedBy": null,
+        "checkedAt": null,
+        "provenance": "Người chụp ghi đây là bánh bông lan nướng kiểu Bangka. Khung thấy bánh vàng, trong hộp đã mở.",
+        "assistance": {
+          "tool": "Codex",
+          "checkedAt": "2026-11-25T07:53:14Z"
+        }
+      },
+      "objectKey": "images/ed6f4147-659d-5264-b6ad-41861728ed29.webp",
+      "thumbnail": {
+        "objectKey": "thumbnails/ed6f4147-659d-5264-b6ad-41861728ed29.webp",
+        "width": 400,
+        "height": 300,
+        "bytes": 10152,
+        "sha256": "298ea7c377a7489fee7788be8ba09ff17b36abf267e58c8194368a4bd437d1d5"
+      }
+    },
+    {
       "dishId": "edbac3bb-96f3-51e1-a158-715f1fc0553c",
       "name": "Hoành thánh chiên",
       "source": "https://commons.wikimedia.org/wiki/File:Fried_wontons.jpg",
@@ -4300,11 +4780,6 @@
       "reason": "no_selected_image"
     },
     {
-      "dishId": "01e12db6-8014-5e84-bc53-398af27ad314",
-      "name": "Cơm cá chiên",
-      "reason": "no_selected_image"
-    },
-    {
       "dishId": "024b5cdf-cb07-5c94-8b34-5dcdebc0d5e4",
       "name": "Cơm trái dừa",
       "reason": "no_selected_image"
@@ -4313,11 +4788,6 @@
       "dishId": "0558ef05-e416-5630-903c-31ffb30f7c99",
       "name": "Sủi dìn",
       "reason": "no_selected_image"
-    },
-    {
-      "dishId": "07f051a6-2a48-5b63-ac86-e56ddd4fb6c4",
-      "name": "Bánh crepe ngọt",
-      "reason": "release_exclusion_requested"
     },
     {
       "dishId": "08a55df5-ac1a-5cbd-a717-fd08b640a4b1",
@@ -4370,12 +4840,6 @@
       "reason": "no_selected_image"
     },
     {
-      "dishId": "107f783c-7249-5c13-98ce-dc9d023247a6",
-      "name": "Bánh tráng nướng",
-      "reason": "candidate shows ingredients and stall only",
-      "candidate": "https://commons.wikimedia.org/wiki/File:B%C3%A1nh_tr%C3%A1ng_n%C6%B0%E1%BB%9Bng_TP._H%E1%BB%93_Ch%C3%AD_Minh_-_street_food_in_Ho_Chi_Minh_City%2C_Vietnam.jpg"
-    },
-    {
       "dishId": "10982699-a9bc-57c7-b732-7c08011f5dc5",
       "name": "Trái cây trộn muối ớt",
       "reason": "no_selected_image"
@@ -4421,11 +4885,6 @@
       "reason": "no_selected_image"
     },
     {
-      "dishId": "18403411-7967-54cd-bd56-e897223c22d5",
-      "name": "Mứt gừng",
-      "reason": "release_exclusion_requested"
-    },
-    {
       "dishId": "1bd3aad6-1bb8-5c7f-9253-476194073b01",
       "name": "Ốc móng tay xào bơ tỏi",
       "reason": "no_selected_image"
@@ -4449,11 +4908,6 @@
       "dishId": "247f0ab9-f1f4-54a3-87cd-99a635be19f6",
       "name": "Bún tôm Bình Định",
       "reason": "no_selected_image"
-    },
-    {
-      "dishId": "25ed8950-757a-5851-a8ff-12ae17f8d64a",
-      "name": "Bánh phồng tôm",
-      "reason": "release_exclusion_requested"
     },
     {
       "dishId": "27711275-291a-5edc-8d93-46767f1b9832",
@@ -4596,11 +5050,6 @@
       "reason": "no_selected_image"
     },
     {
-      "dishId": "6c917fda-1e1b-5192-9bd6-167c6f97e4aa",
-      "name": "Bạch tuộc nướng",
-      "reason": "no_selected_image"
-    },
-    {
       "dishId": "733d1f2f-ae6d-5d6e-b97f-7abf3e549938",
       "name": "Bún bung",
       "reason": "no_selected_image"
@@ -4716,11 +5165,6 @@
       "reason": "no_selected_image"
     },
     {
-      "dishId": "a08e45c7-a6d6-58ed-a41a-c4305a7851c2",
-      "name": "Sữa chua nếp cẩm",
-      "reason": "no_selected_image"
-    },
-    {
       "dishId": "a2e88df3-ff3a-5813-b671-d0a44003cc15",
       "name": "Kem xôi",
       "reason": "no_selected_image"
@@ -4741,12 +5185,6 @@
       "reason": "no_selected_image"
     },
     {
-      "dishId": "aa59b2ad-3c15-5133-bad9-122a8d2fe93b",
-      "name": "Nui",
-      "reason": "broth_photo_awaiting_review",
-      "candidate": "https://commons.wikimedia.org/wiki/File:Soup_Macaroni_in_Hong_Kong.jpg"
-    },
-    {
       "dishId": "afd8050f-e7cc-5a4a-8df3-07031cec9000",
       "name": "Caramen hoa quả",
       "reason": "no_selected_image"
@@ -4754,11 +5192,6 @@
     {
       "dishId": "afecb2ef-01f9-58ec-b2ca-586cc7083ed7",
       "name": "Phở hải sản",
-      "reason": "no_selected_image"
-    },
-    {
-      "dishId": "b036180a-0ff3-5e73-9e25-3732342411d9",
-      "name": "Cháo hải sản",
       "reason": "no_selected_image"
     },
     {
@@ -4774,11 +5207,6 @@
     {
       "dishId": "b2f345e2-bc4c-5529-9c45-02e4aae11d31",
       "name": "Lẩu vịt nấu chao",
-      "reason": "no_selected_image"
-    },
-    {
-      "dishId": "b3890e64-97bf-54fd-a55e-b90b4a4ab966",
-      "name": "Bánh bột củ cải chiên",
       "reason": "no_selected_image"
     },
     {
@@ -4849,11 +5277,6 @@
     {
       "dishId": "d3a72985-f514-5073-9299-254ddffef3c9",
       "name": "Ốc len xào dừa",
-      "reason": "no_selected_image"
-    },
-    {
-      "dishId": "d40885b2-eb15-5b6d-9d47-d5b4c5a8c3a9",
-      "name": "Nem lụi",
       "reason": "no_selected_image"
     },
     {
@@ -4964,11 +5387,6 @@
     {
       "dishId": "ead8da65-a92c-59a7-aecc-1c73b3eba855",
       "name": "Lẩu Thái",
-      "reason": "no_selected_image"
-    },
-    {
-      "dishId": "ed6f4147-659d-5264-b6ad-41861728ed29",
-      "name": "Bánh bông lan",
       "reason": "no_selected_image"
     },
     {

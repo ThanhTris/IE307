@@ -15,7 +15,7 @@ class ReleaseEditorialTest(unittest.TestCase):
         candidate, report = editorial.build()
         self.assertEqual(report['baseSha256'], digest)
         self.assertEqual(base['datasetVersion'], '1.3.0')
-        self.assertEqual(candidate['datasetVersion'], '1.4.2')
+        self.assertEqual(candidate['datasetVersion'], '1.4.3')
         self.assertEqual(candidate['usageScope'], 'test_demo')
         self.assertEqual(report['missingDescription'], [])
         self.assertEqual(len(report['descriptionSourceRefs']), 253)
@@ -151,7 +151,7 @@ class ReleaseEditorialTest(unittest.TestCase):
         photo['aiCheck'].update(verdict='pending_human_review', checkedBy=None, checkedAt=None)
         receipt = {
             'bucketPublicUrl': 'https://staging.example.invalid/storage/v1/object/public/catalogue',
-            'candidateDatasetVersion': '1.4.3',
+            'candidateDatasetVersion': '1.4.4',
             'checkedAt': '2026-11-25T01:00:00Z',
             'objects': [{key: row[key] for key in ('objectKey', 'sha256')} for row in (photo, photo['thumbnail'])],
         }
@@ -160,7 +160,7 @@ class ReleaseEditorialTest(unittest.TestCase):
         photo['aiCheck'].update(verdict='real_photo', checkedBy='Người kiểm fixture',
                                 checkedAt='2026-11-25T00:00:00Z')
         candidate, report = editorial.build(artwork=artwork, storage_receipt=receipt)
-        self.assertEqual(candidate['datasetVersion'], '1.4.3')
+        self.assertEqual(candidate['datasetVersion'], '1.4.4')
         attached = {row['id']: row['artwork'] for row in candidate['entities']['dishes'] if row['artwork'] is not None}
         self.assertEqual(set(attached), {photo['dishId']})
         art = attached[photo['dishId']]

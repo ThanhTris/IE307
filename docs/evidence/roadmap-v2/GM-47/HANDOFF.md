@@ -2,7 +2,7 @@
 
 ## Lô release v1 ngày 25/11/2026
 
-Nhận [GM-41 bundle 1.3.0](../GM-41/HANDOFF.md) qua #210, gồm 253 UUID, trên target `6cd5e1a`. [Nguồn mô tả](../../../../data-preparation/editorial/gm47-release/descriptions.json) và [hồ sơ ảnh](../../../../data-preparation/editorial/gm47-release/artwork-candidates.json) được ghim vào SHA-256 của bundle đầu vào. Dựng candidate QA `1.4.2` vào `.work/gm47-release-editorial/` cùng manifest, báo cáo và danh sách nguồn mô tả.
+Nhận [GM-41 bundle 1.3.0](../GM-41/HANDOFF.md) qua #210, gồm 253 UUID, trên target `6cd5e1a`. [Nguồn mô tả](../../../../data-preparation/editorial/gm47-release/descriptions.json) và [hồ sơ ảnh](../../../../data-preparation/editorial/gm47-release/artwork-candidates.json) được ghim vào SHA-256 của bundle đầu vào. Dựng candidate QA `1.4.3` vào `.work/gm47-release-editorial/` cùng manifest, báo cáo và danh sách nguồn mô tả.
 
 ```sh
 python data-preparation/scripts/gm47_release_editorial.py
@@ -14,7 +14,7 @@ Checker hiện đạt 32/33 mục. Kiểm readback trên [QA GM-03](../GM-03/RUN
 
 ### Gói ảnh cho Trí và Tuấn
 
-Gói cục bộ `.work/gm47-release-editorial/gm47-storage-handoff.zip` có 107 ảnh chính và 107 ảnh nhỏ do Tâm xác nhận qua hai lượt rà, tổng 13.074.184 byte ảnh. Có thể tái tạo từ ảnh chính đã chuẩn bị bằng Python có Pillow 13.0.0 và WebP encoder cùng bản. Lệnh kiểm SHA nguồn, xuất gói và từ chối metadata không khớp.
+Gói cục bộ `.work/gm47-release-editorial/gm47-storage-handoff.zip` có 119 ảnh chính và 119 ảnh nhỏ, tổng 14.689.446 byte ảnh. Có 107 cặp đã được Tâm xác nhận và 12 cặp chờ Tâm duyệt. Chỉ dùng các cặp có `aiCheck.verdict=real_photo` cho lượt tải lên. Có thể tái tạo gói từ ảnh chính bằng Python có Pillow 13.0.0 và WebP encoder cùng bản. Lệnh kiểm SHA và xuất gói từ metadata.
 
 ```sh
 python data-preparation/scripts/gm47_storage_handoff.py --images .work/gm47-release-editorial/images
@@ -22,13 +22,13 @@ python data-preparation/scripts/gm47_storage_handoff.py --images .work/gm47-rele
 
 - `images/<dishId>.webp` là ảnh chính. `thumbnails/<dishId>.webp` là ảnh danh sách 400×300 px. Đây là object key đề xuất để Trí dùng trong bucket công khai GM-52. Mỗi URL đích là URL gốc công khai của bucket tại môi trường tương ứng cộng object key. Xác nhận URL gốc và tải tệp trước khi gắn `artwork.url` và bàn giao URL ảnh nhỏ cho Tuấn. URL tệp Commons trong metadata dùng làm bằng chứng nguồn.
 - Gói kèm `artwork-candidates.json` có tác giả, giấy phép, kích thước, số byte, SHA và `aiCheck` của từng tệp, cùng `ATTRIBUTION.md` để Tuấn triển khai màn Nguồn ảnh trong GM-64. Giữ giấy phép và ghi công cho cả hai bản dẫn xuất. Ảnh Chuối nếp nướng đã đổi SHA và tác giả. Nếu từng nhận gói cũ, chọn bản hiện tại khi upload.
-- `artwork-assignments.csv` chia 143 món còn cần ảnh theo sáu batch GM-41 và nhóm UUID ban đầu, gồm Nui cần ảnh có nước. Mứt gừng và Bánh phồng tôm là hai đề xuất bỏ của đợt này. Bánh crepe ngọt là đề xuất riêng của đợt trước. CSV đánh dấu ba dòng này là `release_exclusion_requested` để Trí quyết định trước phát hành. Với ảnh nhóm tự chụp, giữ bản gốc có EXIF và đường dẫn xác nhận cho phép dùng (`permissionEvidence`).
+- `artwork-assignments.csv` chia 134 món chưa có cặp ảnh theo sáu batch GM-41 và nhóm UUID ban đầu. Trí chốt giữ cả 253 món. Mứt gừng và Bánh phồng tôm có ảnh chờ duyệt. Bánh crepe ngọt đã khôi phục ảnh EXIF HTC để duyệt lại, có kèm ảnh Nui có nước trong cùng lượt. Xem danh sách ưu tiên nhóm tự chụp trong [CHECKS](CHECKS.md).
 
 ### Tâm xác nhận ảnh và mô tả
 
 - Mở ảnh, trang nguồn và thông tin license cho từng UUID. Sau khi Tâm xác nhận ảnh đúng món và đúng nguồn gốc, ghi tên Tâm vào `aiCheck.checkedBy`, thời điểm UTC thực tế vào `aiCheck.checkedAt` và `real_photo` vào `aiCheck.verdict`. Bản ghi chờ có `pending_human_review`. Kết quả rà bằng công cụ nằm trong `assistance`.
-- Với mô tả, đối chiếu từng câu với URL và các dữ kiện ghi ở `factReview.facts`. Sau khi Tâm xác nhận, ghi tên Tâm và thời điểm vào `factReview.checkedBy` và `factReview.checkedAt`. Nếu sửa nội dung hoặc URL, phải rà lại và cập nhật `factReview.textSha256` của bản mới trước khi xác nhận.
-- Theo quyết định của Trí, GM-51 dùng mô tả do nhóm biên tập và URL để đối chiếu dữ kiện. CSV chỉ ghi `team_authored_fact_reference` khi tất cả mô tả dùng URL đó đã được người kiểm xác nhận. Các cột `prechecked_dish_ids` và `reviewed_dish_ids` ghi kết quả rà. Tâm đã xác nhận 62 mô tả. Có 13 URL đạt và 171 URL còn `needs_confirmation`. Xem [CHECKS](CHECKS.md).
+- Với mô tả, đối chiếu từng câu với URL và các dữ kiện ghi ở `factReview.facts`. Sau khi Tâm xác nhận, ghi tên Tâm và thời điểm vào `factReview.checkedBy` và `factReview.checkedAt`. Nếu sửa nội dung hoặc URL, phải rà lại và cập nhật `factReview.textSha256` của bản mới trước khi xác nhận. Trang duyệt cục bộ `.work/gm47-release-editorial/review-7154895031/duyet-anh-va-mo-ta.html` hiển thị ảnh, nguồn, mô tả và tải được JSON chứa UUID cùng SHA của các mục đã chọn.
+- Theo quyết định của Trí, GM-51 dùng mô tả do nhóm biên tập và URL để đối chiếu dữ kiện. CSV chỉ ghi `team_authored_fact_reference` khi tất cả mô tả dùng URL đó đã được người kiểm xác nhận. Các cột `prechecked_dish_ids` và `reviewed_dish_ids` ghi kết quả rà. Tâm đã xác nhận 62 mô tả. Có 13 URL đạt và 174 URL còn `needs_confirmation`. Xem [CHECKS](CHECKS.md).
 
 ### Sau khi Trí xác nhận upload
 
@@ -37,7 +37,7 @@ Cần URL công khai của bucket staging, object key đã chốt, và thông ti
 Dùng lệnh dưới để GET từng ảnh, so số byte và SHA-256. Receipt chỉ sinh khi cả cặp khớp và mục ảnh có xác nhận của người kiểm. Có thể chọn UUID đã upload và đã xác nhận bằng `--dish-id` lặp lại khi thử theo lô.
 
 ```sh
-python data-preparation/scripts/gm47_storage_receipt.py --bucket-url "$GM47_PUBLIC_BUCKET" --candidate-version 1.4.3
+python data-preparation/scripts/gm47_storage_receipt.py --bucket-url "$GM47_PUBLIC_BUCKET" --candidate-version 1.4.4
 python data-preparation/scripts/gm47_release_editorial.py --storage-receipt .work/gm47-release-editorial/storage-receipt.json
 python scripts/release_catalogue_check.py --bundle .work/gm47-release-editorial/with-storage/dishes.json
 python scripts/gm47_catalogue_check.py --qa-manifest "$GM47_QA_MANIFEST" --release-editorial --storage-receipt .work/gm47-release-editorial/storage-receipt.json

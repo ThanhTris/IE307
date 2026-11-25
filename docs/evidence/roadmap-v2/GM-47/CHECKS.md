@@ -1,5 +1,42 @@
 # GM-47 · Kiểm thử
 
+## Ưu tiên theo review #217 ngày 25/11/2026
+
+Trí chốt giữ **253 món**, gồm Bánh crepe ngọt, Mứt gừng và Bánh phồng tôm. Hồ sơ ảnh hiện hành đã bỏ trạng thái đề xuất loại món. Khôi phục ảnh crepe của FlipTable với EXIF HTC và giữ trạng thái chờ Tâm duyệt lại vì lượt trước Tâm đề nghị đổi ảnh. Bổ sung ảnh Commons của Mứt gừng, Bánh phồng tôm và chín món khác, gồm một tô nui kiểu Hong Kong thấy rõ nui ống trong nước súp. Ảnh Nui đang chờ Tâm xác nhận phiên bản phù hợp. [Quyết định của Trí](https://github.com/ThanhTris/IE307/pull/217#issuecomment-7154895031)
+
+| Kiểm | Kết quả |
+| --- | --- |
+| Ảnh và nguồn gốc | Chuẩn bị 119 cặp, gồm 107 cặp Tâm đã xác nhận và 12 cặp chờ xác nhận. Còn 134 món chưa có cặp ảnh. Tổng 14.689.446 byte, gồm 12.446.204 byte ảnh chính và 2.243.242 byte ảnh nhỏ. Từng cặp có SHA, tác giả, giấy phép và ghi công. |
+| Đối chiếu mô tả | Rà từng câu ở 39 món. Viết lại 30 mô tả, trong đó 4 món thay URL để có dữ kiện trực tiếp cho đúng món. Ví dụ nguồn riêng cho Bún rạm bổ sung cách lọc rạm nấu nước dùng. Menu cho Nui chỉ xác nhận tên và phần ăn kèm, nên rút chi tiết về cách nấu. Tất cả 39 mục mới ghi `assistance` và chờ Tâm ký. [Nguồn Bún rạm](https://vnexpress.net/bun-ram-nuc-tieng-o-binh-dinh-3246635.html) |
+| Quyền nguồn | 62/253 mô tả đã có xác nhận của Tâm. 13/187 URL đạt `team_authored_fact_reference`; 174 URL đang `needs_confirmation`. Tách nguồn chung thành nguồn cụ thể làm tăng thêm ba URL trong hàng chờ. |
+| Candidate offline | `1.4.3`, SHA-256 `b6e882fc460544897ee226f165f46b718d235dbe3089a8771d50362c62060e04`. Checker đạt 32/33. Mục ảnh còn thiếu URL từ Storage. |
+| Merge gate upstream | Checker chạy với `--gate merge --base-ref origin/main --verify-outputs` lúc 14:50 ICT trên main `6cd5e1a`, trả `READY_FOR_MERGE_REVIEW` cho đầu vào. PR ở draft trong lúc chờ các AC ảnh, mô tả và gói release có ảnh. |
+| ZIP và receipt | So byte và SHA-256 của cả 238 tệp WebP. Receipt fixture từ chối 12 cặp chờ duyệt. Thử subset 107 cặp đã xác nhận, gắn đúng 107 UUID trên candidate giả lập `1.4.4`. |
+| QA có Storage thật | Chờ duyệt ảnh, bucket staging và lượt upload của Trí. QA local candidate offline dừng ở `QA_HOST_BINDING_NOT_LOOPBACK`; runner đã dọn stack thử. |
+
+### Danh sách ưu tiên tự chụp để Trí phân công
+
+Giữ file gốc có EXIF máy ảnh và link xác nhận cho phép dùng, ghi tên người chụp vào hồ sơ ảnh. Hai món Mứt gừng và Bánh phồng tôm đã có ảnh chờ duyệt. Nếu ảnh Commons không được duyệt, bổ sung hai món này vào lượt tự chụp.
+
+| Lô GM-41 | Món | Lý do đề xuất tự chụp |
+| --- | --- | --- |
+| baseline-72 | Dừa sấy | Commons có ảnh bao bì. Chụp dừa sấy đã lấy khỏi túi. |
+| baseline-72 | Cháo lươn | Ảnh món đúng chỉ còn cạnh ngắn 477 px sau khi cắt. Chụp bát thấy thịt lươn. |
+| baseline-72 | Nem chua rán | Ảnh món đúng 500 × 392 px. Chụp nem đã rán, không dùng nem chưa chiên. |
+| baseline-72 | Cơm tôm rim | Ảnh đã thử chỉ thấy tôm rim. Chụp phần cơm và tôm đã rim trong cùng khung. |
+| batch-01 | Bún quậy | Ảnh đã thử chủ yếu thấy bún trắng, nước chấm hoặc menu. Chụp tô có bún, chả và nước dùng. |
+| batch-01 | Bún cá cay | Nguồn mô tả kiểu Hải Phòng. Ảnh tìm được thuộc biến thể Đông Hà. Chụp tô Hải Phòng thấy cá và nước dùng. |
+| batch-02 | Bò bía mặn | Ảnh popiah chưa xác nhận được nhân theo kiểu Việt. Chụp cuốn mặn có thể thấy nhân. |
+| batch-03 | Cơm niêu | Ảnh đã thử thấy niêu đóng nắp. Chụp niêu mở, thấy phần cơm. |
+| batch-03 | Cháo cá | Ảnh miền Trung là bánh canh. Ảnh cháo cá lóc chủ yếu thấy nồi và bàn. Chụp bát cháo gạo có phần cá. |
+| batch-04 | Lẩu dê | Ảnh theo tên quán chỉ thấy đường. Chụp nồi lẩu với phần dê thấy rõ. |
+| batch-04 | Mì vịt tiềm | Tệp ảnh tìm được ghi vịt quay. Chụp tô mì với vịt đã tiềm. |
+| batch-04 | Mì sủi cảo | Các ảnh đã thử ghi hoành thánh. Chụp tô mì có sủi cảo. |
+| batch-05 | Cơm canh chua cá | Ảnh đã thử chỉ có canh chua. Chụp cả cơm và canh cá trong cùng khung. |
+| batch-06 | Súp khoai lang | Ảnh tìm được là khoai miếng trong nước trong. Chụp súp khoai lang dạng sánh theo mô tả. |
+
+Các món còn lại tiếp tục tìm theo `artwork-assignments.csv`. CSV bàn giao có nhóm món gốc và sáu lô GM-41.
+
 ## Cập nhật lựa chọn ảnh ngày 25/11/2026
 
 - Trong đợt rà 181 món, Tâm đề xuất bỏ **Mứt gừng** (`18403411-7967-54cd-bd56-e897223c22d5`) và **Bánh phồng tôm** (`25ed8950-757a-5851-a8ff-12ae17f8d64a`). Cả hai được đánh dấu `release_exclusion_requested`. Bánh crepe ngọt vẫn là đề xuất riêng của đợt trước. Candidate QA `1.4.2` giữ 253 UUID trong khi chờ Trí quyết định.
