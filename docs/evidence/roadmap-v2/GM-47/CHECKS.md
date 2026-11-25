@@ -1,5 +1,20 @@
 # GM-47 · Kiểm thử
 
+## Xác nhận của Tâm và lô Storage ngày 25/11/2026
+
+Nhận JSON Tâm xuất từ trang duyệt `1.4.3` lúc 16:02 ICT. Đã đối chiếu SHA của bản duyệt, UUID và SHA từng ảnh hoặc câu kèm URL trước khi ghi tên Tâm. Tâm chọn đủ 12 ảnh và 39 mô tả trong lượt này. [Review của Trí](https://github.com/ThanhTris/IE307/pull/217#issuecomment-7157464470)
+
+| Kiểm | Kết quả |
+| --- | --- |
+| Ảnh | 119 cặp có xác nhận. Có thêm 5 cặp chờ Tâm duyệt gồm Chè bưởi, Lẩu Thái, Ô mai, Sủi dìn và Miến. Còn 129 món chưa có cặp. 14 món ở bảng tự chụp bên dưới tiếp tục chờ Trí phân công. |
+| Mô tả | 101/253 món có xác nhận. Đã đối chiếu thêm từng câu cho 30 món thuộc các nguồn VnExpress, Ngôi Sao, Vietnam Tourism, Go Vietnam và Cookpad. Dùng nguồn riêng cho Bánh cống, Cháo trai, Lẩu gà lá giang và Lẩu cá thác lác khổ qua. 30 mục mới có `assistance` và chờ ký. |
+| Quyền nguồn | 46/188 URL đạt `team_authored_fact_reference`, còn 142 URL `needs_confirmation`. Checker xác nhận từng UUID trước khi cập nhật trạng thái chung của URL. |
+| Gói ảnh tải lên | Gói lô 107 cặp có 214 WebP, tổng 13.074.184 byte. Gói hiện hành 119 cặp có 238 WebP, tổng 14.689.446 byte. Mỗi gói có danh sách UUID cố định để kiểm đúng lô Trí đã tải. |
+| Candidate offline | `1.4.4`, SHA-256 `9f4f19823adb4dae22f442a00c47ba872e56b96068d79d7a5f0beb01f550cac0`. Checker đạt 32/33. Mục ảnh chờ URL Storage. |
+| Kiểm lô qua fixture | Dùng byte từ từng ZIP để so SHA và chạy CLI nhận receipt bằng danh sách UUID. Hai lô gắn lần lượt 107 và 119 ảnh vào candidate fixture `1.4.5`. Test CLI xác nhận lô có ảnh chưa duyệt bị chặn trước HTTP. |
+| Merge gate upstream | Sau fetch, target `origin/main` tại `6cd5e1a`. Checker `--gate merge --verify-outputs` trả `READY_FOR_MERGE_REVIEW` cho dependency và artifact lúc 15:58 ICT. |
+| Storage staging và readback có ảnh | Chờ URL bucket, các thư mục object key và xác nhận lô đã upload từ Trí (GM-52). |
+
 ## Ưu tiên theo review #217 ngày 25/11/2026
 
 Trí chốt giữ **253 món**, gồm Bánh crepe ngọt, Mứt gừng và Bánh phồng tôm. Hồ sơ ảnh hiện hành đã bỏ trạng thái đề xuất loại món. Khôi phục ảnh crepe của FlipTable với EXIF HTC và giữ trạng thái chờ Tâm duyệt lại vì lượt trước Tâm đề nghị đổi ảnh. Bổ sung ảnh Commons của Mứt gừng, Bánh phồng tôm và chín món khác, gồm một tô nui kiểu Hong Kong thấy rõ nui ống trong nước súp. Ảnh Nui đang chờ Tâm xác nhận phiên bản phù hợp. [Quyết định của Trí](https://github.com/ThanhTris/IE307/pull/217#issuecomment-7154895031)

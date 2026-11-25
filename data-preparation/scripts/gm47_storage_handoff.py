@@ -15,14 +15,22 @@ from gm47_release_editorial import ARTWORK, OUTPUT, build, gm41
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--images', type=Path, default=OUTPUT / 'images')
-    parser.add_argument('--write-metadata', action='store_true',
-                        help='Refresh the checked-in file metadata from the prepared derivatives')
+    mode = parser.add_mutually_exclusive_group()
+    mode.add_argument('--write-metadata', action='store_true',
+                      help='Refresh the checked-in file metadata from the prepared derivatives')
+    mode.add_argument('--reviewed-only', action='store_true',
+                      help='Export only human-approved pairs for the Storage upload')
     args = parser.parse_args()
     artwork = gm41.dc.load_json(ARTWORK)
+    rows = artwork['images']
+    if args.reviewed_only:
+        rows = [row for row in rows if row['aiCheck']['verdict'] == 'real_photo']
+        if not rows:
+            parser.error('No human-approved image pairs to export')
     files = {}
     credits = ['# Ghi công ảnh GM-47', '',
                'Ảnh chính đã cắt và nén. Ảnh danh sách được giảm kích thước từ ảnh chính.', '']
-    for row in artwork['images']:
+    for row in rows:
         expected_name = f"{row['dishId']}.webp"
         if Path(row['file']).name != expected_name or row['file'] != expected_name:
             raise ValueError(f"Unexpected local filename for {row['dishId']}")
@@ -57,19 +65,31 @@ def main():
     writer.writeheader()
     writer.writerows(report['missingArtwork'])
     OUTPUT.mkdir(parents=True, exist_ok=True)
-    archive = OUTPUT / 'gm47-storage-handoff.zip'
+    archive_name = 'gm47-storage-reviewed.zip' if args.reviewed_only else 'gm47-storage-handoff.zip'
+    archive = OUTPUT / archive_name
     with TemporaryDirectory(dir=OUTPUT) as directory:
         temporary = Path(directory) / archive.name
         with ZipFile(temporary, 'w', compression=ZIP_DEFLATED) as pack:
             for key, value in files.items():
                 pack.writestr(key, value)
-            pack.writestr(ARTWORK.name, metadata)
             pack.writestr('ATTRIBUTION.md', '\n'.join(credits))
-            pack.writestr('artwork-assignments.csv', missing.getvalue().encode('utf-8-sig'))
+            if args.reviewed_only:
+                pack.writestr('reviewed-dish-ids.txt', ''.join(f"{row['dishId']}\n" for row in rows))
+                pack.writestr('reviewed-artwork.json', gm41.dc.encoded({
+                    'baseDatasetVersion': artwork['baseDatasetVersion'],
+                    'baseSha256': artwork['baseSha256'],
+                    'images': rows,
+                }))
+            else:
+                pack.writestr(ARTWORK.name, metadata)
+                pack.writestr('artwork-assignments.csv', missing.getvalue().encode('utf-8-sig'))
         temporary.replace(archive)
     if args.write_metadata:
         ARTWORK.write_bytes(metadata)
-    print(f"{len(files)} WebP files and {len(report['missingArtwork'])} pending dishes: {archive}")
+    if args.reviewed_only:
+        print(f'{len(rows)} human-reviewed pairs, {sum(map(len, files.values()))} bytes: {archive}')
+    else:
+        print(f"{len(files)} WebP files and {len(report['missingArtwork'])} pending dishes: {archive}")
 
 
 if __name__ == '__main__':

@@ -21,14 +21,26 @@ def main():
     parser.add_argument('--candidate-version', required=True)
     parser.add_argument('--image-prefix', default='images', help='Bucket directory for main images. Use an empty string for the root.')
     parser.add_argument('--thumbnail-prefix', default='thumbnails', help='Bucket directory for thumbnails.')
-    parser.add_argument('--dish-id', action='append',
-                        help='Verify a complete human-reviewed pair for this UUID. Default is every prepared pair.')
+    selection = parser.add_mutually_exclusive_group()
+    selection.add_argument('--dish-id', action='append',
+                           help='Verify a complete human-reviewed pair for this UUID. Default is every prepared pair.')
+    selection.add_argument('--dish-list', type=Path,
+                           help='Verify the exact UUIDs in reviewed-dish-ids.txt from an upload batch')
     args = parser.parse_args()
     bucket = storage_bucket(args.bucket_url)
     inventory = gm41.dc.load_json(ARTWORK)
     build(artwork=inventory)
     reviewed = {row['dishId']: row for row in inventory['images']}
-    requested = set(args.dish_id or reviewed)
+    if args.dish_list is not None:
+        try:
+            dish_ids = args.dish_list.read_text(encoding='utf-8-sig').splitlines()
+        except (OSError, UnicodeError):
+            parser.error('Cannot read the upload batch UUID list as UTF-8')
+        if not dish_ids or len(set(dish_ids)) != len(dish_ids):
+            parser.error('The upload batch UUID list must contain one unique UUID per line')
+    else:
+        dish_ids = args.dish_id or reviewed
+    requested = set(dish_ids)
     if not requested or not requested <= reviewed.keys():
         parser.error('Every requested UUID must have a reviewed image pair')
     if any(reviewed[dish_id]['aiCheck']['verdict'] != 'real_photo' for dish_id in requested):

@@ -1,21 +1,67 @@
 from copy import deepcopy
+from io import BytesIO
 from pathlib import Path
 import sys
+from tempfile import TemporaryDirectory
 import unittest
 from unittest.mock import patch
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / 'data-preparation/scripts'))
 
 import gm47_release_editorial as editorial
+import gm47_storage_receipt as receipt_cli
 
 
 class ReleaseEditorialTest(unittest.TestCase):
+    def test_storage_receipt_only_checks_the_uploaded_batch(self):
+        inventory = editorial.gm41.dc.load_json(editorial.ARTWORK)
+        approved, unreviewed = inventory['images'][:2]
+        unreviewed['aiCheck'].update(verdict='pending_human_review', checkedBy=None, checkedAt=None)
+        bucket = 'https://staging.example.invalid/storage/v1/object/public/catalogue'
+        assets = (approved, approved['thumbnail'])
+        paths = (approved['file'], approved['thumbnail']['objectKey'])
+        payloads = {f'{bucket}/{paths[0]}': b'main image bytes', f'{bucket}/{paths[1]}': b'thumbnail'}
+        for asset, key in zip(assets, paths, strict=True):
+            content = payloads[f'{bucket}/{key}']
+            asset.update(bytes=len(content), sha256=editorial.gm41.dc.sha(content))
+        inventory['totalBytes'] = sum(row['bytes'] for row in inventory['images'])
+
+        with TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            inventory_path = root / 'artwork-candidates.json'
+            inventory_path.write_bytes(editorial.gm41.dc.encoded(inventory))
+            uuid_file = root / 'reviewed-dish-ids.txt'
+            uuid_file.write_text(approved['dishId'] + '\n', encoding='utf-8')
+            args = [
+                'receipt', '--bucket-url', bucket, '--candidate-version', '1.4.5',
+                '--dish-list', str(uuid_file), '--image-prefix', '',
+            ]
+            with (patch.object(sys, 'argv', args),
+                  patch.object(receipt_cli, 'ARTWORK', inventory_path),
+                  patch.object(receipt_cli, 'OUTPUT', root),
+                  patch.object(receipt_cli, 'build_opener') as make_opener):
+                opener = make_opener.return_value
+                opener.open.side_effect = lambda request, timeout: BytesIO(payloads[request.full_url])
+                receipt_cli.main()
+                receipt_path = root / 'storage-receipt.json'
+                receipt = receipt_path.read_bytes()
+                self.assertEqual(
+                    [row['storedObjectKey'] for row in editorial.gm41.dc.load_json(receipt_path)['objects']],
+                    list(paths),
+                )
+                self.assertEqual(opener.open.call_count, 2)
+                uuid_file.write_text(approved['dishId'] + '\n' + unreviewed['dishId'] + '\n', encoding='utf-8')
+                with patch('sys.stderr'), self.assertRaises(SystemExit):
+                    receipt_cli.main()
+                self.assertEqual(opener.open.call_count, 2)
+                self.assertEqual(receipt_path.read_bytes(), receipt)
+
     def test_batch_changes_editorial_fields_only(self):
         base, digest = editorial.load_baseline()
         candidate, report = editorial.build()
         self.assertEqual(report['baseSha256'], digest)
         self.assertEqual(base['datasetVersion'], '1.3.0')
-        self.assertEqual(candidate['datasetVersion'], '1.4.3')
+        self.assertEqual(candidate['datasetVersion'], '1.4.4')
         self.assertEqual(candidate['usageScope'], 'test_demo')
         self.assertEqual(report['missingDescription'], [])
         self.assertEqual(len(report['descriptionSourceRefs']), 253)
@@ -151,7 +197,7 @@ class ReleaseEditorialTest(unittest.TestCase):
         photo['aiCheck'].update(verdict='pending_human_review', checkedBy=None, checkedAt=None)
         receipt = {
             'bucketPublicUrl': 'https://staging.example.invalid/storage/v1/object/public/catalogue',
-            'candidateDatasetVersion': '1.4.4',
+            'candidateDatasetVersion': '1.4.5',
             'checkedAt': '2026-11-25T01:00:00Z',
             'objects': [{key: row[key] for key in ('objectKey', 'sha256')} for row in (photo, photo['thumbnail'])],
         }
@@ -160,7 +206,7 @@ class ReleaseEditorialTest(unittest.TestCase):
         photo['aiCheck'].update(verdict='real_photo', checkedBy='Người kiểm fixture',
                                 checkedAt='2026-11-25T00:00:00Z')
         candidate, report = editorial.build(artwork=artwork, storage_receipt=receipt)
-        self.assertEqual(candidate['datasetVersion'], '1.4.4')
+        self.assertEqual(candidate['datasetVersion'], '1.4.5')
         attached = {row['id']: row['artwork'] for row in candidate['entities']['dishes'] if row['artwork'] is not None}
         self.assertEqual(set(attached), {photo['dishId']})
         art = attached[photo['dishId']]
