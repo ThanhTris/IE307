@@ -1,8 +1,9 @@
-import { Stack } from 'expo-router';
+import { Stack, useSegments } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { AppProviders } from '../bootstrap/AppProviders';
 import { PushLifecycle } from '../features/inbox/components/PushLifecycle';
 import { useShellTheme } from '../shared/lib/useShellTheme';
+import { HelpProvider } from '../features/support/HelpProvider';
 
 export default function RootLayout() {
   return <AppProviders><RootNavigation /></AppProviders>;
@@ -10,8 +11,9 @@ export default function RootLayout() {
 
 function RootNavigation() {
   const { colors, dark } = useShellTheme();
+  const segments = useSegments();
   return (
-    <>
+    <HelpProvider segments={segments}>
       <StatusBar style={dark ? 'light' : 'dark'} />
       <PushLifecycle />
       <Stack screenOptions={{ headerShown: false, animation: 'slide_from_right', animationDuration: 260, contentStyle: { backgroundColor: colors.background } }}>
@@ -21,6 +23,6 @@ function RootNavigation() {
         <Stack.Screen name="history" options={{ animation: 'fade', animationDuration: 200 }} />
         <Stack.Screen name="profile" options={{ animation: 'fade', animationDuration: 200 }} />
       </Stack>
-    </>
+    </HelpProvider>
   );
 }

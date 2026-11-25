@@ -386,7 +386,7 @@ describe('GM-25 Review Feedback Regression Suite', () => {
 
     // Host start fails with VERSION_CONFLICT.
     await user.press(screen.getByRole('button', { name: 'Bắt đầu chọn món' }));
-    expect(await screen.findByText('VERSION_CONFLICT')).toBeOnTheScreen();
+    expect(await screen.findByText('Phòng đã được cập nhật. Hãy thử lại.')).toBeOnTheScreen();
 
     // Must have refetched snapshot!
     await waitFor(() => expect(getSnapshotMock).toHaveBeenCalledTimes(2));
@@ -473,7 +473,7 @@ describe('GM-25 Review Feedback Regression Suite', () => {
 
     // First press results in TIMEOUT (uncertain outcome)
     await user.press(screen.getByRole('button', { name: 'Bắt đầu chọn món' }));
-    expect(await screen.findByText('TIMEOUT')).toBeOnTheScreen();
+    expect(await screen.findByText('Chờ vài giây rồi thử lại.')).toBeOnTheScreen();
     const firstCallRequestId = startRoundMock.mock.calls[0][0].requestId;
     expect(firstCallRequestId).toBeTruthy();
 

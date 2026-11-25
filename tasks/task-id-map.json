@@ -2719,6 +2719,47 @@
         "expected": "Danh sách ảo hóa, ảnh có cache và ghi công, số liệu hiệu năng trước/sau.",
         "cases": "253 món, ảnh lỗi, ảnh chưa có, ghi công, render lại, trợ năng, dark mode."
       }
+    },
+    {
+      "new_id": "GM-65",
+      "previous_ids": [],
+      "title": "UI báo lỗi, phục hồi và gửi báo lỗi cho quản trị viên",
+      "track": "INTEGRATION",
+      "stage": "integration",
+      "outputs": [
+        "supabase/migrations/0068_gm65_error_reports.sql",
+        "supabase/tests/GM-65_error_reports.test.sql",
+        "supabase/tests/http/GM-65.http",
+        "mobile/src/shared/errors/describeError.ts",
+        "mobile/src/shared/errors/errorReport.ts",
+        "mobile/src/shared/ui/feedback/ErrorRecovery.tsx",
+        "mobile/src/features/support/components/ReportErrorSheet.tsx",
+        "mobile/tests/unit/describeError.test.ts",
+        "mobile/tests/unit/errorReport.test.ts",
+        "scripts/gm65_reports_to_issues.py",
+        "docs/architecture/decisions/ADR-030-error-reports.md",
+        "docs/evidence/roadmap-v2/GM-65/CHECKS.md",
+        "docs/evidence/roadmap-v2/GM-65/FIGMA_PARITY.md"
+      ],
+      "inputs": [
+        {
+          "task": "GM-35",
+          "artifact": "mobile/src/features/account/index.ts",
+          "gate": "start"
+        },
+        {
+          "task": "GM-50",
+          "artifact": "docs/legal/PRIVACY_POLICY.md",
+          "gate": "merge"
+        }
+      ],
+      "verification": {
+        "mode": "expo-api",
+        "tool": "Jest component/unit, test SQL và HTTP trên QA thật, Android AVD với proxy giả lỗi.",
+        "entrypoint": "Mọi màn sản phẩm khi gặp lỗi và mục \"Trợ giúp & báo lỗi\".",
+        "expected": "Người dùng luôn biết chuyện gì xảy ra, làm gì tiếp và nhờ ai; báo lỗi tới được server.",
+        "cases": "503, mất mạng, hết giờ chờ, 401, 409, 429, phản hồi sai định dạng, gửi báo lỗi, giới hạn tần suất, trợ năng, dark mode trên Android."
+      }
     }
   ]
 }

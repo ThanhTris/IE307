@@ -6,6 +6,7 @@ import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context'
 import { useAppFonts } from '../../../bootstrap/AppFontProvider';
 import type { RoomSnapshot, SessionUser } from '../../../data/api/contracts';
 import { useInboxBadge } from '../../../shared/lib/inboxBadge';
+import { FailureNotice } from '../../../shared/ui/feedback/FailureNotice';
 import { useShellTheme } from '../../../shared/lib/useShellTheme';
 import { ToastNotice } from '../../../shared/ui/feedback/Toast';
 import { AppBottomNavigation, AppButton, AppHeader, AppIcon, AvatarRow, BrandBanner, FormField, LoadingState, SheetDialog, StatusNotice } from '../../../shared/ui';
@@ -156,6 +157,7 @@ export function HomeScreen({ repository, liveSession, activeRoom, onReturnToRoom
   return <SafeAreaView edges={['top', 'left', 'right']} style={[homeStyles.root, { backgroundColor: colors.background }]}>
     <AppHeader colors={colors} onInbox={openInbox} inboxBadge={unreadInbox} showFriends={false} showInbox={!isGuest} showProfile={false} allowTitleWrap hideDivider brandTextStyle={textStyle(700)} />
     <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={homeStyles.content}>
+      <FailureNotice destination="home" colors={colors} />
       {sessionNotice}
       {room.loading ? <StatusNotice title="Đang kiểm tra phòng đã lưu…" colors={colors} /> : null}
       {room.active && room.data ? <StatusNotice title={`Phòng #${room.data.code}`} message="Bạn có thể tiếp tục phiên hiện tại." actionLabel="Quay lại phòng" onAction={onResume} colors={colors} /> : null}

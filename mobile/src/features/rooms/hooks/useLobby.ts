@@ -1,5 +1,8 @@
 import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
-import type { ApiClient, RoomSnapshot } from '../../../data/api';
+import type { ApiClient, ErrorCode, RoomSnapshot } from '../../../data/api';
+import { describeError } from '../../../shared/errors/describeError';
+import { destinationFor, type FailureExit } from '../../../shared/errors/failure';
+import type { ReportContext } from '../../../shared/errors/errorReport';
 import { createDurableRequestId } from '../services/roomRepository';
 import { errorCopy } from '../services/roomEntry';
 import { useRoomUpdates } from './useRoomUpdates';
@@ -17,7 +20,15 @@ export interface UseLobbyParams {
   createRequestId?: (action: string) => string;
   onStartRound?: (snapshot: RoomSnapshot) => void;
   onHome: () => void;
+  /** The room cannot be used by this person any more; the route takes them elsewhere and says why. */
+  onExit?: (exit: FailureExit) => void;
 }
+
+/** Codes after which retrying in the lobby cannot work (see `destinationFor`). */
+const leavesLobby = (code: ErrorCode) => {
+  const destination = destinationFor(code, 'room');
+  return destination === 'home' || destination === 'signIn';
+};
 
 export function useLobby({
   repository,
@@ -26,6 +37,7 @@ export function useLobby({
   createRequestId,
   onStartRound,
   onHome,
+  onExit,
 }: UseLobbyParams) {
   const [snapshot, setSnapshot] = useState<RoomSnapshot | null>(null);
   const [loadedKey, setLoadedKey] = useState('');
@@ -35,6 +47,8 @@ export function useLobby({
   // Green for a done create/edit/delete, red for a server problem.
   const [noticeTone, setNoticeTone] = useState<'success' | 'error'>('error');
   const [busy, setBusy] = useState(false);
+  /** A failed action worth reporting; the screen offers "Báo lỗi" next to it. */
+  const [actionFailure, setActionFailure] = useState<ReportContext>();
   const [realRevision, setRealRevision] = useState(0);
   const [eligibilityError, setEligibilityError] = useState<string | null>(null);
   const busyRef = useRef(false);
@@ -56,6 +70,21 @@ export function useLobby({
   const loadState: 'loading' | 'error' | 'ready' = loading ? 'loading' : loadError ? 'error' : 'ready';
 
   const api = repository;
+
+  /** True while the person is leaving or cancelling on purpose, so the closing room is not treated as a failure. */
+  const selfExitRef = useRef(false);
+  const exitedRef = useRef<string | null>(null);
+  const exitLatest = useRef(onExit);
+  useLayoutEffect(() => { exitLatest.current = onExit; });
+  /** Leaves once per room. Returns false when the screen handles the failure itself (no `onExit`). */
+  const leaveBecause = useCallback((exit: FailureExit): boolean => {
+    if (!exitLatest.current || selfExitRef.current) return false;
+    if (exitedRef.current !== activeRoomId) {
+      exitedRef.current = activeRoomId;
+      exitLatest.current(exit);
+    }
+    return true;
+  }, [activeRoomId]);
 
   const checkEligibility = useCallback(async (snap: RoomSnapshot, isCurrent: () => boolean = () => true) => {
     if (snap.state !== 'LOBBY' || !snap.context) return;
@@ -104,6 +133,7 @@ export function useLobby({
       } else {
         setSnapshot(null);
         setLoadError(result.error.messageKey);
+        if (leavesLobby(result.error.messageKey)) leaveBecause({ code: result.error.messageKey });
       }
     }).catch(() => {
       if (!isCurrent()) return;
@@ -111,7 +141,7 @@ export function useLobby({
       setLoadError('NETWORK_ERROR');
     });
     return () => { active = false; };
-  }, [api, activeRoomId, loadKey, checkEligibility]);
+  }, [api, activeRoomId, loadKey, checkEligibility, leaveBecause]);
 
   const refreshSnapshot = async (targetId: string): Promise<RoomSnapshot | null> => {
     if (!targetId) return null;
@@ -123,7 +153,8 @@ export function useLobby({
       void checkEligibility(result.data, () => scopeRef.current === scope);
       return result.data;
     } else {
-      setNotice(`Không đọc lại được snapshot · ${result.error.messageKey}`); setNoticeTone('error');
+      if (leavesLobby(result.error.messageKey) && (selfExitRef.current || leaveBecause({ code: result.error.messageKey }))) return null;
+      setNotice(`Chưa cập nhật được phòng · ${describeError(result.error).message}`); setNoticeTone('error');
       return null;
     }
   };
@@ -143,8 +174,9 @@ export function useLobby({
       const result = await api.getRoomSnapshot(activeRoomId);
       if (!shouldApply()) return null;
       if (!result.ok) {
-        if (['NOT_MEMBER', 'AUTH_REQUIRED', 'ROOM_EXPIRED', 'ROOM_TERMINAL'].includes(result.error.messageKey)) {
+        if (leavesLobby(result.error.messageKey) && !selfExitRef.current) {
           applyBackgroundLoadError(result.error.messageKey);
+          leaveBecause({ code: result.error.messageKey });
         }
         return null;
       }
@@ -156,7 +188,13 @@ export function useLobby({
       void checkEligibility(next, shouldApply);
       return next;
     },
-    onError: error => applyBackgroundLoadError(error.messageKey),
+    onError: error => {
+      if (selfExitRef.current) return;
+      // A passing sync problem keeps what is on screen; only a room that is gone replaces it.
+      if (!leavesLobby(error.messageKey) && snapshot) return;
+      applyBackgroundLoadError(error.messageKey);
+      if (leavesLobby(error.messageKey)) leaveBecause({ code: error.messageKey });
+    },
   });
 
   const getRequestId = (action: string, version: number, targetId?: string) => {
@@ -182,12 +220,21 @@ export function useLobby({
       if (!onStartRound || openedVotingRef.current === scope) return;
       openedVotingRef.current = scope;
       onStartRound(snapshot);
-    } else if ((snapshot.state === 'CANCELLED' || snapshot.state === 'EXPIRED') && !isHost) {
-      if (closedRoomRef.current === scope) return;
+    } else if (snapshot.state === 'CANCELLED' || snapshot.state === 'EXPIRED') {
+      if (closedRoomRef.current === scope || selfExitRef.current) return;
       closedRoomRef.current = scope;
-      onHome();
+      const handled = leaveBecause(snapshot.state === 'EXPIRED'
+        ? { code: 'ROOM_EXPIRED', title: 'Phòng đã hết hạn' }
+        : { code: 'ROOM_TERMINAL', title: isHost ? 'Phòng đã bị hủy' : 'Chủ phòng đã hủy phòng' });
+      if (!handled && !isHost) onHome();
     }
-  }, [activeRoomId, busy, isHost, loadState, onHome, onStartRound, snapshot, viewer]);
+  }, [activeRoomId, busy, isHost, leaveBecause, loadState, onHome, onStartRound, snapshot, viewer]);
+
+  // Removed by the host, or a link to a room this account is not in.
+  useEffect(() => {
+    if (loadState !== 'ready' || !currentUserId || viewer || snapshot?.roomId !== activeRoomId) return;
+    leaveBecause({ code: 'NOT_MEMBER' });
+  }, [activeRoomId, currentUserId, leaveBecause, loadState, snapshot, viewer]);
 
   const displaySnapshot = snapshot;
   const members = displaySnapshot?.members.map(member => ({
@@ -206,6 +253,18 @@ export function useLobby({
     busyRef.current = true;
     setBusy(true);
     setNotice('');
+    setActionFailure(undefined);
+    selfExitRef.current = action === 'leave' || action === 'cancel';
+    const showFailure = (code: ErrorCode) => {
+      const description = describeError({ messageKey: code });
+      const message = code === 'NOT_ENOUGH_MEMBERS' || code === 'MEMBERS_NOT_READY' ? errorCopy[code]
+        : destinationFor(code, 'room') === 'reload' ? 'Phòng đã được cập nhật. Hãy thử lại.' : description.message;
+      const title = code === 'NOT_ENOUGH_MEMBERS' || code === 'MEMBERS_NOT_READY' ? 'Chưa thực hiện được' : description.title;
+      setNotice(`${title} · ${message}`); setNoticeTone('error');
+      if (description.reportable) {
+        setActionFailure({ errorCode: code, screen: 'room/lobby', action, occurredAt: new Date().toISOString() });
+      }
+    };
     const requestId = getRequestId(action, snapshot.version, partnerId);
     try {
       let result;
@@ -225,10 +284,10 @@ export function useLobby({
         result = await api.inviteToRoom({ roomId: snapshot.roomId, partnerId: partnerId ?? 'usr_tuan_002', expectedVersion: snapshot.version, requestId });
       }
       if (!result.ok) {
-        const failure = result.error.messageKey === 'NOT_ENOUGH_MEMBERS' || result.error.messageKey === 'MEMBERS_NOT_READY'
-          ? errorCopy[result.error.messageKey]
-          : result.error.messageKey;
-        setNotice(`Chưa thực hiện được · ${failure}`); setNoticeTone('error');
+        selfExitRef.current = false;
+        const code = result.error.messageKey as ErrorCode;
+        if (leavesLobby(code) && leaveBecause({ code })) return;
+        showFailure(code);
         if (result.error.messageKey === 'TIMEOUT' || result.error.messageKey === 'NETWORK_ERROR') {
           if (pendingIntentRef.current) {
             pendingIntentRef.current.uncertain = true;
@@ -267,10 +326,11 @@ export function useLobby({
         setNotice('Lời mời đã tạo.'); setNoticeTone('success');
       }
     } catch {
+      selfExitRef.current = false;
       if (pendingIntentRef.current) {
         pendingIntentRef.current.uncertain = true;
       }
-      setNotice('Không hoàn tất được thao tác. Có thể thử lại khi đã tải được trạng thái mới.'); setNoticeTone('error');
+      showFailure('NETWORK_ERROR');
     } finally {
       busyRef.current = false;
       setBusy(false);
@@ -295,5 +355,6 @@ export function useLobby({
     reload,
     refreshSnapshot,
     runWrite,
+    actionFailure,
   };
 }
