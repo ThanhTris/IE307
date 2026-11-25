@@ -22,7 +22,7 @@ def main():
     parser.add_argument('--image-prefix', default='images', help='Bucket directory for main images. Use an empty string for the root.')
     parser.add_argument('--thumbnail-prefix', default='thumbnails', help='Bucket directory for thumbnails.')
     parser.add_argument('--dish-id', action='append',
-                        help='Verify a complete pair for this UUID. Default is every prepared pair.')
+                        help='Verify a complete human-reviewed pair for this UUID. Default is every prepared pair.')
     args = parser.parse_args()
     bucket = storage_bucket(args.bucket_url)
     inventory = gm41.dc.load_json(ARTWORK)
@@ -31,6 +31,8 @@ def main():
     requested = set(args.dish_id or reviewed)
     if not requested or not requested <= reviewed.keys():
         parser.error('Every requested UUID must have a reviewed image pair')
+    if any(reviewed[dish_id]['aiCheck']['verdict'] != 'real_photo' for dish_id in requested):
+        parser.error('Every requested image pair needs human photo review before Storage verification')
     prefixes = [prefix.strip('/') for prefix in (args.image_prefix, args.thumbnail_prefix)]
     if prefixes[0] == prefixes[1]:
         parser.error('Main and thumbnail objects must have different paths')

@@ -72,18 +72,26 @@ class ReleaseEditorialTest(unittest.TestCase):
     def test_shared_source_stays_pending_with_an_unreviewed_description(self):
         load = editorial.gm41.dc.load_json
         locator = 'https://vietnam.travel/vi/things-to-do/15-dreamy-desserts-try-vietnam/'
+        _, report = editorial.build()
+        assisted = next(row for row in report['descriptionRightsReview'] if row['locator'] == locator)
+        self.assertEqual(assisted['status'], 'needs_confirmation')
+        self.assertFalse(assisted['reviewedDishIds'])
+        self.assertEqual(len(assisted['prechecks']), len(assisted['dishIds']))
 
-        def partial_review(path):
+        def record_signoff(path, *, partial=False):
             result = load(path)
             if path == editorial.INPUT:
-                row = next(row for row in result['descriptions'] if row['locator'] == locator)
-                del row['factReview']
+                rows = [row for row in result['descriptions'] if row['locator'] == locator]
+                for row in rows[1 if partial else 0:]:
+                    row['factReview'].update(
+                        checkedBy='Người kiểm fixture', checkedAt='2026-11-25T00:00:00Z')
             return result
 
-        _, report = editorial.build()
+        with patch.object(editorial.gm41.dc, 'load_json', side_effect=record_signoff):
+            _, report = editorial.build()
         complete = next(row for row in report['descriptionRightsReview'] if row['locator'] == locator)
         self.assertEqual(complete['status'], editorial.FACT_REFERENCE)
-        with patch.object(editorial.gm41.dc, 'load_json', side_effect=partial_review):
+        with patch.object(editorial.gm41.dc, 'load_json', side_effect=lambda path: record_signoff(path, partial=True)):
             _, report = editorial.build()
         pending = next(row for row in report['descriptionRightsReview'] if row['locator'] == locator)
         self.assertEqual(pending['status'], 'needs_confirmation')
@@ -93,6 +101,12 @@ class ReleaseEditorialTest(unittest.TestCase):
         row = next(row for row in editorial.gm41.dc.load_json(editorial.INPUT)['descriptions'] if 'factReview' in row)
         row['description'] += ' Nội dung thay đổi.'
         with self.assertRaisesRegex(ValueError, 'stale GM-47 description review'):
+            editorial.description_review(row)
+
+    def test_rejects_tool_as_named_reviewer(self):
+        row = next(row for row in editorial.gm41.dc.load_json(editorial.INPUT)['descriptions'] if 'factReview' in row)
+        row['factReview'].update(checkedBy='Codex (hỗ trợ Tâm)', checkedAt='2026-11-25T00:00:00Z')
+        with self.assertRaisesRegex(ValueError, 'named human reviewer'):
             editorial.description_review(row)
 
     def test_rejects_artwork_for_a_different_base(self):
@@ -134,9 +148,13 @@ class ReleaseEditorialTest(unittest.TestCase):
         receipt = {
             'bucketPublicUrl': 'https://staging.example.invalid/storage/v1/object/public/catalogue',
             'candidateDatasetVersion': '1.4.3',
-            'checkedAt': '2026-11-24T14:00:00Z',
+            'checkedAt': '2026-11-25T01:00:00Z',
             'objects': [{key: row[key] for key in ('objectKey', 'sha256')} for row in (photo, photo['thumbnail'])],
         }
+        with self.assertRaisesRegex(ValueError, 'requires human photo review'):
+            editorial.build(artwork=artwork, storage_receipt=receipt)
+        photo['aiCheck'].update(verdict='real_photo', checkedBy='Người kiểm fixture',
+                                checkedAt='2026-11-25T00:00:00Z')
         candidate, report = editorial.build(artwork=artwork, storage_receipt=receipt)
         self.assertEqual(candidate['datasetVersion'], '1.4.3')
         attached = {row['id']: row['artwork'] for row in candidate['entities']['dishes'] if row['artwork'] is not None}

@@ -10,10 +10,14 @@
       "checkedAt": "2026-11-24T16:58:31Z",
       "description": "Có kiểu kem dừa được múc vào vỏ trái dừa, dùng cùng lạc hoặc bánh quy để thêm phần giòn khi ăn.",
       "factReview": {
-        "checkedBy": "Codex (hỗ trợ Tâm)",
-        "checkedAt": "2026-11-24T17:28:57Z",
+        "checkedBy": null,
+        "checkedAt": null,
         "facts": "Kem dọn trong trái dừa, có thể thêm lạc hoặc bánh quy.",
-        "textSha256": "5d5b6dba9c2506b4561e06b406751ccc2d104596fe848a9c58d0ef97dcf27001"
+        "textSha256": "5d5b6dba9c2506b4561e06b406751ccc2d104596fe848a9c58d0ef97dcf27001",
+        "assistance": {
+          "tool": "Codex",
+          "checkedAt": "2026-11-24T17:28:57Z"
+        }
       }
     },
     {
@@ -23,10 +27,14 @@
       "description": "Ổ bánh mì giòn vỏ và mềm ruột có thể kẹp patê. Có phiên bản thêm dưa leo, đồ chua và rau mùi.",
       "checkedAt": "2026-11-21T17:11:47Z",
       "factReview": {
-        "checkedBy": "Codex (hỗ trợ Tâm)",
-        "checkedAt": "2026-11-24T17:28:57Z",
+        "checkedBy": null,
+        "checkedAt": null,
         "facts": "Vỏ giòn, ruột mềm, có bản dùng patê, đồ chua, rau mùi và dưa leo.",
-        "textSha256": "4126a7c88626d8db8d0fecb282c10975c84370df5e1f3f8632df6cd12be991a3"
+        "textSha256": "4126a7c88626d8db8d0fecb282c10975c84370df5e1f3f8632df6cd12be991a3",
+        "assistance": {
+          "tool": "Codex",
+          "checkedAt": "2026-11-24T17:28:57Z"
+        }
       }
     },
     {
@@ -36,10 +44,14 @@
       "checkedAt": "2026-11-24T16:58:31Z",
       "description": "Có thể xé chiếc bánh bẻng Hải Phòng ra để thấy phần ruột xốp. Kiểu ăn kèm sữa đặc hợp khi bánh còn nóng.",
       "factReview": {
-        "checkedBy": "Codex (hỗ trợ Tâm)",
-        "checkedAt": "2026-11-24T17:28:57Z",
+        "checkedBy": null,
+        "checkedAt": null,
         "facts": "Bánh bản rộng, ruột xốp, dùng nóng và chấm sữa đặc.",
-        "textSha256": "c6d713fdec9c1b0c502546cc6a108c271b23f88dfad7f1c2d867fa36448004de"
+        "textSha256": "c6d713fdec9c1b0c502546cc6a108c271b23f88dfad7f1c2d867fa36448004de",
+        "assistance": {
+          "tool": "Codex",
+          "checkedAt": "2026-11-24T17:28:57Z"
+        }
       }
     },
     {
@@ -56,10 +68,14 @@
       "checkedAt": "2026-11-24T16:58:31Z",
       "description": "Hạt gạo ngâm nước dừa rồi hấp ngay trong trái dừa. Kiểu Bến Tre thường dọn cơm kèm tép rang, thêm vị mặn bên cạnh vị ngọt nhẹ của cơm.",
       "factReview": {
-        "checkedBy": "Codex (hỗ trợ Tâm)",
-        "checkedAt": "2026-11-24T17:28:57Z",
+        "checkedBy": null,
+        "checkedAt": null,
         "facts": "Gạo ngâm nước dừa, hấp trong trái, đi cùng tép rang ở Bến Tre.",
-        "textSha256": "092bb5551ac1564e4d4cedd37608c9f8db0ae948e21adf1fc8235447b2a3400d"
+        "textSha256": "092bb5551ac1564e4d4cedd37608c9f8db0ae948e21adf1fc8235447b2a3400d",
+        "assistance": {
+          "tool": "Codex",
+          "checkedAt": "2026-11-24T17:28:57Z"
+        }
       }
     },
     {
@@ -76,10 +92,14 @@
       "checkedAt": "2026-11-22T02:50:00Z",
       "description": "Viên sủi dìn có lớp bột nếp bọc vừng đen và lạc. Khi dọn, nước mật ngọt bao quanh các viên bánh.",
       "factReview": {
-        "checkedBy": "Codex (hỗ trợ Tâm)",
-        "checkedAt": "2026-11-24T17:28:57Z",
+        "checkedBy": null,
+        "checkedAt": null,
         "facts": "Bột nếp, nhân mè đen và lạc, ăn với nước mật.",
-        "textSha256": "06ea493e0ae5fdcda4dd782b88794ac823961b027cc980fab1a0a5a5a35f3f22"
+        "textSha256": "06ea493e0ae5fdcda4dd782b88794ac823961b027cc980fab1a0a5a5a35f3f22",
+        "assistance": {
+          "tool": "Codex",
+          "checkedAt": "2026-11-24T17:28:57Z"
+        }
       }
     },
     {
@@ -117,10 +137,14 @@
       "checkedAt": "2026-11-24T16:58:31Z",
       "description": "Mỗi cuốn dùng nguyên tấm bánh phở mềm để bọc nhân. Một kiểu ở Trúc Bạch có thịt bò nướng, ăn kèm nước mắm ớt pha nước quất.",
       "factReview": {
-        "checkedBy": "Codex (hỗ trợ Tâm)",
-        "checkedAt": "2026-11-24T17:28:57Z",
+        "checkedBy": null,
+        "checkedAt": null,
         "facts": "Bánh phở mềm, bản Trúc Bạch dùng thịt bò nướng và nước mắm ớt quất.",
-        "textSha256": "505962ad91fb07e6e3d73178b7632e2a6754b3fedcd389d11bc6df9854391ad9"
+        "textSha256": "505962ad91fb07e6e3d73178b7632e2a6754b3fedcd389d11bc6df9854391ad9",
+        "assistance": {
+          "tool": "Codex",
+          "checkedAt": "2026-11-24T17:28:57Z"
+        }
       }
     },
     {
@@ -130,10 +154,14 @@
       "checkedAt": "2026-11-24T16:58:31Z",
       "description": "Gà ướp sả, gừng và lá chanh được cho vào ống tre rồi nướng trên than. Khi nướng, người làm xoay ống để hơi nóng lan đều quanh phần thịt.",
       "factReview": {
-        "checkedBy": "Codex (hỗ trợ Tâm)",
-        "checkedAt": "2026-11-24T17:28:57Z",
+        "checkedBy": null,
+        "checkedAt": null,
         "facts": "Một cách ướp với lá chanh, sả và gừng, nướng than và xoay ống để chín đều.",
-        "textSha256": "e10364e730025d65f5585540e6874fded2ff7cd929db476e076f108819371378"
+        "textSha256": "e10364e730025d65f5585540e6874fded2ff7cd929db476e076f108819371378",
+        "assistance": {
+          "tool": "Codex",
+          "checkedAt": "2026-11-24T17:28:57Z"
+        }
       }
     },
     {
@@ -150,10 +178,14 @@
       "checkedAt": "2026-11-22T02:39:00Z",
       "description": "Mận Hà Nội có vị chua ngọt. Một cách dọn là cho mận vào hộp ăn liền và để muối chấm thành phần riêng.",
       "factReview": {
-        "checkedBy": "Codex (hỗ trợ Tâm)",
-        "checkedAt": "2026-11-24T17:30:33Z",
+        "checkedBy": null,
+        "checkedAt": null,
         "facts": "Menu ghi mận Hà Nội chua ngọt đóng hộp, có muối chấm.",
-        "textSha256": "8ebf1092ce6078ec13e9f2e4f6e67193af396310011d0ccd57b966672c90dfee"
+        "textSha256": "8ebf1092ce6078ec13e9f2e4f6e67193af396310011d0ccd57b966672c90dfee",
+        "assistance": {
+          "tool": "Codex",
+          "checkedAt": "2026-11-24T17:30:33Z"
+        }
       }
     },
     {
@@ -163,10 +195,14 @@
       "checkedAt": "2026-11-22T02:34:21Z",
       "description": "Mè xửng là một món kẹo của Huế. Phần mạch nha làm miếng kẹo có độ dẻo và hơi dính khi nhai.",
       "factReview": {
-        "checkedBy": "Codex (hỗ trợ Tâm)",
-        "checkedAt": "2026-11-24T17:28:57Z",
+        "checkedBy": null,
+        "checkedAt": null,
         "facts": "Kẹo Huế, mạch nha, kết cấu dẻo.",
-        "textSha256": "99376cd57fb7a7e2a14eb3f01ca7c5b6645b881fc15327a58bc215df714faff2"
+        "textSha256": "99376cd57fb7a7e2a14eb3f01ca7c5b6645b881fc15327a58bc215df714faff2",
+        "assistance": {
+          "tool": "Codex",
+          "checkedAt": "2026-11-24T17:28:57Z"
+        }
       }
     },
     {
@@ -183,10 +219,14 @@
       "checkedAt": "2026-11-22T02:34:21Z",
       "description": "Trong một bát chè khúc bạch dùng lạnh, miếng chè mềm ăn cùng vải và hạnh nhân trên nền đá bào.",
       "factReview": {
-        "checkedBy": "Codex (hỗ trợ Tâm)",
-        "checkedAt": "2026-11-24T17:28:57Z",
+        "checkedBy": null,
+        "checkedAt": null,
         "facts": "Miếng chè mềm, vải, hạnh nhân, đá bào.",
-        "textSha256": "c7a12ec476566f72ec492db760d4c2958eaa0f0a7dd46c6de22996750750c158"
+        "textSha256": "c7a12ec476566f72ec492db760d4c2958eaa0f0a7dd46c6de22996750750c158",
+        "assistance": {
+          "tool": "Codex",
+          "checkedAt": "2026-11-24T17:28:57Z"
+        }
       }
     },
     {
@@ -231,10 +271,14 @@
       "checkedAt": "2026-11-22T02:34:21Z",
       "description": "Sợi bánh đa đỏ nằm dưới lớp nước dùng cua đồng. Trong bát kiểu Hải Phòng có thể thấy riêu cua, tôm và chả cá.",
       "factReview": {
-        "checkedBy": "Codex (hỗ trợ Tâm)",
-        "checkedAt": "2026-11-24T17:28:57Z",
+        "checkedBy": null,
+        "checkedAt": null,
         "facts": "Sợi bánh đa đỏ, nước dùng cua, có riêu, chả cá và tôm.",
-        "textSha256": "555b85e1d4de2e3d53ac2a7b073030b196012ceb0e7eb3b040802d8552e3cbe6"
+        "textSha256": "555b85e1d4de2e3d53ac2a7b073030b196012ceb0e7eb3b040802d8552e3cbe6",
+        "assistance": {
+          "tool": "Codex",
+          "checkedAt": "2026-11-24T17:28:57Z"
+        }
       }
     },
     {
@@ -286,10 +330,14 @@
       "description": "Lớp bánh tráng ẩm ôm phần nhân tôm, thịt và rau thơm ở một kiểu cuốn quen thuộc. Mỗi cuốn dùng cùng nước chấm riêng.",
       "checkedAt": "2026-11-21T17:11:47Z",
       "factReview": {
-        "checkedBy": "Codex (hỗ trợ Tâm)",
-        "checkedAt": "2026-11-24T17:28:57Z",
+        "checkedBy": null,
+        "checkedAt": null,
         "facts": "Bánh tráng mềm, rau, tôm/thịt và nước chấm ở kiểu phổ biến.",
-        "textSha256": "91e7f768fc34a4ab2f400308fb1c3bd2430f6c41286171e75b4a1e701a34dd36"
+        "textSha256": "91e7f768fc34a4ab2f400308fb1c3bd2430f6c41286171e75b4a1e701a34dd36",
+        "assistance": {
+          "tool": "Codex",
+          "checkedAt": "2026-11-24T17:28:57Z"
+        }
       }
     },
     {
@@ -306,10 +354,14 @@
       "checkedAt": "2026-11-22T02:34:21Z",
       "description": "Mứt giữ vị cay của gừng bên dưới lớp ngọt từ đường. Có thể nhâm nhi từng miếng nhỏ khi uống trà.",
       "factReview": {
-        "checkedBy": "Codex (hỗ trợ Tâm)",
-        "checkedAt": "2026-11-24T17:28:57Z",
+        "checkedBy": null,
+        "checkedAt": null,
         "facts": "Gừng ngào đường, vị cay ngọt và cách dùng cùng trà.",
-        "textSha256": "3c7cf23a318f7398d22d2a1dcaae2cf6b4efccf998003f4d06970e3a3b87d42c"
+        "textSha256": "3c7cf23a318f7398d22d2a1dcaae2cf6b4efccf998003f4d06970e3a3b87d42c",
+        "assistance": {
+          "tool": "Codex",
+          "checkedAt": "2026-11-24T17:28:57Z"
+        }
       }
     },
     {
@@ -347,10 +399,14 @@
       "checkedAt": "2026-11-22T02:39:00Z",
       "description": "Hộp trái cây cắt sẵn thập cẩm gom nhiều loại quả trong cùng một phần để có thể ăn xen từng món.",
       "factReview": {
-        "checkedBy": "Codex (hỗ trợ Tâm)",
-        "checkedAt": "2026-11-24T17:30:33Z",
+        "checkedBy": null,
+        "checkedAt": null,
         "facts": "Menu có hộp trái cây cắt sẵn với nhiều loại quả theo phần.",
-        "textSha256": "19132fc40e19a28cbf36079fbcff17a3115f8a5399d5124b694212bedda82dcc"
+        "textSha256": "19132fc40e19a28cbf36079fbcff17a3115f8a5399d5124b694212bedda82dcc",
+        "assistance": {
+          "tool": "Codex",
+          "checkedAt": "2026-11-24T17:30:33Z"
+        }
       }
     },
     {
@@ -402,10 +458,14 @@
       "checkedAt": "2026-11-22T02:34:21Z",
       "description": "Cánh gà sau khi chiên được trộn với phần nước mắm. Một cách dọn thêm hành lá và hành tây lên đĩa.",
       "factReview": {
-        "checkedBy": "Codex (hỗ trợ Tâm)",
-        "checkedAt": "2026-11-24T17:30:33Z",
+        "checkedBy": null,
+        "checkedAt": null,
         "facts": "Cánh gà chiên áo nước mắm, dọn với hành tây và hành lá.",
-        "textSha256": "fbfd452f7a087b09aae7d2b81d8ac7f52486fa452d49f63778e31fc5e73d6fa3"
+        "textSha256": "fbfd452f7a087b09aae7d2b81d8ac7f52486fa452d49f63778e31fc5e73d6fa3",
+        "assistance": {
+          "tool": "Codex",
+          "checkedAt": "2026-11-24T17:30:33Z"
+        }
       }
     },
     {
@@ -415,10 +475,14 @@
       "checkedAt": "2026-11-22T02:34:21Z",
       "description": "Phần nấm xào được dùng trong súp cùng kem sữa. Có kiểu thêm dầu nấm truffle và ăn kèm bánh mì giòn.",
       "factReview": {
-        "checkedBy": "Codex (hỗ trợ Tâm)",
-        "checkedAt": "2026-11-24T17:30:33Z",
+        "checkedBy": null,
+        "checkedAt": null,
         "facts": "Nấm xào, kem sữa, dầu truffle và bánh mì nướng giòn.",
-        "textSha256": "610dc893d95749379e1b5a076d41736b3908a781789627d1135ae090d5cf7f1c"
+        "textSha256": "610dc893d95749379e1b5a076d41736b3908a781789627d1135ae090d5cf7f1c",
+        "assistance": {
+          "tool": "Codex",
+          "checkedAt": "2026-11-24T17:30:33Z"
+        }
       }
     },
     {
@@ -498,10 +562,14 @@
       "checkedAt": "2026-11-22T02:34:21Z",
       "description": "Bắp tươi là phần chính trong chén chè kiểu Hội An. Có thể dùng cùng bột báng và kem dừa.",
       "factReview": {
-        "checkedBy": "Codex (hỗ trợ Tâm)",
-        "checkedAt": "2026-11-24T17:28:57Z",
+        "checkedBy": null,
+        "checkedAt": null,
         "facts": "Bắp tươi Hội An, bột báng, kem dừa.",
-        "textSha256": "0f01a7dffb3dfab52c0dff2908e4d27cdd9f4e43f1c81119b70851144ce81005"
+        "textSha256": "0f01a7dffb3dfab52c0dff2908e4d27cdd9f4e43f1c81119b70851144ce81005",
+        "assistance": {
+          "tool": "Codex",
+          "checkedAt": "2026-11-24T17:28:57Z"
+        }
       }
     },
     {
@@ -511,10 +579,14 @@
       "checkedAt": "2026-11-23T02:22:10Z",
       "description": "Bánh đa cá có thể dùng sợi bánh đa đỏ với cá diếc. Một chút thì là làm dậy mùi phần nước chan.",
       "factReview": {
-        "checkedBy": "Codex (hỗ trợ Tâm)",
-        "checkedAt": "2026-11-24T17:30:33Z",
+        "checkedBy": null,
+        "checkedAt": null,
         "facts": "Bánh đa đỏ với cá diếc, thì là và nước chan trong công thức.",
-        "textSha256": "7fadf5e5426a7fa22983a94f2eca89082a0f2503b3814cdf7234b24baaad50b1"
+        "textSha256": "7fadf5e5426a7fa22983a94f2eca89082a0f2503b3814cdf7234b24baaad50b1",
+        "assistance": {
+          "tool": "Codex",
+          "checkedAt": "2026-11-24T17:30:33Z"
+        }
       }
     },
     {
@@ -538,10 +610,14 @@
       "checkedAt": "2026-11-22T02:50:00Z",
       "description": "Phần gà kho có mùi sả và vị cay từ ớt. Có thể ăn xen từng miếng gà với cơm khi còn nóng.",
       "factReview": {
-        "checkedBy": "Codex (hỗ trợ Tâm)",
-        "checkedAt": "2026-11-24T17:30:33Z",
+        "checkedBy": null,
+        "checkedAt": null,
         "facts": "Gà kho có sả, ớt, dùng với cơm nóng.",
-        "textSha256": "e793002c76313ba02cdc55832daf6d5042288da8a1ba8b049db4e7e346fbd3e9"
+        "textSha256": "e793002c76313ba02cdc55832daf6d5042288da8a1ba8b049db4e7e346fbd3e9",
+        "assistance": {
+          "tool": "Codex",
+          "checkedAt": "2026-11-24T17:30:33Z"
+        }
       }
     },
     {
@@ -565,10 +641,14 @@
       "checkedAt": "2026-11-22T02:39:00Z",
       "description": "Thơm dọn thành phần riêng và dùng với muối tôm. Có thể chấm từng miếng theo độ mặn mình thích.",
       "factReview": {
-        "checkedBy": "Codex (hỗ trợ Tâm)",
-        "checkedAt": "2026-11-24T17:30:33Z",
+        "checkedBy": null,
+        "checkedAt": null,
         "facts": "Thơm được bán theo phần cùng muối tôm.",
-        "textSha256": "78d0837d06531d0d3e1c6ee51acdbe83e7947d9efd40cb6c3599b37cbcc07d37"
+        "textSha256": "78d0837d06531d0d3e1c6ee51acdbe83e7947d9efd40cb6c3599b37cbcc07d37",
+        "assistance": {
+          "tool": "Codex",
+          "checkedAt": "2026-11-24T17:30:33Z"
+        }
       }
     },
     {
@@ -613,10 +693,14 @@
       "checkedAt": "2026-11-22T02:34:21Z",
       "description": "Miếng bánh đa mè giòn làm đế cho lớp kê mềm. Khi dọn, có thể phủ thêm đậu xanh và một ít đường.",
       "factReview": {
-        "checkedBy": "Codex (hỗ trợ Tâm)",
-        "checkedAt": "2026-11-24T17:28:57Z",
+        "checkedBy": null,
+        "checkedAt": null,
         "facts": "Bánh đa mè, chè kê, đậu xanh và đường.",
-        "textSha256": "1206b2af65ccd2dee5e07f49d5921cf1d4641f2ae383797ba35d9389d2ac41d6"
+        "textSha256": "1206b2af65ccd2dee5e07f49d5921cf1d4641f2ae383797ba35d9389d2ac41d6",
+        "assistance": {
+          "tool": "Codex",
+          "checkedAt": "2026-11-24T17:28:57Z"
+        }
       }
     },
     {
@@ -640,10 +724,14 @@
       "checkedAt": "2026-11-22T02:43:00Z",
       "description": "Bánh hỏi có sợi nhỏ từ bột gạo. Theo kiểu Quy Nhơn, bánh được rắc hẹ rồi dọn cùng lòng heo và cháo.",
       "factReview": {
-        "checkedBy": "Codex (hỗ trợ Tâm)",
-        "checkedAt": "2026-11-24T17:30:33Z",
+        "checkedBy": null,
+        "checkedAt": null,
         "facts": "Sợi bột gạo nhỏ, hẹ, lòng heo và cháo lòng ăn kèm ở Quy Nhơn.",
-        "textSha256": "959bfa8c9934c14e741956700bd639ab03c66abb0a81ddc8464ffcac287010f8"
+        "textSha256": "959bfa8c9934c14e741956700bd639ab03c66abb0a81ddc8464ffcac287010f8",
+        "assistance": {
+          "tool": "Codex",
+          "checkedAt": "2026-11-24T17:30:33Z"
+        }
       }
     },
     {
@@ -667,10 +755,14 @@
       "checkedAt": "2026-11-22T02:34:21Z",
       "description": "Giá bể là một loại nhuyễn thể có thịt giòn. Kiểu xào ở Hải Phòng dùng nghệ và sả, dọn nóng với phần sốt sánh.",
       "factReview": {
-        "checkedBy": "Codex (hỗ trợ Tâm)",
-        "checkedAt": "2026-11-24T17:28:57Z",
+        "checkedBy": null,
+        "checkedAt": null,
         "facts": "Nhuyễn thể biển xào sả và nghệ, sốt sánh, món nóng.",
-        "textSha256": "1a91112baf802744dc205d6f4d525241ce589983433277896ebef5523d4575f6"
+        "textSha256": "1a91112baf802744dc205d6f4d525241ce589983433277896ebef5523d4575f6",
+        "assistance": {
+          "tool": "Codex",
+          "checkedAt": "2026-11-24T17:28:57Z"
+        }
       }
     },
     {
@@ -736,10 +828,14 @@
       "checkedAt": "2026-11-22T02:43:00Z",
       "description": "Một cách làm món gà nướng lá chanh dùng phần đùi. Lá chanh tạo mùi thơm cho miếng gà khi nướng.",
       "factReview": {
-        "checkedBy": "Codex (hỗ trợ Tâm)",
-        "checkedAt": "2026-11-24T17:30:33Z",
+        "checkedBy": null,
+        "checkedAt": null,
         "facts": "Menu ghi đùi gà nướng vị lá chanh.",
-        "textSha256": "572bf0eef07725e1bace8e7b93d471312a993b402d728b0b49469a1e86a7450f"
+        "textSha256": "572bf0eef07725e1bace8e7b93d471312a993b402d728b0b49469a1e86a7450f",
+        "assistance": {
+          "tool": "Codex",
+          "checkedAt": "2026-11-24T17:30:33Z"
+        }
       }
     },
     {
@@ -749,10 +845,14 @@
       "description": "Mì Quảng chỉ chan một ít nước dùng nên vẫn thấy rõ phần sợi và nhân. Có thể dùng thêm rau và bánh tráng mè.",
       "checkedAt": "2026-11-21T17:11:47Z",
       "factReview": {
-        "checkedBy": "Codex (hỗ trợ Tâm)",
-        "checkedAt": "2026-11-24T17:28:57Z",
+        "checkedBy": null,
+        "checkedAt": null,
         "facts": "Chan ít nước, có rau và bánh tráng mè.",
-        "textSha256": "ee84e638d6eb196e636a1832e18f80c2a6877e32604d035d28e18aa217a61ecd"
+        "textSha256": "ee84e638d6eb196e636a1832e18f80c2a6877e32604d035d28e18aa217a61ecd",
+        "assistance": {
+          "tool": "Codex",
+          "checkedAt": "2026-11-24T17:28:57Z"
+        }
       }
     },
     {
@@ -769,10 +869,14 @@
       "checkedAt": "2026-11-22T02:34:21Z",
       "description": "Ở Hải Phòng có cách dọn chè đỗ đen nấu sệt, rắc dừa nạo và dùng quẩy cắt nhỏ để ăn xen.",
       "factReview": {
-        "checkedBy": "Codex (hỗ trợ Tâm)",
-        "checkedAt": "2026-11-24T17:28:57Z",
+        "checkedBy": null,
+        "checkedAt": null,
         "facts": "Kiểu Hải Phòng nấu sệt, có quẩy và dừa nạo.",
-        "textSha256": "1093e9f6c72f27ed196a3eb2b43a854cfd2f01df4be36a76bcdff54bc8174461"
+        "textSha256": "1093e9f6c72f27ed196a3eb2b43a854cfd2f01df4be36a76bcdff54bc8174461",
+        "assistance": {
+          "tool": "Codex",
+          "checkedAt": "2026-11-24T17:28:57Z"
+        }
       }
     },
     {
@@ -796,10 +900,14 @@
       "checkedAt": "2026-11-22T02:50:00Z",
       "description": "Gạo được rang cho hạt nở rồi trộn với nước đường để kết thành bánh. Đây là một món quà ngọt miền Tây.",
       "factReview": {
-        "checkedBy": "Codex (hỗ trợ Tâm)",
-        "checkedAt": "2026-11-24T17:28:57Z",
+        "checkedBy": null,
+        "checkedAt": null,
         "facts": "Đặc sản miền Tây, gạo rang nổ được trộn với siro đường.",
-        "textSha256": "72885d3c322ef383894e32b92ad0857b2c7459405ea6a39f12ebe72afa573438"
+        "textSha256": "72885d3c322ef383894e32b92ad0857b2c7459405ea6a39f12ebe72afa573438",
+        "assistance": {
+          "tool": "Codex",
+          "checkedAt": "2026-11-24T17:28:57Z"
+        }
       }
     },
     {
@@ -816,10 +924,14 @@
       "description": "Bột có nghệ làm phần vỏ vàng sau khi tráng trên chảo nóng. Bánh giòn được gập lại, ôm phần nhân tôm, thịt và giá.",
       "checkedAt": "2026-11-21T17:11:47Z",
       "factReview": {
-        "checkedBy": "Codex (hỗ trợ Tâm)",
-        "checkedAt": "2026-11-24T17:28:57Z",
+        "checkedBy": null,
+        "checkedAt": null,
         "facts": "Bột có nghệ, chảo nóng, vỏ giòn, có bản tôm thịt và giá.",
-        "textSha256": "e8746e8fdcf48eafbbcad60a6b936502ee62198c6247e29c2329e136493deb16"
+        "textSha256": "e8746e8fdcf48eafbbcad60a6b936502ee62198c6247e29c2329e136493deb16",
+        "assistance": {
+          "tool": "Codex",
+          "checkedAt": "2026-11-24T17:28:57Z"
+        }
       }
     },
     {
@@ -913,10 +1025,14 @@
       "checkedAt": "2026-11-22T02:34:21Z",
       "description": "Một cách làm chè chuối dùng chuối nướng. Phần chè có bột báng, ăn cùng kem dừa cho vị béo.",
       "factReview": {
-        "checkedBy": "Codex (hỗ trợ Tâm)",
-        "checkedAt": "2026-11-24T17:28:57Z",
+        "checkedBy": null,
+        "checkedAt": null,
         "facts": "Phiên bản dùng chuối nướng, bột báng, kem dừa.",
-        "textSha256": "51e985e2ae0fea80e61a92e7bcb84431888c1b852d06ba7d6922c6901e6767b1"
+        "textSha256": "51e985e2ae0fea80e61a92e7bcb84431888c1b852d06ba7d6922c6901e6767b1",
+        "assistance": {
+          "tool": "Codex",
+          "checkedAt": "2026-11-24T17:28:57Z"
+        }
       }
     },
     {
@@ -940,10 +1056,14 @@
       "checkedAt": "2026-11-22T02:34:21Z",
       "description": "Hoành thánh được dọn trong bát nước dùng thịt heo. Món súp có thể thêm tôm, cải thìa và nấm.",
       "factReview": {
-        "checkedBy": "Codex (hỗ trợ Tâm)",
-        "checkedAt": "2026-11-24T17:30:33Z",
+        "checkedBy": null,
+        "checkedAt": null,
         "facts": "Hoành thánh trong nước dùng thịt heo, có tôm, nấm và cải thìa.",
-        "textSha256": "8fdb2eec2b51301b7d09008eeebeea86101793ed90c40e64c2eba6f06fc1a831"
+        "textSha256": "8fdb2eec2b51301b7d09008eeebeea86101793ed90c40e64c2eba6f06fc1a831",
+        "assistance": {
+          "tool": "Codex",
+          "checkedAt": "2026-11-24T17:30:33Z"
+        }
       }
     },
     {
@@ -1002,10 +1122,14 @@
       "checkedAt": "2026-11-22T02:39:00Z",
       "description": "Một kiểu sườn nướng BBQ dùng phần sườn heo non. Món chính này có thể được dọn cùng chút sa tế.",
       "factReview": {
-        "checkedBy": "Codex (hỗ trợ Tâm)",
-        "checkedAt": "2026-11-24T17:30:33Z",
+        "checkedBy": null,
+        "checkedAt": null,
         "facts": "Sườn heo non nướng BBQ. Dòng tiếng Anh của menu ghi saté.",
-        "textSha256": "7b16a3e43b211531331e2aab94c1931fa5794afe4dcb9e386ca23e898334a0de"
+        "textSha256": "7b16a3e43b211531331e2aab94c1931fa5794afe4dcb9e386ca23e898334a0de",
+        "assistance": {
+          "tool": "Codex",
+          "checkedAt": "2026-11-24T17:30:33Z"
+        }
       }
     },
     {
@@ -1043,10 +1167,14 @@
       "checkedAt": "2026-11-22T02:34:21Z",
       "description": "Kẹo có hạt lạc trong phần áo ngọt. Một phiên bản có thêm mè, giữ độ giòn của miếng kẹo khi nhai.",
       "factReview": {
-        "checkedBy": "Codex (hỗ trợ Tâm)",
-        "checkedAt": "2026-11-24T17:28:57Z",
+        "checkedBy": null,
+        "checkedAt": null,
         "facts": "Kẹo từ lạc, có bản rắc mè; kết cấu giòn.",
-        "textSha256": "f1591bde496781da73ccef7d0234f6e0088eeb355699a55b66a8fd3da9aaef12"
+        "textSha256": "f1591bde496781da73ccef7d0234f6e0088eeb355699a55b66a8fd3da9aaef12",
+        "assistance": {
+          "tool": "Codex",
+          "checkedAt": "2026-11-24T17:28:57Z"
+        }
       }
     },
     {
@@ -1063,10 +1191,14 @@
       "description": "Bát nước chấm có chả và thịt nướng được đặt cạnh đĩa bún. Gắp một ít bún vào bát và ăn xen với rau.",
       "checkedAt": "2026-11-21T17:11:47Z",
       "factReview": {
-        "checkedBy": "Codex (hỗ trợ Tâm)",
-        "checkedAt": "2026-11-24T17:28:57Z",
+        "checkedBy": null,
+        "checkedAt": null,
         "facts": "Bún gạo, thịt nướng, chả và nước chấm, rau ăn kèm.",
-        "textSha256": "b41e725d32651599182da31be1c8baaeb0ee1608b20357d8eae69c61102af460"
+        "textSha256": "b41e725d32651599182da31be1c8baaeb0ee1608b20357d8eae69c61102af460",
+        "assistance": {
+          "tool": "Codex",
+          "checkedAt": "2026-11-24T17:28:57Z"
+        }
       }
     },
     {
@@ -1104,10 +1236,14 @@
       "checkedAt": "2026-11-22T02:34:21Z",
       "description": "Các miếng trái cây tươi được dầm với đá bào và kem dừa. Có thể thêm thạch lá dứa khi muốn ăn kèm.",
       "factReview": {
-        "checkedBy": "Codex (hỗ trợ Tâm)",
-        "checkedAt": "2026-11-24T17:28:57Z",
+        "checkedBy": null,
+        "checkedAt": null,
         "facts": "Trái cây tươi, đá bào, kem dừa. Có thể thêm thạch.",
-        "textSha256": "7ff24b7efb50b46a5cde069be931cd5ecda1ddc267806f48ad7afa82bda49d32"
+        "textSha256": "7ff24b7efb50b46a5cde069be931cd5ecda1ddc267806f48ad7afa82bda49d32",
+        "assistance": {
+          "tool": "Codex",
+          "checkedAt": "2026-11-24T17:28:57Z"
+        }
       }
     },
     {
@@ -1208,10 +1344,14 @@
       "checkedAt": "2026-11-22T02:34:21Z",
       "description": "Món ngọt kết hợp nếp cẩm và một phần sữa chua. Khi múc cùng nhau sẽ cảm nhận được hai kết cấu trong một thìa.",
       "factReview": {
-        "checkedBy": "Codex (hỗ trợ Tâm)",
-        "checkedAt": "2026-11-24T17:28:57Z",
+        "checkedBy": null,
+        "checkedAt": null,
         "facts": "Sữa chua dọn chung với nếp cẩm.",
-        "textSha256": "3944ce06bcd327e9b12e3cb7d28cfc6bae36d7c87605e112b62e44ae82e2d989"
+        "textSha256": "3944ce06bcd327e9b12e3cb7d28cfc6bae36d7c87605e112b62e44ae82e2d989",
+        "assistance": {
+          "tool": "Codex",
+          "checkedAt": "2026-11-24T17:28:57Z"
+        }
       }
     },
     {
@@ -1228,10 +1368,14 @@
       "checkedAt": "2026-11-22T02:34:21Z",
       "description": "Kiểu cơm hến Huế trộn phần hến xào với cơm nguội. Rau thơm và lạc rang có thể dọn cùng một bát.",
       "factReview": {
-        "checkedBy": "Codex (hỗ trợ Tâm)",
-        "checkedAt": "2026-11-24T17:28:57Z",
+        "checkedBy": null,
+        "checkedAt": null,
         "facts": "Cơm nguội, hến xào, rau thơm, lạc rang trong kiểu Huế.",
-        "textSha256": "fdea8ff3fa432c910f8a52ee6e3a0db3d6de33cb6e9ea38603dd969ba3e5f786"
+        "textSha256": "fdea8ff3fa432c910f8a52ee6e3a0db3d6de33cb6e9ea38603dd969ba3e5f786",
+        "assistance": {
+          "tool": "Codex",
+          "checkedAt": "2026-11-24T17:28:57Z"
+        }
       }
     },
     {
@@ -1241,10 +1385,14 @@
       "checkedAt": "2026-11-22T02:34:21Z",
       "description": "Xôi lá dứa có màu xanh và được dọn cùng kem dừa. Có thể ăn xen một miếng xôi với phần kem lạnh.",
       "factReview": {
-        "checkedBy": "Codex (hỗ trợ Tâm)",
-        "checkedAt": "2026-11-24T17:28:57Z",
+        "checkedBy": null,
+        "checkedAt": null,
         "facts": "Một kiểu dùng xôi lá dứa màu xanh với kem dừa.",
-        "textSha256": "2a303fc10df20192fbf2d5620e4db74ae297e1fcc6d7086edf4d54572bda1cfa"
+        "textSha256": "2a303fc10df20192fbf2d5620e4db74ae297e1fcc6d7086edf4d54572bda1cfa",
+        "assistance": {
+          "tool": "Codex",
+          "checkedAt": "2026-11-24T17:28:57Z"
+        }
       }
     },
     {
@@ -1331,10 +1479,14 @@
       "checkedAt": "2026-11-22T02:34:21Z",
       "description": "Bánh flan là phần mềm ở giữa đĩa, dùng cùng hoa quả tươi. Một cách dọn có cả thạch và nước cốt dừa.",
       "factReview": {
-        "checkedBy": "Codex (hỗ trợ Tâm)",
-        "checkedAt": "2026-11-24T17:28:57Z",
+        "checkedBy": null,
+        "checkedAt": null,
         "facts": "Bánh flan, hoa quả tươi, thạch, nước cốt dừa.",
-        "textSha256": "0fcc6d423a08ff1c685c3936148480a77aead9a0acae5c941218a04d65219de1"
+        "textSha256": "0fcc6d423a08ff1c685c3936148480a77aead9a0acae5c941218a04d65219de1",
+        "assistance": {
+          "tool": "Codex",
+          "checkedAt": "2026-11-24T17:28:57Z"
+        }
       }
     },
     {
@@ -1393,10 +1545,14 @@
       "checkedAt": "2026-11-22T02:50:00Z",
       "description": "Bánh làm từ bột củ cải rồi đem chiên. Có phiên bản thêm trứng, thường được dọn như một món dimsum.",
       "factReview": {
-        "checkedBy": "Codex (hỗ trợ Tâm)",
-        "checkedAt": "2026-11-24T17:30:33Z",
+        "checkedBy": null,
+        "checkedAt": null,
         "facts": "Menu ghi bánh bột củ cải chiên có trứng trong mục món chiên dimsum.",
-        "textSha256": "1432962e0d86f4636130be156b4903ca0bd747d5043bf13cebb1f441130e613c"
+        "textSha256": "1432962e0d86f4636130be156b4903ca0bd747d5043bf13cebb1f441130e613c",
+        "assistance": {
+          "tool": "Codex",
+          "checkedAt": "2026-11-24T17:30:33Z"
+        }
       }
     },
     {
@@ -1406,10 +1562,14 @@
       "checkedAt": "2026-11-22T02:39:00Z",
       "description": "Ức gà được nướng cùng thảo mộc. Có phiên bản dọn cạnh bí ngòi xào tỏi và đậu Hà Lan.",
       "factReview": {
-        "checkedBy": "Codex (hỗ trợ Tâm)",
-        "checkedAt": "2026-11-24T17:30:33Z",
+        "checkedBy": null,
+        "checkedAt": null,
         "facts": "Ức gà nướng với thảo mộc, bí ngòi và đậu Hà Lan.",
-        "textSha256": "d7d6c12eeb7bb2748787795a98900370961582b2a715a39cd5c4c4b5f70202f7"
+        "textSha256": "d7d6c12eeb7bb2748787795a98900370961582b2a715a39cd5c4c4b5f70202f7",
+        "assistance": {
+          "tool": "Codex",
+          "checkedAt": "2026-11-24T17:30:33Z"
+        }
       }
     },
     {
@@ -1419,10 +1579,14 @@
       "checkedAt": "2026-11-22T02:50:00Z",
       "description": "Ở một kiểu dimsum chiên, lớp đậu hũ ky bọc phần tôm. Có thể dùng món này cùng các phần dimsum khác.",
       "factReview": {
-        "checkedBy": "Codex (hỗ trợ Tâm)",
-        "checkedAt": "2026-11-24T17:30:33Z",
+        "checkedBy": null,
+        "checkedAt": null,
         "facts": "Menu ghi đậu hũ ky tôm chiên trong mục món chiên dimsum.",
-        "textSha256": "7d136b08c385fd98c083ef597cfa211f4b638f37930d7cfcc2c7f20ab8a5ebe8"
+        "textSha256": "7d136b08c385fd98c083ef597cfa211f4b638f37930d7cfcc2c7f20ab8a5ebe8",
+        "assistance": {
+          "tool": "Codex",
+          "checkedAt": "2026-11-24T17:30:33Z"
+        }
       }
     },
     {
@@ -1439,10 +1603,14 @@
       "checkedAt": "2026-11-22T02:34:21Z",
       "description": "Miếng chuối chiên có lớp ngoài giòn, phần chuối bên trong vẫn mềm. Đây là món ăn vặt thường gặp ở chợ.",
       "factReview": {
-        "checkedBy": "Codex (hỗ trợ Tâm)",
-        "checkedAt": "2026-11-24T17:28:57Z",
+        "checkedBy": null,
+        "checkedAt": null,
         "facts": "Món chiên ở chợ, lớp ngoài giòn và chuối bên trong mềm.",
-        "textSha256": "06b0c74d1d78923bee497ea1d9be1e5864e779cf7b5497cfb8e683ecf0f3b4ca"
+        "textSha256": "06b0c74d1d78923bee497ea1d9be1e5864e779cf7b5497cfb8e683ecf0f3b4ca",
+        "assistance": {
+          "tool": "Codex",
+          "checkedAt": "2026-11-24T17:28:57Z"
+        }
       }
     },
     {
@@ -1473,10 +1641,14 @@
       "checkedAt": "2026-11-22T02:39:00Z",
       "description": "Có kiểu bánh mì lagu ở Quy Nhơn dọn ổ bánh cạnh một bát lagu thịt heo. Thịt mềm ăn cùng phần nước trong bát.",
       "factReview": {
-        "checkedBy": "Codex (hỗ trợ Tâm)",
-        "checkedAt": "2026-11-24T17:30:33Z",
+        "checkedBy": null,
+        "checkedAt": null,
         "facts": "Bánh mì ăn với lagu có thịt heo mềm trong phiên bản Quy Nhơn được nêu.",
-        "textSha256": "a09dfbac09b61332f5162b28077be3590c529731547d54f8b00ec86e631c9cb2"
+        "textSha256": "a09dfbac09b61332f5162b28077be3590c529731547d54f8b00ec86e631c9cb2",
+        "assistance": {
+          "tool": "Codex",
+          "checkedAt": "2026-11-24T17:30:33Z"
+        }
       }
     },
     {
@@ -1507,10 +1679,14 @@
       "checkedAt": "2026-11-22T02:50:00Z",
       "description": "Thịt lươn được xào với sả và ớt rồi dùng cùng cơm trắng. Vị cay và mùi sả tập trung ở phần lươn.",
       "factReview": {
-        "checkedBy": "Codex (hỗ trợ Tâm)",
-        "checkedAt": "2026-11-24T17:30:33Z",
+        "checkedBy": null,
+        "checkedAt": null,
         "facts": "Lươn xào sả và ớt dùng với cơm trắng.",
-        "textSha256": "1be28ad1d1cb18b406e62774c51dff209bc8a30a41236507d68b57a61a826be4"
+        "textSha256": "1be28ad1d1cb18b406e62774c51dff209bc8a30a41236507d68b57a61a826be4",
+        "assistance": {
+          "tool": "Codex",
+          "checkedAt": "2026-11-24T17:30:33Z"
+        }
       }
     },
     {
@@ -1562,10 +1738,14 @@
       "checkedAt": "2026-11-22T02:39:00Z",
       "description": "Một kiểu mì lá đút lò kẹp thịt bò giữa các lớp mì. Có thể dùng xốt cà chua và phô mai parmesan.",
       "factReview": {
-        "checkedBy": "Codex (hỗ trợ Tâm)",
-        "checkedAt": "2026-11-24T17:30:33Z",
+        "checkedBy": null,
+        "checkedAt": null,
         "facts": "Lasagna nướng, bản bò dùng hai loại xốt và phô mai.",
-        "textSha256": "b58f3e5bbab6febfabcd4ba05e1c9d67262f84b2ecb5943b4eec967d1a558bb9"
+        "textSha256": "b58f3e5bbab6febfabcd4ba05e1c9d67262f84b2ecb5943b4eec967d1a558bb9",
+        "assistance": {
+          "tool": "Codex",
+          "checkedAt": "2026-11-24T17:30:33Z"
+        }
       }
     },
     {
@@ -1582,10 +1762,14 @@
       "checkedAt": "2026-11-22T02:34:21Z",
       "description": "Ly chè có thạch lá dứa và đậu đỏ, bên trên thêm đá bào. Nước cốt dừa hòa với các lớp khi múc lên.",
       "factReview": {
-        "checkedBy": "Codex (hỗ trợ Tâm)",
-        "checkedAt": "2026-11-24T17:28:57Z",
+        "checkedBy": null,
+        "checkedAt": null,
         "facts": "Thạch lá dứa, đậu đỏ, đá bào và nước cốt dừa; dọn trong ly.",
-        "textSha256": "777166925f34f704d680f8c5dc6e752defe2327fc78e3f2c3254a2fe5b6f59e2"
+        "textSha256": "777166925f34f704d680f8c5dc6e752defe2327fc78e3f2c3254a2fe5b6f59e2",
+        "assistance": {
+          "tool": "Codex",
+          "checkedAt": "2026-11-24T17:28:57Z"
+        }
       }
     },
     {
@@ -1616,10 +1800,14 @@
       "checkedAt": "2026-11-22T02:34:21Z",
       "description": "Lớp bánh tráng mỏng cuốn dừa nạo và mè. Phần kẹo bên trong tạo vị ngọt cho từng cuốn nhỏ.",
       "factReview": {
-        "checkedBy": "Codex (hỗ trợ Tâm)",
-        "checkedAt": "2026-11-24T17:28:57Z",
+        "checkedBy": null,
+        "checkedAt": null,
         "facts": "Bánh tráng mỏng, kẹo, dừa nạo và mè.",
-        "textSha256": "223508578a7ce797ad2a64e474745471ca614383d3d2386def21eeef40a5b1f0"
+        "textSha256": "223508578a7ce797ad2a64e474745471ca614383d3d2386def21eeef40a5b1f0",
+        "assistance": {
+          "tool": "Codex",
+          "checkedAt": "2026-11-24T17:28:57Z"
+        }
       }
     },
     {
@@ -1629,10 +1817,14 @@
       "checkedAt": "2026-11-22T02:34:21Z",
       "description": "Miếng bánh đậu xanh có vị ngọt và dễ tan trong miệng. Trà xanh nóng có thể dùng cùng khi ăn.",
       "factReview": {
-        "checkedBy": "Codex (hỗ trợ Tâm)",
-        "checkedAt": "2026-11-24T17:28:57Z",
+        "checkedBy": null,
+        "checkedAt": null,
         "facts": "Bánh ngọt, mềm tan, dùng cùng trà xanh.",
-        "textSha256": "9597f66a9b8ef75cc6982be11c376a6a42deb46add5c7d72e003a9bd92464925"
+        "textSha256": "9597f66a9b8ef75cc6982be11c376a6a42deb46add5c7d72e003a9bd92464925",
+        "assistance": {
+          "tool": "Codex",
+          "checkedAt": "2026-11-24T17:28:57Z"
+        }
       }
     },
     {
@@ -1663,10 +1855,14 @@
       "checkedAt": "2026-11-22T02:34:21Z",
       "description": "Trong bát bánh đúc tàu kiểu Hải Phòng, bánh cắt miếng ăn cùng đu đủ, tôm và thịt, có chút nước chan.",
       "factReview": {
-        "checkedBy": "Codex (hỗ trợ Tâm)",
-        "checkedAt": "2026-11-24T17:28:57Z",
+        "checkedBy": null,
+        "checkedAt": null,
         "facts": "Bánh trắng cắt nhỏ, đu đủ, tôm thịt và nước chan.",
-        "textSha256": "f991aab9446fa025fc9bc1c55d684f23ce9eef48f434a94ba2c590cb1ceed3f2"
+        "textSha256": "f991aab9446fa025fc9bc1c55d684f23ce9eef48f434a94ba2c590cb1ceed3f2",
+        "assistance": {
+          "tool": "Codex",
+          "checkedAt": "2026-11-24T17:28:57Z"
+        }
       }
     },
     {
@@ -1753,10 +1949,14 @@
       "checkedAt": "2026-11-22T02:39:00Z",
       "description": "Thịt thăn nội bò được nướng để làm món chính. Một cách dọn ăn cùng khoai nghiền và cà rốt xào bơ.",
       "factReview": {
-        "checkedBy": "Codex (hỗ trợ Tâm)",
-        "checkedAt": "2026-11-24T17:30:33Z",
+        "checkedBy": null,
+        "checkedAt": null,
         "facts": "Thăn nội bò nướng, khoai nghiền và cà rốt xào bơ.",
-        "textSha256": "8a8d4a20883d91fb5fd00237139ed1d4cc0603af48746ef48fc15695e77e77ec"
+        "textSha256": "8a8d4a20883d91fb5fd00237139ed1d4cc0603af48746ef48fc15695e77e77ec",
+        "assistance": {
+          "tool": "Codex",
+          "checkedAt": "2026-11-24T17:30:33Z"
+        }
       }
     },
     {
@@ -1773,10 +1973,14 @@
       "checkedAt": "2026-11-22T02:39:00Z",
       "description": "Tôm hùm có thể nướng nguyên con hoặc chẻ đôi. Khi dọn, bơ tỏi và một miếng chanh có thể đi kèm tôm.",
       "factReview": {
-        "checkedBy": "Codex (hỗ trợ Tâm)",
-        "checkedAt": "2026-11-24T17:30:33Z",
+        "checkedBy": null,
+        "checkedAt": null,
         "facts": "Tôm nguyên hoặc nửa con, bơ tỏi, chanh.",
-        "textSha256": "75d6289d1dacf9934f9fcfeee5d1a57428208a5341c9a76921d862c05ed9260f"
+        "textSha256": "75d6289d1dacf9934f9fcfeee5d1a57428208a5341c9a76921d862c05ed9260f",
+        "assistance": {
+          "tool": "Codex",
+          "checkedAt": "2026-11-24T17:30:33Z"
+        }
       }
     },
     {
@@ -1786,10 +1990,14 @@
       "checkedAt": "2026-11-22T02:39:00Z",
       "description": "Cá hồi được nướng để dùng làm món chính. Một cách dọn thêm xốt cà chua bi với nụ bạch hoa.",
       "factReview": {
-        "checkedBy": "Codex (hỗ trợ Tâm)",
-        "checkedAt": "2026-11-24T17:30:33Z",
+        "checkedBy": null,
+        "checkedAt": null,
         "facts": "Cá hồi nướng với xốt cà chua bi và nụ bạch hoa.",
-        "textSha256": "a44a6f6d9cf7e22b0730ca8f69e586a5e021710490ec5bc1a164dfc05f31869d"
+        "textSha256": "a44a6f6d9cf7e22b0730ca8f69e586a5e021710490ec5bc1a164dfc05f31869d",
+        "assistance": {
+          "tool": "Codex",
+          "checkedAt": "2026-11-24T17:30:33Z"
+        }
       }
     },
     {
@@ -1813,10 +2021,14 @@
       "checkedAt": "2026-11-22T02:34:21Z",
       "description": "Miếng cơm được chiên đến khi giòn để làm nền cho phần chà bông. Có thể thêm mỡ hành lên trên.",
       "factReview": {
-        "checkedBy": "Codex (hỗ trợ Tâm)",
-        "checkedAt": "2026-11-24T17:28:57Z",
+        "checkedBy": null,
+        "checkedAt": null,
         "facts": "Cơm chiên giòn, chà bông heo và mỡ hành.",
-        "textSha256": "627de7a4c90e1865b15282bd5cf0e36b53c20436c18f83291ccd9a14a269700d"
+        "textSha256": "627de7a4c90e1865b15282bd5cf0e36b53c20436c18f83291ccd9a14a269700d",
+        "assistance": {
+          "tool": "Codex",
+          "checkedAt": "2026-11-24T17:28:57Z"
+        }
       }
     },
     {
@@ -1847,10 +2059,14 @@
       "checkedAt": "2026-11-22T02:34:21Z",
       "description": "Bẻ viên chè sẽ thấy phần đậu xanh bên trong lớp bột dẻo. Món được dọn cùng nước gừng và có thể rắc mè.",
       "factReview": {
-        "checkedBy": "Codex (hỗ trợ Tâm)",
-        "checkedAt": "2026-11-24T17:28:57Z",
+        "checkedBy": null,
+        "checkedAt": null,
         "facts": "Viên bột gạo nhân đậu xanh, nước gừng, mè.",
-        "textSha256": "c1837746cf2add33eac345e910dbc686474cf7c471332a5d59202ecf2824c905"
+        "textSha256": "c1837746cf2add33eac345e910dbc686474cf7c471332a5d59202ecf2824c905",
+        "assistance": {
+          "tool": "Codex",
+          "checkedAt": "2026-11-24T17:28:57Z"
+        }
       }
     },
     {
@@ -1867,10 +2083,14 @@
       "checkedAt": "2026-11-22T02:39:00Z",
       "description": "Phần bưởi da xanh có muối tôm ăn kèm. Khi dùng có thể chấm từng miếng bưởi vào phần muối riêng.",
       "factReview": {
-        "checkedBy": "Codex (hỗ trợ Tâm)",
-        "checkedAt": "2026-11-24T17:30:33Z",
+        "checkedBy": null,
+        "checkedAt": null,
         "facts": "Menu ghi bưởi da xanh bán theo phần kèm muối tôm.",
-        "textSha256": "c7923ce7ae1568b442ac30dd323acdc2f43d545079906c8ee4e82c7ff8579ea6"
+        "textSha256": "c7923ce7ae1568b442ac30dd323acdc2f43d545079906c8ee4e82c7ff8579ea6",
+        "assistance": {
+          "tool": "Codex",
+          "checkedAt": "2026-11-24T17:30:33Z"
+        }
       }
     },
     {
@@ -1957,10 +2177,14 @@
       "checkedAt": "2026-11-22T02:50:00Z",
       "description": "Ở một kiểu dimsum, hoành thánh dùng tôm làm nhân rồi đem chiên. Có thể dọn món trong phần dimsum chiên.",
       "factReview": {
-        "checkedBy": "Codex (hỗ trợ Tâm)",
-        "checkedAt": "2026-11-24T17:30:33Z",
+        "checkedBy": null,
+        "checkedAt": null,
         "facts": "Menu ghi hoành thánh tôm chiên thuộc dimsum.",
-        "textSha256": "1c88b0afc09c1ca08bfecdd5c8f64494bf7aa14ca6b53df8e81f3036423d54b9"
+        "textSha256": "1c88b0afc09c1ca08bfecdd5c8f64494bf7aa14ca6b53df8e81f3036423d54b9",
+        "assistance": {
+          "tool": "Codex",
+          "checkedAt": "2026-11-24T17:30:33Z"
+        }
       }
     },
     {
@@ -1970,10 +2194,14 @@
       "checkedAt": "2026-11-22T02:34:21Z",
       "description": "Tô bún có cá chiên và dọc mùng trong nước dùng từ xương cá. Kiểu Hải Phòng có vị cay và hơi chua.",
       "factReview": {
-        "checkedBy": "Codex (hỗ trợ Tâm)",
-        "checkedAt": "2026-11-24T17:28:57Z",
+        "checkedBy": null,
+        "checkedAt": null,
         "facts": "Nước dùng từ cá, vị chua nhẹ, có cá chiên và dọc mùng.",
-        "textSha256": "e9c3d769a07c9ba390cb4dbdc3fb88cbbff5c851acd1fe82a5026a62f2a178dc"
+        "textSha256": "e9c3d769a07c9ba390cb4dbdc3fb88cbbff5c851acd1fe82a5026a62f2a178dc",
+        "assistance": {
+          "tool": "Codex",
+          "checkedAt": "2026-11-24T17:28:57Z"
+        }
       }
     },
     {
@@ -1983,10 +2211,14 @@
       "checkedAt": "2026-11-22T02:34:21Z",
       "description": "Kẹo cu đơ Hà Tĩnh kẹp lạc áo mật mía giữa hai lớp bánh tráng. Khi cắn, vỏ giòn và phần nhân có độ dẻo.",
       "factReview": {
-        "checkedBy": "Codex (hỗ trợ Tâm)",
-        "checkedAt": "2026-11-24T17:28:57Z",
+        "checkedBy": null,
+        "checkedAt": null,
         "facts": "Hai miếng bánh tráng, nhân lạc, mật mía và mạch nha. Đặc sản Hà Tĩnh.",
-        "textSha256": "4be79d7aa972bd75d64747fbce92bca96dd3a799d86d03f6d9777f0100e23e37"
+        "textSha256": "4be79d7aa972bd75d64747fbce92bca96dd3a799d86d03f6d9777f0100e23e37",
+        "assistance": {
+          "tool": "Codex",
+          "checkedAt": "2026-11-24T17:28:57Z"
+        }
       }
     },
     {
@@ -1996,10 +2228,14 @@
       "checkedAt": "2026-11-22T02:50:00Z",
       "description": "Bánh xếp có phần hẹ ở bên trong. Phiên bản chiên thường được dọn như một món trong phần dimsum.",
       "factReview": {
-        "checkedBy": "Codex (hỗ trợ Tâm)",
-        "checkedAt": "2026-11-24T17:30:33Z",
+        "checkedBy": null,
+        "checkedAt": null,
         "facts": "Menu ghi bánh xếp hẹ chiên trong mục món chiên dimsum.",
-        "textSha256": "88eb727c1ce6a0e66647d9bf1b6d36a83666d8f853977163817ded1c50dcec0d"
+        "textSha256": "88eb727c1ce6a0e66647d9bf1b6d36a83666d8f853977163817ded1c50dcec0d",
+        "assistance": {
+          "tool": "Codex",
+          "checkedAt": "2026-11-24T17:30:33Z"
+        }
       }
     },
     {
@@ -2009,10 +2245,14 @@
       "checkedAt": "2026-11-22T02:50:00Z",
       "description": "Một phần cơm dọn với bát canh bí đỏ hầm sườn non. Vị ngọt của canh đến từ bí đỏ và phần sườn.",
       "factReview": {
-        "checkedBy": "Codex (hỗ trợ Tâm)",
-        "checkedAt": "2026-11-24T17:30:33Z",
+        "checkedBy": null,
+        "checkedAt": null,
         "facts": "Phần cơm có canh hầm từ sườn và bí đỏ.",
-        "textSha256": "d21c27769d0915e6724fd07bb6ea8b58d3af9dfb63f4acbde8d5231a5671869c"
+        "textSha256": "d21c27769d0915e6724fd07bb6ea8b58d3af9dfb63f4acbde8d5231a5671869c",
+        "assistance": {
+          "tool": "Codex",
+          "checkedAt": "2026-11-24T17:30:33Z"
+        }
       }
     },
     {
@@ -2071,10 +2311,14 @@
       "checkedAt": "2026-11-22T02:34:21Z",
       "description": "Bánh su kem là chiếc bánh ngọt cỡ nhỏ với phần kem vani mềm nằm trong lớp vỏ bánh.",
       "factReview": {
-        "checkedBy": "Codex (hỗ trợ Tâm)",
-        "checkedAt": "2026-11-24T17:28:57Z",
+        "checkedBy": null,
+        "checkedAt": null,
         "facts": "Bánh mềm cỡ nhỏ, nhân kem vani.",
-        "textSha256": "3b2808a26fe6b5ff0f6eff140359c4d21d191db9961fc6f3fc99ed999e47de27"
+        "textSha256": "3b2808a26fe6b5ff0f6eff140359c4d21d191db9961fc6f3fc99ed999e47de27",
+        "assistance": {
+          "tool": "Codex",
+          "checkedAt": "2026-11-24T17:28:57Z"
+        }
       }
     },
     {
@@ -2105,10 +2349,14 @@
       "description": "Cơm nấu từ hạt gạo vỡ. Đĩa cơm tấm sườn có thể kèm trứng ốp la, đồ chua và chút nước mắm pha.",
       "checkedAt": "2026-11-21T17:11:47Z",
       "factReview": {
-        "checkedBy": "Codex (hỗ trợ Tâm)",
-        "checkedAt": "2026-11-24T17:28:57Z",
+        "checkedBy": null,
+        "checkedAt": null,
         "facts": "Gạo vỡ. Bản sườn có ốp la, đồ chua và nước chấm.",
-        "textSha256": "b62f321d2df1759abb7dcf07bc3e0a8a2e7e09bfe434e18110ca3aa1cdb75f3f"
+        "textSha256": "b62f321d2df1759abb7dcf07bc3e0a8a2e7e09bfe434e18110ca3aa1cdb75f3f",
+        "assistance": {
+          "tool": "Codex",
+          "checkedAt": "2026-11-24T17:28:57Z"
+        }
       }
     },
     {

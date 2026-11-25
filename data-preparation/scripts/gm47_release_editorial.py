@@ -47,36 +47,57 @@ def storage_object_key(key, expected):
     return key
 
 
+def review_dates(review, label):
+    checked_by = review.get('checkedBy')
+    checked_at = review.get('checkedAt')
+    assistance = review.get('assistance')
+    if assistance is not None:
+        if (not isinstance(assistance, dict) or not isinstance(assistance.get('tool'), str)
+                or not assistance['tool'].strip() or not isinstance(assistance.get('checkedAt'), str)):
+            raise ValueError(f'Invalid automated precheck for {label}')
+        assisted_on = gm41.dc.parse_utc(assistance['checkedAt'])
+    else:
+        assisted_on = None
+    if checked_by is None and checked_at is None and assisted_on is not None:
+        return None, assisted_on
+    if (not isinstance(checked_by, str) or not checked_by.strip()
+            or re.match(r'^(codex|chatgpt)\b', checked_by.strip(), flags=re.IGNORECASE)
+            or (assistance and checked_by.strip().casefold() == assistance['tool'].strip().casefold())
+            or not isinstance(checked_at, str)):
+        raise ValueError(f'Expected a named human reviewer and date for {label}')
+    return gm41.dc.parse_utc(checked_at), assisted_on
+
+
 def description_review(row):
     review = row.get('factReview')
     if review is None:
         return None
     fingerprint = gm41.dc.sha(gm41.dc.encoded([row['locator'], row['description']]))
     if (not isinstance(review, dict) or review.get('textSha256') != fingerprint
-            or not isinstance(review.get('checkedBy'), str) or not review['checkedBy'].strip()
-            or not isinstance(review.get('facts'), str) or not review['facts'].strip()
-            or not isinstance(review.get('checkedAt'), str)):
+            or not isinstance(review.get('facts'), str) or not review['facts'].strip()):
         raise ValueError(f"Invalid or stale GM-47 description review for {row['dishId']}")
-    gm41.dc.parse_utc(review['checkedAt'])
+    review_dates(review, f"description {row['dishId']}")
     return review
 
 
 def validate_photo_origin(row):
     review = row.get('aiCheck')
     if (not isinstance(review, dict) or type(review.get('cameraExif')) is not bool
-            or review.get('aiCategory') is not False or review.get('verdict') != 'real_photo'
-            or not isinstance(review.get('checkedBy'), str) or not review['checkedBy'].strip()
+            or review.get('aiCategory') is not False
             or not isinstance(review.get('provenance'), str) or not review['provenance'].strip()
             or not isinstance(review.get('uploadedAt'), str)
-            or not isinstance(review.get('checkedAt'), str)
             or (row['license'] == 'Ảnh nhóm tự chụp' and not review['cameraExif'])):
         raise ValueError(f"Missing or rejected GM-47 photo origin review for {row['dishId']}")
-    if gm41.dc.parse_utc(review['uploadedAt']) > gm41.dc.parse_utc(review['checkedAt']):
+    human_date, assisted_date = review_dates(review, f"photo {row['dishId']}")
+    verdict = 'real_photo' if human_date is not None else 'pending_human_review'
+    if review.get('verdict') != verdict:
+        raise ValueError(f"Inconsistent GM-47 photo origin review for {row['dishId']}")
+    if gm41.dc.parse_utc(review['uploadedAt']) > min(date for date in (human_date, assisted_date) if date):
         raise ValueError(f"GM-47 photo source date is after review for {row['dishId']}")
 
 
 def attach_storage(receipt, available, dishes, sources, version):
-    """Bind only objects whose bytes were verified after the upload."""
+    """Bind human-reviewed photos whose bytes were verified after the upload."""
     bucket = storage_bucket(receipt['bucketPublicUrl'])
     release_version = receipt['candidateDatasetVersion']
     if (not re.fullmatch(r'(0|[1-9][0-9]*)(\.(0|[1-9][0-9]*)){2}', release_version)
@@ -95,12 +116,14 @@ def attach_storage(receipt, available, dishes, sources, version):
         thumb_key = row['thumbnail']['objectKey']
         if main_key not in verified and thumb_key not in verified:
             continue
+        if row['aiCheck']['verdict'] != 'real_photo':
+            raise ValueError(f'Storage receipt requires human photo review for {dish_id}')
         if (verified.get(main_key, {}).get('sha256') != row['sha256']
                 or verified.get(thumb_key, {}).get('sha256') != row['thumbnail']['sha256']):
             raise ValueError(f'Storage receipt is missing a verified pair for {dish_id}')
         ref = gm41.ft.stable_id('source', f"gm47:artwork:{row['source']}:{row['license']}")
         sources.setdefault(ref, {
-            **gm41.record(ref), 'enteredBy': 'gm47-editorial', 'checkedAt': row['checkedAt'],
+            **gm41.record(ref), 'enteredBy': 'gm47-editorial', 'checkedAt': row['aiCheck']['checkedAt'],
             'locator': row['source'], 'usageRights': row['usageRights'],
             'license': row['license'], 'attribution': row['attribution'],
         })
@@ -257,6 +280,7 @@ def build(*, artwork=None, storage_receipt=None):
         'candidateDatasetVersion': bundle['datasetVersion'], 'candidateSha256': gm41.dc.sha(gm41.dc.encoded(bundle)),
         'usageScope': bundle['usageScope'], 'descriptionSourceRefs': description_refs, 'coverage': coverage,
         'preparedArtwork': len(available_artwork), 'preparedArtworkBytes': total_bytes,
+        'humanReviewedArtwork': sum(row['aiCheck']['verdict'] == 'real_photo' for row in available_artwork.values()),
         'thumbnailBytes': sum(row['thumbnail']['bytes'] for row in available_artwork.values()),
         'linkedArtwork': linked,
         'artworkBatches': {
@@ -275,11 +299,16 @@ def build(*, artwork=None, storage_receipt=None):
         source = sources[ref]
         locator = source['locator']
         if locator not in rights:
-            rights[locator] = {'locator': locator, 'dishIds': [], 'reviewedDishIds': [], 'reviews': []}
+            rights[locator] = {'locator': locator, 'dishIds': [], 'reviewedDishIds': [], 'reviews': [], 'prechecks': []}
         row = rights[locator]
         row['dishIds'].append(dish_id)
         review = description_reviews[dish_id]
-        if review is not None:
+        if review is not None and review.get('assistance'):
+            row['prechecks'].append({
+                'dishId': dish_id, 'facts': review['facts'],
+                **{key: review['assistance'][key] for key in ('tool', 'checkedAt')},
+            })
+        if review is not None and review.get('checkedBy'):
             row['reviewedDishIds'].append(dish_id)
             row['reviews'].append({
                 'dishId': dish_id,
@@ -304,12 +333,14 @@ if __name__ == '__main__':
     with (output / 'description-rights-review.csv').open('w', encoding='utf-8-sig', newline='') as stream:
         writer = csv.writer(stream)
         writer.writerow(('locator', 'dish_count', 'dish_ids', 'status', 'reviewed_dish_count',
-                         'reviewed_dish_ids', 'checked_by', 'checked_at'))
+                         'reviewed_dish_ids', 'checked_by', 'checked_at', 'prechecked_dish_count',
+                         'prechecked_dish_ids'))
         for row in sorted(report['descriptionRightsReview'], key=lambda item: item['locator']):
             writer.writerow((row['locator'], len(row['dishIds']), ' '.join(row['dishIds']), row['status'],
                              len(row['reviewedDishIds']), ' '.join(row['reviewedDishIds']),
                              ', '.join(sorted({review['checkedBy'] for review in row['reviews']})),
-                             ', '.join(sorted({review['checkedAt'] for review in row['reviews']}))))
+                             ', '.join(sorted({review['checkedAt'] for review in row['reviews']})),
+                             len(row['prechecks']), ' '.join(review['dishId'] for review in row['prechecks'])))
     paths = (upstream.BUNDLE, upstream.MANIFEST, gm41.SCHEMA, INPUT, ARTWORK, HANDOFF)
     manifest = {
         'schemaVersion': candidate['contractVersion'], 'datasetVersion': candidate['datasetVersion'],

@@ -1,5 +1,18 @@
 # GM-47 · Kiểm thử
 
+## Sửa hồ sơ người kiểm và EXIF ngày 25/11/2026
+
+Theo [review của Trí](https://github.com/ThanhTris/IE307/pull/217#issuecomment-7140079834), 72 hồ sơ ảnh và 62 hồ sơ mô tả lưu phần kiểm bằng công cụ trong `assistance`. Các trường `checkedBy` và `checkedAt` chờ Tâm xem ảnh, trang nguồn hoặc từng câu mô tả rồi xác nhận. CSV hiện có 184 URL `needs_confirmation`, gồm 13 URL đã được công cụ đối chiếu toàn bộ. Máy không cấp trạng thái duyệt cho các URL này.
+
+| Kiểm thử | Kết quả và bằng chứng |
+| --- | --- |
+| Bánh crepe ngọt | Commons API và EXIF của JPEG gốc cùng trả `Make=HTC`. Trường `Model` trống. Đặt `cameraExif=true` và ghi căn cứ trong `provenance`. Kiểm lại 9 ảnh còn lại trước đó thiếu EXIF, không có Make hoặc Model. Tổng 63/72 ảnh có Make hoặc Model. [Trang nguồn](https://commons.wikimedia.org/wiki/File:Cr%C3%AApe_with_Strawberry_Ice_Cream.JPG) |
+| Xác nhận ảnh | 72 cặp đã chuẩn bị, 0 cặp có xác nhận của người kiểm và 181 món chưa có ảnh. Đã kiểm bằng fixture rằng receipt có SHA đúng vẫn bị từ chối khi ảnh chưa có xác nhận. |
+| Trạng thái nguồn dùng chung | Test một URL có nhiều món giữ `needs_confirmation` khi còn một món chưa được người kiểm xác nhận. Khi mọi món đã có tên người kiểm và thời điểm, URL mới chuyển sang `team_authored_fact_reference`. |
+| Candidate QA | Bundle offline vẫn là `1.4.2` với SHA-256 `7ca0d2ef9bba03c4bee025f597c2c7bc52de580471d97f9ddcb12463188942d7`. Checker 32/33, còn mục ảnh. Merge gate phụ thuộc và artifact đạt lúc 08:46 ICT trên `origin/main` `6cd5e1a`. |
+
+Mục bên dưới lưu kết quả của revision trước review. Các trạng thái nguồn và người kiểm của revision hiện tại nằm ở mục này.
+
 ## Rà nguồn và xác minh ảnh theo quyết định 25/11/2026
 
 Candidate `1.4.2` có 253 mô tả, dùng SHA-256 `7ca0d2ef9bba03c4bee025f597c2c7bc52de580471d97f9ddcb12463188942d7`. Start gate đạt. Merge gate đối chiếu dependency và artifact trên `origin/main` `6cd5e1a` lúc 00:21 ICT. [Quyết định của Trí](https://github.com/ThanhTris/IE307/pull/217#issuecomment-7138729659) · [Spec ảnh #218](https://github.com/ThanhTris/IE307/pull/218)

@@ -14,7 +14,7 @@ Checker hiện đạt 32/33 mục. Kiểm readback trên [QA GM-03](../GM-03/RUN
 
 ### Gói ảnh cho Trí và Tuấn
 
-Gói cục bộ `.work/gm47-release-editorial/gm47-storage-handoff.zip` có 72 ảnh chính và 72 ảnh nhỏ, tổng 8.187.680 byte ảnh. Có thể tái tạo từ các ảnh chính đã kiểm bằng Python có Pillow 13.0.0 và WebP encoder cùng bản. Lệnh kiểm SHA nguồn, xuất gói và từ chối metadata không khớp.
+Gói cục bộ `.work/gm47-release-editorial/gm47-storage-handoff.zip` có 72 ảnh chính và 72 ảnh nhỏ, tổng 8.187.680 byte ảnh. Đây là gói để Tâm đối chiếu ảnh trước bàn giao upload. Có thể tái tạo từ ảnh chính đã chuẩn bị bằng Python có Pillow 13.0.0 và WebP encoder cùng bản. Lệnh kiểm SHA nguồn, xuất gói và từ chối metadata không khớp.
 
 ```sh
 python data-preparation/scripts/gm47_storage_handoff.py --images .work/gm47-release-editorial/images
@@ -24,13 +24,17 @@ python data-preparation/scripts/gm47_storage_handoff.py --images .work/gm47-rele
 - Gói kèm `artwork-candidates.json` có tác giả, giấy phép, kích thước, số byte, SHA và `aiCheck` của từng tệp, cùng `ATTRIBUTION.md` để Tuấn triển khai màn Nguồn ảnh trong GM-64. Giữ giấy phép và ghi công cho cả hai bản dẫn xuất. Ảnh Chuối nếp nướng đã đổi SHA và tác giả. Nếu từng nhận gói cũ, chọn bản hiện tại khi upload.
 - `artwork-assignments.csv` chia 181 món thiếu ảnh theo sáu batch GM-41 và nhóm UUID ban đầu. Trí chia việc tìm hoặc chụp, Tâm kiểm ảnh, tác giả, license và nguồn gốc ảnh thật. Với ảnh nhóm tự chụp, giữ bản gốc có EXIF và đường dẫn xác nhận cho phép dùng (`permissionEvidence`).
 
-Bàn giao cho GM-51 theo quyết định của Trí ngày 25/11. Dùng mô tả do nhóm biên tập và URL để tham chiếu dữ kiện. `description-rights-review.csv` chỉ ghi `team_authored_fact_reference` khi toàn bộ mô tả dùng URL đó đã được đối chiếu. Cột `reviewed_dish_ids`, `checked_by` và `checked_at` ghi phạm vi và người kiểm. Nếu thay URL hoặc câu đã rà, phải rà lại bản ghi `factReview` tương ứng. Trạng thái của 171 URL còn (gồm cả URL đã đối chiếu một phần) là `needs_confirmation`. Xem [CHECKS](CHECKS.md).
+### Tâm xác nhận ảnh và mô tả
+
+- Mở ảnh, trang nguồn và thông tin license cho từng UUID. Sau khi Tâm xác nhận ảnh đúng món và đúng nguồn gốc, ghi tên Tâm vào `aiCheck.checkedBy`, thời điểm UTC thực tế vào `aiCheck.checkedAt` và `real_photo` vào `aiCheck.verdict`. Bản ghi chờ có `pending_human_review`. Kết quả rà bằng công cụ nằm trong `assistance`.
+- Với mô tả, đối chiếu từng câu với URL và các dữ kiện ghi ở `factReview.facts`. Sau khi Tâm xác nhận, ghi tên Tâm và thời điểm vào `factReview.checkedBy` và `factReview.checkedAt`. Nếu sửa nội dung hoặc URL, phải rà lại và cập nhật `factReview.textSha256` của bản mới trước khi xác nhận.
+- Theo quyết định của Trí, GM-51 dùng mô tả do nhóm biên tập và URL để đối chiếu dữ kiện. CSV chỉ ghi `team_authored_fact_reference` khi tất cả mô tả dùng URL đó đã được người kiểm xác nhận. Các cột `prechecked_dish_ids` và `reviewed_dish_ids` thể hiện hai kết quả rà. Hiện 184 URL còn `needs_confirmation`. Xem [CHECKS](CHECKS.md).
 
 ### Sau khi Trí xác nhận upload
 
 Cần URL công khai của bucket staging, object key đã chốt, và thông tin lô đã upload. [Runbook draft GM-52](https://github.com/ThanhTris/IE307/pull/216) ghi bucket `dish-images` và ảnh chính ở gốc dưới dạng `<dishId>.webp`. Nếu Trí xác nhận cách đó, thêm `--image-prefix ''` khi tạo receipt. Xác nhận riêng thư mục ảnh nhỏ và truyền qua `--thumbnail-prefix` nếu khác `thumbnails`.
 
-Dùng lệnh dưới để GET từng ảnh, so số byte và SHA-256. Receipt chỉ sinh khi cả cặp khớp. Có thể chọn UUID đã upload bằng `--dish-id` lặp lại khi thử theo lô.
+Dùng lệnh dưới để GET từng ảnh, so số byte và SHA-256. Receipt chỉ sinh khi cả cặp khớp và mục ảnh có xác nhận của người kiểm. Có thể chọn UUID đã upload và đã xác nhận bằng `--dish-id` lặp lại khi thử theo lô.
 
 ```sh
 python data-preparation/scripts/gm47_storage_receipt.py --bucket-url "$GM47_PUBLIC_BUCKET" --candidate-version 1.4.3

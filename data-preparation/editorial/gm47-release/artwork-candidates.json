@@ -42,10 +42,14 @@
         "cameraExif": false,
         "uploadedAt": "2014-10-23T14:29:33Z",
         "aiCategory": false,
-        "verdict": "real_photo",
-        "checkedBy": "Codex (hỗ trợ Tâm)",
-        "checkedAt": "2026-11-24T17:27:46Z",
-        "provenance": "Northern Vietnam ghi ảnh tự chụp, file năm 2014 mô tả ba que kem sữa dừa."
+        "verdict": "pending_human_review",
+        "checkedBy": null,
+        "checkedAt": null,
+        "provenance": "Northern Vietnam ghi ảnh tự chụp, file năm 2014 mô tả ba que kem sữa dừa.",
+        "assistance": {
+          "tool": "Codex",
+          "checkedAt": "2026-11-24T17:27:46Z"
+        }
       }
     },
     {
@@ -78,10 +82,14 @@
         "cameraExif": false,
         "uploadedAt": "2015-04-04T21:48:52Z",
         "aiCategory": false,
-        "verdict": "real_photo",
-        "checkedBy": "Codex (hỗ trợ Tâm)",
-        "checkedAt": "2026-11-24T17:27:46Z",
-        "provenance": "Commons ghi Jimmy Chen là tác giả ảnh bánh mì tại Viet Sub, Vancouver, file tải năm 2015."
+        "verdict": "pending_human_review",
+        "checkedBy": null,
+        "checkedAt": null,
+        "provenance": "Commons ghi Jimmy Chen là tác giả ảnh bánh mì tại Viet Sub, Vancouver, file tải năm 2015.",
+        "assistance": {
+          "tool": "Codex",
+          "checkedAt": "2026-11-24T17:27:46Z"
+        }
       }
     },
     {
@@ -114,10 +122,14 @@
         "cameraExif": true,
         "uploadedAt": "2018-07-19T03:32:32Z",
         "aiCategory": false,
-        "verdict": "real_photo",
-        "checkedBy": "Codex (hỗ trợ Tâm)",
-        "checkedAt": "2026-11-24T17:27:46Z",
-        "provenance": "EXIF Lumia 525 trên nguồn Commons. Đã xem ảnh món."
+        "verdict": "pending_human_review",
+        "checkedBy": null,
+        "checkedAt": null,
+        "provenance": "EXIF Lumia 525 trên nguồn Commons. Đã xem ảnh món.",
+        "assistance": {
+          "tool": "Codex",
+          "checkedAt": "2026-11-24T17:27:46Z"
+        }
       }
     },
     {
@@ -147,13 +159,17 @@
         "sha256": "fc3cc3846d7ef613673e1236144cd2a75a1687f762dd5ba171d4440605cc883f"
       },
       "aiCheck": {
-        "cameraExif": false,
+        "cameraExif": true,
         "uploadedAt": "2014-04-11T12:59:57Z",
         "aiCategory": false,
-        "verdict": "real_photo",
-        "checkedBy": "Codex (hỗ trợ Tâm)",
-        "checkedAt": "2026-11-24T17:27:46Z",
-        "provenance": "FlipTable ghi ảnh tự chụp năm 2014, khớp cuốn crepe nhân kem dâu trên ảnh."
+        "verdict": "pending_human_review",
+        "checkedBy": null,
+        "checkedAt": null,
+        "provenance": "FlipTable ghi ảnh tự chụp năm 2014. Commons API và JPEG gốc cùng có EXIF Make=HTC. Trường Model trống.",
+        "assistance": {
+          "tool": "Codex",
+          "checkedAt": "2026-11-25T01:49:13Z"
+        }
       }
     },
     {
@@ -186,10 +202,14 @@
         "cameraExif": true,
         "uploadedAt": "2025-11-16T23:21:29Z",
         "aiCategory": false,
-        "verdict": "real_photo",
-        "checkedBy": "Codex (hỗ trợ Tâm)",
-        "checkedAt": "2026-11-24T17:27:46Z",
-        "provenance": "EXIF SM-A536W trên nguồn Commons. Đã xem ảnh món."
+        "verdict": "pending_human_review",
+        "checkedBy": null,
+        "checkedAt": null,
+        "provenance": "EXIF SM-A536W trên nguồn Commons. Đã xem ảnh món.",
+        "assistance": {
+          "tool": "Codex",
+          "checkedAt": "2026-11-24T17:27:46Z"
+        }
       }
     },
     {
@@ -222,10 +242,14 @@
         "cameraExif": true,
         "uploadedAt": "2020-08-09T03:50:45Z",
         "aiCategory": false,
-        "verdict": "real_photo",
-        "checkedBy": "Codex (hỗ trợ Tâm)",
-        "checkedAt": "2026-11-24T17:27:46Z",
-        "provenance": "EXIF SM-J700H trên nguồn Commons. Đã xem ảnh món."
+        "verdict": "pending_human_review",
+        "checkedBy": null,
+        "checkedAt": null,
+        "provenance": "EXIF SM-J700H trên nguồn Commons. Đã xem ảnh món.",
+        "assistance": {
+          "tool": "Codex",
+          "checkedAt": "2026-11-24T17:27:46Z"
+        }
       }
     },
     {
@@ -258,10 +282,14 @@
         "cameraExif": true,
         "uploadedAt": "2012-10-24T13:39:14Z",
         "aiCategory": false,
-        "verdict": "real_photo",
-        "checkedBy": "Codex (hỗ trợ Tâm)",
-        "checkedAt": "2026-11-24T17:27:46Z",
-        "provenance": "EXIF E-PL1            trên nguồn Commons. Đã xem ảnh món."
+        "verdict": "pending_human_review",
+        "checkedBy": null,
+        "checkedAt": null,
+        "provenance": "EXIF E-PL1            trên nguồn Commons. Đã xem ảnh món.",
+        "assistance": {
+          "tool": "Codex",
+          "checkedAt": "2026-11-24T17:27:46Z"
+        }
       }
     },
     {
@@ -294,10 +322,14 @@
         "cameraExif": true,
         "uploadedAt": "2019-12-13T23:18:08Z",
         "aiCategory": false,
-        "verdict": "real_photo",
-        "checkedBy": "Codex (hỗ trợ Tâm)",
-        "checkedAt": "2026-11-24T17:27:46Z",
-        "provenance": "EXIF SM-G955F trên nguồn Commons. Đã xem ảnh món."
+        "verdict": "pending_human_review",
+        "checkedBy": null,
+        "checkedAt": null,
+        "provenance": "EXIF SM-G955F trên nguồn Commons. Đã xem ảnh món.",
+        "assistance": {
+          "tool": "Codex",
+          "checkedAt": "2026-11-24T17:27:46Z"
+        }
       }
     },
     {
@@ -330,10 +362,14 @@
         "cameraExif": true,
         "uploadedAt": "2007-11-17T08:45:04Z",
         "aiCategory": false,
-        "verdict": "real_photo",
-        "checkedBy": "Codex (hỗ trợ Tâm)",
-        "checkedAt": "2026-11-24T17:27:46Z",
-        "provenance": "EXIF GR Digital      trên nguồn Commons. Đã xem ảnh món."
+        "verdict": "pending_human_review",
+        "checkedBy": null,
+        "checkedAt": null,
+        "provenance": "EXIF GR Digital      trên nguồn Commons. Đã xem ảnh món.",
+        "assistance": {
+          "tool": "Codex",
+          "checkedAt": "2026-11-24T17:27:46Z"
+        }
       }
     },
     {
@@ -366,10 +402,14 @@
         "cameraExif": true,
         "uploadedAt": "2015-11-04T01:37:06Z",
         "aiCategory": false,
-        "verdict": "real_photo",
-        "checkedBy": "Codex (hỗ trợ Tâm)",
-        "checkedAt": "2026-11-24T17:27:46Z",
-        "provenance": "EXIF NIKON D5100 trên nguồn Commons. Đã xem ảnh món."
+        "verdict": "pending_human_review",
+        "checkedBy": null,
+        "checkedAt": null,
+        "provenance": "EXIF NIKON D5100 trên nguồn Commons. Đã xem ảnh món.",
+        "assistance": {
+          "tool": "Codex",
+          "checkedAt": "2026-11-24T17:27:46Z"
+        }
       }
     },
     {
@@ -402,10 +442,14 @@
         "cameraExif": false,
         "uploadedAt": "2013-02-05T01:31:11Z",
         "aiCategory": false,
-        "verdict": "real_photo",
-        "checkedBy": "Codex (hỗ trợ Tâm)",
-        "checkedAt": "2026-11-24T17:27:46Z",
-        "provenance": "Commons ghi Nguyen Thi Quynh Tram và dẫn blog Trams kochen, khớp dấu blog hiển thị trên ảnh năm 2013."
+        "verdict": "pending_human_review",
+        "checkedBy": null,
+        "checkedAt": null,
+        "provenance": "Commons ghi Nguyen Thi Quynh Tram và dẫn blog Trams kochen, khớp dấu blog hiển thị trên ảnh năm 2013.",
+        "assistance": {
+          "tool": "Codex",
+          "checkedAt": "2026-11-24T17:27:46Z"
+        }
       }
     },
     {
@@ -430,10 +474,14 @@
         "cameraExif": true,
         "uploadedAt": "2023-05-18T03:41:16Z",
         "aiCategory": false,
-        "verdict": "real_photo",
-        "checkedBy": "Codex (hỗ trợ Tâm)",
-        "checkedAt": "2026-11-24T17:27:46Z",
-        "provenance": "Ảnh Tri Nguyen chụp năm 2012 (Nikon D700), Commons đối chiếu Flickr và CC BY 2.0. Giữ chữ ghi công trong vùng cắt."
+        "verdict": "pending_human_review",
+        "checkedBy": null,
+        "checkedAt": null,
+        "provenance": "Ảnh Tri Nguyen chụp năm 2012 (Nikon D700), Commons đối chiếu Flickr và CC BY 2.0. Giữ chữ ghi công trong vùng cắt.",
+        "assistance": {
+          "tool": "Codex",
+          "checkedAt": "2026-11-24T17:27:46Z"
+        }
       },
       "objectKey": "images/33cb1cfd-c0a5-5c6c-84c3-d1d646bd4173.webp",
       "thumbnail": {
@@ -474,10 +522,14 @@
         "cameraExif": true,
         "uploadedAt": "2013-01-05T17:15:35Z",
         "aiCategory": false,
-        "verdict": "real_photo",
-        "checkedBy": "Codex (hỗ trợ Tâm)",
-        "checkedAt": "2026-11-24T17:27:46Z",
-        "provenance": "EXIF NIKON D5100 trên nguồn Commons. Đã xem ảnh món."
+        "verdict": "pending_human_review",
+        "checkedBy": null,
+        "checkedAt": null,
+        "provenance": "EXIF NIKON D5100 trên nguồn Commons. Đã xem ảnh món.",
+        "assistance": {
+          "tool": "Codex",
+          "checkedAt": "2026-11-24T17:27:46Z"
+        }
       }
     },
     {
@@ -510,10 +562,14 @@
         "cameraExif": true,
         "uploadedAt": "2009-03-08T02:24:13Z",
         "aiCategory": false,
-        "verdict": "real_photo",
-        "checkedBy": "Codex (hỗ trợ Tâm)",
-        "checkedAt": "2026-11-24T17:27:46Z",
-        "provenance": "EXIF Canon PowerShot SD550 trên nguồn Commons. Đã xem ảnh món."
+        "verdict": "pending_human_review",
+        "checkedBy": null,
+        "checkedAt": null,
+        "provenance": "EXIF Canon PowerShot SD550 trên nguồn Commons. Đã xem ảnh món.",
+        "assistance": {
+          "tool": "Codex",
+          "checkedAt": "2026-11-24T17:27:46Z"
+        }
       }
     },
     {
@@ -546,10 +602,14 @@
         "cameraExif": true,
         "uploadedAt": "2008-02-05T12:22:52Z",
         "aiCategory": false,
-        "verdict": "real_photo",
-        "checkedBy": "Codex (hỗ trợ Tâm)",
-        "checkedAt": "2026-11-24T17:27:46Z",
-        "provenance": "EXIF FinePix E550    trên nguồn Commons. Đã xem ảnh món."
+        "verdict": "pending_human_review",
+        "checkedBy": null,
+        "checkedAt": null,
+        "provenance": "EXIF FinePix E550    trên nguồn Commons. Đã xem ảnh món.",
+        "assistance": {
+          "tool": "Codex",
+          "checkedAt": "2026-11-24T17:27:46Z"
+        }
       }
     },
     {
@@ -582,10 +642,14 @@
         "cameraExif": true,
         "uploadedAt": "2018-12-06T18:42:23Z",
         "aiCategory": false,
-        "verdict": "real_photo",
-        "checkedBy": "Codex (hỗ trợ Tâm)",
-        "checkedAt": "2026-11-24T17:27:46Z",
-        "provenance": "EXIF iPhone 7 Plus trên nguồn Commons. Đã xem ảnh món."
+        "verdict": "pending_human_review",
+        "checkedBy": null,
+        "checkedAt": null,
+        "provenance": "EXIF iPhone 7 Plus trên nguồn Commons. Đã xem ảnh món.",
+        "assistance": {
+          "tool": "Codex",
+          "checkedAt": "2026-11-24T17:27:46Z"
+        }
       }
     },
     {
@@ -618,10 +682,14 @@
         "cameraExif": true,
         "uploadedAt": "2008-03-02T13:57:11Z",
         "aiCategory": false,
-        "verdict": "real_photo",
-        "checkedBy": "Codex (hỗ trợ Tâm)",
-        "checkedAt": "2026-11-24T17:27:46Z",
-        "provenance": "EXIF Canon EOS DIGITAL REBEL XTi trên nguồn Commons. Đã xem ảnh món."
+        "verdict": "pending_human_review",
+        "checkedBy": null,
+        "checkedAt": null,
+        "provenance": "EXIF Canon EOS DIGITAL REBEL XTi trên nguồn Commons. Đã xem ảnh món.",
+        "assistance": {
+          "tool": "Codex",
+          "checkedAt": "2026-11-24T17:27:46Z"
+        }
       }
     },
     {
@@ -654,10 +722,14 @@
         "cameraExif": false,
         "uploadedAt": "2013-03-01T08:49:21Z",
         "aiCategory": false,
-        "verdict": "real_photo",
-        "checkedBy": "Codex (hỗ trợ Tâm)",
-        "checkedAt": "2026-11-24T17:27:46Z",
-        "provenance": "Commons ghi Nguyen Thi Quynh Tram là tác giả, khớp blog Trams kochen và ảnh được đăng năm 2013."
+        "verdict": "pending_human_review",
+        "checkedBy": null,
+        "checkedAt": null,
+        "provenance": "Commons ghi Nguyen Thi Quynh Tram là tác giả, khớp blog Trams kochen và ảnh được đăng năm 2013.",
+        "assistance": {
+          "tool": "Codex",
+          "checkedAt": "2026-11-24T17:27:46Z"
+        }
       }
     },
     {
@@ -690,10 +762,14 @@
         "cameraExif": true,
         "uploadedAt": "2020-08-09T03:41:37Z",
         "aiCategory": false,
-        "verdict": "real_photo",
-        "checkedBy": "Codex (hỗ trợ Tâm)",
-        "checkedAt": "2026-11-24T17:27:46Z",
-        "provenance": "EXIF SM-J700H trên nguồn Commons. Đã xem ảnh món."
+        "verdict": "pending_human_review",
+        "checkedBy": null,
+        "checkedAt": null,
+        "provenance": "EXIF SM-J700H trên nguồn Commons. Đã xem ảnh món.",
+        "assistance": {
+          "tool": "Codex",
+          "checkedAt": "2026-11-24T17:27:46Z"
+        }
       }
     },
     {
@@ -726,10 +802,14 @@
         "cameraExif": true,
         "uploadedAt": "2018-09-13T10:39:26Z",
         "aiCategory": false,
-        "verdict": "real_photo",
-        "checkedBy": "Codex (hỗ trợ Tâm)",
-        "checkedAt": "2026-11-24T17:27:46Z",
-        "provenance": "EXIF RIDGE FAB 4G trên nguồn Commons. Đã xem ảnh món."
+        "verdict": "pending_human_review",
+        "checkedBy": null,
+        "checkedAt": null,
+        "provenance": "EXIF RIDGE FAB 4G trên nguồn Commons. Đã xem ảnh món.",
+        "assistance": {
+          "tool": "Codex",
+          "checkedAt": "2026-11-24T17:27:46Z"
+        }
       }
     },
     {
@@ -762,10 +842,14 @@
         "cameraExif": true,
         "uploadedAt": "2015-02-01T15:02:06Z",
         "aiCategory": false,
-        "verdict": "real_photo",
-        "checkedBy": "Codex (hỗ trợ Tâm)",
-        "checkedAt": "2026-11-24T17:27:46Z",
-        "provenance": "EXIF X100S trên nguồn Commons. Đã xem ảnh món."
+        "verdict": "pending_human_review",
+        "checkedBy": null,
+        "checkedAt": null,
+        "provenance": "EXIF X100S trên nguồn Commons. Đã xem ảnh món.",
+        "assistance": {
+          "tool": "Codex",
+          "checkedAt": "2026-11-24T17:27:46Z"
+        }
       }
     },
     {
@@ -798,10 +882,14 @@
         "cameraExif": true,
         "uploadedAt": "2022-10-20T09:29:04Z",
         "aiCategory": false,
-        "verdict": "real_photo",
-        "checkedBy": "Codex (hỗ trợ Tâm)",
-        "checkedAt": "2026-11-24T17:27:46Z",
-        "provenance": "EXIF SM-A305F trên nguồn Commons. Đã xem ảnh món."
+        "verdict": "pending_human_review",
+        "checkedBy": null,
+        "checkedAt": null,
+        "provenance": "EXIF SM-A305F trên nguồn Commons. Đã xem ảnh món.",
+        "assistance": {
+          "tool": "Codex",
+          "checkedAt": "2026-11-24T17:27:46Z"
+        }
       }
     },
     {
@@ -834,10 +922,14 @@
         "cameraExif": true,
         "uploadedAt": "2015-02-15T02:28:09Z",
         "aiCategory": false,
-        "verdict": "real_photo",
-        "checkedBy": "Codex (hỗ trợ Tâm)",
-        "checkedAt": "2026-11-24T17:27:46Z",
-        "provenance": "EXIF iPhone 6 trên nguồn Commons. Đã xem ảnh món."
+        "verdict": "pending_human_review",
+        "checkedBy": null,
+        "checkedAt": null,
+        "provenance": "EXIF iPhone 6 trên nguồn Commons. Đã xem ảnh món.",
+        "assistance": {
+          "tool": "Codex",
+          "checkedAt": "2026-11-24T17:27:46Z"
+        }
       }
     },
     {
@@ -870,10 +962,14 @@
         "cameraExif": false,
         "uploadedAt": "2024-06-24T15:13:26Z",
         "aiCategory": false,
-        "verdict": "real_photo",
-        "checkedBy": "Codex (hỗ trợ Tâm)",
-        "checkedAt": "2026-11-24T17:27:46Z",
-        "provenance": "Ser Amantio di Nicolao ghi ảnh tự chụp tại Pho Number 1, Springfield; ảnh món và rau khớp hồ sơ."
+        "verdict": "pending_human_review",
+        "checkedBy": null,
+        "checkedAt": null,
+        "provenance": "Ser Amantio di Nicolao ghi ảnh tự chụp tại Pho Number 1, Springfield; ảnh món và rau khớp hồ sơ.",
+        "assistance": {
+          "tool": "Codex",
+          "checkedAt": "2026-11-24T17:27:46Z"
+        }
       }
     },
     {
@@ -906,10 +1002,14 @@
         "cameraExif": true,
         "uploadedAt": "2008-07-17T17:01:35Z",
         "aiCategory": false,
-        "verdict": "real_photo",
-        "checkedBy": "Codex (hỗ trợ Tâm)",
-        "checkedAt": "2026-11-24T17:27:46Z",
-        "provenance": "EXIF Canon PowerShot S400 trên nguồn Commons. Đã xem ảnh món."
+        "verdict": "pending_human_review",
+        "checkedBy": null,
+        "checkedAt": null,
+        "provenance": "EXIF Canon PowerShot S400 trên nguồn Commons. Đã xem ảnh món.",
+        "assistance": {
+          "tool": "Codex",
+          "checkedAt": "2026-11-24T17:27:46Z"
+        }
       }
     },
     {
@@ -942,10 +1042,14 @@
         "cameraExif": true,
         "uploadedAt": "2020-02-21T14:26:06Z",
         "aiCategory": false,
-        "verdict": "real_photo",
-        "checkedBy": "Codex (hỗ trợ Tâm)",
-        "checkedAt": "2026-11-24T17:27:46Z",
-        "provenance": "EXIF iPhone 5 trên nguồn Commons. Đã xem ảnh món."
+        "verdict": "pending_human_review",
+        "checkedBy": null,
+        "checkedAt": null,
+        "provenance": "EXIF iPhone 5 trên nguồn Commons. Đã xem ảnh món.",
+        "assistance": {
+          "tool": "Codex",
+          "checkedAt": "2026-11-24T17:27:46Z"
+        }
       }
     },
     {
@@ -978,10 +1082,14 @@
         "cameraExif": true,
         "uploadedAt": "2010-09-09T18:03:40Z",
         "aiCategory": false,
-        "verdict": "real_photo",
-        "checkedBy": "Codex (hỗ trợ Tâm)",
-        "checkedAt": "2026-11-24T17:27:46Z",
-        "provenance": "EXIF Canon PowerShot SD1300 IS trên nguồn Commons. Đã xem ảnh món."
+        "verdict": "pending_human_review",
+        "checkedBy": null,
+        "checkedAt": null,
+        "provenance": "EXIF Canon PowerShot SD1300 IS trên nguồn Commons. Đã xem ảnh món.",
+        "assistance": {
+          "tool": "Codex",
+          "checkedAt": "2026-11-24T17:27:46Z"
+        }
       }
     },
     {
@@ -1014,10 +1122,14 @@
         "cameraExif": true,
         "uploadedAt": "2017-01-07T08:44:08Z",
         "aiCategory": false,
-        "verdict": "real_photo",
-        "checkedBy": "Codex (hỗ trợ Tâm)",
-        "checkedAt": "2026-11-24T17:27:46Z",
-        "provenance": "EXIF 2014818 trên nguồn Commons. Đã xem ảnh món."
+        "verdict": "pending_human_review",
+        "checkedBy": null,
+        "checkedAt": null,
+        "provenance": "EXIF 2014818 trên nguồn Commons. Đã xem ảnh món.",
+        "assistance": {
+          "tool": "Codex",
+          "checkedAt": "2026-11-24T17:27:46Z"
+        }
       }
     },
     {
@@ -1050,10 +1162,14 @@
         "cameraExif": true,
         "uploadedAt": "2021-12-22T10:27:06Z",
         "aiCategory": false,
-        "verdict": "real_photo",
-        "checkedBy": "Codex (hỗ trợ Tâm)",
-        "checkedAt": "2026-11-24T17:27:46Z",
-        "provenance": "EXIF X-T2 trên nguồn Commons. Đã xem ảnh món."
+        "verdict": "pending_human_review",
+        "checkedBy": null,
+        "checkedAt": null,
+        "provenance": "EXIF X-T2 trên nguồn Commons. Đã xem ảnh món.",
+        "assistance": {
+          "tool": "Codex",
+          "checkedAt": "2026-11-24T17:27:46Z"
+        }
       }
     },
     {
@@ -1086,10 +1202,14 @@
         "cameraExif": false,
         "uploadedAt": "2013-07-18T19:36:09Z",
         "aiCategory": false,
-        "verdict": "real_photo",
-        "checkedBy": "Codex (hỗ trợ Tâm)",
-        "checkedAt": "2026-11-24T17:27:46Z",
-        "provenance": "Ảnh vỉ nướng do Gyfjonas ghi tự chụp, tải lên năm 2013."
+        "verdict": "pending_human_review",
+        "checkedBy": null,
+        "checkedAt": null,
+        "provenance": "Ảnh vỉ nướng do Gyfjonas ghi tự chụp, tải lên năm 2013.",
+        "assistance": {
+          "tool": "Codex",
+          "checkedAt": "2026-11-24T17:27:46Z"
+        }
       }
     },
     {
@@ -1114,10 +1234,14 @@
         "cameraExif": true,
         "uploadedAt": "2026-06-07T11:21:14Z",
         "aiCategory": false,
-        "verdict": "real_photo",
-        "checkedBy": "Codex (hỗ trợ Tâm)",
-        "checkedAt": "2026-11-24T17:27:46Z",
-        "provenance": "EXIF Galaxy S25 Ultra trên nguồn Commons. Đã xem ảnh món."
+        "verdict": "pending_human_review",
+        "checkedBy": null,
+        "checkedAt": null,
+        "provenance": "EXIF Galaxy S25 Ultra trên nguồn Commons. Đã xem ảnh món.",
+        "assistance": {
+          "tool": "Codex",
+          "checkedAt": "2026-11-24T17:27:46Z"
+        }
       },
       "objectKey": "images/8131e3cd-bce2-5843-8800-9426c91382ba.webp",
       "thumbnail": {
@@ -1158,10 +1282,14 @@
         "cameraExif": true,
         "uploadedAt": "2006-09-17T18:50:56Z",
         "aiCategory": false,
-        "verdict": "real_photo",
-        "checkedBy": "Codex (hỗ trợ Tâm)",
-        "checkedAt": "2026-11-24T17:27:46Z",
-        "provenance": "EXIF PENTAX Optio 550 trên nguồn Commons. Đã xem ảnh món."
+        "verdict": "pending_human_review",
+        "checkedBy": null,
+        "checkedAt": null,
+        "provenance": "EXIF PENTAX Optio 550 trên nguồn Commons. Đã xem ảnh món.",
+        "assistance": {
+          "tool": "Codex",
+          "checkedAt": "2026-11-24T17:27:46Z"
+        }
       }
     },
     {
@@ -1194,10 +1322,14 @@
         "cameraExif": true,
         "uploadedAt": "2020-04-19T08:48:41Z",
         "aiCategory": false,
-        "verdict": "real_photo",
-        "checkedBy": "Codex (hỗ trợ Tâm)",
-        "checkedAt": "2026-11-24T17:27:46Z",
-        "provenance": "EXIF DMC-GX8 trên nguồn Commons. Đã xem ảnh món."
+        "verdict": "pending_human_review",
+        "checkedBy": null,
+        "checkedAt": null,
+        "provenance": "EXIF DMC-GX8 trên nguồn Commons. Đã xem ảnh món.",
+        "assistance": {
+          "tool": "Codex",
+          "checkedAt": "2026-11-24T17:27:46Z"
+        }
       }
     },
     {
@@ -1230,10 +1362,14 @@
         "cameraExif": true,
         "uploadedAt": "2010-08-31T05:21:12Z",
         "aiCategory": false,
-        "verdict": "real_photo",
-        "checkedBy": "Codex (hỗ trợ Tâm)",
-        "checkedAt": "2026-11-24T17:27:46Z",
-        "provenance": "EXIF 6300 trên nguồn Commons. Đã xem ảnh món."
+        "verdict": "pending_human_review",
+        "checkedBy": null,
+        "checkedAt": null,
+        "provenance": "EXIF 6300 trên nguồn Commons. Đã xem ảnh món.",
+        "assistance": {
+          "tool": "Codex",
+          "checkedAt": "2026-11-24T17:27:46Z"
+        }
       }
     },
     {
@@ -1266,10 +1402,14 @@
         "cameraExif": true,
         "uploadedAt": "2020-12-22T10:24:21Z",
         "aiCategory": false,
-        "verdict": "real_photo",
-        "checkedBy": "Codex (hỗ trợ Tâm)",
-        "checkedAt": "2026-11-24T17:27:46Z",
-        "provenance": "EXIF SM-J730G trên nguồn Commons. Đã xem ảnh món."
+        "verdict": "pending_human_review",
+        "checkedBy": null,
+        "checkedAt": null,
+        "provenance": "EXIF SM-J730G trên nguồn Commons. Đã xem ảnh món.",
+        "assistance": {
+          "tool": "Codex",
+          "checkedAt": "2026-11-24T17:27:46Z"
+        }
       }
     },
     {
@@ -1302,10 +1442,14 @@
         "cameraExif": true,
         "uploadedAt": "2017-03-10T02:30:23Z",
         "aiCategory": false,
-        "verdict": "real_photo",
-        "checkedBy": "Codex (hỗ trợ Tâm)",
-        "checkedAt": "2026-11-24T17:27:46Z",
-        "provenance": "EXIF FinePix T300 trên nguồn Commons. Đã xem ảnh món."
+        "verdict": "pending_human_review",
+        "checkedBy": null,
+        "checkedAt": null,
+        "provenance": "EXIF FinePix T300 trên nguồn Commons. Đã xem ảnh món.",
+        "assistance": {
+          "tool": "Codex",
+          "checkedAt": "2026-11-24T17:27:46Z"
+        }
       }
     },
     {
@@ -1338,10 +1482,14 @@
         "cameraExif": true,
         "uploadedAt": "2019-10-24T00:32:18Z",
         "aiCategory": false,
-        "verdict": "real_photo",
-        "checkedBy": "Codex (hỗ trợ Tâm)",
-        "checkedAt": "2026-11-24T17:27:46Z",
-        "provenance": "EXIF MI 6 trên nguồn Commons. Đã xem ảnh món."
+        "verdict": "pending_human_review",
+        "checkedBy": null,
+        "checkedAt": null,
+        "provenance": "EXIF MI 6 trên nguồn Commons. Đã xem ảnh món.",
+        "assistance": {
+          "tool": "Codex",
+          "checkedAt": "2026-11-24T17:27:46Z"
+        }
       }
     },
     {
@@ -1374,10 +1522,14 @@
         "cameraExif": true,
         "uploadedAt": "2014-07-12T20:59:12Z",
         "aiCategory": false,
-        "verdict": "real_photo",
-        "checkedBy": "Codex (hỗ trợ Tâm)",
-        "checkedAt": "2026-11-24T17:27:46Z",
-        "provenance": "EXIF NIKON 1 J2 trên nguồn Commons. Đã xem ảnh món."
+        "verdict": "pending_human_review",
+        "checkedBy": null,
+        "checkedAt": null,
+        "provenance": "EXIF NIKON 1 J2 trên nguồn Commons. Đã xem ảnh món.",
+        "assistance": {
+          "tool": "Codex",
+          "checkedAt": "2026-11-24T17:27:46Z"
+        }
       }
     },
     {
@@ -1410,10 +1562,14 @@
         "cameraExif": true,
         "uploadedAt": "2011-04-08T19:05:33Z",
         "aiCategory": false,
-        "verdict": "real_photo",
-        "checkedBy": "Codex (hỗ trợ Tâm)",
-        "checkedAt": "2026-11-24T17:27:46Z",
-        "provenance": "EXIF DMC-FZ5 trên nguồn Commons. Đã xem ảnh món."
+        "verdict": "pending_human_review",
+        "checkedBy": null,
+        "checkedAt": null,
+        "provenance": "EXIF DMC-FZ5 trên nguồn Commons. Đã xem ảnh món.",
+        "assistance": {
+          "tool": "Codex",
+          "checkedAt": "2026-11-24T17:27:46Z"
+        }
       }
     },
     {
@@ -1446,10 +1602,14 @@
         "cameraExif": false,
         "uploadedAt": "2008-06-25T12:16:31Z",
         "aiCategory": false,
-        "verdict": "real_photo",
-        "checkedBy": "Codex (hỗ trợ Tâm)",
-        "checkedAt": "2026-11-24T17:27:46Z",
-        "provenance": "Commons ghi nguồn Flickr của Nha Nghi La, ảnh chén bánh tải lên năm 2008."
+        "verdict": "pending_human_review",
+        "checkedBy": null,
+        "checkedAt": null,
+        "provenance": "Commons ghi nguồn Flickr của Nha Nghi La, ảnh chén bánh tải lên năm 2008.",
+        "assistance": {
+          "tool": "Codex",
+          "checkedAt": "2026-11-24T17:27:46Z"
+        }
       }
     },
     {
@@ -1482,10 +1642,14 @@
         "cameraExif": false,
         "uploadedAt": "2013-10-30T07:53:31Z",
         "aiCategory": false,
-        "verdict": "real_photo",
-        "checkedBy": "Codex (hỗ trợ Tâm)",
-        "checkedAt": "2026-11-24T17:27:46Z",
-        "provenance": "TonySam123 ghi ảnh tự chụp bánh pía còn nguyên dấu in, file tải năm 2013."
+        "verdict": "pending_human_review",
+        "checkedBy": null,
+        "checkedAt": null,
+        "provenance": "TonySam123 ghi ảnh tự chụp bánh pía còn nguyên dấu in, file tải năm 2013.",
+        "assistance": {
+          "tool": "Codex",
+          "checkedAt": "2026-11-24T17:27:46Z"
+        }
       }
     },
     {
@@ -1518,10 +1682,14 @@
         "cameraExif": true,
         "uploadedAt": "2025-11-07T08:25:51Z",
         "aiCategory": false,
-        "verdict": "real_photo",
-        "checkedBy": "Codex (hỗ trợ Tâm)",
-        "checkedAt": "2026-11-24T17:27:46Z",
-        "provenance": "EXIF iPhone 11 Pro trên nguồn Commons. Đã xem ảnh món."
+        "verdict": "pending_human_review",
+        "checkedBy": null,
+        "checkedAt": null,
+        "provenance": "EXIF iPhone 11 Pro trên nguồn Commons. Đã xem ảnh món.",
+        "assistance": {
+          "tool": "Codex",
+          "checkedAt": "2026-11-24T17:27:46Z"
+        }
       }
     },
     {
@@ -1554,10 +1722,14 @@
         "cameraExif": true,
         "uploadedAt": "2020-12-24T13:13:10Z",
         "aiCategory": false,
-        "verdict": "real_photo",
-        "checkedBy": "Codex (hỗ trợ Tâm)",
-        "checkedAt": "2026-11-24T17:27:46Z",
-        "provenance": "EXIF SM-J730G trên nguồn Commons. Đã xem ảnh món."
+        "verdict": "pending_human_review",
+        "checkedBy": null,
+        "checkedAt": null,
+        "provenance": "EXIF SM-J730G trên nguồn Commons. Đã xem ảnh món.",
+        "assistance": {
+          "tool": "Codex",
+          "checkedAt": "2026-11-24T17:27:46Z"
+        }
       }
     },
     {
@@ -1590,10 +1762,14 @@
         "cameraExif": true,
         "uploadedAt": "2012-07-21T14:59:42Z",
         "aiCategory": false,
-        "verdict": "real_photo",
-        "checkedBy": "Codex (hỗ trợ Tâm)",
-        "checkedAt": "2026-11-24T17:27:46Z",
-        "provenance": "EXIF DMC-FS3 trên nguồn Commons. Đã xem ảnh món."
+        "verdict": "pending_human_review",
+        "checkedBy": null,
+        "checkedAt": null,
+        "provenance": "EXIF DMC-FS3 trên nguồn Commons. Đã xem ảnh món.",
+        "assistance": {
+          "tool": "Codex",
+          "checkedAt": "2026-11-24T17:27:46Z"
+        }
       }
     },
     {
@@ -1626,10 +1802,14 @@
         "cameraExif": true,
         "uploadedAt": "2021-04-01T19:28:26Z",
         "aiCategory": false,
-        "verdict": "real_photo",
-        "checkedBy": "Codex (hỗ trợ Tâm)",
-        "checkedAt": "2026-11-24T17:27:46Z",
-        "provenance": "EXIF SM-G955F trên nguồn Commons. Đã xem ảnh món."
+        "verdict": "pending_human_review",
+        "checkedBy": null,
+        "checkedAt": null,
+        "provenance": "EXIF SM-G955F trên nguồn Commons. Đã xem ảnh món.",
+        "assistance": {
+          "tool": "Codex",
+          "checkedAt": "2026-11-24T17:27:46Z"
+        }
       }
     },
     {
@@ -1662,10 +1842,14 @@
         "cameraExif": true,
         "uploadedAt": "2012-07-21T14:59:38Z",
         "aiCategory": false,
-        "verdict": "real_photo",
-        "checkedBy": "Codex (hỗ trợ Tâm)",
-        "checkedAt": "2026-11-24T17:27:46Z",
-        "provenance": "EXIF DMC-FS3 trên nguồn Commons. Đã xem ảnh món."
+        "verdict": "pending_human_review",
+        "checkedBy": null,
+        "checkedAt": null,
+        "provenance": "EXIF DMC-FS3 trên nguồn Commons. Đã xem ảnh món.",
+        "assistance": {
+          "tool": "Codex",
+          "checkedAt": "2026-11-24T17:27:46Z"
+        }
       }
     },
     {
@@ -1698,10 +1882,14 @@
         "cameraExif": true,
         "uploadedAt": "2016-03-18T17:27:47Z",
         "aiCategory": false,
-        "verdict": "real_photo",
-        "checkedBy": "Codex (hỗ trợ Tâm)",
-        "checkedAt": "2026-11-24T17:27:46Z",
-        "provenance": "EXIF COOLPIX S8200 trên nguồn Commons. Đã xem ảnh món."
+        "verdict": "pending_human_review",
+        "checkedBy": null,
+        "checkedAt": null,
+        "provenance": "EXIF COOLPIX S8200 trên nguồn Commons. Đã xem ảnh món.",
+        "assistance": {
+          "tool": "Codex",
+          "checkedAt": "2026-11-24T17:27:46Z"
+        }
       }
     },
     {
@@ -1734,10 +1922,14 @@
         "cameraExif": true,
         "uploadedAt": "2020-12-20T13:24:59Z",
         "aiCategory": false,
-        "verdict": "real_photo",
-        "checkedBy": "Codex (hỗ trợ Tâm)",
-        "checkedAt": "2026-11-24T17:27:46Z",
-        "provenance": "EXIF SM-J415N trên nguồn Commons. Đã xem ảnh món."
+        "verdict": "pending_human_review",
+        "checkedBy": null,
+        "checkedAt": null,
+        "provenance": "EXIF SM-J415N trên nguồn Commons. Đã xem ảnh món.",
+        "assistance": {
+          "tool": "Codex",
+          "checkedAt": "2026-11-24T17:27:46Z"
+        }
       }
     },
     {
@@ -1770,10 +1962,14 @@
         "cameraExif": true,
         "uploadedAt": "2023-03-15T03:17:10Z",
         "aiCategory": false,
-        "verdict": "real_photo",
-        "checkedBy": "Codex (hỗ trợ Tâm)",
-        "checkedAt": "2026-11-24T17:27:46Z",
-        "provenance": "EXIF Canon DC40 trên nguồn Commons. Đã xem ảnh món."
+        "verdict": "pending_human_review",
+        "checkedBy": null,
+        "checkedAt": null,
+        "provenance": "EXIF Canon DC40 trên nguồn Commons. Đã xem ảnh món.",
+        "assistance": {
+          "tool": "Codex",
+          "checkedAt": "2026-11-24T17:27:46Z"
+        }
       }
     },
     {
@@ -1806,10 +2002,14 @@
         "cameraExif": true,
         "uploadedAt": "2022-11-21T01:50:17Z",
         "aiCategory": false,
-        "verdict": "real_photo",
-        "checkedBy": "Codex (hỗ trợ Tâm)",
-        "checkedAt": "2026-11-24T17:27:46Z",
-        "provenance": "EXIF SM-G780G trên nguồn Commons. Đã xem ảnh món."
+        "verdict": "pending_human_review",
+        "checkedBy": null,
+        "checkedAt": null,
+        "provenance": "EXIF SM-G780G trên nguồn Commons. Đã xem ảnh món.",
+        "assistance": {
+          "tool": "Codex",
+          "checkedAt": "2026-11-24T17:27:46Z"
+        }
       }
     },
     {
@@ -1842,10 +2042,14 @@
         "cameraExif": true,
         "uploadedAt": "2009-06-08T16:55:48Z",
         "aiCategory": false,
-        "verdict": "real_photo",
-        "checkedBy": "Codex (hỗ trợ Tâm)",
-        "checkedAt": "2026-11-24T17:27:46Z",
-        "provenance": "EXIF Canon PowerShot SD950 IS trên nguồn Commons. Đã xem ảnh món."
+        "verdict": "pending_human_review",
+        "checkedBy": null,
+        "checkedAt": null,
+        "provenance": "EXIF Canon PowerShot SD950 IS trên nguồn Commons. Đã xem ảnh món.",
+        "assistance": {
+          "tool": "Codex",
+          "checkedAt": "2026-11-24T17:27:46Z"
+        }
       }
     },
     {
@@ -1878,10 +2082,14 @@
         "cameraExif": true,
         "uploadedAt": "2015-09-30T14:57:33Z",
         "aiCategory": false,
-        "verdict": "real_photo",
-        "checkedBy": "Codex (hỗ trợ Tâm)",
-        "checkedAt": "2026-11-24T17:27:46Z",
-        "provenance": "EXIF Canon EOS DIGITAL REBEL XTi trên nguồn Commons. Đã xem ảnh món."
+        "verdict": "pending_human_review",
+        "checkedBy": null,
+        "checkedAt": null,
+        "provenance": "EXIF Canon EOS DIGITAL REBEL XTi trên nguồn Commons. Đã xem ảnh món.",
+        "assistance": {
+          "tool": "Codex",
+          "checkedAt": "2026-11-24T17:27:46Z"
+        }
       }
     },
     {
@@ -1914,10 +2122,14 @@
         "cameraExif": true,
         "uploadedAt": "2017-07-14T06:02:03Z",
         "aiCategory": false,
-        "verdict": "real_photo",
-        "checkedBy": "Codex (hỗ trợ Tâm)",
-        "checkedAt": "2026-11-24T17:27:46Z",
-        "provenance": "EXIF iPhone 5 trên nguồn Commons. Đã xem ảnh món."
+        "verdict": "pending_human_review",
+        "checkedBy": null,
+        "checkedAt": null,
+        "provenance": "EXIF iPhone 5 trên nguồn Commons. Đã xem ảnh món.",
+        "assistance": {
+          "tool": "Codex",
+          "checkedAt": "2026-11-24T17:27:46Z"
+        }
       }
     },
     {
@@ -1950,10 +2162,14 @@
         "cameraExif": true,
         "uploadedAt": "2010-07-02T04:10:15Z",
         "aiCategory": false,
-        "verdict": "real_photo",
-        "checkedBy": "Codex (hỗ trợ Tâm)",
-        "checkedAt": "2026-11-24T17:27:46Z",
-        "provenance": "EXIF Canon DIGITAL IXUS 70 trên nguồn Commons. Đã xem ảnh món."
+        "verdict": "pending_human_review",
+        "checkedBy": null,
+        "checkedAt": null,
+        "provenance": "EXIF Canon DIGITAL IXUS 70 trên nguồn Commons. Đã xem ảnh món.",
+        "assistance": {
+          "tool": "Codex",
+          "checkedAt": "2026-11-24T17:27:46Z"
+        }
       }
     },
     {
@@ -1986,10 +2202,14 @@
         "cameraExif": true,
         "uploadedAt": "2015-12-02T02:16:19Z",
         "aiCategory": false,
-        "verdict": "real_photo",
-        "checkedBy": "Codex (hỗ trợ Tâm)",
-        "checkedAt": "2026-11-24T17:27:46Z",
-        "provenance": "EXIF SM-T311 trên nguồn Commons. Đã xem ảnh món."
+        "verdict": "pending_human_review",
+        "checkedBy": null,
+        "checkedAt": null,
+        "provenance": "EXIF SM-T311 trên nguồn Commons. Đã xem ảnh món.",
+        "assistance": {
+          "tool": "Codex",
+          "checkedAt": "2026-11-24T17:27:46Z"
+        }
       }
     },
     {
@@ -2022,10 +2242,14 @@
         "cameraExif": true,
         "uploadedAt": "2007-11-25T04:03:31Z",
         "aiCategory": false,
-        "verdict": "real_photo",
-        "checkedBy": "Codex (hỗ trợ Tâm)",
-        "checkedAt": "2026-11-24T17:27:46Z",
-        "provenance": "EXIF Canon PowerShot S2 IS trên nguồn Commons. Đã xem ảnh món."
+        "verdict": "pending_human_review",
+        "checkedBy": null,
+        "checkedAt": null,
+        "provenance": "EXIF Canon PowerShot S2 IS trên nguồn Commons. Đã xem ảnh món.",
+        "assistance": {
+          "tool": "Codex",
+          "checkedAt": "2026-11-24T17:27:46Z"
+        }
       }
     },
     {
@@ -2050,10 +2274,14 @@
         "cameraExif": true,
         "uploadedAt": "2015-02-01T15:02:05Z",
         "aiCategory": false,
-        "verdict": "real_photo",
-        "checkedBy": "Codex (hỗ trợ Tâm)",
-        "checkedAt": "2026-11-24T17:27:46Z",
-        "provenance": "EXIF X100S trên nguồn Commons. Đã xem ảnh món."
+        "verdict": "pending_human_review",
+        "checkedBy": null,
+        "checkedAt": null,
+        "provenance": "EXIF X100S trên nguồn Commons. Đã xem ảnh món.",
+        "assistance": {
+          "tool": "Codex",
+          "checkedAt": "2026-11-24T17:27:46Z"
+        }
       },
       "objectKey": "images/da40f225-25dd-5527-b535-ae5d48e15b9d.webp",
       "thumbnail": {
@@ -2094,10 +2322,14 @@
         "cameraExif": true,
         "uploadedAt": "2026-11-13T03:27:12Z",
         "aiCategory": false,
-        "verdict": "real_photo",
-        "checkedBy": "Codex (hỗ trợ Tâm)",
-        "checkedAt": "2026-11-24T17:27:46Z",
-        "provenance": "EXIF iPhone 4 trên nguồn Commons. Đã xem ảnh món."
+        "verdict": "pending_human_review",
+        "checkedBy": null,
+        "checkedAt": null,
+        "provenance": "EXIF iPhone 4 trên nguồn Commons. Đã xem ảnh món.",
+        "assistance": {
+          "tool": "Codex",
+          "checkedAt": "2026-11-24T17:27:46Z"
+        }
       }
     },
     {
@@ -2130,10 +2362,14 @@
         "cameraExif": true,
         "uploadedAt": "2011-12-19T14:22:32Z",
         "aiCategory": false,
-        "verdict": "real_photo",
-        "checkedBy": "Codex (hỗ trợ Tâm)",
-        "checkedAt": "2026-11-24T17:27:46Z",
-        "provenance": "EXIF Canon PowerShot SX230 HS trên nguồn Commons. Đã xem ảnh món."
+        "verdict": "pending_human_review",
+        "checkedBy": null,
+        "checkedAt": null,
+        "provenance": "EXIF Canon PowerShot SX230 HS trên nguồn Commons. Đã xem ảnh món.",
+        "assistance": {
+          "tool": "Codex",
+          "checkedAt": "2026-11-24T17:27:46Z"
+        }
       }
     },
     {
@@ -2166,10 +2402,14 @@
         "cameraExif": true,
         "uploadedAt": "2018-12-30T00:09:29Z",
         "aiCategory": false,
-        "verdict": "real_photo",
-        "checkedBy": "Codex (hỗ trợ Tâm)",
-        "checkedAt": "2026-11-24T17:27:46Z",
-        "provenance": "EXIF Canon EOS REBEL T1i trên nguồn Commons. Đã xem ảnh món."
+        "verdict": "pending_human_review",
+        "checkedBy": null,
+        "checkedAt": null,
+        "provenance": "EXIF Canon EOS REBEL T1i trên nguồn Commons. Đã xem ảnh món.",
+        "assistance": {
+          "tool": "Codex",
+          "checkedAt": "2026-11-24T17:27:46Z"
+        }
       }
     },
     {
@@ -2202,10 +2442,14 @@
         "cameraExif": true,
         "uploadedAt": "2019-08-15T09:48:44Z",
         "aiCategory": false,
-        "verdict": "real_photo",
-        "checkedBy": "Codex (hỗ trợ Tâm)",
-        "checkedAt": "2026-11-24T17:27:46Z",
-        "provenance": "EXIF NIKON D3100 trên nguồn Commons. Đã xem ảnh món."
+        "verdict": "pending_human_review",
+        "checkedBy": null,
+        "checkedAt": null,
+        "provenance": "EXIF NIKON D3100 trên nguồn Commons. Đã xem ảnh món.",
+        "assistance": {
+          "tool": "Codex",
+          "checkedAt": "2026-11-24T17:27:46Z"
+        }
       }
     },
     {
@@ -2238,10 +2482,14 @@
         "cameraExif": true,
         "uploadedAt": "2012-11-01T18:02:29Z",
         "aiCategory": false,
-        "verdict": "real_photo",
-        "checkedBy": "Codex (hỗ trợ Tâm)",
-        "checkedAt": "2026-11-24T17:27:46Z",
-        "provenance": "EXIF 5130c-2 trên nguồn Commons. Đã xem ảnh món."
+        "verdict": "pending_human_review",
+        "checkedBy": null,
+        "checkedAt": null,
+        "provenance": "EXIF 5130c-2 trên nguồn Commons. Đã xem ảnh món.",
+        "assistance": {
+          "tool": "Codex",
+          "checkedAt": "2026-11-24T17:27:46Z"
+        }
       }
     },
     {
@@ -2274,10 +2522,14 @@
         "cameraExif": true,
         "uploadedAt": "2023-08-05T03:09:37Z",
         "aiCategory": false,
-        "verdict": "real_photo",
-        "checkedBy": "Codex (hỗ trợ Tâm)",
-        "checkedAt": "2026-11-24T17:27:46Z",
-        "provenance": "EXIF SM-N960F trên nguồn Commons. Đã xem ảnh món."
+        "verdict": "pending_human_review",
+        "checkedBy": null,
+        "checkedAt": null,
+        "provenance": "EXIF SM-N960F trên nguồn Commons. Đã xem ảnh món.",
+        "assistance": {
+          "tool": "Codex",
+          "checkedAt": "2026-11-24T17:27:46Z"
+        }
       }
     },
     {
@@ -2310,10 +2562,14 @@
         "cameraExif": true,
         "uploadedAt": "2017-07-29T04:38:07Z",
         "aiCategory": false,
-        "verdict": "real_photo",
-        "checkedBy": "Codex (hỗ trợ Tâm)",
-        "checkedAt": "2026-11-24T17:27:46Z",
-        "provenance": "EXIF Canon EOS 500D trên nguồn Commons. Đã xem ảnh món."
+        "verdict": "pending_human_review",
+        "checkedBy": null,
+        "checkedAt": null,
+        "provenance": "EXIF Canon EOS 500D trên nguồn Commons. Đã xem ảnh món.",
+        "assistance": {
+          "tool": "Codex",
+          "checkedAt": "2026-11-24T17:27:46Z"
+        }
       }
     },
     {
@@ -2346,10 +2602,14 @@
         "cameraExif": true,
         "uploadedAt": "2017-07-14T05:45:42Z",
         "aiCategory": false,
-        "verdict": "real_photo",
-        "checkedBy": "Codex (hỗ trợ Tâm)",
-        "checkedAt": "2026-11-24T17:27:46Z",
-        "provenance": "EXIF iPhone 4S trên nguồn Commons. Đã xem ảnh món."
+        "verdict": "pending_human_review",
+        "checkedBy": null,
+        "checkedAt": null,
+        "provenance": "EXIF iPhone 4S trên nguồn Commons. Đã xem ảnh món.",
+        "assistance": {
+          "tool": "Codex",
+          "checkedAt": "2026-11-24T17:27:46Z"
+        }
       }
     },
     {
@@ -2382,10 +2642,14 @@
         "cameraExif": true,
         "uploadedAt": "2024-09-25T14:22:27Z",
         "aiCategory": false,
-        "verdict": "real_photo",
-        "checkedBy": "Codex (hỗ trợ Tâm)",
-        "checkedAt": "2026-11-24T17:27:46Z",
-        "provenance": "EXIF FRL-AN00a trên nguồn Commons. Đã xem ảnh món."
+        "verdict": "pending_human_review",
+        "checkedBy": null,
+        "checkedAt": null,
+        "provenance": "EXIF FRL-AN00a trên nguồn Commons. Đã xem ảnh món.",
+        "assistance": {
+          "tool": "Codex",
+          "checkedAt": "2026-11-24T17:27:46Z"
+        }
       }
     },
     {
@@ -2418,10 +2682,14 @@
         "cameraExif": true,
         "uploadedAt": "2016-11-24T01:45:08Z",
         "aiCategory": false,
-        "verdict": "real_photo",
-        "checkedBy": "Codex (hỗ trợ Tâm)",
-        "checkedAt": "2026-11-24T17:27:46Z",
-        "provenance": "EXIF Redmi 3S trên nguồn Commons. Đã xem ảnh món."
+        "verdict": "pending_human_review",
+        "checkedBy": null,
+        "checkedAt": null,
+        "provenance": "EXIF Redmi 3S trên nguồn Commons. Đã xem ảnh món.",
+        "assistance": {
+          "tool": "Codex",
+          "checkedAt": "2026-11-24T17:27:46Z"
+        }
       }
     },
     {
@@ -2454,10 +2722,14 @@
         "cameraExif": true,
         "uploadedAt": "2015-02-01T15:02:05Z",
         "aiCategory": false,
-        "verdict": "real_photo",
-        "checkedBy": "Codex (hỗ trợ Tâm)",
-        "checkedAt": "2026-11-24T17:27:46Z",
-        "provenance": "EXIF X100S trên nguồn Commons. Đã xem ảnh món."
+        "verdict": "pending_human_review",
+        "checkedBy": null,
+        "checkedAt": null,
+        "provenance": "EXIF X100S trên nguồn Commons. Đã xem ảnh món.",
+        "assistance": {
+          "tool": "Codex",
+          "checkedAt": "2026-11-24T17:27:46Z"
+        }
       }
     },
     {
@@ -2490,10 +2762,14 @@
         "cameraExif": true,
         "uploadedAt": "2024-08-28T08:39:14Z",
         "aiCategory": false,
-        "verdict": "real_photo",
-        "checkedBy": "Codex (hỗ trợ Tâm)",
-        "checkedAt": "2026-11-24T17:27:46Z",
-        "provenance": "EXIF FRL-AN00a trên nguồn Commons. Đã xem ảnh món."
+        "verdict": "pending_human_review",
+        "checkedBy": null,
+        "checkedAt": null,
+        "provenance": "EXIF FRL-AN00a trên nguồn Commons. Đã xem ảnh món.",
+        "assistance": {
+          "tool": "Codex",
+          "checkedAt": "2026-11-24T17:27:46Z"
+        }
       }
     },
     {
@@ -2526,10 +2802,14 @@
         "cameraExif": false,
         "uploadedAt": "2020-09-04T05:22:08Z",
         "aiCategory": false,
-        "verdict": "real_photo",
-        "checkedBy": "Codex (hỗ trợ Tâm)",
-        "checkedAt": "2026-11-24T17:27:46Z",
-        "provenance": "Crasheerr ghi ảnh tự chụp năm 2020, ảnh các bánh lá dứa khớp mô tả Commons."
+        "verdict": "pending_human_review",
+        "checkedBy": null,
+        "checkedAt": null,
+        "provenance": "Crasheerr ghi ảnh tự chụp năm 2020, ảnh các bánh lá dứa khớp mô tả Commons.",
+        "assistance": {
+          "tool": "Codex",
+          "checkedAt": "2026-11-24T17:27:46Z"
+        }
       }
     },
     {
@@ -2562,10 +2842,14 @@
         "cameraExif": true,
         "uploadedAt": "2015-02-01T15:02:10Z",
         "aiCategory": false,
-        "verdict": "real_photo",
-        "checkedBy": "Codex (hỗ trợ Tâm)",
-        "checkedAt": "2026-11-24T17:27:46Z",
-        "provenance": "EXIF X100S trên nguồn Commons. Đã xem ảnh món."
+        "verdict": "pending_human_review",
+        "checkedBy": null,
+        "checkedAt": null,
+        "provenance": "EXIF X100S trên nguồn Commons. Đã xem ảnh món.",
+        "assistance": {
+          "tool": "Codex",
+          "checkedAt": "2026-11-24T17:27:46Z"
+        }
       }
     },
     {
@@ -2598,10 +2882,14 @@
         "cameraExif": true,
         "uploadedAt": "2024-09-14T13:35:26Z",
         "aiCategory": false,
-        "verdict": "real_photo",
-        "checkedBy": "Codex (hỗ trợ Tâm)",
-        "checkedAt": "2026-11-24T17:27:46Z",
-        "provenance": "EXIF iPhone XR trên nguồn Commons. Đã xem ảnh món."
+        "verdict": "pending_human_review",
+        "checkedBy": null,
+        "checkedAt": null,
+        "provenance": "EXIF iPhone XR trên nguồn Commons. Đã xem ảnh món.",
+        "assistance": {
+          "tool": "Codex",
+          "checkedAt": "2026-11-24T17:27:46Z"
+        }
       }
     }
   ],
