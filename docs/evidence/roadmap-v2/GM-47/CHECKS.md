@@ -1,5 +1,11 @@
 # GM-47 · Kiểm thử
 
+## Tâm xác nhận đợt rà ngày 25/11/2026
+
+- Tâm xác nhận **71 cặp ảnh** còn lại và **62 mô tả** trong hồ sơ đã gửi. Thời điểm ghi nhận `2026-11-25T02:10:28Z`. Có 13/184 URL đủ xác nhận cho toàn bộ mô tả dùng URL đó. 171 URL còn chờ.
+- Tâm yêu cầu bỏ hoặc thay **Bánh crepe ngọt** (`07f051a6-2a48-5b63-ac86-e56ddd4fb6c4`). Đã rút cả hai tệp ảnh của món khỏi ZIP. CSV của candidate đánh dấu riêng `release_exclusion_requested`. Có 181 món khác chưa có cặp ảnh hợp lệ.
+- Chạy checker với bản sao QA loại riêng UUID crepe khỏi danh sách món. Còn 252 món (ngưỡng 250), đạt 32/33 mục. Mục ảnh vẫn thiếu URL Storage. Đây là phép kiểm ngưỡng cho đề xuất bỏ món. Trí chốt quyết định phát hành theo mục 5 của spec. Candidate 1.4.2 hiện vẫn có 253 món và cùng SHA-256.
+
 ## Sửa hồ sơ người kiểm và EXIF ngày 25/11/2026
 
 Theo [review của Trí](https://github.com/ThanhTris/IE307/pull/217#issuecomment-7140079834), 72 hồ sơ ảnh và 62 hồ sơ mô tả lưu phần kiểm bằng công cụ trong `assistance`. Các trường `checkedBy` và `checkedAt` chờ Tâm xem ảnh, trang nguồn hoặc từng câu mô tả rồi xác nhận. CSV hiện có 184 URL `needs_confirmation`, gồm 13 URL đã được công cụ đối chiếu toàn bộ. Máy không cấp trạng thái duyệt cho các URL này.

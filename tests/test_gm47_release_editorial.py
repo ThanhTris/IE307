@@ -72,26 +72,29 @@ class ReleaseEditorialTest(unittest.TestCase):
     def test_shared_source_stays_pending_with_an_unreviewed_description(self):
         load = editorial.gm41.dc.load_json
         locator = 'https://vietnam.travel/vi/things-to-do/15-dreamy-desserts-try-vietnam/'
-        _, report = editorial.build()
+        def record_signoff(path, *, confirmed):
+            result = load(path)
+            if path == editorial.INPUT:
+                rows = [row for row in result['descriptions'] if row['locator'] == locator]
+                for index, row in enumerate(rows):
+                    review = row['factReview']
+                    review.update(checkedBy='Người kiểm fixture' if index < confirmed else None,
+                                  checkedAt=review['assistance']['checkedAt'] if index < confirmed else None)
+            return result
+
+        with patch.object(editorial.gm41.dc, 'load_json', side_effect=lambda path: record_signoff(path, confirmed=0)):
+            _, report = editorial.build()
         assisted = next(row for row in report['descriptionRightsReview'] if row['locator'] == locator)
         self.assertEqual(assisted['status'], 'needs_confirmation')
         self.assertFalse(assisted['reviewedDishIds'])
         self.assertEqual(len(assisted['prechecks']), len(assisted['dishIds']))
 
-        def record_signoff(path, *, partial=False):
-            result = load(path)
-            if path == editorial.INPUT:
-                rows = [row for row in result['descriptions'] if row['locator'] == locator]
-                for row in rows[1 if partial else 0:]:
-                    row['factReview'].update(
-                        checkedBy='Người kiểm fixture', checkedAt='2026-11-25T00:00:00Z')
-            return result
-
-        with patch.object(editorial.gm41.dc, 'load_json', side_effect=record_signoff):
+        count = len(assisted['dishIds'])
+        with patch.object(editorial.gm41.dc, 'load_json', side_effect=lambda path: record_signoff(path, confirmed=count)):
             _, report = editorial.build()
         complete = next(row for row in report['descriptionRightsReview'] if row['locator'] == locator)
         self.assertEqual(complete['status'], editorial.FACT_REFERENCE)
-        with patch.object(editorial.gm41.dc, 'load_json', side_effect=lambda path: record_signoff(path, partial=True)):
+        with patch.object(editorial.gm41.dc, 'load_json', side_effect=lambda path: record_signoff(path, confirmed=count - 1)):
             _, report = editorial.build()
         pending = next(row for row in report['descriptionRightsReview'] if row['locator'] == locator)
         self.assertEqual(pending['status'], 'needs_confirmation')
@@ -145,6 +148,7 @@ class ReleaseEditorialTest(unittest.TestCase):
     def test_storage_receipt_links_only_verified_pairs(self):
         artwork = editorial.gm41.dc.load_json(editorial.ARTWORK)
         photo = artwork['images'][0]
+        photo['aiCheck'].update(verdict='pending_human_review', checkedBy=None, checkedAt=None)
         receipt = {
             'bucketPublicUrl': 'https://staging.example.invalid/storage/v1/object/public/catalogue',
             'candidateDatasetVersion': '1.4.3',
