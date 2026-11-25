@@ -1,5 +1,12 @@
 # GM-47 · Kiểm thử
 
+## Xử lý review bca5e95 ngày 25/11/2026
+
+- Tâm xác nhận 12 ảnh Commons qua JSON xuất lúc 18:25 ICT. Đã so SHA bundle, đối chiếu 12 UUID và SHA của từng ảnh trên trang duyệt với byte WebP. Cả 12 có `aiCheck.checkedBy = "Tâm"` và `verdict = "real_photo"`. Gói tải có 136 cặp, gồm 272 WebP, tổng 16.914.034 byte ảnh. [Review của Trí](https://github.com/ThanhTris/IE307/pull/217#issuecomment-7159904392)
+- Đã lập danh sách 117 món cần ảnh có giấy phép mở hoặc ảnh nhóm tự chụp. Hồ sơ web dùng để nhận diện món khi tìm ảnh hoặc chụp. [Danh sách phân công](PHOTO_ASSIGNMENTS.md) · [Hồ sơ ảnh tham khảo](WEB_PHOTO_SELECTIONS.json)
+- Kiểm GET ba UUID từ lô đầu 107 cặp, tại gốc bucket staging và thư mục `thumbnails/`. Cả sáu yêu cầu trả HTTP 400. Phản hồi kiểm chi tiết cho một ảnh chính ghi `NoSuchKey`. Chờ Trí xác nhận lô và object key đã upload trước khi tạo receipt. QA với URL Storage vẫn chờ. Checker catalogue offline đạt 32/33 vì mục ảnh có URL còn 0/253.
+- Bundle QA `1.4.4` dựng lại đúng SHA `9f4f19823adb4dae22f442a00c47ba872e56b96068d79d7a5f0beb01f550cac0`. Có 253 mô tả đã xác nhận và 188 URL tham khảo dữ kiện.
+
 ## Tâm chọn ảnh tham khảo cho 117 món ngày 25/11/2026
 
 - Đối chiếu 115 lựa chọn trong JSON Tâm gửi với UUID, tên món, URL ảnh và trang nguồn của trang duyệt. Theo xác nhận bổ sung của Tâm, ghi ảnh đầu tiên cho Lẩu cá linh điên điển và Trái cây trộn muối ớt. Cả 117 UUID khớp danh sách món chưa có cặp ảnh trong candidate `1.4.4`. [Danh sách lựa chọn](WEB_PHOTO_SELECTIONS.json)

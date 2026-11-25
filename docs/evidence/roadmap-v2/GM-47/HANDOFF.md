@@ -14,34 +14,35 @@ Checker hiện đạt 32/33 mục. Kiểm readback trên [QA GM-03](../GM-03/RUN
 
 ### Gói ảnh cho Trí và Tuấn
 
-Gói tải lên `.work/gm47-release-editorial/gm47-storage-reviewed.zip` có **124 cặp đã duyệt**, tổng 15.273.974 byte ảnh, kèm `reviewed-dish-ids.txt` và metadata. Bản lô đầu được lưu riêng tại `.work/gm47-release-editorial/review-7157464470/gm47-storage-lot01-107.zip` gồm **107 cặp** như Trí dự kiến. Khi Trí xác nhận lô đã tải, dùng danh sách UUID lấy từ đúng ZIP của lô đó.
+Gói tải lên `.work/gm47-release-editorial/gm47-storage-reviewed.zip` có **136 cặp đã duyệt**, tổng 16.914.034 byte ảnh, kèm `reviewed-dish-ids.txt` và metadata. Bản lô đầu được lưu riêng tại `.work/gm47-release-editorial/review-7157464470/gm47-storage-lot01-107.zip` gồm **107 cặp** như Trí dự kiến. Khi Trí xác nhận lô đã tải, dùng danh sách UUID lấy từ đúng ZIP của lô đó.
 
 ```sh
 python data-preparation/scripts/gm47_storage_handoff.py --reviewed-only
 ```
 
-Dựng bằng Python có Pillow 13.0.0 và WebP encoder cùng bản. Lệnh kiểm SHA và số byte. Có thể chạy với các ảnh trong thư mục mặc định `.work/gm47-release-editorial/images`. Lệnh chạy không có `--reviewed-only` xuất gói kiểm ảnh 136 cặp gồm 124 cặp đã xác nhận và 12 cặp chờ, cùng CSV các món chưa có ảnh.
+Dựng bằng Python có Pillow 13.0.0 và WebP encoder cùng bản. Lệnh kiểm SHA và số byte. Có thể chạy với các ảnh trong thư mục mặc định `.work/gm47-release-editorial/images`. Lệnh chạy không có `--reviewed-only` xuất gói kiểm ảnh 136 cặp, cùng CSV các món chưa có ảnh.
 
-- `images/<dishId>.webp` là ảnh chính. `thumbnails/<dishId>.webp` là ảnh danh sách 400×300 px. Đây là object key đề xuất để Trí dùng trong bucket công khai GM-52. Mỗi URL đích là URL gốc công khai của bucket tại môi trường tương ứng cộng object key. Xác nhận URL gốc và tải tệp trước khi gắn `artwork.url` và bàn giao URL ảnh nhỏ cho Tuấn. URL tệp Commons trong metadata dùng làm bằng chứng nguồn.
+- Trong ZIP, `images/<dishId>.webp` là ảnh chính và `thumbnails/<dishId>.webp` là ảnh danh sách 400×300 px. Khi upload theo quy ước dự kiến của GM-52, đặt ảnh chính ở gốc bucket và ảnh nhỏ trong `thumbnails/`. Receipt ánh xạ đường dẫn trong ZIP với object key thực tế. URL Commons trong metadata ghi nguồn ảnh.
 - Gói tải lên kèm `reviewed-artwork.json` có tác giả, giấy phép, kích thước, số byte, SHA và `aiCheck` của từng tệp, cùng `ATTRIBUTION.md` để Tuấn triển khai màn Nguồn ảnh trong GM-64. Giữ giấy phép và ghi công cho cả hai bản dẫn xuất. Ảnh Chuối nếp nướng đã đổi SHA và tác giả. Nếu từng nhận gói cũ, chọn bản hiện tại khi upload.
-- `artwork-assignments.csv` chia 117 món chưa có cặp ảnh theo sáu batch GM-41 và nhóm UUID ban đầu. Trí chốt giữ cả 253 món. Mứt gừng, Bánh phồng tôm, Bánh crepe ngọt và Nui có nước đã có xác nhận của Tâm. Xem danh sách ưu tiên nhóm tự chụp trong [CHECKS](CHECKS.md).
+- `artwork-assignments.csv` chia 117 món chưa có cặp ảnh theo sáu batch GM-41 và nhóm UUID ban đầu. Trí chốt giữ cả 253 món. Mứt gừng, Bánh phồng tôm, Bánh crepe ngọt và Nui có nước đã có xác nhận của Tâm. Xem [danh sách phân công đủ 117 món](PHOTO_ASSIGNMENTS.md).
 
 ### Tâm xác nhận ảnh và mô tả
 
 - Mở ảnh, trang nguồn và thông tin license cho từng UUID. Sau khi Tâm xác nhận ảnh đúng món và đúng nguồn gốc, ghi tên Tâm vào `aiCheck.checkedBy`, thời điểm UTC thực tế vào `aiCheck.checkedAt` và `real_photo` vào `aiCheck.verdict`. Bản ghi chờ có `pending_human_review`. Kết quả rà bằng công cụ nằm trong `assistance`.
 - Với mô tả, đối chiếu từng câu với URL và các dữ kiện ghi ở `factReview.facts`. Sau khi Tâm xác nhận, ghi tên Tâm và thời điểm vào `factReview.checkedBy` và `factReview.checkedAt`. Nếu sửa nội dung hoặc URL, phải rà lại và cập nhật `factReview.textSha256` của bản mới trước khi xác nhận. Trang duyệt cục bộ `.work/gm47-release-editorial/anh-dot-tiep/GM-47-duyet-anh-dot-tiep-1.4.4.html` hiển thị ảnh, nguồn, mô tả và tải được JSON chứa UUID cùng SHA của các mục đã chọn.
-- Tâm đã chọn ảnh tham khảo cho 117 món còn thiếu cặp ảnh. Dùng [danh sách URL theo UUID và lô](WEB_PHOTO_SELECTIONS.json) để liên hệ nguồn hoặc đối chiếu khi tự chụp. Các lựa chọn chờ bằng chứng quyền sử dụng, tác giả, tệp gốc và kiểm kỹ thuật. Gói tải lên và receipt dùng các cặp đã có xác nhận trong hồ sơ ảnh.
+- Tâm đã chọn ảnh tham khảo cho 117 món còn thiếu cặp ảnh. Dùng [ảnh tham khảo theo UUID và lô](WEB_PHOTO_SELECTIONS.json) để nhận diện món khi tìm nguồn có giấy phép mở hoặc tự chụp. Ảnh tham khảo web nằm ngoài luồng bundle và Storage.
 - Theo quyết định của Trí, GM-51 dùng mô tả do nhóm biên tập và URL để đối chiếu dữ kiện. CSV chỉ ghi `team_authored_fact_reference` khi tất cả mô tả dùng URL đó đã được người kiểm xác nhận. Các cột `prechecked_dish_ids` và `reviewed_dish_ids` ghi kết quả rà. Tâm đã xác nhận 253 mô tả. Đủ 188 URL đạt `team_authored_fact_reference`. Xem [CHECKS](CHECKS.md).
 
 ### Sau khi Trí xác nhận upload
 
-Cần URL công khai của bucket staging, object key đã chốt, và thông tin lô đã upload. [Runbook draft GM-52](https://github.com/ThanhTris/IE307/pull/216) ghi bucket `dish-images` và ảnh chính ở gốc dưới dạng `<dishId>.webp`. Nếu Trí xác nhận cách đó, thêm `--image-prefix ''` khi tạo receipt. Xác nhận riêng thư mục ảnh nhỏ và truyền qua `--thumbnail-prefix` nếu khác `thumbnails`.
+Trí đã cung cấp [URL bucket staging](https://cijknqhnmzdsturkzyiz.supabase.co/storage/v1/object/public/dish-images/). Theo [runbook GM-52](https://github.com/ThanhTris/IE307/pull/216), đường dẫn dự kiến là `<dishId>.webp` cho ảnh chính và `thumbnails/<dishId>.webp` cho ảnh nhỏ. Cần Trí xác nhận các đường dẫn và UUID của lô đã upload.
 
 Dùng lệnh dưới để GET từng ảnh, so số byte và SHA-256. Receipt chỉ sinh khi cả cặp khớp và mục ảnh có xác nhận của người kiểm. Với lô từng phần, trích danh sách UUID từ đúng ZIP Trí đã dùng. Giữ bản danh sách đó khi tạo receipt.
 
 ```sh
 unzip -p "$GM47_UPLOAD_ZIP" reviewed-dish-ids.txt > .work/gm47-release-editorial/reviewed-dish-ids.txt
 python data-preparation/scripts/gm47_storage_receipt.py --bucket-url "$GM47_PUBLIC_BUCKET" --candidate-version 1.4.5 \
+  --image-prefix '' --thumbnail-prefix thumbnails \
   --dish-list .work/gm47-release-editorial/reviewed-dish-ids.txt
 python data-preparation/scripts/gm47_release_editorial.py --storage-receipt .work/gm47-release-editorial/storage-receipt.json
 python scripts/release_catalogue_check.py --bundle .work/gm47-release-editorial/with-storage/dishes.json

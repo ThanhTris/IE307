@@ -1,22 +1,22 @@
 # GM-47 · Mô tả và ảnh catalogue
 
-## Lô release v1 ngày 24/11/2026
+## Lô release v1 ngày 25/11/2026
 
-[Đặc tả release v1](RELEASE_V1_CATALOGUE_SPEC.md) áp dụng cho bundle lên store. Đợt này nhận [1.3.0 của GM-41](https://github.com/ThanhTris/IE307/pull/210), gồm 253 món. Tạo candidate test-demo 1.4.0, ghép 72 mô tả của đợt 22/11 và bổ sung mô tả cho 181 UUID mới.
+Candidate QA `1.4.4` nhận 253 UUID từ [GM-41 v1.3.0](https://github.com/ThanhTris/IE307/pull/210). Yêu cầu phát hành theo [đặc tả release v1](RELEASE_V1_CATALOGUE_SPEC.md).
 
-- [Mô tả theo UUID](../../data-preparation/editorial/gm47-release/descriptions.json) có 253 mô tả tự viết, dài 101–145 ký tự, ghi URL và mốc kiểm nguồn. Tái sử dụng nguồn trong hồ sơ GM-41 khi phù hợp và thay nguồn khó mở lại. Candidate liên kết `fieldSources.description` với evidence. Xác nhận quyền dùng nguồn mô tả trước khi phát hành vẫn chờ GM-51.
-- [Hồ sơ ảnh theo UUID](../../data-preparation/editorial/gm47-release/artwork-candidates.json) ghi trang gốc, tác giả, license, ghi công, object key và SHA-256 cho 63 cặp WebP đã chuẩn bị. Ảnh chính có cạnh ngắn 660–750 px và không quá 200.000 byte/tệp. Ảnh danh sách có kích thước 400×300 px. Hai bộ cộng lại 7.264.438 byte.
-- Theo [quyết định #215](https://github.com/ThanhTris/IE307/pull/215), Trí tạo bucket Supabase Storage trong GM-52 và tải tệp lên. Tuấn làm màn ghi công trong [GM-64](https://github.com/ThanhTris/IE307/issues/213). Tâm gắn URL sau khi nhận URL bucket và xác nhận tệp đã tải đủ.
-- Gói bàn giao kèm danh sách 190 món thiếu ảnh. Lô 01–06 thiếu lần lượt 37, 29, 23, 20, 31 và 6 món. Nhóm 72 UUID ban đầu còn 44 món. Hồ sơ lưu lý do và trang ứng viên nếu đã xem.
+- Tâm đã xác nhận 253/253 mô tả tự viết và 188/188 URL tham khảo dữ kiện. [Mô tả theo UUID](../../data-preparation/editorial/gm47-release/descriptions.json)
+- Tâm đã xác nhận 136 cặp WebP từ Commons. Ảnh chính có cạnh ngắn 600–750 px và tối đa 200.000 byte mỗi tệp. Ảnh nhỏ 400×300 px. Gói ảnh có 272 tệp WebP, tổng 16.914.034 byte ảnh. [Hồ sơ ảnh theo UUID](../../data-preparation/editorial/gm47-release/artwork-candidates.json)
+- 117 món cần ảnh có giấy phép mở hoặc ảnh nhóm tự chụp. [Danh sách phân công theo lô](../evidence/roadmap-v2/GM-47/PHOTO_ASSIGNMENTS.md)
+- Trí phụ trách bucket staging và upload theo GM-52. Tâm tạo receipt từ ảnh đã tải, kiểm SHA-256 trước khi gắn URL. Tuấn nhận ảnh nhỏ và ghi công cho [GM-64](https://github.com/ThanhTris/IE307/issues/213). [Bàn giao](../evidence/roadmap-v2/GM-47/HANDOFF.md)
 
-| Bữa | Món | Có mô tả | Có tệp WebP đã chuẩn bị |
-| --- | ---: | ---: | ---: |
-| Sáng | 68 | 68 | 29 |
-| Trưa | 100 | 100 | 26 |
-| Tối | 72 | 72 | 20 |
-| Ăn vặt | 114 | 114 | 33 |
+| Bữa | Món | Có mô tả | Có cặp WebP đã xác nhận | Có URL trong bundle QA |
+| --- | ---: | ---: | ---: | ---: |
+| Sáng | 68 | 68 | 47 | 0 |
+| Trưa | 100 | 100 | 52 | 0 |
+| Tối | 72 | 72 | 38 | 0 |
+| Ăn vặt | 114 | 114 | 68 | 0 |
 
-Một món có thể thuộc nhiều bữa. [Bàn giao và lệnh chạy](../evidence/roadmap-v2/GM-47/HANDOFF.md) · [Kết quả kiểm](../evidence/roadmap-v2/GM-47/CHECKS.md)
+Một món có thể thuộc nhiều bữa. [Kết quả kiểm](../evidence/roadmap-v2/GM-47/CHECKS.md)
 
 ## Lô ngày 20/11/2026
 
