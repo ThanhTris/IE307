@@ -20,17 +20,18 @@ Gói tải lên `.work/gm47-release-editorial/gm47-storage-reviewed.zip` có **1
 python data-preparation/scripts/gm47_storage_handoff.py --reviewed-only
 ```
 
-Dựng bằng Python có Pillow 13.0.0 và WebP encoder cùng bản. Lệnh kiểm SHA và số byte. Có thể chạy với các ảnh trong thư mục mặc định `.work/gm47-release-editorial/images`. Lệnh chạy không có `--reviewed-only` xuất gói kiểm ảnh đầy đủ và CSV các món chưa có ảnh.
+Dựng bằng Python có Pillow 13.0.0 và WebP encoder cùng bản. Lệnh kiểm SHA và số byte. Có thể chạy với các ảnh trong thư mục mặc định `.work/gm47-release-editorial/images`. Lệnh chạy không có `--reviewed-only` xuất gói kiểm ảnh 136 cặp gồm 124 cặp đã xác nhận và 12 cặp chờ, cùng CSV các món chưa có ảnh.
 
 - `images/<dishId>.webp` là ảnh chính. `thumbnails/<dishId>.webp` là ảnh danh sách 400×300 px. Đây là object key đề xuất để Trí dùng trong bucket công khai GM-52. Mỗi URL đích là URL gốc công khai của bucket tại môi trường tương ứng cộng object key. Xác nhận URL gốc và tải tệp trước khi gắn `artwork.url` và bàn giao URL ảnh nhỏ cho Tuấn. URL tệp Commons trong metadata dùng làm bằng chứng nguồn.
 - Gói tải lên kèm `reviewed-artwork.json` có tác giả, giấy phép, kích thước, số byte, SHA và `aiCheck` của từng tệp, cùng `ATTRIBUTION.md` để Tuấn triển khai màn Nguồn ảnh trong GM-64. Giữ giấy phép và ghi công cho cả hai bản dẫn xuất. Ảnh Chuối nếp nướng đã đổi SHA và tác giả. Nếu từng nhận gói cũ, chọn bản hiện tại khi upload.
-- `artwork-assignments.csv` chia 129 món chưa có cặp ảnh theo sáu batch GM-41 và nhóm UUID ban đầu. Trí chốt giữ cả 253 món. Mứt gừng, Bánh phồng tôm, Bánh crepe ngọt và Nui có nước đã có xác nhận của Tâm. Xem danh sách ưu tiên nhóm tự chụp trong [CHECKS](CHECKS.md).
+- `artwork-assignments.csv` chia 117 món chưa có cặp ảnh theo sáu batch GM-41 và nhóm UUID ban đầu. Trí chốt giữ cả 253 món. Mứt gừng, Bánh phồng tôm, Bánh crepe ngọt và Nui có nước đã có xác nhận của Tâm. Xem danh sách ưu tiên nhóm tự chụp trong [CHECKS](CHECKS.md).
 
 ### Tâm xác nhận ảnh và mô tả
 
 - Mở ảnh, trang nguồn và thông tin license cho từng UUID. Sau khi Tâm xác nhận ảnh đúng món và đúng nguồn gốc, ghi tên Tâm vào `aiCheck.checkedBy`, thời điểm UTC thực tế vào `aiCheck.checkedAt` và `real_photo` vào `aiCheck.verdict`. Bản ghi chờ có `pending_human_review`. Kết quả rà bằng công cụ nằm trong `assistance`.
-- Với mô tả, đối chiếu từng câu với URL và các dữ kiện ghi ở `factReview.facts`. Sau khi Tâm xác nhận, ghi tên Tâm và thời điểm vào `factReview.checkedBy` và `factReview.checkedAt`. Nếu sửa nội dung hoặc URL, phải rà lại và cập nhật `factReview.textSha256` của bản mới trước khi xác nhận. Trang duyệt cục bộ `.work/gm47-release-editorial/review-next-1.4.4/duyet-anh-va-mo-ta.html` hiển thị ảnh, nguồn, mô tả và tải được JSON chứa UUID cùng SHA của các mục đã chọn.
-- Theo quyết định của Trí, GM-51 dùng mô tả do nhóm biên tập và URL để đối chiếu dữ kiện. CSV chỉ ghi `team_authored_fact_reference` khi tất cả mô tả dùng URL đó đã được người kiểm xác nhận. Các cột `prechecked_dish_ids` và `reviewed_dish_ids` ghi kết quả rà. Tâm đã xác nhận 131 mô tả. Có 73 URL đạt và 115 URL còn `needs_confirmation`. Xem [CHECKS](CHECKS.md).
+- Với mô tả, đối chiếu từng câu với URL và các dữ kiện ghi ở `factReview.facts`. Sau khi Tâm xác nhận, ghi tên Tâm và thời điểm vào `factReview.checkedBy` và `factReview.checkedAt`. Nếu sửa nội dung hoặc URL, phải rà lại và cập nhật `factReview.textSha256` của bản mới trước khi xác nhận. Trang duyệt cục bộ `.work/gm47-release-editorial/anh-dot-tiep/GM-47-duyet-anh-dot-tiep-1.4.4.html` hiển thị ảnh, nguồn, mô tả và tải được JSON chứa UUID cùng SHA của các mục đã chọn.
+- Tâm đã chọn ảnh tham khảo cho 117 món còn thiếu cặp ảnh. Dùng [danh sách URL theo UUID và lô](WEB_PHOTO_SELECTIONS.json) để liên hệ nguồn hoặc đối chiếu khi tự chụp. Các lựa chọn chờ bằng chứng quyền sử dụng, tác giả, tệp gốc và kiểm kỹ thuật. Gói tải lên và receipt dùng các cặp đã có xác nhận trong hồ sơ ảnh.
+- Theo quyết định của Trí, GM-51 dùng mô tả do nhóm biên tập và URL để đối chiếu dữ kiện. CSV chỉ ghi `team_authored_fact_reference` khi tất cả mô tả dùng URL đó đã được người kiểm xác nhận. Các cột `prechecked_dish_ids` và `reviewed_dish_ids` ghi kết quả rà. Tâm đã xác nhận 253 mô tả. Đủ 188 URL đạt `team_authored_fact_reference`. Xem [CHECKS](CHECKS.md).
 
 ### Sau khi Trí xác nhận upload
 

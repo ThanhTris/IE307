@@ -66,7 +66,9 @@
         "assistance": {
           "tool": "Codex",
           "checkedAt": "2026-11-25T09:10:32Z"
-        }
+        },
+        "checkedBy": "Tâm",
+        "checkedAt": "2026-11-25T09:20:16Z"
       }
     },
     {
@@ -125,7 +127,13 @@
       "name": "Bánh crepe ngọt",
       "locator": "https://www.dienmayxanh.com/vao-bep/cach-lam-banh-crepe-phap-thom-ngon-chuan-vi-cuc-don-gian-ngay-24129",
       "checkedAt": "2026-11-23T02:22:10Z",
-      "description": "Bột được tráng thành một lớp bánh mỏng rồi dọn theo kiểu ngọt. Khi ăn có thể gập hoặc cuộn bánh quanh phần ăn kèm."
+      "description": "Bột được tráng thành một lớp bánh mỏng rồi dọn theo kiểu ngọt. Khi ăn có thể gập hoặc cuộn bánh quanh phần ăn kèm.",
+      "factReview": {
+        "textSha256": "67f18bb897de8eab44f5a40bec09f9c305b97801041c3a44b199d2427956e39a",
+        "facts": "Bột được tráng thành một lớp bánh mỏng rồi dọn theo kiểu ngọt. Khi ăn có thể gập hoặc cuộn bánh quanh phần ăn kèm.",
+        "checkedBy": "Tâm",
+        "checkedAt": "2026-11-25T09:20:16Z"
+      }
     },
     {
       "dishId": "08a55df5-ac1a-5cbd-a717-fd08b640a4b1",
@@ -166,7 +174,13 @@
       "name": "Lẩu bò sa tế",
       "locator": "https://ngoisao.vnexpress.net/nhung-mon-lau-sai-gon-nghe-ten-la-them-3079340.html",
       "checkedAt": "2026-11-22T02:45:00Z",
-      "description": "Món lẩu dùng thịt bò và phần nước nêm sa tế có vị cay. Người ăn có thể nhúng thịt và phần rau kèm vào nồi đang nóng."
+      "description": "Món lẩu dùng thịt bò và phần nước nêm sa tế có vị cay. Người ăn có thể nhúng thịt và phần rau kèm vào nồi đang nóng.",
+      "factReview": {
+        "textSha256": "1e9efb72365bdb217b733edd1d5190e308a0cfbdb5801a836d87d4b33223267a",
+        "facts": "Món lẩu dùng thịt bò và phần nước nêm sa tế có vị cay. Người ăn có thể nhúng thịt và phần rau kèm vào nồi đang nóng.",
+        "checkedBy": "Tâm",
+        "checkedAt": "2026-11-25T09:20:16Z"
+      }
     },
     {
       "dishId": "0c62a5d8-b122-587b-b3d2-3a601dbfd956",
@@ -258,7 +272,13 @@
       "name": "Phở bò",
       "locator": "https://govietnam.travel/food/pho-2/",
       "description": "Bánh phở và thịt bò được dọn cùng nước dùng nóng trong tô. Tùy kiểu phở, người ăn có thể thêm rau thơm, chanh hoặc gia vị tại bàn.",
-      "checkedAt": "2026-11-21T17:11:47Z"
+      "checkedAt": "2026-11-21T17:11:47Z",
+      "factReview": {
+        "textSha256": "c2cc8edf77e2b2f21e5fc67bdc6694a98d0dd91cbaaa8d56d479a03e4ffffadf",
+        "facts": "Bánh phở và thịt bò được dọn cùng nước dùng nóng trong tô. Tùy kiểu phở, người ăn có thể thêm rau thơm, chanh hoặc gia vị tại bàn.",
+        "checkedBy": "Tâm",
+        "checkedAt": "2026-11-25T09:20:16Z"
+      }
     },
     {
       "dishId": "0e30745a-d1c9-5b0b-b1ec-6cafa4bb6f2b",
@@ -282,14 +302,26 @@
       "name": "Dừa sấy",
       "locator": "https://nonglamfood.com/dua-say-gion-sp511.html",
       "description": "Cơm dừa được thái lát rồi sấy để có độ giòn. Có thể ăn từng lát như một món quà vặt hoặc rắc lên món tráng miệng.",
-      "checkedAt": "2026-11-21T17:11:47Z"
+      "checkedAt": "2026-11-21T17:11:47Z",
+      "factReview": {
+        "textSha256": "a60188d8836164aab51677b634f6d841375ebb46f64b40d09fa58091a1ba821d",
+        "facts": "Cơm dừa được thái lát rồi sấy để có độ giòn. Có thể ăn từng lát như một món quà vặt hoặc rắc lên món tráng miệng.",
+        "checkedBy": "Tâm",
+        "checkedAt": "2026-11-25T09:20:16Z"
+      }
     },
     {
       "dishId": "10432ab2-7c9d-56d1-978c-38509208921a",
       "name": "Cơm thịt xào mắm ruốc",
       "locator": "https://food.be.com.vn/ho-chi-minh/co-tu-com-phan-com-tam-duong-so-3-86367",
       "checkedAt": "2026-11-22T02:50:00Z",
-      "description": "Thịt được xào cùng mắm ruốc tạo mùi thơm và vị đậm. Phần thịt được dọn với cơm để có thể ăn xen từng miếng."
+      "description": "Thịt được xào cùng mắm ruốc tạo mùi thơm và vị đậm. Phần thịt được dọn với cơm để có thể ăn xen từng miếng.",
+      "factReview": {
+        "textSha256": "236a6f3340dacb2941a37a9b61c85a75be415f89b4eed9ef39ad5a2437a24386",
+        "facts": "Thịt được xào cùng mắm ruốc tạo mùi thơm và vị đậm. Phần thịt được dọn với cơm để có thể ăn xen từng miếng.",
+        "checkedBy": "Tâm",
+        "checkedAt": "2026-11-25T09:20:16Z"
+      }
     },
     {
       "dishId": "107f783c-7249-5c13-98ce-dc9d023247a6",
@@ -330,7 +362,13 @@
       "name": "Mận lắc",
       "locator": "https://vnexpress.net/sai-gon-no-ro-kinh-doanh-mon-an-tu-muoi-ot-3426780.html",
       "checkedAt": "2026-11-22T02:45:00Z",
-      "description": "Mận được cắt thành miếng rồi lắc với gia vị để áo quanh mặt quả. Có thể ăn từng miếng để cảm nhận vị chua cùng lớp gia vị."
+      "description": "Mận được cắt thành miếng rồi lắc với gia vị để áo quanh mặt quả. Có thể ăn từng miếng để cảm nhận vị chua cùng lớp gia vị.",
+      "factReview": {
+        "textSha256": "630752803603b01c3d4f539705eaf9b4e777f3d1d20f88a46a24520534b9bb42",
+        "facts": "Mận được cắt thành miếng rồi lắc với gia vị để áo quanh mặt quả. Có thể ăn từng miếng để cảm nhận vị chua cùng lớp gia vị.",
+        "checkedBy": "Tâm",
+        "checkedAt": "2026-11-25T09:20:16Z"
+      }
     },
     {
       "dishId": "122e0939-6478-5963-90e8-5ffd10988c2c",
@@ -388,7 +426,13 @@
       "name": "Bánh trôi tàu",
       "locator": "https://antoanthucpham.hanoi.gov.vn/banh-troi-tau-thuc-qua-nong-hoi-niu-chan-nguoi-ha-noi-moi-khi-tro-gio-239260917145058683.htm",
       "checkedAt": "2026-11-23T02:22:10Z",
-      "description": "Viên bánh bột nếp được dọn trong phần nước ngọt dùng nóng. Người ăn có thể dùng thìa tách từng viên rồi múc cùng một ít nước."
+      "description": "Viên bánh bột nếp được dọn trong phần nước ngọt dùng nóng. Người ăn có thể dùng thìa tách từng viên rồi múc cùng một ít nước.",
+      "factReview": {
+        "textSha256": "f0a6d6b878204018a40f795b9b7db51e71c189a36fd4fa238540bfe0ed895fa1",
+        "facts": "Viên bánh bột nếp được dọn trong phần nước ngọt dùng nóng. Người ăn có thể dùng thìa tách từng viên rồi múc cùng một ít nước.",
+        "checkedBy": "Tâm",
+        "checkedAt": "2026-11-25T09:20:16Z"
+      }
     },
     {
       "dishId": "13dfcadb-9b2c-5bec-9722-6dd121b8b7a2",
@@ -429,7 +473,13 @@
       "name": "Cơm chay",
       "locator": "https://food.be.com.vn/ho-chi-minh/com-chay-thap-phuong-hoang-dieu-2-125649",
       "description": "Cơm được dọn cùng các món kèm khác nhau, chẳng hạn rau củ. Có thể dùng xen từng miếng món kèm với cơm hoặc rưới một ít sốt nếu có.",
-      "checkedAt": "2026-11-21T17:11:47Z"
+      "checkedAt": "2026-11-21T17:11:47Z",
+      "factReview": {
+        "textSha256": "0f85d51d6b9025e389602c6681daf7616f0fb34a53da7d5932f25ce9c62e7f4d",
+        "facts": "Cơm được dọn cùng các món kèm khác nhau, chẳng hạn rau củ. Có thể dùng xen từng miếng món kèm với cơm hoặc rưới một ít sốt nếu có.",
+        "checkedBy": "Tâm",
+        "checkedAt": "2026-11-25T09:20:16Z"
+      }
     },
     {
       "dishId": "16bcbd4f-90ab-57f5-b7e5-52ce31a1bf84",
@@ -487,21 +537,39 @@
       "name": "Súp bí đỏ",
       "locator": "https://www.hyatt.com/content/dam/hotel/propertysites/assets/regency/danhr/documents/en_us/dining/beach-house/DANHRBeachHouseVietnameseSetDinnerMenu.pdf",
       "checkedAt": "2026-11-22T02:34:21Z",
-      "description": "Bí đỏ là phần chính của bát súp, có thể được nấu mềm và xay thành hỗn hợp mịn. Món thường được dùng bằng thìa khi còn ấm."
+      "description": "Bí đỏ là phần chính của bát súp, có thể được nấu mềm và xay thành hỗn hợp mịn. Món thường được dùng bằng thìa khi còn ấm.",
+      "factReview": {
+        "textSha256": "63f070f05efdb486e63d23d1e16451de764dd43550f21a2148b647cc6e23980a",
+        "facts": "Bí đỏ là phần chính của bát súp, có thể được nấu mềm và xay thành hỗn hợp mịn. Món thường được dùng bằng thìa khi còn ấm.",
+        "checkedBy": "Tâm",
+        "checkedAt": "2026-11-25T09:20:16Z"
+      }
     },
     {
       "dishId": "19f07737-1d4e-590e-8df2-18a56347803c",
       "name": "Phở chay",
       "locator": "https://kobelab.vn/cong-thuc-nau-an/mon-viet/pho-chay-rau-cu",
       "checkedAt": "2026-11-23T02:22:10Z",
-      "description": "Bánh phở được chan nước dùng nấu từ rau củ theo cách của nguồn tham khảo. Có thể ăn nóng với phần rau ăn kèm tùy khẩu vị."
+      "description": "Bánh phở được chan nước dùng nấu từ rau củ theo cách của nguồn tham khảo. Có thể ăn nóng với phần rau ăn kèm tùy khẩu vị.",
+      "factReview": {
+        "textSha256": "1070e753a7896525d2964ef339dc8e1bfd5fc6c65433ef1023ba581d8f21d0d4",
+        "facts": "Bánh phở được chan nước dùng nấu từ rau củ theo cách của nguồn tham khảo. Có thể ăn nóng với phần rau ăn kèm tùy khẩu vị.",
+        "checkedBy": "Tâm",
+        "checkedAt": "2026-11-25T09:20:16Z"
+      }
     },
     {
       "dishId": "1bd3aad6-1bb8-5c7f-9253-476194073b01",
       "name": "Ốc móng tay xào bơ tỏi",
       "locator": "https://trangiafoods.vn/blogs/news/oc-mong-tay-xao-bo-toi/",
       "description": "Món xào từ ốc móng tay với bơ và tỏi. Phần bơ tỏi bám quanh ốc khi đảo trên chảo, tạo nên mùi thơm đặc trưng của món.",
-      "checkedAt": "2026-11-21T17:11:47Z"
+      "checkedAt": "2026-11-21T17:11:47Z",
+      "factReview": {
+        "textSha256": "c2512fdcb47a338ab31a7db60b38bc038df32c4d96c26b5e328376dbf3a4b1b2",
+        "facts": "Món xào từ ốc móng tay với bơ và tỏi. Phần bơ tỏi bám quanh ốc khi đảo trên chảo, tạo nên mùi thơm đặc trưng của món.",
+        "checkedBy": "Tâm",
+        "checkedAt": "2026-11-25T09:20:16Z"
+      }
     },
     {
       "dishId": "1eeba7ab-7b12-590b-994a-06adbe47ec63",
@@ -559,7 +627,13 @@
       "name": "Cháo bò Tri Tôn",
       "locator": "https://thanhnien.vn/chao-bo-tri-ton-185169652.htm",
       "checkedAt": "2026-11-23T02:22:10Z",
-      "description": "Cháo nóng được dọn với phần thịt hoặc lòng bò đã chế biến theo kiểu Tri Tôn. Có thể múc cháo và gắp phần bò xen nhau khi ăn."
+      "description": "Cháo nóng được dọn với phần thịt hoặc lòng bò đã chế biến theo kiểu Tri Tôn. Có thể múc cháo và gắp phần bò xen nhau khi ăn.",
+      "factReview": {
+        "textSha256": "099d05bf0e49bd23bb78cc06ac01f62202679c48101b792636534a5906f9318a",
+        "facts": "Cháo nóng được dọn với phần thịt hoặc lòng bò đã chế biến theo kiểu Tri Tôn. Có thể múc cháo và gắp phần bò xen nhau khi ăn.",
+        "checkedBy": "Tâm",
+        "checkedAt": "2026-11-25T09:20:16Z"
+      }
     },
     {
       "dishId": "244c6669-391f-5d22-90b1-002fddf9e894",
@@ -624,7 +698,9 @@
         "assistance": {
           "tool": "Codex",
           "checkedAt": "2026-11-25T09:10:32Z"
-        }
+        },
+        "checkedBy": "Tâm",
+        "checkedAt": "2026-11-25T09:20:16Z"
       }
     },
     {
@@ -683,21 +759,39 @@
       "name": "Súp khoai lang",
       "locator": "https://haisanpho.com.vn/sup-kem-khoai-lang",
       "checkedAt": "2026-11-23T02:22:10Z",
-      "description": "Khoai lang và các phần rau củ được nấu mềm thành món súp sánh. Có thể ăn bằng thìa khi còn ấm để cảm nhận vị ngọt của khoai."
+      "description": "Khoai lang và các phần rau củ được nấu mềm thành món súp sánh. Có thể ăn bằng thìa khi còn ấm để cảm nhận vị ngọt của khoai.",
+      "factReview": {
+        "textSha256": "1c7f18ec8a82443531a73b36ba321a450c01244fa04732b336b0ac6e2fb05c10",
+        "facts": "Khoai lang và các phần rau củ được nấu mềm thành món súp sánh. Có thể ăn bằng thìa khi còn ấm để cảm nhận vị ngọt của khoai.",
+        "checkedBy": "Tâm",
+        "checkedAt": "2026-11-25T09:20:16Z"
+      }
     },
     {
       "dishId": "2f3cdcc9-61af-5a87-a6ab-bd6d0b04d512",
       "name": "Cóc lắc",
       "locator": "https://vtcnews.vn/cach-lam-coc-lac-muoi-ot-sieu-ngon-ar906062.html",
       "description": "Cóc được cắt thành miếng vừa ăn rồi lắc với gia vị. Kiểu trộn muối ớt giữ độ giòn của cóc và thêm vị mặn cay vào vị chua của quả.",
-      "checkedAt": "2026-11-21T17:11:47Z"
+      "checkedAt": "2026-11-21T17:11:47Z",
+      "factReview": {
+        "textSha256": "75953fae469dbe1d124e756fe0482c80913ca97de2cd44c3694a7cd1c34610fe",
+        "facts": "Cóc được cắt thành miếng vừa ăn rồi lắc với gia vị. Kiểu trộn muối ớt giữ độ giòn của cóc và thêm vị mặn cay vào vị chua của quả.",
+        "checkedBy": "Tâm",
+        "checkedAt": "2026-11-25T09:20:16Z"
+      }
     },
     {
       "dishId": "2f68da9a-4fe2-5765-9b54-94410b5fce69",
       "name": "Bánh canh",
       "locator": "https://www.aciar.gov.au/sites/default/files/aciar_cookbook_vietnamese.pdf",
       "description": "Bánh canh là món sợi bản dày ăn với nước dùng. Một phiên bản được ghi trong sách nấu ăn ACIAR dùng tôm và cua làm phần ăn kèm.",
-      "checkedAt": "2026-11-21T17:11:47Z"
+      "checkedAt": "2026-11-21T17:11:47Z",
+      "factReview": {
+        "textSha256": "200b94fd290e4d97c1abdca2d2bcdb74ca1ffc2b737281371aeefd845b4e049d",
+        "facts": "Bánh canh là món sợi bản dày ăn với nước dùng. Một phiên bản được ghi trong sách nấu ăn ACIAR dùng tôm và cua làm phần ăn kèm.",
+        "checkedBy": "Tâm",
+        "checkedAt": "2026-11-25T09:20:16Z"
+      }
     },
     {
       "dishId": "2fa4b413-e5c2-50c8-81d0-f037bcf2d286",
@@ -738,14 +832,26 @@
       "name": "Bánh sừng bò",
       "locator": "https://www.kingarthurbaking.com/recipes/bakers-croissants-recipe",
       "checkedAt": "2026-11-23T02:22:10Z",
-      "description": "Bánh nướng được cuộn thành hình cong, với nhiều lớp bột mỏng lộ ra khi bẻ. Có thể ăn từng chiếc, khi lớp vỏ vẫn còn giòn."
+      "description": "Bánh nướng được cuộn thành hình cong, với nhiều lớp bột mỏng lộ ra khi bẻ. Có thể ăn từng chiếc, khi lớp vỏ vẫn còn giòn.",
+      "factReview": {
+        "textSha256": "081f38d14cd01170aa765523450befb55b00cefc76ef63bc517d94f5b4ad5d44",
+        "facts": "Bánh nướng được cuộn thành hình cong, với nhiều lớp bột mỏng lộ ra khi bẻ. Có thể ăn từng chiếc, khi lớp vỏ vẫn còn giòn.",
+        "checkedBy": "Tâm",
+        "checkedAt": "2026-11-25T09:20:16Z"
+      }
     },
     {
       "dishId": "33c758d0-9f9b-5dd9-8976-c52b6f949d31",
       "name": "Phở gà",
       "locator": "https://govietnam.travel/food/pho-2/",
       "description": "Phở gà là món bánh phở chan nước dùng gà. Phần thịt có thể thái hoặc xé rồi dọn ngay trong tô với hành, rau thơm tùy cách làm.",
-      "checkedAt": "2026-11-21T17:11:47Z"
+      "checkedAt": "2026-11-21T17:11:47Z",
+      "factReview": {
+        "textSha256": "f36600451eb1dc01f7c76e7839ff2aa91406ef6f402bc70baec896c9cd22749f",
+        "facts": "Phở gà là món bánh phở chan nước dùng gà. Phần thịt có thể thái hoặc xé rồi dọn ngay trong tô với hành, rau thơm tùy cách làm.",
+        "checkedBy": "Tâm",
+        "checkedAt": "2026-11-25T09:20:16Z"
+      }
     },
     {
       "dishId": "33cb1cfd-c0a5-5c6c-84c3-d1d646bd4173",
@@ -769,7 +875,13 @@
       "name": "Ốc nướng tiêu",
       "locator": "https://thanhnien.vn/oc-nuong-tieu-can-tho-185124235.htm",
       "checkedAt": "2026-11-23T02:22:10Z",
-      "description": "Ốc được nướng với gia vị có tiêu và dọn khi còn nóng. Người ăn có thể gỡ thịt ốc rồi dùng với phần gia vị còn đọng trong vỏ."
+      "description": "Ốc được nướng với gia vị có tiêu và dọn khi còn nóng. Người ăn có thể gỡ thịt ốc rồi dùng với phần gia vị còn đọng trong vỏ.",
+      "factReview": {
+        "textSha256": "d581d490359fe0753ac8c0d1d8fd826788619cf6b048e7c8cd89924e810d81ea",
+        "facts": "Ốc được nướng với gia vị có tiêu và dọn khi còn nóng. Người ăn có thể gỡ thịt ốc rồi dùng với phần gia vị còn đọng trong vỏ.",
+        "checkedBy": "Tâm",
+        "checkedAt": "2026-11-25T09:20:16Z"
+      }
     },
     {
       "dishId": "35c28b84-c9fe-5397-b9ed-4b1e17f070cb",
@@ -810,14 +922,26 @@
       "name": "Cơm sườn",
       "locator": "https://vietnamesecookbook.com/vi/recipes/com-tam/",
       "description": "Cơm sườn là phần cơm dùng cùng miếng sườn đã chế biến. Kiểu sườn nướng có thể dọn kèm đồ chua và nước chấm để ăn xen.",
-      "checkedAt": "2026-11-21T17:11:47Z"
+      "checkedAt": "2026-11-21T17:11:47Z",
+      "factReview": {
+        "textSha256": "6f623fd5f5c4ffea92c570c75daff11d61942be17dc20b43147bf90d6041eba2",
+        "facts": "Cơm sườn là phần cơm dùng cùng miếng sườn đã chế biến. Kiểu sườn nướng có thể dọn kèm đồ chua và nước chấm để ăn xen.",
+        "checkedBy": "Tâm",
+        "checkedAt": "2026-11-25T09:20:16Z"
+      }
     },
     {
       "dishId": "39da0965-df4e-5ca1-8741-bdb9aeb85f57",
       "name": "Bánh cuộn",
       "locator": "https://food.be.com.vn/ho-chi-minh/wallace-burger-chicken-kha-van-can-126511",
       "description": "Một tấm bánh mềm được cuộn quanh phần nhân để cầm ăn. Tùy phiên bản, bên trong có thể có rau, phần nhân chính và nước sốt.",
-      "checkedAt": "2026-11-21T17:11:47Z"
+      "checkedAt": "2026-11-21T17:11:47Z",
+      "factReview": {
+        "textSha256": "2dc7668aa4f075a32063deca81ca7f203f09e5b805d980273d10bd3ac5928697",
+        "facts": "Một tấm bánh mềm được cuộn quanh phần nhân để cầm ăn. Tùy phiên bản, bên trong có thể có rau, phần nhân chính và nước sốt.",
+        "checkedBy": "Tâm",
+        "checkedAt": "2026-11-25T09:20:16Z"
+      }
     },
     {
       "dishId": "3a4021fa-454d-5b31-a8bc-49e864013dda",
@@ -841,14 +965,26 @@
       "name": "Cơm canh chua cá",
       "locator": "https://vietnamesecookbook.com/vi/recipes/canh-chua-ca/",
       "checkedAt": "2026-11-23T02:22:10Z",
-      "description": "Phần cơm được dọn cùng canh chua có cá. Có thể ăn xen từng miếng cá với cơm và dùng thêm một thìa canh giữa các miếng."
+      "description": "Phần cơm được dọn cùng canh chua có cá. Có thể ăn xen từng miếng cá với cơm và dùng thêm một thìa canh giữa các miếng.",
+      "factReview": {
+        "textSha256": "eb6b7b8ef353adee25dc965bc1cb1f0603c9b6ad67892edf912ae4c9887fa1f8",
+        "facts": "Phần cơm được dọn cùng canh chua có cá. Có thể ăn xen từng miếng cá với cơm và dùng thêm một thìa canh giữa các miếng.",
+        "checkedBy": "Tâm",
+        "checkedAt": "2026-11-25T09:20:16Z"
+      }
     },
     {
       "dishId": "3cfc0543-f816-583b-bfe6-27f4010aeefa",
       "name": "Bún mắm",
       "locator": "https://ngoisao.vnexpress.net/tran-thanh-ghien-bun-mam-trong-hem-gia-130-000-dong-4866629.html",
       "checkedAt": "2026-11-22T02:45:00Z",
-      "description": "Bún được chan nước dùng nấu với mắm, tạo mùi vị rõ. Khi ăn có thể gắp bún cùng phần đồ ăn kèm và thêm rau tùy cách dọn."
+      "description": "Bún được chan nước dùng nấu với mắm, tạo mùi vị rõ. Khi ăn có thể gắp bún cùng phần đồ ăn kèm và thêm rau tùy cách dọn.",
+      "factReview": {
+        "textSha256": "d1a5cf17a34eb1c95466af84a6f6c82c7849343918413f560a2e6e3e217bedef",
+        "facts": "Bún được chan nước dùng nấu với mắm, tạo mùi vị rõ. Khi ăn có thể gắp bún cùng phần đồ ăn kèm và thêm rau tùy cách dọn.",
+        "checkedBy": "Tâm",
+        "checkedAt": "2026-11-25T09:20:16Z"
+      }
     },
     {
       "dishId": "3d7bf018-ab49-514b-9023-8334786f8e21",
@@ -923,7 +1059,13 @@
       "name": "Nhum biển nướng",
       "locator": "https://www.vietnam.travel/vi/things-to-do/phu-quoc-specialty-seafood",
       "checkedAt": "2026-11-22T02:45:00Z",
-      "description": "Nhum biển được nướng và có thể dọn trên phần vỏ. Dùng thìa múc phần mềm bên trong, thêm chút vị chua hoặc cay nếu có."
+      "description": "Nhum biển được nướng và có thể dọn trên phần vỏ. Dùng thìa múc phần mềm bên trong, thêm chút vị chua hoặc cay nếu có.",
+      "factReview": {
+        "textSha256": "d2935056c2a5cb2270ca07486cecc21e5d3ecce79313138793ff1237e7021af9",
+        "facts": "Nhum biển được nướng và có thể dọn trên phần vỏ. Dùng thìa múc phần mềm bên trong, thêm chút vị chua hoặc cay nếu có.",
+        "checkedBy": "Tâm",
+        "checkedAt": "2026-11-25T09:20:16Z"
+      }
     },
     {
       "dishId": "402f6f92-8cc8-5397-adb7-14a9a3dfe6e3",
@@ -981,7 +1123,13 @@
       "name": "Bún thịt nướng",
       "locator": "https://www.vietnamtourism.com/en/bun-thit-nuong-the-complete-guide-to-vietnam-s-grilled-pork",
       "description": "Bún được dọn cùng thịt nướng và rau, thay vì chan nước dùng. Khi ăn có thể rưới nước chấm lên tô rồi trộn đều với sợi bún.",
-      "checkedAt": "2026-11-21T17:11:47Z"
+      "checkedAt": "2026-11-21T17:11:47Z",
+      "factReview": {
+        "textSha256": "c4752b1895a6c2394d048c74e2aa1202963d57b68ae6bc3f1d0ca3905ee976b4",
+        "facts": "Bún được dọn cùng thịt nướng và rau, thay vì chan nước dùng. Khi ăn có thể rưới nước chấm lên tô rồi trộn đều với sợi bún.",
+        "checkedBy": "Tâm",
+        "checkedAt": "2026-11-25T09:20:16Z"
+      }
     },
     {
       "dishId": "443b19d1-73de-53a7-9812-e02ce32779c1",
@@ -1005,14 +1153,26 @@
       "name": "Ốc hương hấp sả",
       "locator": "https://trangiafoods.vn/blogs/news/cach-lam-oc-huong-hap-sa/",
       "description": "Ốc hương được hấp với sả đập dập để lấy mùi thơm từ hơi nước. Khi ăn, lấy thịt ốc ra khỏi vỏ và dùng với nước chấm nếu có.",
-      "checkedAt": "2026-11-21T17:11:47Z"
+      "checkedAt": "2026-11-21T17:11:47Z",
+      "factReview": {
+        "textSha256": "9367145fc4ef11cd1643f386fed94557174ae16618e14b7020b61e6cc49aa3e4",
+        "facts": "Ốc hương được hấp với sả đập dập để lấy mùi thơm từ hơi nước. Khi ăn, lấy thịt ốc ra khỏi vỏ và dùng với nước chấm nếu có.",
+        "checkedBy": "Tâm",
+        "checkedAt": "2026-11-25T09:20:16Z"
+      }
     },
     {
       "dishId": "46818c04-7d88-5314-9391-e4b46784c54b",
       "name": "Lẩu gà ớt hiểm",
       "locator": "https://food.be.com.vn/ho-chi-minh/dac-san-ga-ta-ga-xe-309-au-co-133644",
       "checkedAt": "2026-11-22T02:45:00Z",
-      "description": "Gà dùng với nước lẩu nêm ớt hiểm tạo vị cay. Khi ăn có thể gắp gà và phần rau đã nhúng, rồi múc thêm nước lẩu theo khẩu vị."
+      "description": "Gà dùng với nước lẩu nêm ớt hiểm tạo vị cay. Khi ăn có thể gắp gà và phần rau đã nhúng, rồi múc thêm nước lẩu theo khẩu vị.",
+      "factReview": {
+        "textSha256": "f8368fc0711cd26c0c50600807c9ddd2e6574f2b23227c91e407a7c1509efc16",
+        "facts": "Gà dùng với nước lẩu nêm ớt hiểm tạo vị cay. Khi ăn có thể gắp gà và phần rau đã nhúng, rồi múc thêm nước lẩu theo khẩu vị.",
+        "checkedBy": "Tâm",
+        "checkedAt": "2026-11-25T09:20:16Z"
+      }
     },
     {
       "dishId": "46a284ae-4fcc-506f-a657-74d5254723de",
@@ -1053,14 +1213,26 @@
       "name": "Cháo lươn",
       "locator": "https://visitnghean.gov.vn/tin-tuc/chao-luon-vinh",
       "description": "Cháo gạo nấu mềm, ăn cùng thịt lươn đã chế biến. Ở Vinh, món này thường được múc ra tô và dùng nóng, có thể thêm rau thơm.",
-      "checkedAt": "2026-11-21T17:11:47Z"
+      "checkedAt": "2026-11-21T17:11:47Z",
+      "factReview": {
+        "textSha256": "fa093c3ba471b2d4e41179ea08a805c7edb2bbf2f01dbecd9ce0daabf66ada57",
+        "facts": "Cháo gạo nấu mềm, ăn cùng thịt lươn đã chế biến. Ở Vinh, món này thường được múc ra tô và dùng nóng, có thể thêm rau thơm.",
+        "checkedBy": "Tâm",
+        "checkedAt": "2026-11-25T09:20:16Z"
+      }
     },
     {
       "dishId": "4f4e0327-d10e-5c8f-b69a-eb4f2df520ea",
       "name": "Mì trộn",
       "locator": "https://www.dienmayxanh.com/vao-bep/cach-lam-sot-tron-mi-kho-hu-tieu-kho-sanh-min-chuan-vi-de-lam-23838",
       "description": "Mì được làm chín rồi trộn với phần sốt cho bám quanh sợi. Các món ăn kèm có thể được bày trên mặt để trộn chung khi ăn.",
-      "checkedAt": "2026-11-21T17:11:47Z"
+      "checkedAt": "2026-11-21T17:11:47Z",
+      "factReview": {
+        "textSha256": "a1e5a667db975c2e75a71afe4d5c9c365c635c0e93c90fcbce7fd92e624b6ac2",
+        "facts": "Mì được làm chín rồi trộn với phần sốt cho bám quanh sợi. Các món ăn kèm có thể được bày trên mặt để trộn chung khi ăn.",
+        "checkedBy": "Tâm",
+        "checkedAt": "2026-11-25T09:20:16Z"
+      }
     },
     {
       "dishId": "501b82d0-9b3d-57f0-b7c7-7a068a601222",
@@ -1084,14 +1256,26 @@
       "name": "Bún chay",
       "locator": "https://dinhduong2598.food/mon-an/bun-mang-chay/",
       "description": "Bún có thể được dọn trong tô với nước dùng và phần ăn kèm. Một cách nấu dùng măng cho phần ăn kèm, có thể dùng thêm rau theo khẩu vị.",
-      "checkedAt": "2026-11-21T17:11:47Z"
+      "checkedAt": "2026-11-21T17:11:47Z",
+      "factReview": {
+        "textSha256": "47c158957f798b1b6dbfc0bd8ee9c730f758cefa750bc765670e19473a61d400",
+        "facts": "Bún có thể được dọn trong tô với nước dùng và phần ăn kèm. Một cách nấu dùng măng cho phần ăn kèm, có thể dùng thêm rau theo khẩu vị.",
+        "checkedBy": "Tâm",
+        "checkedAt": "2026-11-25T09:20:16Z"
+      }
     },
     {
       "dishId": "535fe47b-d26a-5c05-ba94-88e5e1562df0",
       "name": "Gà nướng lá chúc",
       "locator": "https://vnexpress.net/cam-nang-du-lich-an-giang-4445399.html",
       "checkedAt": "2026-11-22T02:50:00Z",
-      "description": "Gà nướng kiểu Ô Thum có mùi thơm của lá chúc. Có thể chia gà thành phần nhỏ sau khi nướng và ăn cùng các món khác trong bữa."
+      "description": "Gà nướng kiểu Ô Thum có mùi thơm của lá chúc. Có thể chia gà thành phần nhỏ sau khi nướng và ăn cùng các món khác trong bữa.",
+      "factReview": {
+        "textSha256": "308c43b50531607dbb85c3971e80cf8f5ce00ba0aa572ab8e9a1b7efc241994e",
+        "facts": "Gà nướng kiểu Ô Thum có mùi thơm của lá chúc. Có thể chia gà thành phần nhỏ sau khi nướng và ăn cùng các món khác trong bữa.",
+        "checkedBy": "Tâm",
+        "checkedAt": "2026-11-25T09:20:16Z"
+      }
     },
     {
       "dishId": "53621685-2bea-5e48-8a59-202482acfad1",
@@ -1115,7 +1299,13 @@
       "name": "Bún gạo xào",
       "locator": "https://ngoisao.vnexpress.net/goi-y-food-tour-binh-dan-no-day-bung-tu-sang-den-dem-o-sai-gon-4499723.html",
       "checkedAt": "2026-11-22T02:43:00Z",
-      "description": "Bún gạo được làm mềm rồi đảo trên chảo với phần ăn kèm. Khi dọn, có thể gắp sợi bún cùng các phần xào thay vì chan nước dùng."
+      "description": "Bún gạo được làm mềm rồi đảo trên chảo với phần ăn kèm. Khi dọn, có thể gắp sợi bún cùng các phần xào thay vì chan nước dùng.",
+      "factReview": {
+        "textSha256": "24e6c49c588fe5613b5df2140dd28c2e29e4ff8d6e6abee71bb0145b60cb546e",
+        "facts": "Bún gạo được làm mềm rồi đảo trên chảo với phần ăn kèm. Khi dọn, có thể gắp sợi bún cùng các phần xào thay vì chan nước dùng.",
+        "checkedBy": "Tâm",
+        "checkedAt": "2026-11-25T09:20:16Z"
+      }
     },
     {
       "dishId": "5a5d30ce-49b1-5cab-b6f6-007fde4c33bc",
@@ -1156,7 +1346,13 @@
       "name": "Xíu mại hấp",
       "locator": "https://food.be.com.vn/ho-chi-minh/chu-dimsum-house-au-co-128011",
       "checkedAt": "2026-11-22T02:50:00Z",
-      "description": "Xíu mại kiểu dim sum được hấp chín thành những miếng nhỏ. Có thể gắp từng miếng để ăn nóng, dùng thêm sốt nếu có."
+      "description": "Xíu mại kiểu dim sum được hấp chín thành những miếng nhỏ. Có thể gắp từng miếng để ăn nóng, dùng thêm sốt nếu có.",
+      "factReview": {
+        "textSha256": "951b2c56c63ea0ffbc02fe4b06afab5cb126ee248b308bb7fa00f566a5fe6578",
+        "facts": "Xíu mại kiểu dim sum được hấp chín thành những miếng nhỏ. Có thể gắp từng miếng để ăn nóng, dùng thêm sốt nếu có.",
+        "checkedBy": "Tâm",
+        "checkedAt": "2026-11-25T09:20:16Z"
+      }
     },
     {
       "dishId": "5b4bfdd7-e841-5e6f-8580-4ff0530b8d5d",
@@ -1265,21 +1461,39 @@
       "name": "Hủ tiếu sa tế",
       "locator": "https://vnexpress.net/ba-quan-hu-tieu-sa-te-duoc-che-bien-cong-phu-o-sai-gon-3854684.html",
       "checkedAt": "2026-11-23T02:22:10Z",
-      "description": "Sợi hủ tiếu được dọn với phần nước sa tế có vị cay và béo. Khi ăn có thể gắp sợi kèm một ít nước đặc bám quanh sợi."
+      "description": "Sợi hủ tiếu được dọn với phần nước sa tế có vị cay và béo. Khi ăn có thể gắp sợi kèm một ít nước đặc bám quanh sợi.",
+      "factReview": {
+        "textSha256": "7c87c51751d2ea98cec61cb109b1019261fa3b0c0e11985e2b7c1c4cc06535d5",
+        "facts": "Sợi hủ tiếu được dọn với phần nước sa tế có vị cay và béo. Khi ăn có thể gắp sợi kèm một ít nước đặc bám quanh sợi.",
+        "checkedBy": "Tâm",
+        "checkedAt": "2026-11-25T09:20:16Z"
+      }
     },
     {
       "dishId": "65688791-906c-59b0-8282-b9a5c8161f23",
       "name": "Hủ tiếu mực",
       "locator": "https://baoangiang.com.vn/top-10-quan-an-sang-o-phu-quoc-ngon-re-a393075.html",
       "checkedAt": "2026-11-22T02:50:00Z",
-      "description": "Sợi hủ tiếu được chan nước dùng và dọn với phần mực. Có thể ăn nóng bằng cách gắp sợi cùng một miếng mực, thêm rau nếu có."
+      "description": "Sợi hủ tiếu được chan nước dùng và dọn với phần mực. Có thể ăn nóng bằng cách gắp sợi cùng một miếng mực, thêm rau nếu có.",
+      "factReview": {
+        "textSha256": "5cd2ca75cf890cf149cbe08bd596dc645bb1e711b4cac661c9fbf7f4ac51d02d",
+        "facts": "Sợi hủ tiếu được chan nước dùng và dọn với phần mực. Có thể ăn nóng bằng cách gắp sợi cùng một miếng mực, thêm rau nếu có.",
+        "checkedBy": "Tâm",
+        "checkedAt": "2026-11-25T09:20:16Z"
+      }
     },
     {
       "dishId": "69073532-dba4-59ab-917e-42971d5e81c3",
       "name": "Mì",
       "locator": "https://food.be.com.vn/ho-chi-minh/pho-ly-quoc-su-hoang-dieu-2-86590",
       "description": "Mì là phần sợi làm nền cho một tô hoặc đĩa, với món ăn kèm tùy kiểu dọn. Một cách phục vụ là dọn sợi mì cùng phần thịt đã chế biến.",
-      "checkedAt": "2026-11-21T17:11:47Z"
+      "checkedAt": "2026-11-21T17:11:47Z",
+      "factReview": {
+        "textSha256": "2b8de602e62f745b16b14548f9876d967439574b5b0f8dab5a2a0e8d0d072a1d",
+        "facts": "Mì là phần sợi làm nền cho một tô hoặc đĩa, với món ăn kèm tùy kiểu dọn. Một cách phục vụ là dọn sợi mì cùng phần thịt đã chế biến.",
+        "checkedBy": "Tâm",
+        "checkedAt": "2026-11-25T09:20:16Z"
+      }
     },
     {
       "dishId": "693daba6-9af8-51a6-a626-16ce4ff2d330",
@@ -1303,14 +1517,26 @@
       "name": "Ô mai",
       "locator": "https://antoanthucpham.hanoi.gov.vn/o-mai-thuc-qua-chua-cay-niu-giu-vi-ky-uc-nguoi-ha-noi-239260923211442566.htm",
       "description": "Ô mai là quà vặt từ quả được chế biến với gia vị. Tùy loại quả và cách làm, từng miếng có thể thiên về vị chua, ngọt, mặn hoặc cay.",
-      "checkedAt": "2026-11-21T17:11:47Z"
+      "checkedAt": "2026-11-21T17:11:47Z",
+      "factReview": {
+        "textSha256": "a61a79873e584363234879705550f7e47bc147e3e06f11a354be5e6f9d429385",
+        "facts": "Ô mai là quà vặt từ quả được chế biến với gia vị. Tùy loại quả và cách làm, từng miếng có thể thiên về vị chua, ngọt, mặn hoặc cay.",
+        "checkedBy": "Tâm",
+        "checkedAt": "2026-11-25T09:20:16Z"
+      }
     },
     {
       "dishId": "6c917fda-1e1b-5192-9bd6-167c6f97e4aa",
       "name": "Bạch tuộc nướng",
       "locator": "https://vnexpress.net/4-mon-an-vat-sai-gon-khien-nhieu-nguoi-me-man-3368753.html",
       "checkedAt": "2026-11-22T02:45:00Z",
-      "description": "Bạch tuộc được nướng rồi dọn thành phần để ăn chung. Có thể cắt thành miếng vừa miệng và dùng khi còn ấm."
+      "description": "Bạch tuộc được nướng rồi dọn thành phần để ăn chung. Có thể cắt thành miếng vừa miệng và dùng khi còn ấm.",
+      "factReview": {
+        "textSha256": "dd573b124cfd7845ffb87aec9ab7cc11e7eac2afc5b690e7a219f9d80dd48b37",
+        "facts": "Bạch tuộc được nướng rồi dọn thành phần để ăn chung. Có thể cắt thành miếng vừa miệng và dùng khi còn ấm.",
+        "checkedBy": "Tâm",
+        "checkedAt": "2026-11-25T09:20:16Z"
+      }
     },
     {
       "dishId": "6e6a3c13-7da9-51f2-907d-74bd87d4ce72",
@@ -1334,21 +1560,39 @@
       "name": "Bò né",
       "locator": "https://food.be.com.vn/ho-chi-minh/banh-mi-hoi-an-madam-q-vo-oanh-123168",
       "checkedAt": "2026-11-22T02:39:00Z",
-      "description": "Bò né thường được dọn trên chảo nóng với phần thịt bò. Kiểu có trứng ốp la có thể ăn bằng cách gắp thịt và trứng xen nhau."
+      "description": "Bò né thường được dọn trên chảo nóng với phần thịt bò. Kiểu có trứng ốp la có thể ăn bằng cách gắp thịt và trứng xen nhau.",
+      "factReview": {
+        "textSha256": "0bd7bd054b354c6244caff61a3ee6eed4bfabc34c3d9dfaefc20347a998683dc",
+        "facts": "Bò né thường được dọn trên chảo nóng với phần thịt bò. Kiểu có trứng ốp la có thể ăn bằng cách gắp thịt và trứng xen nhau.",
+        "checkedBy": "Tâm",
+        "checkedAt": "2026-11-25T09:20:16Z"
+      }
     },
     {
       "dishId": "733d1f2f-ae6d-5d6e-b97f-7abf3e549938",
       "name": "Bún bung",
       "locator": "https://vnexpress.net/la-lot-dau-an-huong-vi-am-thuc-thai-binh-4433483.html",
       "checkedAt": "2026-11-23T02:22:10Z",
-      "description": "Bún được chan nước dùng và dọn cùng phần ăn kèm. Một kiểu bún bung có hoa chuối và chả lá lốt, dùng chung trong một tô."
+      "description": "Bún được chan nước dùng và dọn cùng phần ăn kèm. Một kiểu bún bung có hoa chuối và chả lá lốt, dùng chung trong một tô.",
+      "factReview": {
+        "textSha256": "5e421853b2a5f15de33a4ab1c193a670dd1fc09b6c514da6dadc03a0fc0fa4a8",
+        "facts": "Bún được chan nước dùng và dọn cùng phần ăn kèm. Một kiểu bún bung có hoa chuối và chả lá lốt, dùng chung trong một tô.",
+        "checkedBy": "Tâm",
+        "checkedAt": "2026-11-25T09:20:16Z"
+      }
     },
     {
       "dishId": "74456894-f456-551c-9ff1-1fd2adf21823",
       "name": "Chè sen long nhãn",
       "locator": "https://vinhyencitycentre.crowneplaza.com/wp-content/uploads/2023/11/Vietnamese-Menu-digital.pdf",
       "checkedAt": "2026-11-22T02:43:00Z",
-      "description": "Hạt sen và long nhãn được dọn trong phần nước chè ngọt. Có thể múc cả hạt sen bùi và nhãn mềm trong cùng một thìa."
+      "description": "Hạt sen và long nhãn được dọn trong phần nước chè ngọt. Có thể múc cả hạt sen bùi và nhãn mềm trong cùng một thìa.",
+      "factReview": {
+        "textSha256": "d78479534e2f864128b142e44741036c1835238929c8ae9c84dc5c3c3c10275e",
+        "facts": "Hạt sen và long nhãn được dọn trong phần nước chè ngọt. Có thể múc cả hạt sen bùi và nhãn mềm trong cùng một thìa.",
+        "checkedBy": "Tâm",
+        "checkedAt": "2026-11-25T09:20:16Z"
+      }
     },
     {
       "dishId": "746c5eeb-9550-513b-9959-20f3c9be396b",
@@ -1372,7 +1616,13 @@
       "name": "Lẩu cá điêu hồng",
       "locator": "https://haisanpho.com.vn/lau-ca-dieu-hong",
       "checkedAt": "2026-11-23T02:22:10Z",
-      "description": "Cá điêu hồng được dùng trong nồi nước lẩu nóng. Có thể gỡ từng miếng cá đã chín rồi ăn cùng rau nhúng và một ít nước dùng."
+      "description": "Cá điêu hồng được dùng trong nồi nước lẩu nóng. Có thể gỡ từng miếng cá đã chín rồi ăn cùng rau nhúng và một ít nước dùng.",
+      "factReview": {
+        "textSha256": "62478b63a40ecebe1811f2d09878115ad74ea4759cac5e0f04e034ab6240b578",
+        "facts": "Cá điêu hồng được dùng trong nồi nước lẩu nóng. Có thể gỡ từng miếng cá đã chín rồi ăn cùng rau nhúng và một ít nước dùng.",
+        "checkedBy": "Tâm",
+        "checkedAt": "2026-11-25T09:20:16Z"
+      }
     },
     {
       "dishId": "75883713-cd7e-5b37-9ab9-a51f447f88da",
@@ -1396,7 +1646,13 @@
       "name": "Kem bơ",
       "locator": "https://dalat.vn/vi/kembothanhthaodl",
       "description": "Kiểu kem bơ Đà Lạt thường dọn trong ly, với phần bơ xay ở dưới và viên kem ở trên. Khi ăn có thể múc cả hai phần trong cùng một thìa.",
-      "checkedAt": "2026-11-21T17:11:47Z"
+      "checkedAt": "2026-11-21T17:11:47Z",
+      "factReview": {
+        "textSha256": "6cc5e703ac56e4bc3d87a5ec54c37e60691e4df0b65793fe1f9d4da3c3d84558",
+        "facts": "Kiểu kem bơ Đà Lạt thường dọn trong ly, với phần bơ xay ở dưới và viên kem ở trên. Khi ăn có thể múc cả hai phần trong cùng một thìa.",
+        "checkedBy": "Tâm",
+        "checkedAt": "2026-11-25T09:20:16Z"
+      }
     },
     {
       "dishId": "787d0dde-b75f-5a87-9afc-35c9f131ef78",
@@ -1437,35 +1693,65 @@
       "name": "Bún riêu",
       "locator": "https://vietnamesecookbook.com/vi/recipes/bun-rieu/",
       "description": "Bún riêu thường được dọn cùng nước dùng và phần riêu. Kiểu nước dùng cà chua có vị chua nhẹ, có thể ăn cùng rau hoặc các món kèm khác.",
-      "checkedAt": "2026-11-21T17:11:47Z"
+      "checkedAt": "2026-11-21T17:11:47Z",
+      "factReview": {
+        "textSha256": "9b80077c7495de90ad70022b7793153d40434f0e7a1d5550773bded484330e70",
+        "facts": "Bún riêu thường được dọn cùng nước dùng và phần riêu. Kiểu nước dùng cà chua có vị chua nhẹ, có thể ăn cùng rau hoặc các món kèm khác.",
+        "checkedBy": "Tâm",
+        "checkedAt": "2026-11-25T09:20:16Z"
+      }
     },
     {
       "dishId": "7cec2262-fd1b-591d-8c20-7f5ef7d5fe0a",
       "name": "Bánh mì chảo",
       "locator": "https://ngoisao.vnexpress.net/goi-y-food-tour-binh-dan-no-day-bung-tu-sang-den-dem-o-sai-gon-4499723.html",
       "checkedAt": "2026-11-22T02:43:00Z",
-      "description": "Bánh mì được dọn riêng cùng chảo nóng, chẳng hạn chảo trứng và xíu mại. Người ăn có thể xé bánh rồi chấm vào phần sốt trong chảo."
+      "description": "Bánh mì được dọn riêng cùng chảo nóng, chẳng hạn chảo trứng và xíu mại. Người ăn có thể xé bánh rồi chấm vào phần sốt trong chảo.",
+      "factReview": {
+        "textSha256": "41712664ff5f8767782910322a9d5765ffea1449e832fc5199f7c29486c708cd",
+        "facts": "Bánh mì được dọn riêng cùng chảo nóng, chẳng hạn chảo trứng và xíu mại. Người ăn có thể xé bánh rồi chấm vào phần sốt trong chảo.",
+        "checkedBy": "Tâm",
+        "checkedAt": "2026-11-25T09:20:16Z"
+      }
     },
     {
       "dishId": "7d4be5dd-0b8b-589c-845a-74eaf04a7a93",
       "name": "Há cảo",
       "locator": "https://www.youtube.com/watch?v=NEDEwvhC2Sk",
       "checkedAt": "2026-11-23T02:22:10Z",
-      "description": "Lớp vỏ mỏng bọc phần nhân rồi được hấp chín thành từng miếng nhỏ. Có thể gắp ăn khi còn nóng và chấm thêm nếu muốn."
+      "description": "Lớp vỏ mỏng bọc phần nhân rồi được hấp chín thành từng miếng nhỏ. Có thể gắp ăn khi còn nóng và chấm thêm nếu muốn.",
+      "factReview": {
+        "textSha256": "946433f52453e0dc15d96deed60e43910172198d96f9c25bb9ede9b11d763351",
+        "facts": "Lớp vỏ mỏng bọc phần nhân rồi được hấp chín thành từng miếng nhỏ. Có thể gắp ăn khi còn nóng và chấm thêm nếu muốn.",
+        "checkedBy": "Tâm",
+        "checkedAt": "2026-11-25T09:20:16Z"
+      }
     },
     {
       "dishId": "7dc4a501-9f31-5164-956e-13338699d38d",
       "name": "Sò lông nướng mỡ hành",
       "locator": "https://ngoisao.vnexpress.net/so-long-nuong-mo-hanh-4181256.html",
       "checkedAt": "2026-11-23T02:22:10Z",
-      "description": "Sò lông được nướng trên vỏ rồi thêm phần mỡ hành. Có thể dùng một chiếc thìa nhỏ để gỡ thịt sò và múc phần mỡ hành cùng lúc."
+      "description": "Sò lông được nướng trên vỏ rồi thêm phần mỡ hành. Có thể dùng một chiếc thìa nhỏ để gỡ thịt sò và múc phần mỡ hành cùng lúc.",
+      "factReview": {
+        "textSha256": "c186dee05f29334e49baca468d9b759bdb23eec0cd9d929695594f57ca00b83a",
+        "facts": "Sò lông được nướng trên vỏ rồi thêm phần mỡ hành. Có thể dùng một chiếc thìa nhỏ để gỡ thịt sò và múc phần mỡ hành cùng lúc.",
+        "checkedBy": "Tâm",
+        "checkedAt": "2026-11-25T09:20:16Z"
+      }
     },
     {
       "dishId": "7ea6c758-aed3-5580-b579-1931a926458b",
       "name": "Hàu nướng mỡ hành",
       "locator": "https://www.aciar.gov.au/sites/default/files/aciar_cookbook_vietnamese.pdf",
       "checkedAt": "2026-11-23T02:22:10Z",
-      "description": "Hàu được nướng và dọn trên vỏ với phần mỡ hành thơm. Có thể dùng thìa gỡ từng con và múc một ít phần mỡ hành trên mặt."
+      "description": "Hàu được nướng và dọn trên vỏ với phần mỡ hành thơm. Có thể dùng thìa gỡ từng con và múc một ít phần mỡ hành trên mặt.",
+      "factReview": {
+        "textSha256": "a85638a7cf7adee67ccc500c68d72b39ed1b2f089d52c9654d6ba976188d5891",
+        "facts": "Hàu được nướng và dọn trên vỏ với phần mỡ hành thơm. Có thể dùng thìa gỡ từng con và múc một ít phần mỡ hành trên mặt.",
+        "checkedBy": "Tâm",
+        "checkedAt": "2026-11-25T09:20:16Z"
+      }
     },
     {
       "dishId": "7f6cff9c-e556-5e46-8cae-8ea9e9de160e",
@@ -1496,7 +1782,9 @@
         "assistance": {
           "tool": "Codex",
           "checkedAt": "2026-11-25T09:10:32Z"
-        }
+        },
+        "checkedBy": "Tâm",
+        "checkedAt": "2026-11-25T09:20:16Z"
       }
     },
     {
@@ -1521,14 +1809,26 @@
       "name": "Burger",
       "locator": "https://pburgerhoian.com/vi/menu",
       "description": "Burger có phần nhân đặt giữa hai nửa bánh để cầm ăn. Tùy loại, phần nhân được xếp cùng rau, sốt hoặc món kèm khác.",
-      "checkedAt": "2026-11-21T17:11:47Z"
+      "checkedAt": "2026-11-21T17:11:47Z",
+      "factReview": {
+        "textSha256": "c721c852e08c78df48ec308514a1baf9345bbbcfca6b62a30ecb4005971d8005",
+        "facts": "Burger có phần nhân đặt giữa hai nửa bánh để cầm ăn. Tùy loại, phần nhân được xếp cùng rau, sốt hoặc món kèm khác.",
+        "checkedBy": "Tâm",
+        "checkedAt": "2026-11-25T09:20:16Z"
+      }
     },
     {
       "dishId": "834c6de8-3a6f-5b92-9f1d-7ff5d64ce0ba",
       "name": "Mì udon xào",
       "locator": "https://www.youtube.com/watch?v=2a9MxnEC7fg",
       "checkedAt": "2026-11-23T02:22:10Z",
-      "description": "Sợi udon dày được đảo trong chảo cùng phần gia vị và món ăn kèm. Một cách dọn dùng thịt bò để ăn xen với từng đũa mì."
+      "description": "Sợi udon dày được đảo trong chảo cùng phần gia vị và món ăn kèm. Một cách dọn dùng thịt bò để ăn xen với từng đũa mì.",
+      "factReview": {
+        "textSha256": "2d2b78e286a5dd08848a4ff7019bcb0a2c7cb3b69c4d0f8ad769c9732d51f512",
+        "facts": "Sợi udon dày được đảo trong chảo cùng phần gia vị và món ăn kèm. Một cách dọn dùng thịt bò để ăn xen với từng đũa mì.",
+        "checkedBy": "Tâm",
+        "checkedAt": "2026-11-25T09:20:16Z"
+      }
     },
     {
       "dishId": "8418bb13-f782-51b9-a8de-24490840ff24",
@@ -1542,7 +1842,9 @@
         "assistance": {
           "tool": "Codex",
           "checkedAt": "2026-11-25T09:10:32Z"
-        }
+        },
+        "checkedBy": "Tâm",
+        "checkedAt": "2026-11-25T09:20:16Z"
       }
     },
     {
@@ -1550,7 +1852,13 @@
       "name": "Cơm bò",
       "locator": "https://bepkom9.com/san-pham/mon-com-bo-sot-tieu-den/",
       "description": "Một phần cơm được dọn với thịt bò chế biến riêng. Kiểu bò sốt có thể ăn bằng cách rưới một ít sốt lên cơm rồi dùng từng miếng bò.",
-      "checkedAt": "2026-11-21T17:11:47Z"
+      "checkedAt": "2026-11-21T17:11:47Z",
+      "factReview": {
+        "textSha256": "983b920940a382264195f38021dc742fab787981db804455ead7a45535c20dbe",
+        "facts": "Một phần cơm được dọn với thịt bò chế biến riêng. Kiểu bò sốt có thể ăn bằng cách rưới một ít sốt lên cơm rồi dùng từng miếng bò.",
+        "checkedBy": "Tâm",
+        "checkedAt": "2026-11-25T09:20:16Z"
+      }
     },
     {
       "dishId": "88ebbde4-14db-566e-aaa5-ff68691297ed",
@@ -1574,7 +1882,13 @@
       "name": "Lẩu dê",
       "locator": "https://www.unileverfoodsolutions.com.vn/vi/cong-thuc-nau-an/lau-de-R0066487.html",
       "checkedAt": "2026-11-23T02:22:10Z",
-      "description": "Món lẩu dùng phần thịt dê trong nồi nước dùng để ăn chung. Có thể múc thịt chín và các món nhúng ra bát theo từng lượt."
+      "description": "Món lẩu dùng phần thịt dê trong nồi nước dùng để ăn chung. Có thể múc thịt chín và các món nhúng ra bát theo từng lượt.",
+      "factReview": {
+        "textSha256": "894a76495908910711c2fa6399d7d6998e1303a92a109265c4d50b0f12a480ab",
+        "facts": "Món lẩu dùng phần thịt dê trong nồi nước dùng để ăn chung. Có thể múc thịt chín và các món nhúng ra bát theo từng lượt.",
+        "checkedBy": "Tâm",
+        "checkedAt": "2026-11-25T09:20:16Z"
+      }
     },
     {
       "dishId": "8a0f91fd-211f-5f7a-929b-ec9a7266b48e",
@@ -1615,7 +1929,13 @@
       "name": "Súp gà đậu ván ý dĩ",
       "locator": "https://suckhoedoisong.vn/3-mon-an-bai-thuoc-giup-duong-ty-vi-sau-tet-16926020715292157.htm",
       "checkedAt": "2026-11-22T02:57:00Z",
-      "description": "Gà dùng cùng đậu ván và ý dĩ trong món súp nóng. Có thể múc phần nước cùng một ít hạt đã nấu mềm rồi ăn xen với thịt gà."
+      "description": "Gà dùng cùng đậu ván và ý dĩ trong món súp nóng. Có thể múc phần nước cùng một ít hạt đã nấu mềm rồi ăn xen với thịt gà.",
+      "factReview": {
+        "textSha256": "bbe3d9f3bdfc2eb18ac6e449d23dda3e4928172981477dfb8e01c65568b3f600",
+        "facts": "Gà dùng cùng đậu ván và ý dĩ trong món súp nóng. Có thể múc phần nước cùng một ít hạt đã nấu mềm rồi ăn xen với thịt gà.",
+        "checkedBy": "Tâm",
+        "checkedAt": "2026-11-25T09:20:16Z"
+      }
     },
     {
       "dishId": "8d3f3d1e-d8c3-551e-96b0-3a39ae37666d",
@@ -1629,7 +1949,9 @@
         "assistance": {
           "tool": "Codex",
           "checkedAt": "2026-11-25T09:10:32Z"
-        }
+        },
+        "checkedBy": "Tâm",
+        "checkedAt": "2026-11-25T09:20:16Z"
       }
     },
     {
@@ -1671,49 +1993,91 @@
       "name": "Bánh bò",
       "locator": "https://www.angingon.com/cong-thuc/cach-lam-banh-bo-hap-tu-com-ruou-dai-mem-re-tre-thom-ngon",
       "description": "Bánh bò hấp có phần ruột xốp với các lỗ nhỏ chạy dọc, thường gọi là rễ tre. Có thể xé bánh thành miếng để ăn như một món quà vặt.",
-      "checkedAt": "2026-11-21T17:11:47Z"
+      "checkedAt": "2026-11-21T17:11:47Z",
+      "factReview": {
+        "textSha256": "5192787523761c42a38eb598a6435899b949be121e28780c4fde67a7a4fa873d",
+        "facts": "Bánh bò hấp có phần ruột xốp với các lỗ nhỏ chạy dọc, thường gọi là rễ tre. Có thể xé bánh thành miếng để ăn như một món quà vặt.",
+        "checkedBy": "Tâm",
+        "checkedAt": "2026-11-25T09:20:16Z"
+      }
     },
     {
       "dishId": "90ac5782-622a-5545-b2f0-a369ca8e85dc",
       "name": "Súp gà bắp",
       "locator": "https://mnhoamoclan.hanoi.edu.vn/dinh-duong-cho-be/cac-che-bien-mon-sup-bap-ga-xe-don-gian-cho-be/ct/16793/852024",
       "checkedAt": "2026-11-23T02:22:10Z",
-      "description": "Gà và bắp được nấu chung thành món súp dùng nóng. Có thể múc cả hạt bắp và phần gà trong cùng một thìa nước súp."
+      "description": "Gà và bắp được nấu chung thành món súp dùng nóng. Có thể múc cả hạt bắp và phần gà trong cùng một thìa nước súp.",
+      "factReview": {
+        "textSha256": "e1020ab14e02b536fabce2e5359730211c6590c0c72c7b25503ac6f55ef8dc9f",
+        "facts": "Gà và bắp được nấu chung thành món súp dùng nóng. Có thể múc cả hạt bắp và phần gà trong cùng một thìa nước súp.",
+        "checkedBy": "Tâm",
+        "checkedAt": "2026-11-25T09:20:16Z"
+      }
     },
     {
       "dishId": "918307b3-554d-5bb0-83f5-2f1ac63de60c",
       "name": "Súp tôm",
       "locator": "https://cookbeo.com/recipes/sup-tom",
       "checkedAt": "2026-11-22T02:52:00Z",
-      "description": "Tôm được nấu thành món súp ăn nóng, có thể dùng như phần nhỏ trong bữa. Khi ăn, múc từng miếng tôm cùng một ít nước súp."
+      "description": "Tôm được nấu thành món súp ăn nóng, có thể dùng như phần nhỏ trong bữa. Khi ăn, múc từng miếng tôm cùng một ít nước súp.",
+      "factReview": {
+        "textSha256": "7aef3451e16e203fabd05b1be6e88cc7c77daba22432db42fbfa34af5a54e76e",
+        "facts": "Tôm được nấu thành món súp ăn nóng, có thể dùng như phần nhỏ trong bữa. Khi ăn, múc từng miếng tôm cùng một ít nước súp.",
+        "checkedBy": "Tâm",
+        "checkedAt": "2026-11-25T09:20:16Z"
+      }
     },
     {
       "dishId": "92dcc2c3-1eb7-56af-89dd-2c6b393eef0e",
       "name": "Sò dương nướng",
       "locator": "https://vnexpress.net/goi-y-3-ngay-kham-pha-phu-quoc-4110223.html",
       "checkedAt": "2026-11-22T02:50:00Z",
-      "description": "Sò dương được nướng rồi dọn thành món hải sản. Khi ăn có thể gỡ phần thịt khỏi vỏ và cắt thành miếng vừa miệng."
+      "description": "Sò dương được nướng rồi dọn thành món hải sản. Khi ăn có thể gỡ phần thịt khỏi vỏ và cắt thành miếng vừa miệng.",
+      "factReview": {
+        "textSha256": "ef022673fe1c3ee47af522d26eeb1c41afa026ef68931ab431c6717c2eace9a8",
+        "facts": "Sò dương được nướng rồi dọn thành món hải sản. Khi ăn có thể gỡ phần thịt khỏi vỏ và cắt thành miếng vừa miệng.",
+        "checkedBy": "Tâm",
+        "checkedAt": "2026-11-25T09:20:16Z"
+      }
     },
     {
       "dishId": "9757f47c-4926-5ac4-af78-f5775e1d7cac",
       "name": "Bún nước lèo",
       "locator": "https://vnexpress.net/cho-noi-nga-nam-ngay-giap-tet-4045425.html",
       "checkedAt": "2026-11-22T02:39:00Z",
-      "description": "Bún được chan với nước lèo, một cách dọn quen thuộc ở Sóc Trăng. Tô bún có thể ăn nóng cùng phần rau hoặc món kèm."
+      "description": "Bún được chan với nước lèo, một cách dọn quen thuộc ở Sóc Trăng. Tô bún có thể ăn nóng cùng phần rau hoặc món kèm.",
+      "factReview": {
+        "textSha256": "a8a73a57aad01d7083fb5e3b365211c9d312790e9a4beaed0412fbea7a6ed94b",
+        "facts": "Bún được chan với nước lèo, một cách dọn quen thuộc ở Sóc Trăng. Tô bún có thể ăn nóng cùng phần rau hoặc món kèm.",
+        "checkedBy": "Tâm",
+        "checkedAt": "2026-11-25T09:20:16Z"
+      }
     },
     {
       "dishId": "988b3131-073b-5a11-bfae-408cebb1761e",
       "name": "Lẩu mắm",
       "locator": "https://nongthon.vietnamtourism.gov.vn/ve-mien-tay-thuong-thuc-dac-san-lau-mam-thom-ngon-kho-cuong/",
       "description": "Lẩu mắm miền Tây dùng nước lẩu nấu từ mắm cá. Rau và phần ăn kèm được nhúng vào nồi đang nóng, rồi có thể ăn cùng bún.",
-      "checkedAt": "2026-11-21T17:11:47Z"
+      "checkedAt": "2026-11-21T17:11:47Z",
+      "factReview": {
+        "textSha256": "7c4a95afaf9c4073c177af00d70e6308358c33cb81dae0540fdb3b9b35c1c27e",
+        "facts": "Lẩu mắm miền Tây dùng nước lẩu nấu từ mắm cá. Rau và phần ăn kèm được nhúng vào nồi đang nóng, rồi có thể ăn cùng bún.",
+        "checkedBy": "Tâm",
+        "checkedAt": "2026-11-25T09:20:16Z"
+      }
     },
     {
       "dishId": "990393dc-1b1d-5a1a-9ccd-2b0c4ac60572",
       "name": "Bánh bao",
       "locator": "https://vnexpress.net/banh-bao-la-mon-an-duong-pho-ngon-nhat-viet-nam-4384721.html",
       "description": "Bánh bao có lớp vỏ mềm bao quanh phần nhân rồi được hấp chín. Có thể cầm ăn nguyên chiếc hoặc bẻ đôi để dùng từng phần.",
-      "checkedAt": "2026-11-21T17:11:47Z"
+      "checkedAt": "2026-11-21T17:11:47Z",
+      "factReview": {
+        "textSha256": "ce31803ffd52722cf9d3e91fb212a57480cee5ad9931e15f808a77d05e219ffa",
+        "facts": "Bánh bao có lớp vỏ mềm bao quanh phần nhân rồi được hấp chín. Có thể cầm ăn nguyên chiếc hoặc bẻ đôi để dùng từng phần.",
+        "checkedBy": "Tâm",
+        "checkedAt": "2026-11-25T09:20:16Z"
+      }
     },
     {
       "dishId": "9a5ba9ec-d6c2-5925-90e5-6ab2552f34a5",
@@ -1737,35 +2101,65 @@
       "name": "Bánh ram ít",
       "locator": "https://vnexpress.net/mot-ngay-thuong-thuc-dac-san-hue-4722654.html",
       "checkedAt": "2026-11-22T02:34:21Z",
-      "description": "Món bánh kết hợp phần bánh dẻo bên trên với phần đế chiên giòn bên dưới. Có thể gắp cả hai lớp trong một miếng khi ăn."
+      "description": "Món bánh kết hợp phần bánh dẻo bên trên với phần đế chiên giòn bên dưới. Có thể gắp cả hai lớp trong một miếng khi ăn.",
+      "factReview": {
+        "textSha256": "7a09146e9cb4c414c4e43e629f2103163daa3dfd576d126018d3e7d687f9bb11",
+        "facts": "Món bánh kết hợp phần bánh dẻo bên trên với phần đế chiên giòn bên dưới. Có thể gắp cả hai lớp trong một miếng khi ăn.",
+        "checkedBy": "Tâm",
+        "checkedAt": "2026-11-25T09:20:16Z"
+      }
     },
     {
       "dishId": "9cbc5485-896f-5725-bc54-c7d637f54770",
       "name": "Cơm đậu hủ sốt cà",
       "locator": "https://monngonmoingay.com/mon-ngon-moi-ngay-khong-ngan/",
       "description": "Đậu hủ được dọn với phần sốt cà sánh và cơm. Có thể ăn từng miếng đậu cùng cơm và rưới thêm chút sốt theo khẩu vị.",
-      "checkedAt": "2026-11-21T17:11:47Z"
+      "checkedAt": "2026-11-21T17:11:47Z",
+      "factReview": {
+        "textSha256": "4db4efec2c45962e60a02b1352cc2879299640e5f4b985d7df1c5e5d70692d5c",
+        "facts": "Đậu hủ được dọn với phần sốt cà sánh và cơm. Có thể ăn từng miếng đậu cùng cơm và rưới thêm chút sốt theo khẩu vị.",
+        "checkedBy": "Tâm",
+        "checkedAt": "2026-11-25T09:20:16Z"
+      }
     },
     {
       "dishId": "9d96bd31-d637-5849-98a9-d55797a7d536",
       "name": "Cơm cuộn Hàn Quốc",
       "locator": "https://nhahanghonghanh.vn/cach-lam-com-cuon-ngon.htm",
       "checkedAt": "2026-11-23T02:22:10Z",
-      "description": "Cơm và các phần nhân được cuộn thành đòn rồi cắt khoanh. Có thể dùng từng khoanh để ăn cả cơm và nhân trong cùng một miếng."
+      "description": "Cơm và các phần nhân được cuộn thành đòn rồi cắt khoanh. Có thể dùng từng khoanh để ăn cả cơm và nhân trong cùng một miếng.",
+      "factReview": {
+        "textSha256": "4acf896dae14916714662a693594ee8d5cb5376fad47d98f11a9e9563f610782",
+        "facts": "Cơm và các phần nhân được cuộn thành đòn rồi cắt khoanh. Có thể dùng từng khoanh để ăn cả cơm và nhân trong cùng một miếng.",
+        "checkedBy": "Tâm",
+        "checkedAt": "2026-11-25T09:20:16Z"
+      }
     },
     {
       "dishId": "9f12342d-c0be-559d-87a1-6ca84c307b39",
       "name": "Tàu hũ đá sầu riêng",
       "locator": "https://vnexpress.net/goi-y-3-ngay-kham-pha-phu-quoc-4110223.html",
       "checkedAt": "2026-11-22T02:50:00Z",
-      "description": "Tàu hũ mềm được dùng lạnh với đá và phần sầu riêng. Có thể dùng thìa múc cả tàu hũ lẫn sầu riêng trong cùng một miếng."
+      "description": "Tàu hũ mềm được dùng lạnh với đá và phần sầu riêng. Có thể dùng thìa múc cả tàu hũ lẫn sầu riêng trong cùng một miếng.",
+      "factReview": {
+        "textSha256": "219e4c696a6e39a2e3d9da98bbcd1a20efff99b64d9d26360d78d01aeb4c8928",
+        "facts": "Tàu hũ mềm được dùng lạnh với đá và phần sầu riêng. Có thể dùng thìa múc cả tàu hũ lẫn sầu riêng trong cùng một miếng.",
+        "checkedBy": "Tâm",
+        "checkedAt": "2026-11-25T09:20:16Z"
+      }
     },
     {
       "dishId": "9f217554-649c-5a63-901e-1ca27dd6ef8b",
       "name": "Ổi lắc",
       "locator": "https://cookpad.com/vn/cong-thuc/25242632",
       "description": "Ổi giòn được cắt miếng rồi lắc để gia vị bám đều quanh mặt quả. Phiên bản muối ớt thêm vị mặn cay và thường ăn ngay sau khi trộn.",
-      "checkedAt": "2026-11-21T17:11:47Z"
+      "checkedAt": "2026-11-21T17:11:47Z",
+      "factReview": {
+        "textSha256": "e2431edfc9137c71c778a2d9f83924f24d5dd51a65f0072cc9647e32723ad91b",
+        "facts": "Ổi giòn được cắt miếng rồi lắc để gia vị bám đều quanh mặt quả. Phiên bản muối ớt thêm vị mặn cay và thường ăn ngay sau khi trộn.",
+        "checkedBy": "Tâm",
+        "checkedAt": "2026-11-25T09:20:16Z"
+      }
     },
     {
       "dishId": "a08e45c7-a6d6-58ed-a41a-c4305a7851c2",
@@ -1796,7 +2190,9 @@
         "assistance": {
           "tool": "Codex",
           "checkedAt": "2026-11-25T09:10:32Z"
-        }
+        },
+        "checkedBy": "Tâm",
+        "checkedAt": "2026-11-25T09:20:16Z"
       }
     },
     {
@@ -1862,7 +2258,9 @@
         "assistance": {
           "tool": "Codex",
           "checkedAt": "2026-11-25T09:10:32Z"
-        }
+        },
+        "checkedBy": "Tâm",
+        "checkedAt": "2026-11-25T09:20:16Z"
       }
     },
     {
@@ -1870,14 +2268,26 @@
       "name": "Lẩu bò Tứ Xuyên",
       "locator": "https://vnexpress.net/cac-mon-nen-thu-tren-pho-khong-ngu-4050472.html",
       "checkedAt": "2026-11-22T02:43:00Z",
-      "description": "Phần bò được nhúng trong nồi nước lẩu nêm kiểu Tứ Xuyên. Có thể gắp từng miếng khi vừa chín để ăn cùng phần rau nhúng."
+      "description": "Phần bò được nhúng trong nồi nước lẩu nêm kiểu Tứ Xuyên. Có thể gắp từng miếng khi vừa chín để ăn cùng phần rau nhúng.",
+      "factReview": {
+        "textSha256": "18c720c8416e04c26f07f6d6423e26f1ab60ef3e70ccb2ef3f884e9d742c1a6d",
+        "facts": "Phần bò được nhúng trong nồi nước lẩu nêm kiểu Tứ Xuyên. Có thể gắp từng miếng khi vừa chín để ăn cùng phần rau nhúng.",
+        "checkedBy": "Tâm",
+        "checkedAt": "2026-11-25T09:20:16Z"
+      }
     },
     {
       "dishId": "a7619de7-cecd-558c-9e8a-dcdedd82465a",
       "name": "Cơm thịt kho",
       "locator": "https://vietnamnet.vn/10-cach-lam-mon-thit-kho-don-gian-dam-da-huong-vi-an-ton-com-2440570.html",
       "description": "Thịt được kho trong gia vị rồi dọn cùng cơm. Có thể ăn xen thịt với cơm hoặc chan một ít nước kho tùy cách dọn.",
-      "checkedAt": "2026-11-21T17:11:47Z"
+      "checkedAt": "2026-11-21T17:11:47Z",
+      "factReview": {
+        "textSha256": "9119f8053f12c52c0062d322c40e79408a032d4adc86e8029528197a056ca817",
+        "facts": "Thịt được kho trong gia vị rồi dọn cùng cơm. Có thể ăn xen thịt với cơm hoặc chan một ít nước kho tùy cách dọn.",
+        "checkedBy": "Tâm",
+        "checkedAt": "2026-11-25T09:20:16Z"
+      }
     },
     {
       "dishId": "a785a621-2cbc-5f16-9274-a47141a8e3c8",
@@ -1918,21 +2328,39 @@
       "name": "Bánh bèo",
       "locator": "https://vietnamtourism.vn/index.php/about/items/2038",
       "description": "Bánh bèo kiểu Huế được hấp trong những chén nhỏ. Khi ăn, có thể múc trực tiếp từ chén với phần rắc bên trên và nước chấm.",
-      "checkedAt": "2026-11-21T17:11:47Z"
+      "checkedAt": "2026-11-21T17:11:47Z",
+      "factReview": {
+        "textSha256": "c974c284a0e74d52f9c2959a9d05d293d97497e3cf09c27c0ff378468211a92c",
+        "facts": "Bánh bèo kiểu Huế được hấp trong những chén nhỏ. Khi ăn, có thể múc trực tiếp từ chén với phần rắc bên trên và nước chấm.",
+        "checkedBy": "Tâm",
+        "checkedAt": "2026-11-25T09:20:16Z"
+      }
     },
     {
       "dishId": "ac2c0696-6b41-58ee-8186-a8b805a6fe13",
       "name": "Bánh pía",
       "locator": "https://baosoctrang.org.vn/van-hoa-the-thao/202101/tim-hieu-ve-banh-keo-cua-nguoi-hoa-soc-trang-2c4201a/",
       "description": "Bánh pía có vỏ mỏng tách thành nhiều lớp khi bẻ. Các phiên bản kiểu Sóc Trăng có thể gặp nhân đậu xanh, sầu riêng hoặc thêm lòng đỏ trứng muối.",
-      "checkedAt": "2026-11-21T17:11:47Z"
+      "checkedAt": "2026-11-21T17:11:47Z",
+      "factReview": {
+        "textSha256": "9c5f851aeeabaa7b15d08eb03577de26812cd446a264712ea3424f33406ad90e",
+        "facts": "Bánh pía có vỏ mỏng tách thành nhiều lớp khi bẻ. Các phiên bản kiểu Sóc Trăng có thể gặp nhân đậu xanh, sầu riêng hoặc thêm lòng đỏ trứng muối.",
+        "checkedBy": "Tâm",
+        "checkedAt": "2026-11-25T09:20:16Z"
+      }
     },
     {
       "dishId": "ae648b17-c886-5b31-abfe-47a3bf0a50e6",
       "name": "Bánh mì que",
       "locator": "https://haiphong.gov.vn/Diem-bao/Diem-bao-hang-ngay-ve-Hai-Phong-ngay-2482022-98622",
       "checkedAt": "2026-11-22T02:34:21Z",
-      "description": "Ổ bánh mì nhỏ và thuôn dài được rạch để phết nhân. Phiên bản Hải Phòng dùng pa-tê và có thể thêm tương ớt vào bánh khi ăn."
+      "description": "Ổ bánh mì nhỏ và thuôn dài được rạch để phết nhân. Phiên bản Hải Phòng dùng pa-tê và có thể thêm tương ớt vào bánh khi ăn.",
+      "factReview": {
+        "textSha256": "2d72209dae1cd616be5fcf88904b53a75df55780680d832cc01b5dac5e43b3d7",
+        "facts": "Ổ bánh mì nhỏ và thuôn dài được rạch để phết nhân. Phiên bản Hải Phòng dùng pa-tê và có thể thêm tương ớt vào bánh khi ăn.",
+        "checkedBy": "Tâm",
+        "checkedAt": "2026-11-25T09:20:16Z"
+      }
     },
     {
       "dishId": "aeb07c17-4368-5f06-bace-3e569f82925a",
@@ -1956,7 +2384,13 @@
       "name": "Cá lóc nướng trui",
       "locator": "https://vnexpress.net/24h-du-ngoan-o-mien-dat-gao-trang-nuoc-trong-3130136.html",
       "checkedAt": "2026-11-22T02:43:00Z",
-      "description": "Cá lóc được nướng nguyên con theo kiểu nướng trui. Khi dọn, có thể tách phần bên ngoài rồi gỡ thịt cá thành miếng để ăn chung."
+      "description": "Cá lóc được nướng nguyên con theo kiểu nướng trui. Khi dọn, có thể tách phần bên ngoài rồi gỡ thịt cá thành miếng để ăn chung.",
+      "factReview": {
+        "textSha256": "1637e8152030f4ee5ed0e852ec4a0ed27232ef98aa8c379765a990892124e31f",
+        "facts": "Cá lóc được nướng nguyên con theo kiểu nướng trui. Khi dọn, có thể tách phần bên ngoài rồi gỡ thịt cá thành miếng để ăn chung.",
+        "checkedBy": "Tâm",
+        "checkedAt": "2026-11-25T09:20:16Z"
+      }
     },
     {
       "dishId": "afd8050f-e7cc-5a4a-8df3-07031cec9000",
@@ -1980,35 +2414,65 @@
       "name": "Phở hải sản",
       "locator": "https://bundaumamtomtienhai.vn/cach-nau-pho-hai-san/",
       "checkedAt": "2026-11-22T02:52:00Z",
-      "description": "Bánh phở được dọn trong tô cùng hải sản và nước dùng. Có thể dùng một ít bánh phở với từng miếng hải sản, rồi múc thêm nước chan."
+      "description": "Bánh phở được dọn trong tô cùng hải sản và nước dùng. Có thể dùng một ít bánh phở với từng miếng hải sản, rồi múc thêm nước chan.",
+      "factReview": {
+        "textSha256": "a4ee9645d1129c7ee94b340da36134674ce2aa55947f9e2bd2a8d7abcd814442",
+        "facts": "Bánh phở được dọn trong tô cùng hải sản và nước dùng. Có thể dùng một ít bánh phở với từng miếng hải sản, rồi múc thêm nước chan.",
+        "checkedBy": "Tâm",
+        "checkedAt": "2026-11-25T09:20:16Z"
+      }
     },
     {
       "dishId": "b036180a-0ff3-5e73-9e25-3732342411d9",
       "name": "Cháo hải sản",
       "locator": "https://haisanpho.com.vn/chao-hai-san",
       "checkedAt": "2026-11-23T02:22:10Z",
-      "description": "Gạo được nấu thành cháo rồi dọn với phần hải sản. Có thể ăn cháo nóng từng thìa cùng phần hải sản có trong bát."
+      "description": "Gạo được nấu thành cháo rồi dọn với phần hải sản. Có thể ăn cháo nóng từng thìa cùng phần hải sản có trong bát.",
+      "factReview": {
+        "textSha256": "7ad3cf9ca98edd3c4daea5dbbc3c6ccb6386e542f5cdc35c655d1c00921a71ca",
+        "facts": "Gạo được nấu thành cháo rồi dọn với phần hải sản. Có thể ăn cháo nóng từng thìa cùng phần hải sản có trong bát.",
+        "checkedBy": "Tâm",
+        "checkedAt": "2026-11-25T09:20:16Z"
+      }
     },
     {
       "dishId": "b0a7b0aa-7e88-543c-ad30-88e3de570852",
       "name": "Nộm bò khô",
       "locator": "https://vietnam.travel/things-to-do/10-must-try-hanoi-dishes/",
       "checkedAt": "2026-11-22T02:34:21Z",
-      "description": "Bò khô được dọn cùng rau củ và phần nước trộn chua ngọt. Khi ăn có thể trộn đều các phần để thịt bò và rau ngấm nước trộn."
+      "description": "Bò khô được dọn cùng rau củ và phần nước trộn chua ngọt. Khi ăn có thể trộn đều các phần để thịt bò và rau ngấm nước trộn.",
+      "factReview": {
+        "textSha256": "8f4b7f3b88f3403ab6bbbaa753a3ab729f6bc784e9ab034c625a9600116fc8e8",
+        "facts": "Bò khô được dọn cùng rau củ và phần nước trộn chua ngọt. Khi ăn có thể trộn đều các phần để thịt bò và rau ngấm nước trộn.",
+        "checkedBy": "Tâm",
+        "checkedAt": "2026-11-25T09:20:16Z"
+      }
     },
     {
       "dishId": "b115bf23-4277-5a5d-a439-002b0ceda3ce",
       "name": "Cơm gà",
       "locator": "https://vnexpress.net/com-ga-tu-bac-vao-nam-an-o-dau-cung-ngon-3381507.html",
       "description": "Cơm gà dọn cơm với phần thịt gà, có nhiều kiểu chế biến. Gà có thể được xé hoặc chặt để ăn cùng cơm và món kèm.",
-      "checkedAt": "2026-11-21T17:11:47Z"
+      "checkedAt": "2026-11-21T17:11:47Z",
+      "factReview": {
+        "textSha256": "ded6f0bad23806f344186f11129c69ff0191455f008974ffb05ea26af536d20b",
+        "facts": "Cơm gà dọn cơm với phần thịt gà, có nhiều kiểu chế biến. Gà có thể được xé hoặc chặt để ăn cùng cơm và món kèm.",
+        "checkedBy": "Tâm",
+        "checkedAt": "2026-11-25T09:20:16Z"
+      }
     },
     {
       "dishId": "b151781d-c641-593f-9aba-a1ac5d16e309",
       "name": "Mì Ý",
       "locator": "https://www.barilla.com/en-us/recipe/all/barilla-fried-angel-hair-red-onion-tomatoes-parmigiano-cheese",
       "description": "Mì Ý thường được làm chín rồi dọn cùng sốt hoặc phần nguyên liệu xào chung. Một phiên bản có thể trộn sợi mì với cà chua.",
-      "checkedAt": "2026-11-21T17:11:47Z"
+      "checkedAt": "2026-11-21T17:11:47Z",
+      "factReview": {
+        "textSha256": "65495621fb57a96660a524d7a6dd0337171003ef07de9d96095e2e52eb101b8e",
+        "facts": "Mì Ý thường được làm chín rồi dọn cùng sốt hoặc phần nguyên liệu xào chung. Một phiên bản có thể trộn sợi mì với cà chua.",
+        "checkedBy": "Tâm",
+        "checkedAt": "2026-11-25T09:20:16Z"
+      }
     },
     {
       "dishId": "b2403d29-55ab-5f56-872f-e05badfb3a7a",
@@ -2100,7 +2564,13 @@
       "name": "Mực nướng muối ớt",
       "locator": "https://nhahangcomviet.com/wp-content/uploads/2025/06/MENU-NH-COM-VIET.pdf",
       "checkedAt": "2026-11-22T02:43:00Z",
-      "description": "Mực được nêm muối ớt rồi đem nướng. Khi dọn có thể cắt thành miếng nhỏ, mỗi miếng có phần gia vị bám ở mặt ngoài."
+      "description": "Mực được nêm muối ớt rồi đem nướng. Khi dọn có thể cắt thành miếng nhỏ, mỗi miếng có phần gia vị bám ở mặt ngoài.",
+      "factReview": {
+        "textSha256": "af90fc6eac273f80c4f194a7468272263c6987aaf52080a5a01f74be56a3ea83",
+        "facts": "Mực được nêm muối ớt rồi đem nướng. Khi dọn có thể cắt thành miếng nhỏ, mỗi miếng có phần gia vị bám ở mặt ngoài.",
+        "checkedBy": "Tâm",
+        "checkedAt": "2026-11-25T09:20:16Z"
+      }
     },
     {
       "dishId": "b9cb052a-cf1f-5cdc-9399-7efef7f222e8",
@@ -2141,7 +2611,13 @@
       "name": "Khô mực nướng",
       "locator": "https://vove.com.vn/blogs/thuong-thuc-dac-san/cach-nuong-muc-kho",
       "checkedAt": "2026-11-23T02:22:10Z",
-      "description": "Mực khô được nướng đến khi nóng và dậy mùi. Khi dùng, có thể xé miếng mực theo thớ rồi ăn từng sợi nhỏ."
+      "description": "Mực khô được nướng đến khi nóng và dậy mùi. Khi dùng, có thể xé miếng mực theo thớ rồi ăn từng sợi nhỏ.",
+      "factReview": {
+        "textSha256": "8cfecbdc22448ce976ca13408d60213af2d4f26a53a37b9f22a7d78af9134a47",
+        "facts": "Mực khô được nướng đến khi nóng và dậy mùi. Khi dùng, có thể xé miếng mực theo thớ rồi ăn từng sợi nhỏ.",
+        "checkedBy": "Tâm",
+        "checkedAt": "2026-11-25T09:20:16Z"
+      }
     },
     {
       "dishId": "c0c7bd62-550e-5389-8500-6c86dbdbe369",
@@ -2199,14 +2675,26 @@
       "name": "Miến",
       "locator": "https://tteokbokki.vn/blogs/stories/so-sanh-mien-viet-nam-va-mien-han-quoc-cach-chon-mien-lam-mon-mien-tron",
       "description": "Miến có sợi trong và dai khi làm chín, độ dày thay đổi tùy loại. Có thể dùng sợi miến để trộn với sốt và phần ăn kèm.",
-      "checkedAt": "2026-11-21T17:11:47Z"
+      "checkedAt": "2026-11-21T17:11:47Z",
+      "factReview": {
+        "textSha256": "0b31b978b7dc67b99b114829a484844976c1c4818a8d9998d7445e8130a5ed4a",
+        "facts": "Miến có sợi trong và dai khi làm chín, độ dày thay đổi tùy loại. Có thể dùng sợi miến để trộn với sốt và phần ăn kèm.",
+        "checkedBy": "Tâm",
+        "checkedAt": "2026-11-25T09:20:16Z"
+      }
     },
     {
       "dishId": "c4782d39-0c86-59d9-b021-4e07a07208f7",
       "name": "Bánh mì bò sốt vang",
       "locator": "https://saiko.com.vn/blogs/cong-thuc/cach-nau-bo-sot-vang-mem-ngon-an-voi-banh-mi",
       "checkedAt": "2026-11-23T02:22:10Z",
-      "description": "Phần bò nấu sốt vang được dọn cùng bánh mì. Có thể xé bánh để chấm sốt, rồi ăn xen các miếng bò và rau củ trong bát."
+      "description": "Phần bò nấu sốt vang được dọn cùng bánh mì. Có thể xé bánh để chấm sốt, rồi ăn xen các miếng bò và rau củ trong bát.",
+      "factReview": {
+        "textSha256": "f498e906c2441cf6dc4355ebac0bc69839f756b3d6a6e16b6885f355b4bd534a",
+        "facts": "Phần bò nấu sốt vang được dọn cùng bánh mì. Có thể xé bánh để chấm sốt, rồi ăn xen các miếng bò và rau củ trong bát.",
+        "checkedBy": "Tâm",
+        "checkedAt": "2026-11-25T09:20:16Z"
+      }
     },
     {
       "dishId": "c487fe2b-3fc6-5e83-9052-5b3bb7423d52",
@@ -2230,14 +2718,26 @@
       "name": "Ốc luộc",
       "locator": "https://vnexpress.net/hang-quan-do-an-vat-cho-ngay-tro-lanh-o-ha-noi-5143228.html",
       "checkedAt": "2026-11-22T02:45:00Z",
-      "description": "Ốc được luộc với các nguyên liệu tạo mùi thơm như sả hoặc lá chanh. Khi ăn, gỡ thịt ốc khỏi vỏ và chấm theo khẩu vị."
+      "description": "Ốc được luộc với các nguyên liệu tạo mùi thơm như sả hoặc lá chanh. Khi ăn, gỡ thịt ốc khỏi vỏ và chấm theo khẩu vị.",
+      "factReview": {
+        "textSha256": "22d16401ba7300a335f52bd00c04c1223eff2eea0e1a99c67458b010f4733a0e",
+        "facts": "Ốc được luộc với các nguyên liệu tạo mùi thơm như sả hoặc lá chanh. Khi ăn, gỡ thịt ốc khỏi vỏ và chấm theo khẩu vị.",
+        "checkedBy": "Tâm",
+        "checkedAt": "2026-11-25T09:20:16Z"
+      }
     },
     {
       "dishId": "c5bbbe58-91c4-5819-8813-a531825073b6",
       "name": "Hủ tiếu",
       "locator": "https://www.vietnamtourism.com/vi/hu-tieu-mon-mi-nuoc-phuong-nam-khong-phai-pho",
       "description": "Hủ tiếu là món sợi có thể ăn với nước dùng hoặc dọn kiểu khô. Kiểu khô có thể dùng nước dùng trong một chén riêng.",
-      "checkedAt": "2026-11-21T17:11:47Z"
+      "checkedAt": "2026-11-21T17:11:47Z",
+      "factReview": {
+        "textSha256": "d30c7581600fc28799d1398943eec9ce1eba4d87c95eadd88441d41027df3835",
+        "facts": "Hủ tiếu là món sợi có thể ăn với nước dùng hoặc dọn kiểu khô. Kiểu khô có thể dùng nước dùng trong một chén riêng.",
+        "checkedBy": "Tâm",
+        "checkedAt": "2026-11-25T09:20:16Z"
+      }
     },
     {
       "dishId": "c646a7f3-59b9-503c-ae87-0faad4824dda",
@@ -2261,7 +2761,13 @@
       "name": "Dưa lưới cắt sẵn",
       "locator": "https://food.be.com.vn/ho-chi-minh/tini-fruit-trai-cay-cat-san-an-vat-duong-so-17-26347",
       "checkedAt": "2026-11-22T02:39:00Z",
-      "description": "Dưa lưới được gọt và cắt thành miếng vừa miệng. Phần dưa cắt hộp có thể dùng ngay như món ăn nhẹ mà không cần thêm sốt."
+      "description": "Dưa lưới được gọt và cắt thành miếng vừa miệng. Phần dưa cắt hộp có thể dùng ngay như món ăn nhẹ mà không cần thêm sốt.",
+      "factReview": {
+        "textSha256": "915adf37eca674c6096ae79f70898e3a1b6794c7ce217a082936cfd371718520",
+        "facts": "Dưa lưới được gọt và cắt thành miếng vừa miệng. Phần dưa cắt hộp có thể dùng ngay như món ăn nhẹ mà không cần thêm sốt.",
+        "checkedBy": "Tâm",
+        "checkedAt": "2026-11-25T09:20:16Z"
+      }
     },
     {
       "dishId": "ca3eac84-18b3-5348-86d4-73efc55369de",
@@ -2292,7 +2798,9 @@
         "assistance": {
           "tool": "Codex",
           "checkedAt": "2026-11-25T09:10:32Z"
-        }
+        },
+        "checkedBy": "Tâm",
+        "checkedAt": "2026-11-25T09:20:16Z"
       }
     },
     {
@@ -2368,7 +2876,13 @@
       "name": "Ốc len xào dừa",
       "locator": "https://helenrecipes.com/vi/oc-len-xao-dua-coconut-sea-snails/",
       "description": "Ốc len được nấu trong phần nước cốt dừa sánh. Đuôi vỏ thường được cắt trước khi nấu để người ăn có thể hút phần thịt ốc ra.",
-      "checkedAt": "2026-11-21T17:11:47Z"
+      "checkedAt": "2026-11-21T17:11:47Z",
+      "factReview": {
+        "textSha256": "ab56901262d20936767a565c6d089a0f427682ea0bc613ed3fcada8924d8e865",
+        "facts": "Ốc len được nấu trong phần nước cốt dừa sánh. Đuôi vỏ thường được cắt trước khi nấu để người ăn có thể hút phần thịt ốc ra.",
+        "checkedBy": "Tâm",
+        "checkedAt": "2026-11-25T09:20:16Z"
+      }
     },
     {
       "dishId": "d40885b2-eb15-5b6d-9d47-d5b4c5a8c3a9",
@@ -2460,7 +2974,13 @@
       "name": "Gỏi xoài tôm khô",
       "locator": "https://www.hisaigonairport.com/wp-content/uploads/sites/283/2026/01/IRD-Ala-Carte-Menu-2025.pdf",
       "checkedAt": "2026-11-22T02:34:21Z",
-      "description": "Xoài được thái sợi rồi trộn với tôm khô. Một kiểu dọn dùng nước trộn chua cay để áo đều sợi xoài trước lúc ăn."
+      "description": "Xoài được thái sợi rồi trộn với tôm khô. Một kiểu dọn dùng nước trộn chua cay để áo đều sợi xoài trước lúc ăn.",
+      "factReview": {
+        "textSha256": "5aad6c1996e850d8792449458e9bc1edf8d75d6a56a0446be2f49a76bc0473c7",
+        "facts": "Xoài được thái sợi rồi trộn với tôm khô. Một kiểu dọn dùng nước trộn chua cay để áo đều sợi xoài trước lúc ăn.",
+        "checkedBy": "Tâm",
+        "checkedAt": "2026-11-25T09:20:16Z"
+      }
     },
     {
       "dishId": "d76dd83a-59ba-5c06-948a-2ad55f5f5bea",
@@ -2484,7 +3004,13 @@
       "name": "Xôi xéo",
       "locator": "https://www.vietnamtourism.com/en/xoi-vietnamese-sticky-rice-types-and-where-to-eat-it",
       "checkedAt": "2026-11-23T02:22:10Z",
-      "description": "Xôi nếp vàng được dọn cùng phần đậu xanh và hành phi. Khi ăn có thể xúc một ít xôi với đậu và hành trong cùng một miếng."
+      "description": "Xôi nếp vàng được dọn cùng phần đậu xanh và hành phi. Khi ăn có thể xúc một ít xôi với đậu và hành trong cùng một miếng.",
+      "factReview": {
+        "textSha256": "6582ffa3cb3d003d4341da9cb3537e1c87bea216491f9d2af4790c359d9b3e46",
+        "facts": "Xôi nếp vàng được dọn cùng phần đậu xanh và hành phi. Khi ăn có thể xúc một ít xôi với đậu và hành trong cùng một miếng.",
+        "checkedBy": "Tâm",
+        "checkedAt": "2026-11-25T09:20:16Z"
+      }
     },
     {
       "dishId": "d9756559-2697-565c-86e0-36cf39c4da49",
@@ -2498,7 +3024,9 @@
         "assistance": {
           "tool": "Codex",
           "checkedAt": "2026-11-25T09:10:32Z"
-        }
+        },
+        "checkedBy": "Tâm",
+        "checkedAt": "2026-11-25T09:20:16Z"
       }
     },
     {
@@ -2557,42 +3085,78 @@
       "name": "Bánh mì gối",
       "locator": "https://file.hstatic.net/200000343865/file/banh_mi_goi_xinh_9486994ab3c34bfd89ee54259bf6eee6.pdf",
       "checkedAt": "2026-11-23T02:22:10Z",
-      "description": "Bánh mì gối được nướng thành ổ, có ruột mềm và dễ cắt thành lát. Có thể dùng từng lát để kẹp nhân hoặc nướng lại cho giòn."
+      "description": "Bánh mì gối được nướng thành ổ, có ruột mềm và dễ cắt thành lát. Có thể dùng từng lát để kẹp nhân hoặc nướng lại cho giòn.",
+      "factReview": {
+        "textSha256": "ddf89c10dafe40febbce237773903f10457ad77fcf0c9cfdae5b48e3d466788a",
+        "facts": "Bánh mì gối được nướng thành ổ, có ruột mềm và dễ cắt thành lát. Có thể dùng từng lát để kẹp nhân hoặc nướng lại cho giòn.",
+        "checkedBy": "Tâm",
+        "checkedAt": "2026-11-25T09:20:16Z"
+      }
     },
     {
       "dishId": "da94ed2a-5919-53c3-8398-813a4c444096",
       "name": "Bánh canh ghẹ",
       "locator": "https://baoangiang.com.vn/top-10-quan-an-sang-o-phu-quoc-ngon-re-a393075.html",
       "checkedAt": "2026-11-22T02:52:00Z",
-      "description": "Sợi bánh canh dày được chan nước dùng nấu với ghẹ. Khi ăn có thể dùng từng đũa sợi cùng phần thịt ghẹ và nước dùng nóng."
+      "description": "Sợi bánh canh dày được chan nước dùng nấu với ghẹ. Khi ăn có thể dùng từng đũa sợi cùng phần thịt ghẹ và nước dùng nóng.",
+      "factReview": {
+        "textSha256": "70b70fceb14a76b91a8d460632a68b9388f87772db30a3cf5b9d07307096c9af",
+        "facts": "Sợi bánh canh dày được chan nước dùng nấu với ghẹ. Khi ăn có thể dùng từng đũa sợi cùng phần thịt ghẹ và nước dùng nóng.",
+        "checkedBy": "Tâm",
+        "checkedAt": "2026-11-25T09:20:16Z"
+      }
     },
     {
       "dishId": "da9ffefd-c102-51f4-92d4-49869088636e",
       "name": "Cơm canh gà lá giang",
       "locator": "https://vtcnews.vn/cach-nau-canh-ga-la-giang-thom-ngon-bo-duong-ar633025.html",
       "checkedAt": "2026-11-23T02:22:10Z",
-      "description": "Cơm được dọn cùng canh gà nấu lá giang. Có thể dùng từng miếng gà với cơm rồi ăn xen phần nước có vị chua của lá."
+      "description": "Cơm được dọn cùng canh gà nấu lá giang. Có thể dùng từng miếng gà với cơm rồi ăn xen phần nước có vị chua của lá.",
+      "factReview": {
+        "textSha256": "7032f5f8b96d987c87871e81d9ce425557b1e1d8eff811817436af87dcb78442",
+        "facts": "Cơm được dọn cùng canh gà nấu lá giang. Có thể dùng từng miếng gà với cơm rồi ăn xen phần nước có vị chua của lá.",
+        "checkedBy": "Tâm",
+        "checkedAt": "2026-11-25T09:20:16Z"
+      }
     },
     {
       "dishId": "db666124-3676-5609-8dc4-b313a1809358",
       "name": "Bún riêu chay",
       "locator": "https://naungon.com/index.php?id=-bun-rieu-chay-~-bun-rieu-chay-ngon-bun-rieu-cua-chay-cach-lam-bun-rieu-chay-cach-nau-bun-rieu-cua-&pageindex=1&q=cach+lam+bun+rieu+chay",
       "description": "Bún được chan nước kiểu riêu có thể nấu với cà chua. Một cách làm dọn tô bún cùng đậu hủ và rau để người ăn dùng kèm.",
-      "checkedAt": "2026-11-21T17:11:47Z"
+      "checkedAt": "2026-11-21T17:11:47Z",
+      "factReview": {
+        "textSha256": "6d122d5f9f92792d74281105f989eabd531d1e369dfe156c30a6587e632f777f",
+        "facts": "Bún được chan nước kiểu riêu có thể nấu với cà chua. Một cách làm dọn tô bún cùng đậu hủ và rau để người ăn dùng kèm.",
+        "checkedBy": "Tâm",
+        "checkedAt": "2026-11-25T09:20:16Z"
+      }
     },
     {
       "dishId": "db73a380-cfb1-5018-bb42-9754e40c8f3d",
       "name": "Chè ba màu",
       "locator": "https://helenrecipes.com/vi/recipe-three-color-dessert-che-ba-mau/",
       "description": "Chè ba màu xếp phần đậu và thạch thành các lớp khác màu trong ly. Khi ăn thường chan nước cốt dừa và trộn các lớp cùng đá.",
-      "checkedAt": "2026-11-21T17:11:47Z"
+      "checkedAt": "2026-11-21T17:11:47Z",
+      "factReview": {
+        "textSha256": "3a56841179d53fc1fb2b4ade2646cb22ad0b494ab108f4a8a0e2affb437db555",
+        "facts": "Chè ba màu xếp phần đậu và thạch thành các lớp khác màu trong ly. Khi ăn thường chan nước cốt dừa và trộn các lớp cùng đá.",
+        "checkedBy": "Tâm",
+        "checkedAt": "2026-11-25T09:20:16Z"
+      }
     },
     {
       "dishId": "dc8822d1-e883-5b72-80c0-fda8e875a09b",
       "name": "Bánh muffin",
       "locator": "https://www.kingarthurbaking.com/recipes/banana-muffins-recipe",
       "checkedAt": "2026-11-23T02:22:10Z",
-      "description": "Bánh nướng được chia thành từng chiếc nhỏ. Kiểu bánh vị chuối có thể cầm ăn từng miếng hoặc dùng như món nhẹ trong bữa chiều."
+      "description": "Bánh nướng được chia thành từng chiếc nhỏ. Kiểu bánh vị chuối có thể cầm ăn từng miếng hoặc dùng như món nhẹ trong bữa chiều.",
+      "factReview": {
+        "textSha256": "93126a7c50ae34a9d0d9ada93027026b37b0765b9baa2c6d6fa4d3c2773c2cdb",
+        "facts": "Bánh nướng được chia thành từng chiếc nhỏ. Kiểu bánh vị chuối có thể cầm ăn từng miếng hoặc dùng như món nhẹ trong bữa chiều.",
+        "checkedBy": "Tâm",
+        "checkedAt": "2026-11-25T09:20:16Z"
+      }
     },
     {
       "dishId": "dec7c964-c295-5d27-9d8b-0a4744a05dde",
@@ -2674,7 +3238,9 @@
         "assistance": {
           "tool": "Codex",
           "checkedAt": "2026-11-25T09:10:32Z"
-        }
+        },
+        "checkedBy": "Tâm",
+        "checkedAt": "2026-11-25T09:20:16Z"
       }
     },
     {
@@ -2682,7 +3248,13 @@
       "name": "Bánh phồng xứ Lạng",
       "locator": "https://vnexpress.net/banh-phong-xu-lang-vao-mua-3510707.html",
       "checkedAt": "2026-11-22T02:50:00Z",
-      "description": "Bánh nếp được chao rồi áo đường theo cách làm quà Tết xứ Lạng. Có thể cầm ăn từng miếng để cảm nhận lớp đường bên ngoài."
+      "description": "Bánh nếp được chao rồi áo đường theo cách làm quà Tết xứ Lạng. Có thể cầm ăn từng miếng để cảm nhận lớp đường bên ngoài.",
+      "factReview": {
+        "textSha256": "93a124be52189f81afc319a8edf4d129db50ee13602293c17c91d5c1c5c268c6",
+        "facts": "Bánh nếp được chao rồi áo đường theo cách làm quà Tết xứ Lạng. Có thể cầm ăn từng miếng để cảm nhận lớp đường bên ngoài.",
+        "checkedBy": "Tâm",
+        "checkedAt": "2026-11-25T09:20:16Z"
+      }
     },
     {
       "dishId": "e15c8cf8-34da-5d73-aced-31cd6d5eea7c",
@@ -2706,21 +3278,39 @@
       "name": "Mực rim me",
       "locator": "https://vnexpress.net/3-quan-an-vat-cho-cuoi-tuan-ben-ban-be-o-sai-gon-3162664.html",
       "checkedAt": "2026-11-22T02:50:00Z",
-      "description": "Mực được rim trong phần sốt me có vị chua. Sốt bám ngoài miếng mực, có thể dùng từng miếng nhỏ như một món ăn vặt."
+      "description": "Mực được rim trong phần sốt me có vị chua. Sốt bám ngoài miếng mực, có thể dùng từng miếng nhỏ như một món ăn vặt.",
+      "factReview": {
+        "textSha256": "29e5c7f71c2d0a9be2b31d6c75db6ff0f96c731371102775429446ad1284087f",
+        "facts": "Mực được rim trong phần sốt me có vị chua. Sốt bám ngoài miếng mực, có thể dùng từng miếng nhỏ như một món ăn vặt.",
+        "checkedBy": "Tâm",
+        "checkedAt": "2026-11-25T09:20:16Z"
+      }
     },
     {
       "dishId": "e4568243-3075-5983-8a6c-b260005a2157",
       "name": "Cháo thịt bò cải bó xôi",
       "locator": "https://hcdc.vn/public/img/02bf8460bf0d6384849ca010eda38cf8e9dbc4c7/images/dangbai1/images/vi-chat-dinh-duong-suc-khoe--tam-voc--tri-tue/files/So%20tay%20Vi%20chat%20DD%20tai%20ban%20FA%202022.pdf",
       "checkedAt": "2026-11-22T02:50:00Z",
-      "description": "Gạo được nấu mềm rồi dùng cùng thịt bò và cải bó xôi. Phiên bản nêm nhẹ có thể ăn từng thìa khi cháo còn ấm."
+      "description": "Gạo được nấu mềm rồi dùng cùng thịt bò và cải bó xôi. Phiên bản nêm nhẹ có thể ăn từng thìa khi cháo còn ấm.",
+      "factReview": {
+        "textSha256": "7f03305a6adcdb9585741f84128ba05781f85ed3e8bada8f8f4b5535e289388c",
+        "facts": "Gạo được nấu mềm rồi dùng cùng thịt bò và cải bó xôi. Phiên bản nêm nhẹ có thể ăn từng thìa khi cháo còn ấm.",
+        "checkedBy": "Tâm",
+        "checkedAt": "2026-11-25T09:20:16Z"
+      }
     },
     {
       "dishId": "e4b579a0-ca4b-5211-b417-0043a2bee527",
       "name": "Kẹo dừa",
       "locator": "https://scov.gov.vn/ban-sac-van-hoa/huong-vi-que-nha/keo-dua-ben-tre-ngot-ngao-huong-vi-truyen-thong.html",
       "description": "Nước cốt dừa được nấu đến khi hỗn hợp đủ dẻo để cán và cắt. Kẹo thường được chia thành những viên nhỏ, gói riêng từng viên.",
-      "checkedAt": "2026-11-21T17:11:47Z"
+      "checkedAt": "2026-11-21T17:11:47Z",
+      "factReview": {
+        "textSha256": "4015f4823f4396b4949b706b42ddcb76dae28ed1d2be20fe946340b03a5c5500",
+        "facts": "Nước cốt dừa được nấu đến khi hỗn hợp đủ dẻo để cán và cắt. Kẹo thường được chia thành những viên nhỏ, gói riêng từng viên.",
+        "checkedBy": "Tâm",
+        "checkedAt": "2026-11-25T09:20:16Z"
+      }
     },
     {
       "dishId": "e63f04aa-5e31-5f38-a35f-160c345a220d",
@@ -2744,7 +3334,13 @@
       "name": "Bún nem nướng",
       "locator": "https://amthucdinhduong.com.vn/mon-an/bun-nem-nuong/",
       "description": "Bún được dọn cùng phần nem đã nướng chín. Khi ăn có thể gắp một ít bún với nem rồi thêm rau, đồ chua hoặc nước chấm.",
-      "checkedAt": "2026-11-21T17:11:47Z"
+      "checkedAt": "2026-11-21T17:11:47Z",
+      "factReview": {
+        "textSha256": "3c430d16f679811dbc50287fe4671707e9b771ed4038f03b9d90893cadf22a70",
+        "facts": "Bún được dọn cùng phần nem đã nướng chín. Khi ăn có thể gắp một ít bún với nem rồi thêm rau, đồ chua hoặc nước chấm.",
+        "checkedBy": "Tâm",
+        "checkedAt": "2026-11-25T09:20:16Z"
+      }
     },
     {
       "dishId": "e760bb05-c76d-5939-90de-dfe78c20691d",
@@ -2785,14 +3381,26 @@
       "name": "Cháo yến mạch",
       "locator": "https://huongdantapluyen.tdtt.gov.vn/dinh-duong/ID/7808/MACH-BAN-4-CONG-THUC-CHE-BIEN-YEN-MACH-DAY-SANG-TAO",
       "checkedAt": "2026-11-23T02:22:10Z",
-      "description": "Yến mạch được nấu mềm thành bát cháo, có thể dùng sữa hoặc nước khi nấu. Cháo ăn bằng thìa khi còn ấm."
+      "description": "Yến mạch được nấu mềm thành bát cháo, có thể dùng sữa hoặc nước khi nấu. Cháo ăn bằng thìa khi còn ấm.",
+      "factReview": {
+        "textSha256": "3fb6e5fbda65aeddde3cd9a9953c95572b791bc6f439878dc5c390653ccc7098",
+        "facts": "Yến mạch được nấu mềm thành bát cháo, có thể dùng sữa hoặc nước khi nấu. Cháo ăn bằng thìa khi còn ấm.",
+        "checkedBy": "Tâm",
+        "checkedAt": "2026-11-25T09:20:16Z"
+      }
     },
     {
       "dishId": "e927a33d-30c0-5bd0-af08-5772aa95595a",
       "name": "Bánh tôm",
       "locator": "https://www.vietnamairlines.com/go/vi/plan-book/travel/travel-guide/banh-tom-ho-tay",
       "checkedAt": "2026-11-23T02:22:10Z",
-      "description": "Tôm được chiên cùng lớp bột đến khi bánh vàng giòn. Khi ăn có thể dùng từng miếng bánh và chấm nhẹ để vẫn cảm nhận được độ giòn."
+      "description": "Tôm được chiên cùng lớp bột đến khi bánh vàng giòn. Khi ăn có thể dùng từng miếng bánh và chấm nhẹ để vẫn cảm nhận được độ giòn.",
+      "factReview": {
+        "textSha256": "70ba1d1130269ec10424b7de0de1f26a6ef55883bf7e00774f45f334e29d1bb6",
+        "facts": "Tôm được chiên cùng lớp bột đến khi bánh vàng giòn. Khi ăn có thể dùng từng miếng bánh và chấm nhẹ để vẫn cảm nhận được độ giòn.",
+        "checkedBy": "Tâm",
+        "checkedAt": "2026-11-25T09:20:16Z"
+      }
     },
     {
       "dishId": "e9781315-3374-52b6-bee5-9c36c46ce10d",
@@ -2816,7 +3424,13 @@
       "name": "Lẩu ếch",
       "locator": "https://www.lifood.vn/cong-thuc/lau-ech-mang-chua-cay-don-gian-tai-nha",
       "checkedAt": "2026-11-23T02:22:10Z",
-      "description": "Thịt ếch được dùng trong nồi lẩu ăn chung, với phần nước dùng giữ nóng trên bàn. Có thể nhúng món kèm rồi gắp ra từng phần."
+      "description": "Thịt ếch được dùng trong nồi lẩu ăn chung, với phần nước dùng giữ nóng trên bàn. Có thể nhúng món kèm rồi gắp ra từng phần.",
+      "factReview": {
+        "textSha256": "6e020f4e5d56b0be644e053763bc50ff9a245ca64cb6fed6b586436ec246d690",
+        "facts": "Thịt ếch được dùng trong nồi lẩu ăn chung, với phần nước dùng giữ nóng trên bàn. Có thể nhúng món kèm rồi gắp ra từng phần.",
+        "checkedBy": "Tâm",
+        "checkedAt": "2026-11-25T09:20:16Z"
+      }
     },
     {
       "dishId": "e9d4bec0-677c-5af2-878b-6fa1031fb5de",
@@ -2840,14 +3454,26 @@
       "name": "Xoài lắc",
       "locator": "https://vov.vn/dinh-duong-mon-ngon/cach-lam-mon-xoai-lac-mien-nam-ngon-dung-dieu-583178.vov",
       "description": "Xoài giòn cắt miếng được cho vào hộp rồi lắc đều với gia vị. Từng miếng có vị chua của xoài cùng vị mặn ngọt của phần áo bên ngoài.",
-      "checkedAt": "2026-11-21T17:11:47Z"
+      "checkedAt": "2026-11-21T17:11:47Z",
+      "factReview": {
+        "textSha256": "9886db998fed52c41b061c8d0b91ffc1cc4b6e0e07a112d045cefce7a103db15",
+        "facts": "Xoài giòn cắt miếng được cho vào hộp rồi lắc đều với gia vị. Từng miếng có vị chua của xoài cùng vị mặn ngọt của phần áo bên ngoài.",
+        "checkedBy": "Tâm",
+        "checkedAt": "2026-11-25T09:20:16Z"
+      }
     },
     {
       "dishId": "eaa258ec-03f6-5baa-acf4-bf90304269e6",
       "name": "Bánh ít ngọt",
       "locator": "https://vnexpress.net/thuc-qua-que-trong-cho-mien-tay-4279311.html",
       "checkedAt": "2026-11-22T02:34:21Z",
-      "description": "Bột nếp bọc phần nhân ngọt, chẳng hạn đậu hoặc dừa. Bánh có thể được gói thành từng chiếc nhỏ và bóc ra để ăn khi còn ấm."
+      "description": "Bột nếp bọc phần nhân ngọt, chẳng hạn đậu hoặc dừa. Bánh có thể được gói thành từng chiếc nhỏ và bóc ra để ăn khi còn ấm.",
+      "factReview": {
+        "textSha256": "a99dacd3f65e12bdaa4b0b09b2fe2e643ad478330c08db55537d5de0b86d9803",
+        "facts": "Bột nếp bọc phần nhân ngọt, chẳng hạn đậu hoặc dừa. Bánh có thể được gói thành từng chiếc nhỏ và bóc ra để ăn khi còn ấm.",
+        "checkedBy": "Tâm",
+        "checkedAt": "2026-11-25T09:20:16Z"
+      }
     },
     {
       "dishId": "ead8da65-a92c-59a7-aecc-1c73b3eba855",
@@ -3007,42 +3633,78 @@
       "name": "Hủ tiếu bò kho",
       "locator": "https://vnexpress.net/nhung-quan-an-ngon-tren-duong-tu-tp-hcm-di-ben-tre-3940049.html",
       "checkedAt": "2026-11-22T02:43:00Z",
-      "description": "Sợi hủ tiếu được dọn cùng bò kho và phần nước nấu đậm vị. Khi ăn, gắp sợi hủ tiếu cùng thịt đã kho mềm trong tô."
+      "description": "Sợi hủ tiếu được dọn cùng bò kho và phần nước nấu đậm vị. Khi ăn, gắp sợi hủ tiếu cùng thịt đã kho mềm trong tô.",
+      "factReview": {
+        "textSha256": "3b86db1fe7c2c6e420db029666f77ba7a479da5b509fdf80f03cf07c4523fdd8",
+        "facts": "Sợi hủ tiếu được dọn cùng bò kho và phần nước nấu đậm vị. Khi ăn, gắp sợi hủ tiếu cùng thịt đã kho mềm trong tô.",
+        "checkedBy": "Tâm",
+        "checkedAt": "2026-11-25T09:20:16Z"
+      }
     },
     {
       "dishId": "f2112769-1ace-59f5-be69-ac46ce5ca13c",
       "name": "Lẩu nấm",
       "locator": "https://monngonmoingay.com/lau-nam/",
       "description": "Lẩu nấm dọn nhiều loại nấm để nhúng vào nồi nước dùng đang sôi. Có thể ăn cùng rau hoặc các phần nhúng khác theo cách nấu.",
-      "checkedAt": "2026-11-21T17:11:47Z"
+      "checkedAt": "2026-11-21T17:11:47Z",
+      "factReview": {
+        "textSha256": "bcbccca4a5f544733a8315fe02dcfa380889b67b1cef86a578ab08a19bb77667",
+        "facts": "Lẩu nấm dọn nhiều loại nấm để nhúng vào nồi nước dùng đang sôi. Có thể ăn cùng rau hoặc các phần nhúng khác theo cách nấu.",
+        "checkedBy": "Tâm",
+        "checkedAt": "2026-11-25T09:20:16Z"
+      }
     },
     {
       "dishId": "f3a24a4b-3ecd-5339-bb76-32d454dc2d58",
       "name": "Bánh nậm",
       "locator": "https://huetourism.gov.vn/Thuong-thuc-banh-beo-nam-loc-truyen-thong-Hue-tai-quan-Ba-Do.html/?pid=MTk0MTV8Y3NkbGRs0",
       "description": "Bánh nậm kiểu Huế được gói dẹt trong lá rồi hấp. Khi ăn, bóc lá để lộ lớp bột mềm và phần nhân mỏng, có thể chan nước chấm.",
-      "checkedAt": "2026-11-21T17:11:47Z"
+      "checkedAt": "2026-11-21T17:11:47Z",
+      "factReview": {
+        "textSha256": "de763b6124dc9442214abce51fc84972f982320a15a1bfd59fff0f2c66e10add",
+        "facts": "Bánh nậm kiểu Huế được gói dẹt trong lá rồi hấp. Khi ăn, bóc lá để lộ lớp bột mềm và phần nhân mỏng, có thể chan nước chấm.",
+        "checkedBy": "Tâm",
+        "checkedAt": "2026-11-25T09:20:16Z"
+      }
     },
     {
       "dishId": "f50473c3-0b6e-52b4-8218-781d74c4fc46",
       "name": "Cháo Tiều",
       "locator": "https://ngoisao.vnexpress.net/an-dem-o-cho-lon-2520386.html",
       "checkedAt": "2026-11-22T02:45:00Z",
-      "description": "Cháo kiểu Triều Châu có thể dùng cùng lòng và cải chua. Có thể ăn xen từng thìa cháo với một miếng cải để đổi vị."
+      "description": "Cháo kiểu Triều Châu có thể dùng cùng lòng và cải chua. Có thể ăn xen từng thìa cháo với một miếng cải để đổi vị.",
+      "factReview": {
+        "textSha256": "a6a064337149fa51690e506bf905da5c38397750ab458037f2b18f80fdf6ffb4",
+        "facts": "Cháo kiểu Triều Châu có thể dùng cùng lòng và cải chua. Có thể ăn xen từng thìa cháo với một miếng cải để đổi vị.",
+        "checkedBy": "Tâm",
+        "checkedAt": "2026-11-25T09:20:16Z"
+      }
     },
     {
       "dishId": "f518af1a-6744-545a-83b4-4fa14d590a43",
       "name": "Cơm cá kho",
       "locator": "https://vnexpress.net/nhieu-mon-ca-kho-ngon-mieng-cho-ngay-mua-2307106.html",
       "description": "Cá được kho cho thấm nước gia vị rồi dọn cùng cơm. Tùy cách kho, phần nước có thể còn sánh để rưới một ít lên cơm khi ăn.",
-      "checkedAt": "2026-11-21T17:11:47Z"
+      "checkedAt": "2026-11-21T17:11:47Z",
+      "factReview": {
+        "textSha256": "866d929012285af6db535945f243c8efbc90824995673265afb7fdf03e263e41",
+        "facts": "Cá được kho cho thấm nước gia vị rồi dọn cùng cơm. Tùy cách kho, phần nước có thể còn sánh để rưới một ít lên cơm khi ăn.",
+        "checkedBy": "Tâm",
+        "checkedAt": "2026-11-25T09:20:16Z"
+      }
     },
     {
       "dishId": "f6880a4b-b953-5e1c-ae60-ba95b046d669",
       "name": "Cháo cá",
       "locator": "https://medialib.qlgd.edu.vn/Uploads/THU_VIEN/shn/2/506/UserFiles/Nhung-mon-an-mien-nam-duoc-ua-chuong-nguyen-thi-dieu-thao-5647fa18-9f84-4a50-80b6-e8adf4981ab0.pdf",
       "checkedAt": "2026-11-23T02:22:10Z",
-      "description": "Cháo gạo nấu mềm được dọn cùng phần cá. Khi dùng nóng, có thể gỡ cá thành miếng nhỏ để ăn xen với từng thìa cháo."
+      "description": "Cháo gạo nấu mềm được dọn cùng phần cá. Khi dùng nóng, có thể gỡ cá thành miếng nhỏ để ăn xen với từng thìa cháo.",
+      "factReview": {
+        "textSha256": "d30abb87e63ac2c689d3a87b536a3f7e4799d406cdf8902d3dbb73ea84f075d9",
+        "facts": "Cháo gạo nấu mềm được dọn cùng phần cá. Khi dùng nóng, có thể gỡ cá thành miếng nhỏ để ăn xen với từng thìa cháo.",
+        "checkedBy": "Tâm",
+        "checkedAt": "2026-11-25T09:20:16Z"
+      }
     },
     {
       "dishId": "f8297789-ef96-5f5f-a2db-a678dd1e09e0",
@@ -3100,7 +3762,13 @@
       "name": "Cá tầm nướng",
       "locator": "https://vinhyencitycentre.crowneplaza.com/wp-content/uploads/2023/11/Vietnamese-Menu-digital.pdf",
       "checkedAt": "2026-11-22T02:43:00Z",
-      "description": "Cá tầm được làm chín bằng cách nướng rồi dọn làm món chính. Khi ăn có thể gắp từng miếng cá cùng phần ăn kèm trên bàn."
+      "description": "Cá tầm được làm chín bằng cách nướng rồi dọn làm món chính. Khi ăn có thể gắp từng miếng cá cùng phần ăn kèm trên bàn.",
+      "factReview": {
+        "textSha256": "e93ce27ba290e3af5eb8175307e28ce9f4da6ddc70957a6adb402d1f3898b637",
+        "facts": "Cá tầm được làm chín bằng cách nướng rồi dọn làm món chính. Khi ăn có thể gắp từng miếng cá cùng phần ăn kèm trên bàn.",
+        "checkedBy": "Tâm",
+        "checkedAt": "2026-11-25T09:20:16Z"
+      }
     },
     {
       "dishId": "fc959eeb-033c-54b6-b8a2-9d7c6982803e",
@@ -3124,21 +3792,39 @@
       "name": "Sandwich gà",
       "locator": "https://cooponline.vn/tin-tuc/cach-lam-sandwich-ga/",
       "description": "Nhân gà được kẹp giữa hai lát bánh mì, có thể thêm rau hoặc sốt tùy cách làm. Bánh có thể cắt đôi để cầm ăn từng phần.",
-      "checkedAt": "2026-11-21T17:11:47Z"
+      "checkedAt": "2026-11-21T17:11:47Z",
+      "factReview": {
+        "textSha256": "b2fce37270122b77e7a2e4bb85cc877f053c49e37bd29b9dc3afb7be771bea02",
+        "facts": "Nhân gà được kẹp giữa hai lát bánh mì, có thể thêm rau hoặc sốt tùy cách làm. Bánh có thể cắt đôi để cầm ăn từng phần.",
+        "checkedBy": "Tâm",
+        "checkedAt": "2026-11-25T09:20:16Z"
+      }
     },
     {
       "dishId": "fdf67f00-3830-5df5-8d76-f4debcd0c085",
       "name": "Cơm canh sườn hầm đu đủ",
       "locator": "https://dinhduong2598.food/mon-an/canh-du-du-xanh-nau-suon-heo/",
       "checkedAt": "2026-11-23T02:22:10Z",
-      "description": "Phần cơm dùng với canh sườn hầm đu đủ. Có thể ăn xen cơm với sườn, đu đủ nấu mềm và từng thìa nước canh."
+      "description": "Phần cơm dùng với canh sườn hầm đu đủ. Có thể ăn xen cơm với sườn, đu đủ nấu mềm và từng thìa nước canh.",
+      "factReview": {
+        "textSha256": "2e7db006ddfe36d4e5ec4e91e3037499192042532cfea53653d38867ff9f6980",
+        "facts": "Phần cơm dùng với canh sườn hầm đu đủ. Có thể ăn xen cơm với sườn, đu đủ nấu mềm và từng thìa nước canh.",
+        "checkedBy": "Tâm",
+        "checkedAt": "2026-11-25T09:20:16Z"
+      }
     },
     {
       "dishId": "fe39887f-b79c-5981-8f0a-6e50c4a5dc54",
       "name": "Bún bò chay",
       "locator": "https://monngonmoingay.com/bun-bo-hue/",
       "description": "Sợi bún được dọn với nước dùng nêm theo kiểu bún bò Huế. Tô bún trong cách nấu này có thể ăn kèm nấm và các loại rau.",
-      "checkedAt": "2026-11-21T17:11:47Z"
+      "checkedAt": "2026-11-21T17:11:47Z",
+      "factReview": {
+        "textSha256": "19177541bcf19d5f75bb594c69cab15c9eb40e567c42bf146664878a268e5413",
+        "facts": "Sợi bún được dọn với nước dùng nêm theo kiểu bún bò Huế. Tô bún trong cách nấu này có thể ăn kèm nấm và các loại rau.",
+        "checkedBy": "Tâm",
+        "checkedAt": "2026-11-25T09:20:16Z"
+      }
     },
     {
       "dishId": "ff74d5af-05b6-5f9a-9012-f8a2aadefb0c",
@@ -3162,7 +3848,13 @@
       "name": "Cơm hạt sen",
       "locator": "https://vnexpress.net/48-gio-o-dong-thap-4674761.html",
       "checkedAt": "2026-11-22T02:39:00Z",
-      "description": "Hạt sen được dùng cùng cơm, tạo thêm độ bùi bên cạnh hạt cơm mềm. Có thể dùng như phần cơm chính trong bữa và ăn kèm món khác."
+      "description": "Hạt sen được dùng cùng cơm, tạo thêm độ bùi bên cạnh hạt cơm mềm. Có thể dùng như phần cơm chính trong bữa và ăn kèm món khác.",
+      "factReview": {
+        "textSha256": "a39c09f81b1c925b5f470daf0a1b71c11a7de2bac381f470417b44585dc0557b",
+        "facts": "Hạt sen được dùng cùng cơm, tạo thêm độ bùi bên cạnh hạt cơm mềm. Có thể dùng như phần cơm chính trong bữa và ăn kèm món khác.",
+        "checkedBy": "Tâm",
+        "checkedAt": "2026-11-25T09:20:16Z"
+      }
     }
   ]
 }

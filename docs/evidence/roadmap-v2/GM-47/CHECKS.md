@@ -1,5 +1,25 @@
 # GM-47 · Kiểm thử
 
+## Tâm chọn ảnh tham khảo cho 117 món ngày 25/11/2026
+
+- Đối chiếu 115 lựa chọn trong JSON Tâm gửi với UUID, tên món, URL ảnh và trang nguồn của trang duyệt. Theo xác nhận bổ sung của Tâm, ghi ảnh đầu tiên cho Lẩu cá linh điên điển và Trái cây trộn muối ớt. Cả 117 UUID khớp danh sách món chưa có cặp ảnh trong candidate `1.4.4`. [Danh sách lựa chọn](WEB_PHOTO_SELECTIONS.json)
+- Mỗi mục có trạng thái `needs_verification` về quyền sử dụng. Mục Bò bía mặn ghi trang nguồn vì URL ảnh có chữ ký tạm. Ảnh tham khảo này chưa có trong ZIP tải lên hoặc bundle. Gói tải lên có 124 cặp đã xác nhận, 12 cặp Commons đang chờ Tâm duyệt.
+- Kiểm tải đủ bốn ảnh của hai món trên Chrome. Kết quả xuất JSON của trang duyệt lại giữ nguyên 115 lựa chọn và thêm đúng hai UUID khi chọn ảnh. Ảnh đã chọn cho món trái cây có bản xem trước 640 × 427 px, cần xin bản gốc đủ kích thước nếu được quyền dùng.
+
+## Tìm bổ sung ảnh ngày 25/11/2026
+
+- Đối chiếu 36 tệp ứng viên theo tên món, cách gọi khác và trang nguồn. Bổ sung Bún riêu chay, Cháo lươn và Cơm niêu vào hàng chờ. Ảnh Cháo lươn giữ nguyên khung ảnh gốc 639 × 732 px trên nền 976 × 732 px, chỉ thêm viền trơn và nén. Trang duyệt có nguồn, phép dùng và ghi chú đối chiếu từng ảnh. [Bún riêu chay](https://commons.wikimedia.org/wiki/File:Vietnamese_vegetarian_crab_noodle_soup.jpg) · [Cháo lươn](https://commons.wikimedia.org/wiki/File:Batchaoluon.png) · [Cơm niêu](https://commons.wikimedia.org/wiki/File:C%C6%A1m_ni%C3%AAu_Kombo.jpg)
+- Có 124 cặp đã xác nhận, 12 cặp chờ và 117 món cần ảnh. Gói duyệt có 272 WebP, tổng 16.914.034 byte ảnh. Trang duyệt liệt kê nguồn tham khảo để xử lý một số món thiếu ảnh, gồm ảnh Bún quậy chưa có xác nhận quyền và ảnh Nem chua rán có cạnh ngắn 392 px.
+- So khớp SHA-256 và số byte của cả 272 WebP với metadata ZIP. Kiểm thử trên Chrome xác nhận trang hiện đúng 12 ảnh chờ, tìm được món theo tên và xuất đúng UUID cùng SHA-256 của các ảnh được chọn.
+- Candidate offline `1.4.4` và 253 mô tả đã xác nhận giữ cùng SHA-256 `9f4f19823adb4dae22f442a00c47ba872e56b96068d79d7a5f0beb01f550cac0`. Còn chờ ảnh đủ 253 món và lượt kiểm Storage thật.
+
+## Rà toàn bộ ảnh còn thiếu và ghi xác nhận mô tả ngày 25/11/2026
+
+- Đã đối chiếu UUID và SHA của 122 mô tả trong JSON Tâm gửi từ trang duyệt toàn bộ. Tổng 253/253 mô tả có xác nhận. CSV ghi 188/188 URL `team_authored_fact_reference`. Với mục chưa có ghi chú đối chiếu trước đó, hồ sơ lưu nội dung chính xác mà Tâm đã xác nhận.
+- Đã rà ảnh theo tên món, cách gọi khác và các danh mục ẩm thực trên Commons. Có 9 ứng viên đúng món, đủ kích thước và giấy phép, chờ Tâm xác nhận. Các ảnh mới có hồ sơ tác giả, trang nguồn, giấy phép, SHA và `aiCheck.assistance`. Không dùng ảnh chỉ thấy nguyên liệu, cửa quán, hoặc biến thể khác món.
+- Danh mục có 124 cặp đã xác nhận, 9 cặp chờ và 120 món chưa có cặp ảnh. Gói duyệt có 266 WebP với tổng 16.460.334 byte ảnh. ZIP tải lên tiếp tục dùng 124 cặp đã xác nhận. CSV bàn giao chia 120 món chưa có ảnh theo các lô GM-41.
+- Candidate offline `1.4.4` giữ SHA-256 `9f4f19823adb4dae22f442a00c47ba872e56b96068d79d7a5f0beb01f550cac0`. Checker đạt 32/33 vì chờ ảnh có URL Storage. Receipt và QA với Storage thật vẫn chờ lô upload.
+
 ## Xác nhận bổ sung cho bản 1.4.4 ngày 25/11/2026
 
 Đã đối chiếu UUID và SHA từ JSON Tâm xuất lúc 16:06 ICT. Ghi nhận đủ 5 cặp ảnh và 30 mô tả đã chọn. Bundle vẫn có 253 món, version `1.4.4`, SHA-256 `9f4f19823adb4dae22f442a00c47ba872e56b96068d79d7a5f0beb01f550cac0`. [Review yêu cầu xác nhận](https://github.com/ThanhTris/IE307/pull/217#issuecomment-7157464470)
