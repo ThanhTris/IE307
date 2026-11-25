@@ -39,6 +39,8 @@ Không tự điền mức tuổi IARC: Play Console tạo mức xếp hạng sau
 
 ## Apple App Privacy — mapping dự thảo
 
+**Chỉ dùng làm tài liệu tham khảo.** Phát hành iOS/App Store đang hoãn theo GM-60 và không nằm trong hồ sơ phát hành v1 hiện tại. Không nộp bảng mapping này cho App Store Connect cho tới khi kế hoạch iOS được mở lại và nội dung được đối chiếu với build iOS thực tế.
+
 | Khai báo Apple | Dữ liệu | Liên kết danh tính / dùng tracking? |
 | --- | --- | --- |
 | Contact Info — Name | Tên hiển thị | Gắn với tài khoản/phòng; không dùng tracking |

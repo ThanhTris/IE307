@@ -6,7 +6,7 @@ permalink: /terms/
 
 # Điều khoản sử dụng
 
-**Nhà phát hành:** Nguyễn Thanh Trí. Các điều khoản này có hiệu lực kể từ ngày được đăng tải.
+**Nhà phát hành:** Nguyễn Thanh Trí. **Ngày hiệu lực:** 2026-11-26.
 
 Các điều khoản này áp dụng cho việc sử dụng ứng dụng Gì Cũng Được (`vn.gicungduoc.mobile`) do **Nguyễn Thanh Trí** vận hành (“chúng tôi”). Khi dùng ứng dụng, bạn đồng ý tuân thủ điều khoản sau khi bản chính thức được công bố.
 

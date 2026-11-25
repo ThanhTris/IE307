@@ -6,7 +6,7 @@ permalink: /privacy/
 
 # Chính sách quyền riêng tư
 
-**Nhà phát hành:** Nguyễn Thanh Trí. **Ngày hiệu lực:** ngày chính sách này được đăng tải.
+**Nhà phát hành:** Nguyễn Thanh Trí. **Ngày hiệu lực / cập nhật lần cuối:** 2026-11-26.
 
 Gì Cũng Được giúp một nhóm chọn món ăn. Ứng dụng không phải dịch vụ đặt bàn, đặt món, giao hàng hay thanh toán. Chính sách này mô tả dữ liệu theo phạm vi phát hành Android v1 hiện đã chốt trong repo; cần đối chiếu lại với bản build và cấu hình dịch vụ trước khi công bố.
 
@@ -61,11 +61,11 @@ Bạn có thể từ chối quyền vị trí hoặc camera; các tính năng c�
 
 ## Thay đổi chính sách
 
-Chúng tôi sẽ cập nhật trang này khi cách xử lý dữ liệu thay đổi. Chính sách có hiệu lực kể từ ngày được đăng tải.
+Chúng tôi sẽ cập nhật trang này khi cách xử lý dữ liệu thay đổi. Ngày hiệu lực và cập nhật lần cuối được ghi ở đầu trang.
 
 ## Tóm tắt bằng tiếng Anh
 
-Gì Cũng Được (“Whatever Works”), published by Nguyễn Thanh Trí, helps a group choose a meal. Supabase processes authentication, display names, room membership, preferences, submitted choices, and consent-based meal history. If you ask to find nearby places and grant foreground location access, the app sends your current coordinates and dish query directly to Google Places; the app does not send GPS to Supabase or retain it in room history. Camera access is used to scan an invitation QR code on-device; camera images and videos are not uploaded. Personal and group history is opt-in and retained for no more than 30 days under the applicable consent. Account and data deletion is available through the app or through the web request page. Remote push notifications are excluded from the approved v1 release scope. The policy takes effect when published.
+Gì Cũng Được (“Whatever Works”), published by Nguyễn Thanh Trí, helps a group choose a meal. Supabase processes authentication, display names, room membership, preferences, submitted choices, and consent-based meal history. If you ask to find nearby places and grant foreground location access, the app sends your current coordinates and dish query directly to Google Places; the app does not send GPS to Supabase or retain it in room history. Camera access is used to scan an invitation QR code on-device; camera images and videos are not uploaded. Personal and group history is opt-in and retained for no more than 30 days under the applicable consent. Account and data deletion is available through the app or through the web request page. Remote push notifications are excluded from the approved v1 release scope. Effective date / last updated: 2026-11-26.
 
 ## Tham chiếu chính sách
 
