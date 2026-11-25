@@ -12,7 +12,8 @@ Trí chốt giữ **253 món**, gồm Bánh crepe ngọt, Mứt gừng và Bánh
 | Candidate offline | `1.4.3`, SHA-256 `b6e882fc460544897ee226f165f46b718d235dbe3089a8771d50362c62060e04`. Checker đạt 32/33. Mục ảnh còn thiếu URL từ Storage. |
 | Merge gate upstream | Checker chạy với `--gate merge --base-ref origin/main --verify-outputs` lúc 14:50 ICT trên main `6cd5e1a`, trả `READY_FOR_MERGE_REVIEW` cho đầu vào. PR ở draft trong lúc chờ các AC ảnh, mô tả và gói release có ảnh. |
 | ZIP và receipt | So byte và SHA-256 của cả 238 tệp WebP. Receipt fixture từ chối 12 cặp chờ duyệt. Thử subset 107 cặp đã xác nhận, gắn đúng 107 UUID trên candidate giả lập `1.4.4`. |
-| QA có Storage thật | Chờ duyệt ảnh, bucket staging và lượt upload của Trí. QA local candidate offline dừng ở `QA_HOST_BINDING_NOT_LOOPBACK`; runner đã dọn stack thử. |
+| GM-03 QA với bundle offline | Ubuntu CI đọc đúng 253 thẻ, khớp SHA bundle trên merge ref kiểm thử `a2fb20a` của `3a74c0d` với `main` `6cd5e1a`. Import test-only, release đang active được giữ. QA local macOS dừng ở `QA_HOST_BINDING_NOT_LOOPBACK` và runner đã dọn stack thử. [Run và báo cáo](https://github.com/ThanhTris/IE307/actions/runs/45572366908) |
+| QA có Storage thật | Chờ duyệt ảnh, bucket staging và lượt upload của Trí. |
 
 ### Danh sách ưu tiên tự chụp để Trí phân công
 
