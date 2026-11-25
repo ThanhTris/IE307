@@ -1,5 +1,17 @@
 # GM-47 · Kiểm thử
 
+## Cập nhật lựa chọn ảnh ngày 25/11/2026
+
+- Trong đợt rà 181 món, Tâm đề xuất bỏ **Mứt gừng** (`18403411-7967-54cd-bd56-e897223c22d5`) và **Bánh phồng tôm** (`25ed8950-757a-5851-a8ff-12ae17f8d64a`). Cả hai được đánh dấu `release_exclusion_requested`. Bánh crepe ngọt vẫn là đề xuất riêng của đợt trước. Candidate QA `1.4.2` giữ 253 UUID trong khi chờ Trí quyết định.
+- Tâm xác nhận các ảnh còn lại trong lượt rà. Đã ghi nhận 36 lựa chọn tương ứng với ảnh đầu tiên đã chuẩn bị trong hồ sơ, có tệp gốc, đúng món và đạt kiểm tra kích thước, dung lượng. Phần đối chiếu nguồn và giấy phép bằng công cụ được ghi riêng trong `aiCheck.assistance`. Với tám ảnh public domain, đã kiểm SHA-1 và mẫu công bố của tác giả trên Commons. Nui vẫn chờ ảnh có nước phù hợp.
+- ZIP bàn giao có 107 ảnh chính và 107 ảnh nhỏ, tổng 13.074.184 byte ảnh. CSV còn 143 món cần ảnh, gồm Nui, và ba dòng đề xuất bỏ. Candidate offline `1.4.2` giữ SHA-256 `7ca0d2ef9bba03c4bee025f597c2c7bc52de580471d97f9ddcb12463188942d7`.
+
+| Kiểm thử | Kết quả |
+| --- | --- |
+| Ngưỡng nếu Trí duyệt bỏ món | Bản sao bỏ hai món đợt này còn 251 món. Bản sao áp dụng cả đề xuất Bánh crepe ngọt còn 250 món. Cả hai đạt 32/33 mục, còn mục ảnh có URL hợp lệ. |
+| Gói ảnh và receipt | Đã so 214 tệp WebP với metadata và tái tạo receipt bằng dữ liệu ZIP. Bản thử `1.4.3` gắn đúng 107/253 ảnh qua fixture, thiếu 146 món nếu giữ cả ba đề xuất trong danh mục. Supabase Storage thật chưa kiểm. |
+| Kiểm thử và validator | 11 test GM-47 đạt. `validate_repository.py` và `task_readiness.py --check-docs` đạt. |
+
 ## Đối chiếu ảnh cho các món còn thiếu ngày 25/11/2026
 
 - Tìm được 78 ảnh ứng viên cho 51/181 món. Đã tải và đối chiếu tệp gốc để tạo 49 ảnh chính thử. Có 38 ảnh cho thấy rõ món sau khi cắt. Các link tương ứng được ghi ở trạng thái `prepared_awaiting_selection` trong hồ sơ ảnh. Gói bàn giao vẫn có 71 cặp đã xác nhận. Cần đối chiếu bản xuất lựa chọn của Tâm để biết chính xác ảnh được chọn và món đề xuất bỏ.

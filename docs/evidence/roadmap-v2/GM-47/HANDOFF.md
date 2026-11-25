@@ -14,7 +14,7 @@ Checker hiện đạt 32/33 mục. Kiểm readback trên [QA GM-03](../GM-03/RUN
 
 ### Gói ảnh cho Trí và Tuấn
 
-Gói cục bộ `.work/gm47-release-editorial/gm47-storage-handoff.zip` có 71 ảnh chính và 71 ảnh nhỏ do Tâm xác nhận, tổng 8.119.446 byte ảnh. Có thể tái tạo từ ảnh chính đã chuẩn bị bằng Python có Pillow 13.0.0 và WebP encoder cùng bản. Lệnh kiểm SHA nguồn, xuất gói và từ chối metadata không khớp.
+Gói cục bộ `.work/gm47-release-editorial/gm47-storage-handoff.zip` có 107 ảnh chính và 107 ảnh nhỏ do Tâm xác nhận qua hai lượt rà, tổng 13.074.184 byte ảnh. Có thể tái tạo từ ảnh chính đã chuẩn bị bằng Python có Pillow 13.0.0 và WebP encoder cùng bản. Lệnh kiểm SHA nguồn, xuất gói và từ chối metadata không khớp.
 
 ```sh
 python data-preparation/scripts/gm47_storage_handoff.py --images .work/gm47-release-editorial/images
@@ -22,7 +22,7 @@ python data-preparation/scripts/gm47_storage_handoff.py --images .work/gm47-rele
 
 - `images/<dishId>.webp` là ảnh chính. `thumbnails/<dishId>.webp` là ảnh danh sách 400×300 px. Đây là object key đề xuất để Trí dùng trong bucket công khai GM-52. Mỗi URL đích là URL gốc công khai của bucket tại môi trường tương ứng cộng object key. Xác nhận URL gốc và tải tệp trước khi gắn `artwork.url` và bàn giao URL ảnh nhỏ cho Tuấn. URL tệp Commons trong metadata dùng làm bằng chứng nguồn.
 - Gói kèm `artwork-candidates.json` có tác giả, giấy phép, kích thước, số byte, SHA và `aiCheck` của từng tệp, cùng `ATTRIBUTION.md` để Tuấn triển khai màn Nguồn ảnh trong GM-64. Giữ giấy phép và ghi công cho cả hai bản dẫn xuất. Ảnh Chuối nếp nướng đã đổi SHA và tác giả. Nếu từng nhận gói cũ, chọn bản hiện tại khi upload.
-- `artwork-assignments.csv` chia 181 món thiếu ảnh theo sáu batch GM-41 và nhóm UUID ban đầu. Ngoài ra, dòng Bánh crepe ngọt có trạng thái riêng `release_exclusion_requested`. Gói hiện tại đã rút ảnh của món này. Trí chốt đề xuất bỏ món khỏi bản phát hành. Với ảnh nhóm tự chụp, giữ bản gốc có EXIF và đường dẫn xác nhận cho phép dùng (`permissionEvidence`).
+- `artwork-assignments.csv` chia 143 món còn cần ảnh theo sáu batch GM-41 và nhóm UUID ban đầu, gồm Nui cần ảnh có nước. Mứt gừng và Bánh phồng tôm là hai đề xuất bỏ của đợt này. Bánh crepe ngọt là đề xuất riêng của đợt trước. CSV đánh dấu ba dòng này là `release_exclusion_requested` để Trí quyết định trước phát hành. Với ảnh nhóm tự chụp, giữ bản gốc có EXIF và đường dẫn xác nhận cho phép dùng (`permissionEvidence`).
 
 ### Tâm xác nhận ảnh và mô tả
 
