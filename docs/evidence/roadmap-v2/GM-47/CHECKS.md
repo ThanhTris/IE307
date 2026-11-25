@@ -1,5 +1,10 @@
 # GM-47 · Kiểm thử
 
+## Đối chiếu ảnh cho các món còn thiếu ngày 25/11/2026
+
+- Tìm được 78 ảnh ứng viên cho 51/181 món. Đã tải và đối chiếu tệp gốc để tạo 49 ảnh chính thử. Có 38 ảnh cho thấy rõ món sau khi cắt. Các link tương ứng được ghi ở trạng thái `prepared_awaiting_selection` trong hồ sơ ảnh. Gói bàn giao vẫn có 71 cặp đã xác nhận. Cần đối chiếu bản xuất lựa chọn của Tâm để biết chính xác ảnh được chọn và món đề xuất bỏ.
+- Tâm yêu cầu dùng ảnh nui có nước. Đã rút ảnh nui khô khỏi trang duyệt. Ảnh súp nui gà Việt Nam của HungryHuy là CC BY 2.0 nhưng tệp gốc 600 × 900 px chỉ cho ảnh cắt 4:3 tối đa 600 × 450 px. Ảnh nui nước kiểu Hong Kong của hamron là CC BY-SA 2.0, tệp gốc 1280 × 1280 px. Mục Nui giữ chờ Tâm xác nhận ảnh, chưa gắn URL vào bundle. [Ảnh nui gà Việt Nam](https://commons.wikimedia.org/wiki/File:Vietnamese_chicken_soup,_nui_ga.jpg) · [Ảnh nui nước kiểu Hong Kong](https://commons.wikimedia.org/wiki/File:Soup_Macaroni_in_Hong_Kong.jpg)
+
 ## Tâm xác nhận đợt rà ngày 25/11/2026
 
 - Tâm xác nhận **71 cặp ảnh** còn lại và **62 mô tả** trong hồ sơ đã gửi. Thời điểm ghi nhận `2026-11-25T02:10:28Z`. Có 13/184 URL đủ xác nhận cho toàn bộ mô tả dùng URL đó. 171 URL còn chờ.

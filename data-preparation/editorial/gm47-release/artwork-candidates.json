@@ -2922,7 +2922,8 @@
     {
       "dishId": "0e30745a-d1c9-5b0b-b1ec-6cafa4bb6f2b",
       "name": "Chè khúc bạch",
-      "reason": "no_selected_image"
+      "reason": "prepared_awaiting_selection",
+      "candidate": "https://commons.wikimedia.org/wiki/File:Ch%C3%A8_kh%C3%BAc_b%E1%BA%A1ch_%E1%BB%9F_qu%C3%A1n_Th%E1%BA%A3o_Vy_2020_09_06.jpg"
     },
     {
       "dishId": "0f4c6871-3d02-5f3c-8d1a-2c5d0edb7c8e",
@@ -2988,12 +2989,14 @@
     {
       "dishId": "18403411-7967-54cd-bd56-e897223c22d5",
       "name": "Mứt gừng",
-      "reason": "no_selected_image"
+      "reason": "prepared_awaiting_selection",
+      "candidate": "https://commons.wikimedia.org/wiki/File:Tr%C3%A0_v%C3%A0_M%E1%BB%A9t_g%E1%BB%ABng_nh%C3%A0_c%E1%BA%ADu_C%E1%BA%A3m,_01_T%E1%BA%BFt_2018_(1).jpg"
     },
     {
       "dishId": "19f07737-1d4e-590e-8df2-18a56347803c",
       "name": "Phở chay",
-      "reason": "no_selected_image"
+      "reason": "prepared_awaiting_selection",
+      "candidate": "https://commons.wikimedia.org/wiki/File:Tofu_noodle_soup_(Ph%E1%BB%9F_chay)_-_Pho_Hanoi_Authentic_2024-12-01.jpg"
     },
     {
       "dishId": "1bd3aad6-1bb8-5c7f-9253-476194073b01",
@@ -3008,7 +3011,8 @@
     {
       "dishId": "1f60e3db-5eaa-501a-9e43-02068c1e3d94",
       "name": "Trái cây cắt sẵn thập cẩm",
-      "reason": "no_selected_image"
+      "reason": "prepared_awaiting_selection",
+      "candidate": "https://commons.wikimedia.org/wiki/File:Home_made_fruit_salad.jpg"
     },
     {
       "dishId": "20f9a023-5013-5956-a228-8ce3da13bcf5",
@@ -3028,23 +3032,26 @@
     {
       "dishId": "25ed8950-757a-5851-a8ff-12ae17f8d64a",
       "name": "Bánh phồng tôm",
-      "reason": "candidate shows uncooked crackers",
-      "candidate": "https://commons.wikimedia.org/wiki/File:Prawn_crackers_%282%29.jpg"
+      "reason": "prepared_awaiting_selection",
+      "candidate": "https://commons.wikimedia.org/wiki/File:Deep-fried_prawn_crackers.jpg"
     },
     {
       "dishId": "26448eef-8a0a-5934-bc0a-8936b205b389",
       "name": "Salad",
-      "reason": "no_selected_image"
+      "reason": "prepared_awaiting_selection",
+      "candidate": "https://commons.wikimedia.org/wiki/File:Colorful_mixed_vegetable_salad.jpg"
     },
     {
       "dishId": "265809a8-986a-5c78-8199-94c45094b450",
       "name": "Cánh gà chiên nước mắm",
-      "reason": "no_selected_image"
+      "reason": "prepared_awaiting_selection",
+      "candidate": "https://commons.wikimedia.org/wiki/File:C%C3%A1nh_g%C3%A0_chi%C3%AAn_n%C6%B0%E1%BB%9Bc_m%E1%BA%AFm,_th%C3%A1ng_8_n%C4%83m_2018_(1).JPG"
     },
     {
       "dishId": "2749cd54-8b25-5d2a-9c75-d1286568d833",
       "name": "Súp kem nấm",
-      "reason": "no_selected_image"
+      "reason": "prepared_awaiting_selection",
+      "candidate": "https://commons.wikimedia.org/wiki/File:Saizeriya_cream_of_mushroom_soup.jpg"
     },
     {
       "dishId": "27711275-291a-5edc-8d93-46767f1b9832",
@@ -3059,12 +3066,14 @@
     {
       "dishId": "2f3cdcc9-61af-5a87-a6ab-bd6d0b04d512",
       "name": "Cóc lắc",
-      "reason": "no_selected_image"
+      "reason": "prepared_awaiting_selection",
+      "candidate": "https://commons.wikimedia.org/wiki/File:C%C3%B3c_l%E1%BA%AFc.jpeg"
     },
     {
       "dishId": "2f68da9a-4fe2-5765-9b54-94410b5fce69",
       "name": "Bánh canh",
-      "reason": "no_selected_image"
+      "reason": "prepared_awaiting_selection",
+      "candidate": "https://commons.wikimedia.org/wiki/File:T%C3%B4_b%C3%A1nh_canh_th%C3%A1ng_4_n%C4%83m_2018_(1).jpg"
     },
     {
       "dishId": "2fa4b413-e5c2-50c8-81d0-f037bcf2d286",
@@ -3079,7 +3088,8 @@
     {
       "dishId": "355961da-f261-56ea-b59a-cc4daa162f16",
       "name": "Ốc nướng tiêu",
-      "reason": "no_selected_image"
+      "reason": "prepared_awaiting_selection",
+      "candidate": "https://commons.wikimedia.org/wiki/File:%E1%BB%90c_n%C6%B0%E1%BB%9Bng_ti%C3%AAu_t%E1%BA%A1i_C%E1%BA%A7n_Th%C6%A1.jpg"
     },
     {
       "dishId": "35fa1ae5-9253-5d3d-b525-87b853b13e2c",
@@ -3089,7 +3099,8 @@
     {
       "dishId": "37e032fb-1a78-5b5c-833d-c5362ba14445",
       "name": "Cơm sườn",
-      "reason": "no_selected_image"
+      "reason": "prepared_awaiting_selection",
+      "candidate": "https://commons.wikimedia.org/wiki/File:C%C6%A1m_t%E1%BA%A5m_s%C6%B0%E1%BB%9Dn_Ph%C6%B0%E1%BB%9Bc_L%E1%BB%99c_Th%E1%BB%8D_%E1%BB%9F_%C4%91%C6%B0%E1%BB%9Dng_V%C6%B0%E1%BB%9Dn_L%C3%A0i_ng11th8n2020_(1).jpg"
     },
     {
       "dishId": "39da0965-df4e-5ca1-8741-bdb9aeb85f57",
@@ -3124,7 +3135,8 @@
     {
       "dishId": "3ea6319a-f313-525f-a5dc-765c50993410",
       "name": "Nhum biển nướng",
-      "reason": "no_selected_image"
+      "reason": "prepared_awaiting_selection",
+      "candidate": "https://commons.wikimedia.org/wiki/File:Grilled_Sea_Urchin_Japanese_YakiUni.jp.jpg"
     },
     {
       "dishId": "402f6f92-8cc8-5397-adb7-14a9a3dfe6e3",
@@ -3134,7 +3146,8 @@
     {
       "dishId": "41295125-ec27-55a4-93f2-a0cbe9c1892f",
       "name": "Bánh mì xíu mại",
-      "reason": "no_selected_image"
+      "reason": "prepared_awaiting_selection",
+      "candidate": "https://commons.wikimedia.org/wiki/File:B%C3%A1nh_m%C3%AC_x%C3%ADu_m%E1%BA%A1i-meatball-sandwich.jpg"
     },
     {
       "dishId": "443b19d1-73de-53a7-9812-e02ce32779c1",
@@ -3164,7 +3177,8 @@
     {
       "dishId": "4f4e0327-d10e-5c8f-b69a-eb4f2df520ea",
       "name": "Mì trộn",
-      "reason": "no_selected_image"
+      "reason": "prepared_awaiting_selection",
+      "candidate": "https://commons.wikimedia.org/wiki/File:M%C3%AC_tr%E1%BB%99n_t%C6%B0%C6%A1ng_%C4%91en_ng17th3n2023_(5).jpg"
     },
     {
       "dishId": "52c6435f-c967-5820-8e76-b1917291a1ef",
@@ -3189,12 +3203,14 @@
     {
       "dishId": "5acbe28c-e04e-5c86-b337-ef48f12acf09",
       "name": "Xíu mại hấp",
-      "reason": "no_selected_image"
+      "reason": "prepared_awaiting_selection",
+      "candidate": "https://commons.wikimedia.org/wiki/File:HK_SW_%E4%B8%8A%E7%92%B0_Sheung_Wan_%E6%98%9F%E6%9C%88%E6%A8%93_Sky_Cuisine_Restaurant_Friday_morning_%E6%97%A9%E9%A4%90_breakfast_steamed_%E7%87%92%E8%B3%A3_siu_mai_%E9%BB%9E%E5%BF%83_dim_sum_March_2026_N13P_06.jpg"
     },
     {
       "dishId": "5b4bfdd7-e841-5e6f-8580-4ff0530b8d5d",
       "name": "Chè đỗ đen",
-      "reason": "no_selected_image"
+      "reason": "prepared_awaiting_selection",
+      "candidate": "https://commons.wikimedia.org/wiki/File:Ch%C3%A8_%C4%91%E1%BA%ADu_%C4%91en_nh%C3%A0_l%C3%A0m_(th%C3%A1ng_1_n%C4%83m_2018)_(2).jpg"
     },
     {
       "dishId": "5bc35095-fdc9-5b91-8b7e-e323cdb896d2",
@@ -3239,8 +3255,8 @@
     {
       "dishId": "70834c74-c730-589b-8498-4629cadbf42f",
       "name": "Bò né",
-      "reason": "visual_review_not_selected",
-      "candidate": "https://commons.wikimedia.org/wiki/File:B%C3%B2_n%C3%A9.jpg"
+      "reason": "prepared_awaiting_selection",
+      "candidate": "https://commons.wikimedia.org/wiki/File:B%C3%B2_n%C3%A9_(b%C3%B2_Gia_Lai)_ng8th2n2021_(2).jpg"
     },
     {
       "dishId": "733d1f2f-ae6d-5d6e-b97f-7abf3e549938",
@@ -3265,7 +3281,8 @@
     {
       "dishId": "75883713-cd7e-5b37-9ab9-a51f447f88da",
       "name": "Chè chuối",
-      "reason": "no_selected_image"
+      "reason": "prepared_awaiting_selection",
+      "candidate": "https://commons.wikimedia.org/wiki/File:Ch%C3%A8_chu%E1%BB%91i_20201125.jpg"
     },
     {
       "dishId": "75df571f-8fe5-5a93-819b-de5c8ae15085",
@@ -3275,7 +3292,8 @@
     {
       "dishId": "7d4be5dd-0b8b-589c-845a-74eaf04a7a93",
       "name": "Há cảo",
-      "reason": "no_selected_image"
+      "reason": "prepared_awaiting_selection",
+      "candidate": "https://commons.wikimedia.org/wiki/File:Ha_Gow_(Cantonese_Shrimp_Dumplings).jpeg"
     },
     {
       "dishId": "7dc4a501-9f31-5164-956e-13338699d38d",
@@ -3285,7 +3303,8 @@
     {
       "dishId": "7ea6c758-aed3-5580-b579-1931a926458b",
       "name": "Hàu nướng mỡ hành",
-      "reason": "no_selected_image"
+      "reason": "prepared_awaiting_selection",
+      "candidate": "https://commons.wikimedia.org/wiki/File:C%E1%BB%ADa_Vi%E1%BB%87t_th4n2023,_Ks_Song_Ph%C6%B0%C6%A1ng_(%C4%91%E1%BB%93_%C4%83n,_m%C3%B3n_h%C3%A0u_n%C6%B0%E1%BB%9Bng_m%E1%BB%A1_h%C3%A0nh)_(5).jpg"
     },
     {
       "dishId": "7f6cff9c-e556-5e46-8cae-8ea9e9de160e",
@@ -3330,7 +3349,8 @@
     {
       "dishId": "8d3f3d1e-d8c3-551e-96b0-3a39ae37666d",
       "name": "Bánh cam",
-      "reason": "no_selected_image"
+      "reason": "prepared_awaiting_selection",
+      "candidate": "https://commons.wikimedia.org/wiki/File:B%C3%A1nh_cam.jpg"
     },
     {
       "dishId": "8d60e0e5-e038-5441-8223-58a3de33d366",
@@ -3345,12 +3365,14 @@
     {
       "dishId": "90ac5782-622a-5545-b2f0-a369ca8e85dc",
       "name": "Súp gà bắp",
-      "reason": "no_selected_image"
+      "reason": "prepared_awaiting_selection",
+      "candidate": "https://commons.wikimedia.org/wiki/File:Southern_Chinese_style_chicken_soup_with_mushrooms_and_corn.jpg"
     },
     {
       "dishId": "918307b3-554d-5bb0-83f5-2f1ac63de60c",
       "name": "Súp tôm",
-      "reason": "no_selected_image"
+      "reason": "prepared_awaiting_selection",
+      "candidate": "https://commons.wikimedia.org/wiki/File:Shrimp_soup_at_home.jpg"
     },
     {
       "dishId": "92dcc2c3-1eb7-56af-89dd-2c6b393eef0e",
@@ -3360,7 +3382,8 @@
     {
       "dishId": "9757f47c-4926-5ac4-af78-f5775e1d7cac",
       "name": "Bún nước lèo",
-      "reason": "no_selected_image"
+      "reason": "prepared_awaiting_selection",
+      "candidate": "https://commons.wikimedia.org/wiki/File:Bun_nuoc_leo_SocTrang.jpg"
     },
     {
       "dishId": "988b3131-073b-5a11-bfae-408cebb1761e",
@@ -3410,7 +3433,8 @@
     {
       "dishId": "a4ce2d45-80c6-54c0-bcb7-b5405a4a2f69",
       "name": "Cháo trắng",
-      "reason": "no_selected_image"
+      "reason": "prepared_awaiting_selection",
+      "candidate": "https://commons.wikimedia.org/wiki/File:Vietnamese_white_porridge.jpg"
     },
     {
       "dishId": "a74fa2f3-3757-5cc4-9323-a1e8577fe95e",
@@ -3425,7 +3449,8 @@
     {
       "dishId": "aa59b2ad-3c15-5133-bad9-122a8d2fe93b",
       "name": "Nui",
-      "reason": "no_selected_image"
+      "reason": "broth_photo_awaiting_review",
+      "candidate": "https://commons.wikimedia.org/wiki/File:Soup_Macaroni_in_Hong_Kong.jpg"
     },
     {
       "dishId": "afd8050f-e7cc-5a4a-8df3-07031cec9000",
@@ -3450,7 +3475,8 @@
     {
       "dishId": "b115bf23-4277-5a5d-a439-002b0ceda3ce",
       "name": "Cơm gà",
-      "reason": "no_selected_image"
+      "reason": "prepared_awaiting_selection",
+      "candidate": "https://commons.wikimedia.org/wiki/File:Com_ga_Viet_Nam_voi_ga_luoc_com_vang_va_nuoc_cham.jpg"
     },
     {
       "dishId": "b2403d29-55ab-5f56-872f-e05badfb3a7a",
@@ -3490,7 +3516,8 @@
     {
       "dishId": "bc569e5d-bd97-5c64-9963-6a5413199aa8",
       "name": "Khô mực nướng",
-      "reason": "no_selected_image"
+      "reason": "prepared_awaiting_selection",
+      "candidate": "https://commons.wikimedia.org/wiki/File:Grilled_shredded_squid_(1).jpg"
     },
     {
       "dishId": "c0c7bd62-550e-5389-8500-6c86dbdbe369",
@@ -3530,7 +3557,8 @@
     {
       "dishId": "c82139ab-726f-5c53-ae02-41aec6b088f2",
       "name": "Dưa lưới cắt sẵn",
-      "reason": "no_selected_image"
+      "reason": "prepared_awaiting_selection",
+      "candidate": "https://commons.wikimedia.org/wiki/File:Pieces_of_a_cut_melon.jpg"
     },
     {
       "dishId": "cab36f16-8235-5d43-a1c2-bf708e1f7b92",
@@ -3585,7 +3613,8 @@
     {
       "dishId": "da86071b-5a71-5e12-9af5-fd462484f058",
       "name": "Bánh mì gối",
-      "reason": "no_selected_image"
+      "reason": "prepared_awaiting_selection",
+      "candidate": "https://commons.wikimedia.org/wiki/File:Pullman_loaf.jpg"
     },
     {
       "dishId": "da94ed2a-5919-53c3-8398-813a4c444096",
@@ -3605,7 +3634,8 @@
     {
       "dishId": "dec7c964-c295-5d27-9d8b-0a4744a05dde",
       "name": "Thăn bò nướng",
-      "reason": "no_selected_image"
+      "reason": "prepared_awaiting_selection",
+      "candidate": "https://commons.wikimedia.org/wiki/File:Th%E1%BB%8Fi_th%C4%83n_b%C3%B2_n%C6%B0%E1%BB%9Bng_%E1%BB%9F_qu%C3%A1n_B%C3%B2_C%C6%B0%E1%BB%9Di_(1).jpg"
     },
     {
       "dishId": "df04074c-027b-597e-a30d-dab217155801",
@@ -3640,7 +3670,8 @@
     {
       "dishId": "e63f04aa-5e31-5f38-a35f-160c345a220d",
       "name": "Chè trôi nước",
-      "reason": "no_selected_image"
+      "reason": "prepared_awaiting_selection",
+      "candidate": "https://commons.wikimedia.org/wiki/File:M%C3%B3n_ch%C3%A8_%E1%BB%9F_B%C3%ACnh_Long_n%C4%83m_2020.jpg"
     },
     {
       "dishId": "e6558eda-db0f-5583-bbf5-be4f7da8f2f9",
@@ -3660,7 +3691,8 @@
     {
       "dishId": "e9081bf1-da78-55af-ad2f-08d148ee74e8",
       "name": "Cháo yến mạch",
-      "reason": "no_selected_image"
+      "reason": "prepared_awaiting_selection",
+      "candidate": "https://commons.wikimedia.org/wiki/File:Oatmeal_porridge_with_fruits.jpg"
     },
     {
       "dishId": "e9829de3-2878-5392-8c2c-e1894eacc829",
@@ -3675,7 +3707,8 @@
     {
       "dishId": "ea76b34b-b5ee-570f-be9e-24bc55787f8f",
       "name": "Xoài lắc",
-      "reason": "no_selected_image"
+      "reason": "prepared_awaiting_selection",
+      "candidate": "https://commons.wikimedia.org/wiki/File:Xoai_l%E1%BA%AFc_12.jpg"
     },
     {
       "dishId": "eaa258ec-03f6-5baa-acf4-bf90304269e6",
@@ -3700,7 +3733,8 @@
     {
       "dishId": "ef2c9689-995e-5ef0-bfb3-60f6c8aa4f2f",
       "name": "Kẹo cu đơ",
-      "reason": "no_selected_image"
+      "reason": "prepared_awaiting_selection",
+      "candidate": "https://commons.wikimedia.org/wiki/File:KeoCudo.JPG"
     },
     {
       "dishId": "ef81066f-3779-5ab3-b6ed-716b670f055d",
@@ -3715,12 +3749,14 @@
     {
       "dishId": "f0c67e6f-9eeb-5745-9f20-f10429158e22",
       "name": "Bánh áp chao",
-      "reason": "no_selected_image"
+      "reason": "prepared_awaiting_selection",
+      "candidate": "https://commons.wikimedia.org/wiki/File:B%C3%A1nh_%C3%81p_chao_(_%C3%81p_chao_Xu%C3%A2n_S%E1%BB%ADu_)_-_panoramio.jpg"
     },
     {
       "dishId": "f2112769-1ace-59f5-be69-ac46ce5ca13c",
       "name": "Lẩu nấm",
-      "reason": "no_selected_image"
+      "reason": "prepared_awaiting_selection",
+      "candidate": "https://commons.wikimedia.org/wiki/File:Mushroom_hot_pot_2.jpg"
     },
     {
       "dishId": "f50473c3-0b6e-52b4-8218-781d74c4fc46",
@@ -3750,7 +3786,8 @@
     {
       "dishId": "fd9d7d43-dee7-574d-99c0-5a7fce2a600d",
       "name": "Sandwich gà",
-      "reason": "no_selected_image"
+      "reason": "prepared_awaiting_selection",
+      "candidate": "https://commons.wikimedia.org/wiki/File:Chicken_sandwich.jpg"
     },
     {
       "dishId": "fdf67f00-3830-5df5-8d76-f4debcd0c085",
