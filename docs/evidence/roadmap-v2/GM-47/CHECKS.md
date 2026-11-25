@@ -1,5 +1,16 @@
 # GM-47 · Kiểm thử
 
+## Xác nhận bổ sung cho bản 1.4.4 ngày 25/11/2026
+
+Đã đối chiếu UUID và SHA từ JSON Tâm xuất lúc 16:06 ICT. Ghi nhận đủ 5 cặp ảnh và 30 mô tả đã chọn. Bundle vẫn có 253 món, version `1.4.4`, SHA-256 `9f4f19823adb4dae22f442a00c47ba872e56b96068d79d7a5f0beb01f550cac0`. [Review yêu cầu xác nhận](https://github.com/ThanhTris/IE307/pull/217#issuecomment-7157464470)
+
+| Kiểm | Kết quả |
+| --- | --- |
+| Ảnh | 124 cặp đã xác nhận, còn 129 món cần ảnh. ZIP hiện hành có 248 tệp WebP, tổng 15.273.974 byte ảnh. Lô đầu giữ 107 cặp để đối chiếu đúng lô Trí dự kiến tải. |
+| Mô tả | 131/253 mục đã xác nhận. 73/188 URL đạt `team_authored_fact_reference`, 115 URL còn chờ. Đã đối chiếu thêm 10 mục từ bài của VnExpress, công thức Cookpad và menu beFood. Các mục này ghi `assistance` và chờ Tâm duyệt. |
+| Kiểm ZIP và receipt | Đối chiếu toàn bộ 248 tệp theo UUID, kích thước và SHA-256. Chạy receipt với byte ảnh từ ZIP để kiểm lô fixture `1.4.5` gắn đủ 124 UUID đã duyệt. |
+| Storage staging | Chờ Trí xác nhận URL công khai, thư mục ảnh chính, thư mục ảnh nhỏ và lô đã tải. Checker offline đạt 32/33, còn mục ảnh. Receipt và QA với ảnh từ Storage thật chưa chạy. |
+
 ## Xác nhận của Tâm và lô Storage ngày 25/11/2026
 
 Nhận JSON Tâm xuất từ trang duyệt `1.4.3` lúc 16:02 ICT. Đã đối chiếu SHA của bản duyệt, UUID và SHA từng ảnh hoặc câu kèm URL trước khi ghi tên Tâm. Tâm chọn đủ 12 ảnh và 39 mô tả trong lượt này. [Review của Trí](https://github.com/ThanhTris/IE307/pull/217#issuecomment-7157464470)

@@ -59,7 +59,15 @@
       "name": "Cơm cá chiên",
       "locator": "https://food.be.com.vn/ho-chi-minh/com-tam-49-duong-so-4-64909",
       "description": "Phần cơm được dọn với cá đã chiên. Tùy cách phục vụ, có thể ăn xen miếng cá với cơm và một ít rau hoặc dưa đi kèm.",
-      "checkedAt": "2026-11-21T17:11:47Z"
+      "checkedAt": "2026-11-21T17:11:47Z",
+      "factReview": {
+        "facts": "Dòng Cơm cá chiên trên menu liệt kê cá chiên cùng rau và dưa. Chỉ dùng tên và các món đi kèm.",
+        "textSha256": "22c1623d0ff7b628c3f7b87b97ef1c76b3f377f2e7885503adf742dbace5e9d4",
+        "assistance": {
+          "tool": "Codex",
+          "checkedAt": "2026-11-25T09:10:32Z"
+        }
+      }
     },
     {
       "dishId": "024b5cdf-cb07-5c94-8b34-5dcdebc0d5e4",
@@ -90,7 +98,9 @@
         "assistance": {
           "tool": "Codex",
           "checkedAt": "2026-11-25T09:02:10Z"
-        }
+        },
+        "checkedBy": "Tâm",
+        "checkedAt": "2026-11-25T09:06:33Z"
       }
     },
     {
@@ -204,7 +214,9 @@
         "assistance": {
           "tool": "Codex",
           "checkedAt": "2026-11-25T09:02:10Z"
-        }
+        },
+        "checkedBy": "Tâm",
+        "checkedAt": "2026-11-25T09:06:33Z"
       }
     },
     {
@@ -349,7 +361,9 @@
         "assistance": {
           "tool": "Codex",
           "checkedAt": "2026-11-25T09:02:10Z"
-        }
+        },
+        "checkedBy": "Tâm",
+        "checkedAt": "2026-11-25T09:06:33Z"
       }
     },
     {
@@ -535,7 +549,9 @@
         "assistance": {
           "tool": "Codex",
           "checkedAt": "2026-11-25T09:02:10Z"
-        }
+        },
+        "checkedBy": "Tâm",
+        "checkedAt": "2026-11-25T09:06:33Z"
       }
     },
     {
@@ -557,7 +573,9 @@
         "assistance": {
           "tool": "Codex",
           "checkedAt": "2026-11-25T09:02:10Z"
-        }
+        },
+        "checkedBy": "Tâm",
+        "checkedAt": "2026-11-25T09:06:33Z"
       }
     },
     {
@@ -599,7 +617,15 @@
       "name": "Salad",
       "locator": "https://cookpad.com/vn/cong-thuc/12907638",
       "description": "Các thành phần của salad rau được cắt vừa ăn rồi trộn hoặc bày chung trong đĩa. Có thể trộn với sốt ngay trước lúc ăn.",
-      "checkedAt": "2026-11-21T17:11:47Z"
+      "checkedAt": "2026-11-21T17:11:47Z",
+      "factReview": {
+        "facts": "Công thức Salad rau trộn thái rau xà lách vừa ăn và trộn rau với sốt.",
+        "textSha256": "e0f09f09b042f6eb55590001208927f6f17622dd7d86f575620aba328f962303",
+        "assistance": {
+          "tool": "Codex",
+          "checkedAt": "2026-11-25T09:10:32Z"
+        }
+      }
     },
     {
       "dishId": "265809a8-986a-5c78-8199-94c45094b450",
@@ -853,7 +879,9 @@
         "assistance": {
           "tool": "Codex",
           "checkedAt": "2026-11-25T09:02:10Z"
-        }
+        },
+        "checkedBy": "Tâm",
+        "checkedAt": "2026-11-25T09:06:33Z"
       }
     },
     {
@@ -943,7 +971,9 @@
         "assistance": {
           "tool": "Codex",
           "checkedAt": "2026-11-25T09:02:10Z"
-        }
+        },
+        "checkedBy": "Tâm",
+        "checkedAt": "2026-11-25T09:06:33Z"
       }
     },
     {
@@ -1013,7 +1043,9 @@
         "assistance": {
           "tool": "Codex",
           "checkedAt": "2026-11-25T09:02:10Z"
-        }
+        },
+        "checkedBy": "Tâm",
+        "checkedAt": "2026-11-25T09:06:33Z"
       }
     },
     {
@@ -1042,7 +1074,9 @@
         "assistance": {
           "tool": "Codex",
           "checkedAt": "2026-11-25T09:02:10Z"
-        }
+        },
+        "checkedBy": "Tâm",
+        "checkedAt": "2026-11-25T09:06:33Z"
       }
     },
     {
@@ -1071,7 +1105,9 @@
         "assistance": {
           "tool": "Codex",
           "checkedAt": "2026-11-25T09:02:10Z"
-        }
+        },
+        "checkedBy": "Tâm",
+        "checkedAt": "2026-11-25T09:06:33Z"
       }
     },
     {
@@ -1151,7 +1187,9 @@
         "assistance": {
           "tool": "Codex",
           "checkedAt": "2026-11-25T09:02:10Z"
-        }
+        },
+        "checkedBy": "Tâm",
+        "checkedAt": "2026-11-25T09:06:33Z"
       }
     },
     {
@@ -1166,7 +1204,9 @@
         "assistance": {
           "tool": "Codex",
           "checkedAt": "2026-11-25T09:02:10Z"
-        }
+        },
+        "checkedBy": "Tâm",
+        "checkedAt": "2026-11-25T09:06:33Z"
       }
     },
     {
@@ -1198,7 +1238,9 @@
         "assistance": {
           "tool": "Codex",
           "checkedAt": "2026-11-25T09:02:10Z"
-        }
+        },
+        "checkedBy": "Tâm",
+        "checkedAt": "2026-11-25T09:06:33Z"
       }
     },
     {
@@ -1251,7 +1293,9 @@
         "assistance": {
           "tool": "Codex",
           "checkedAt": "2026-11-25T09:02:10Z"
-        }
+        },
+        "checkedBy": "Tâm",
+        "checkedAt": "2026-11-25T09:06:33Z"
       }
     },
     {
@@ -1280,7 +1324,9 @@
         "assistance": {
           "tool": "Codex",
           "checkedAt": "2026-11-25T09:02:10Z"
-        }
+        },
+        "checkedBy": "Tâm",
+        "checkedAt": "2026-11-25T09:06:33Z"
       }
     },
     {
@@ -1316,7 +1362,9 @@
         "assistance": {
           "tool": "Codex",
           "checkedAt": "2026-11-25T09:02:10Z"
-        }
+        },
+        "checkedBy": "Tâm",
+        "checkedAt": "2026-11-25T09:06:33Z"
       }
     },
     {
@@ -1362,7 +1410,9 @@
         "assistance": {
           "tool": "Codex",
           "checkedAt": "2026-11-25T09:02:10Z"
-        }
+        },
+        "checkedBy": "Tâm",
+        "checkedAt": "2026-11-25T09:06:33Z"
       }
     },
     {
@@ -1429,7 +1479,9 @@
         "assistance": {
           "tool": "Codex",
           "checkedAt": "2026-11-25T09:02:10Z"
-        }
+        },
+        "checkedBy": "Tâm",
+        "checkedAt": "2026-11-25T09:06:33Z"
       }
     },
     {
@@ -1437,7 +1489,15 @@
       "name": "Bún gạo lứt",
       "locator": "https://cookpad.com/vn/cong-thuc/15411997",
       "description": "Bún có sợi làm từ gạo lứt. Một cách dọn là trụng bún, để ráo rồi trộn sợi với rau và nước sốt trước khi ăn.",
-      "checkedAt": "2026-11-21T17:11:47Z"
+      "checkedAt": "2026-11-21T17:11:47Z",
+      "factReview": {
+        "facts": "Công thức Bún gạo lứt trộn rau nấu mềm, để bún ráo rồi dùng với rau và sốt trộn.",
+        "textSha256": "838bf8d2c71987fff7b2fb88f78fb091581f4796d25ab48a8d02fc7c6df874a4",
+        "assistance": {
+          "tool": "Codex",
+          "checkedAt": "2026-11-25T09:10:32Z"
+        }
+      }
     },
     {
       "dishId": "80d8acd6-a7ae-59d7-90d7-ead59f8db2e9",
@@ -1475,7 +1535,15 @@
       "name": "Cá sòng nướng",
       "locator": "https://www.vietnam.travel/vi/things-to-do/phu-quoc-specialty-seafood",
       "checkedAt": "2026-11-22T02:45:00Z",
-      "description": "Cá sòng được nướng trên than cho thịt cá chín và dậy mùi thơm. Khi ăn, có thể gỡ từng phần thịt để dùng cùng món kèm."
+      "description": "Cá sòng được nướng trên than cho thịt cá chín và dậy mùi thơm. Khi ăn, có thể gỡ từng phần thịt để dùng cùng món kèm.",
+      "factReview": {
+        "facts": "Mục Cá sòng nướng mô tả nướng than và ăn thịt cá với rau trong bánh tráng.",
+        "textSha256": "e65e38f04277dc6989b96ac2736070f3ec07c4c974665dd088af7a543e916f86",
+        "assistance": {
+          "tool": "Codex",
+          "checkedAt": "2026-11-25T09:10:32Z"
+        }
+      }
     },
     {
       "dishId": "864f37d1-97e9-57bc-bce5-351668f703da",
@@ -1554,7 +1622,15 @@
       "name": "Bánh cam",
       "locator": "https://vnexpress.net/nhung-mon-qua-sang-dan-da-chi-co-o-mien-tay-3671120.html",
       "checkedAt": "2026-11-22T02:34:21Z",
-      "description": "Bánh tròn được chiên vàng, với phần nhân đậu xanh nằm trong lớp vỏ. Kiểu bánh phủ đường có mặt ngoài ngọt và hơi giòn khi ăn."
+      "description": "Bánh tròn được chiên vàng, với phần nhân đậu xanh nằm trong lớp vỏ. Kiểu bánh phủ đường có mặt ngoài ngọt và hơi giòn khi ăn.",
+      "factReview": {
+        "facts": "Mục Bánh còng, bánh cam phân biệt bánh cam có nhân đậu xanh, chiên vàng và có bản áo đường. Cách pha bột có thể làm vỏ giòn.",
+        "textSha256": "c26ea5222495a17039b348db1d7d48f726e7f11be69ae714ec4008ea45556c14",
+        "assistance": {
+          "tool": "Codex",
+          "checkedAt": "2026-11-25T09:10:32Z"
+        }
+      }
     },
     {
       "dishId": "8d60e0e5-e038-5441-8223-58a3de33d366",
@@ -1568,7 +1644,9 @@
         "assistance": {
           "tool": "Codex",
           "checkedAt": "2026-11-25T09:02:10Z"
-        }
+        },
+        "checkedBy": "Tâm",
+        "checkedAt": "2026-11-25T09:06:33Z"
       }
     },
     {
@@ -1711,7 +1789,15 @@
       "name": "Bánh tráng trộn",
       "locator": "https://vnexpress.net/banh-trang-tron-mien-nam-hut-khach-ha-noi-4089816.html",
       "description": "Bánh tráng cắt sợi được trộn với gia vị và phần ăn kèm. Có thể gặp phiên bản dùng xoài xanh bào sợi để thêm vị chua.",
-      "checkedAt": "2026-11-21T17:11:47Z"
+      "checkedAt": "2026-11-21T17:11:47Z",
+      "factReview": {
+        "facts": "Mục thành phần và cách dọn có bánh tráng cắt sợi, xoài và các loại gia vị. Tác giả ghi xoài góp vị chua.",
+        "textSha256": "2b9463c60349b0c6fb383a490c98c81d995a73588bac49622db62320e78b0eb9",
+        "assistance": {
+          "tool": "Codex",
+          "checkedAt": "2026-11-25T09:10:32Z"
+        }
+      }
     },
     {
       "dishId": "a1e6ab51-9e2e-55c2-8369-0ef075ea7813",
@@ -1759,7 +1845,9 @@
         "assistance": {
           "tool": "Codex",
           "checkedAt": "2026-11-25T09:02:10Z"
-        }
+        },
+        "checkedBy": "Tâm",
+        "checkedAt": "2026-11-25T09:06:33Z"
       }
     },
     {
@@ -1767,7 +1855,15 @@
       "name": "Cháo trắng",
       "locator": "https://cookpad.com/vn/cong-thuc/15342970",
       "checkedAt": "2026-11-23T02:26:49Z",
-      "description": "Gạo nấu mềm trong nước thành bát cháo có vị nhẹ. Có thể ăn riêng hoặc dùng xen một món kèm đậm vị như trứng muối."
+      "description": "Gạo nấu mềm trong nước thành bát cháo có vị nhẹ. Có thể ăn riêng hoặc dùng xen một món kèm đậm vị như trứng muối.",
+      "factReview": {
+        "facts": "Công thức Cháo Trắng Trứng Muối nấu gạo đến nhừ rồi dọn phần cháo với trứng muối để riêng.",
+        "textSha256": "341cb53f58631f65536b59eeb9709c8155c265fb25181c3f9092bb2a3899e838",
+        "assistance": {
+          "tool": "Codex",
+          "checkedAt": "2026-11-25T09:10:32Z"
+        }
+      }
     },
     {
       "dishId": "a74fa2f3-3757-5cc4-9323-a1e8577fe95e",
@@ -1795,7 +1891,9 @@
         "assistance": {
           "tool": "Codex",
           "checkedAt": "2026-11-25T09:02:10Z"
-        }
+        },
+        "checkedBy": "Tâm",
+        "checkedAt": "2026-11-25T09:06:33Z"
       }
     },
     {
@@ -1848,7 +1946,9 @@
         "assistance": {
           "tool": "Codex",
           "checkedAt": "2026-11-25T09:02:10Z"
-        }
+        },
+        "checkedBy": "Tâm",
+        "checkedAt": "2026-11-25T09:06:33Z"
       }
     },
     {
@@ -1922,7 +2022,9 @@
         "assistance": {
           "tool": "Codex",
           "checkedAt": "2026-11-25T09:02:10Z"
-        }
+        },
+        "checkedBy": "Tâm",
+        "checkedAt": "2026-11-25T09:06:33Z"
       }
     },
     {
@@ -2087,7 +2189,9 @@
         "assistance": {
           "tool": "Codex",
           "checkedAt": "2026-11-25T09:02:10Z"
-        }
+        },
+        "checkedBy": "Tâm",
+        "checkedAt": "2026-11-25T09:06:33Z"
       }
     },
     {
@@ -2171,7 +2275,9 @@
         "assistance": {
           "tool": "Codex",
           "checkedAt": "2026-11-25T09:02:10Z"
-        }
+        },
+        "checkedBy": "Tâm",
+        "checkedAt": "2026-11-25T09:06:33Z"
       }
     },
     {
@@ -2179,7 +2285,15 @@
       "name": "Cơm mắm kho",
       "locator": "https://food.be.com.vn/ho-chi-minh/bep-nha-com-van-phong-com-phan-ly-thai-to-90516?dish=8909459",
       "checkedAt": "2026-11-22T02:50:00Z",
-      "description": "Cơm được dọn cùng mắm kho có vị đậm. Có thể gắp một ít phần kho rồi ăn cùng cơm, dùng thêm rau ăn kèm nếu có."
+      "description": "Cơm được dọn cùng mắm kho có vị đậm. Có thể gắp một ít phần kho rồi ăn cùng cơm, dùng thêm rau ăn kèm nếu có.",
+      "factReview": {
+        "facts": "Dòng Cơm Mắm kho miền Tây trong menu nêu mắm cá linh, rau sống và cơm.",
+        "textSha256": "4db8705c19a114c0493372e6e84fa2f19267b79a8bf7ec53661a0c29e0a9acca",
+        "assistance": {
+          "tool": "Codex",
+          "checkedAt": "2026-11-25T09:10:32Z"
+        }
+      }
     },
     {
       "dishId": "cecd8705-eb04-5b6c-9015-014c51d36be2",
@@ -2210,7 +2324,9 @@
         "assistance": {
           "tool": "Codex",
           "checkedAt": "2026-11-25T09:02:10Z"
-        }
+        },
+        "checkedBy": "Tâm",
+        "checkedAt": "2026-11-25T09:06:33Z"
       }
     },
     {
@@ -2242,7 +2358,9 @@
         "assistance": {
           "tool": "Codex",
           "checkedAt": "2026-11-25T09:02:10Z"
-        }
+        },
+        "checkedBy": "Tâm",
+        "checkedAt": "2026-11-25T09:06:33Z"
       }
     },
     {
@@ -2264,7 +2382,9 @@
         "assistance": {
           "tool": "Codex",
           "checkedAt": "2026-11-25T09:02:10Z"
-        }
+        },
+        "checkedBy": "Tâm",
+        "checkedAt": "2026-11-25T09:06:33Z"
       }
     },
     {
@@ -2330,7 +2450,9 @@
         "assistance": {
           "tool": "Codex",
           "checkedAt": "2026-11-25T09:02:10Z"
-        }
+        },
+        "checkedBy": "Tâm",
+        "checkedAt": "2026-11-25T09:06:33Z"
       }
     },
     {
@@ -2369,7 +2491,15 @@
       "name": "Cơm trộn",
       "locator": "https://food.be.com.vn/ho-chi-minh/tiem-com-nha-tron-hoang-dieu-2-102327",
       "description": "Cơm được dọn với các phần ăn kèm để trộn chung trước lúc ăn. Có thể gặp các kiểu khác nhau theo món kèm hoặc phần sốt.",
-      "checkedAt": "2026-11-21T17:11:47Z"
+      "checkedAt": "2026-11-21T17:11:47Z",
+      "factReview": {
+        "facts": "Menu liệt kê nhiều phần cơm trộn, gồm bản thịt bằm và bản xốt tom yum. Chỉ dùng tên món và thành phần ghi trên menu.",
+        "textSha256": "19174c273de07618b0ac73041c8fbab1711ba94670447c73a3d6f51cbedfaffe",
+        "assistance": {
+          "tool": "Codex",
+          "checkedAt": "2026-11-25T09:10:32Z"
+        }
+      }
     },
     {
       "dishId": "d9a0c3c2-f691-5b47-9ce6-e0b1318ead05",
@@ -2537,7 +2667,15 @@
       "name": "Cơm tôm rim",
       "locator": "https://vnexpress.net/cach-lam-tom-rim-man-ngot-4400373.html",
       "description": "Tôm được rim để nước gia vị rút lại và bám trên từng con. Phần tôm rim đậm vị thường dọn với cơm và ăn từng miếng nhỏ.",
-      "checkedAt": "2026-11-21T17:11:47Z"
+      "checkedAt": "2026-11-21T17:11:47Z",
+      "factReview": {
+        "facts": "Công thức cho tôm vào phần xốt rim đến khi quyện đều, có cách ăn với cơm nóng và rau.",
+        "textSha256": "995a3903d3354fadb6ea88f0f0ad254e8a088eb83f27925ab4af5cca4ca18b2f",
+        "assistance": {
+          "tool": "Codex",
+          "checkedAt": "2026-11-25T09:10:32Z"
+        }
+      }
     },
     {
       "dishId": "e150f612-6774-54fe-9094-da1bff83bb32",
@@ -3014,7 +3152,9 @@
         "assistance": {
           "tool": "Codex",
           "checkedAt": "2026-11-25T09:02:10Z"
-        }
+        },
+        "checkedBy": "Tâm",
+        "checkedAt": "2026-11-25T09:06:33Z"
       }
     },
     {

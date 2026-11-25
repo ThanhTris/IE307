@@ -14,13 +14,13 @@ Checker hiện đạt 32/33 mục. Kiểm readback trên [QA GM-03](../GM-03/RUN
 
 ### Gói ảnh cho Trí và Tuấn
 
-Gói tải lên `.work/gm47-release-editorial/gm47-storage-reviewed.zip` có **119 cặp đã duyệt**, tổng 14.689.446 byte ảnh, kèm `reviewed-dish-ids.txt` và metadata. Bản lô đầu được lưu riêng tại `.work/gm47-release-editorial/review-7157464470/gm47-storage-lot01-107.zip` gồm **107 cặp** như Trí dự kiến. Khi Trí xác nhận lô đã tải, dùng danh sách UUID lấy từ đúng ZIP của lô đó.
+Gói tải lên `.work/gm47-release-editorial/gm47-storage-reviewed.zip` có **124 cặp đã duyệt**, tổng 15.273.974 byte ảnh, kèm `reviewed-dish-ids.txt` và metadata. Bản lô đầu được lưu riêng tại `.work/gm47-release-editorial/review-7157464470/gm47-storage-lot01-107.zip` gồm **107 cặp** như Trí dự kiến. Khi Trí xác nhận lô đã tải, dùng danh sách UUID lấy từ đúng ZIP của lô đó.
 
 ```sh
 python data-preparation/scripts/gm47_storage_handoff.py --reviewed-only
 ```
 
-Dựng bằng Python có Pillow 13.0.0 và WebP encoder cùng bản. Lệnh kiểm SHA và số byte. Có thể chạy với các ảnh trong thư mục mặc định `.work/gm47-release-editorial/images`. Lệnh chạy không có `--reviewed-only` xuất gói kiểm ảnh đầy đủ gồm 124 cặp, trong đó 5 cặp chờ duyệt.
+Dựng bằng Python có Pillow 13.0.0 và WebP encoder cùng bản. Lệnh kiểm SHA và số byte. Có thể chạy với các ảnh trong thư mục mặc định `.work/gm47-release-editorial/images`. Lệnh chạy không có `--reviewed-only` xuất gói kiểm ảnh đầy đủ và CSV các món chưa có ảnh.
 
 - `images/<dishId>.webp` là ảnh chính. `thumbnails/<dishId>.webp` là ảnh danh sách 400×300 px. Đây là object key đề xuất để Trí dùng trong bucket công khai GM-52. Mỗi URL đích là URL gốc công khai của bucket tại môi trường tương ứng cộng object key. Xác nhận URL gốc và tải tệp trước khi gắn `artwork.url` và bàn giao URL ảnh nhỏ cho Tuấn. URL tệp Commons trong metadata dùng làm bằng chứng nguồn.
 - Gói tải lên kèm `reviewed-artwork.json` có tác giả, giấy phép, kích thước, số byte, SHA và `aiCheck` của từng tệp, cùng `ATTRIBUTION.md` để Tuấn triển khai màn Nguồn ảnh trong GM-64. Giữ giấy phép và ghi công cho cả hai bản dẫn xuất. Ảnh Chuối nếp nướng đã đổi SHA và tác giả. Nếu từng nhận gói cũ, chọn bản hiện tại khi upload.
@@ -29,8 +29,8 @@ Dựng bằng Python có Pillow 13.0.0 và WebP encoder cùng bản. Lệnh ki�
 ### Tâm xác nhận ảnh và mô tả
 
 - Mở ảnh, trang nguồn và thông tin license cho từng UUID. Sau khi Tâm xác nhận ảnh đúng món và đúng nguồn gốc, ghi tên Tâm vào `aiCheck.checkedBy`, thời điểm UTC thực tế vào `aiCheck.checkedAt` và `real_photo` vào `aiCheck.verdict`. Bản ghi chờ có `pending_human_review`. Kết quả rà bằng công cụ nằm trong `assistance`.
-- Với mô tả, đối chiếu từng câu với URL và các dữ kiện ghi ở `factReview.facts`. Sau khi Tâm xác nhận, ghi tên Tâm và thời điểm vào `factReview.checkedBy` và `factReview.checkedAt`. Nếu sửa nội dung hoặc URL, phải rà lại và cập nhật `factReview.textSha256` của bản mới trước khi xác nhận. Trang duyệt cục bộ `.work/gm47-release-editorial/review-7157464470/duyet-anh-va-mo-ta.html` hiển thị ảnh, nguồn, mô tả và tải được JSON chứa UUID cùng SHA của các mục đã chọn.
-- Theo quyết định của Trí, GM-51 dùng mô tả do nhóm biên tập và URL để đối chiếu dữ kiện. CSV chỉ ghi `team_authored_fact_reference` khi tất cả mô tả dùng URL đó đã được người kiểm xác nhận. Các cột `prechecked_dish_ids` và `reviewed_dish_ids` ghi kết quả rà. Tâm đã xác nhận 101 mô tả. Có 46 URL đạt và 142 URL còn `needs_confirmation`. Xem [CHECKS](CHECKS.md).
+- Với mô tả, đối chiếu từng câu với URL và các dữ kiện ghi ở `factReview.facts`. Sau khi Tâm xác nhận, ghi tên Tâm và thời điểm vào `factReview.checkedBy` và `factReview.checkedAt`. Nếu sửa nội dung hoặc URL, phải rà lại và cập nhật `factReview.textSha256` của bản mới trước khi xác nhận. Trang duyệt cục bộ `.work/gm47-release-editorial/review-next-1.4.4/duyet-anh-va-mo-ta.html` hiển thị ảnh, nguồn, mô tả và tải được JSON chứa UUID cùng SHA của các mục đã chọn.
+- Theo quyết định của Trí, GM-51 dùng mô tả do nhóm biên tập và URL để đối chiếu dữ kiện. CSV chỉ ghi `team_authored_fact_reference` khi tất cả mô tả dùng URL đó đã được người kiểm xác nhận. Các cột `prechecked_dish_ids` và `reviewed_dish_ids` ghi kết quả rà. Tâm đã xác nhận 131 mô tả. Có 73 URL đạt và 115 URL còn `needs_confirmation`. Xem [CHECKS](CHECKS.md).
 
 ### Sau khi Trí xác nhận upload
 
