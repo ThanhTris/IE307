@@ -11,17 +11,19 @@ import { useAccountAction } from '../hooks/useAccountAction';
 import { accountErrorMessage } from '../services/accountMessages';
 import type { PersonalHistorySettings } from '../services/profileHistorySettings';
 import { ProfileSettings } from '../components/ProfileSettings';
+import { ProfileLegalLinks } from '../components/ProfileLegalLinks';
 
 type Props = {
   user: SessionUser;
   account?: AccountService;
   historySettings?: PersonalHistorySettings;
+  canDeleteAccount?: boolean;
   onNavigate: (path: string) => void;
   onHome: () => void;
   onLogout: () => Promise<boolean>;
 };
 
-export function ProfileScreen({ user, account, historySettings, onNavigate, onHome, onLogout }: Props) {
+export function ProfileScreen({ user, account, historySettings, canDeleteAccount, onNavigate, onHome, onLogout }: Props) {
   const { colors } = useShellTheme();
   const [confirmLogout, setConfirmLogout] = useState(false);
   const [profile, setProfile] = useState<ReadResult<AccountProfile>>();
@@ -81,6 +83,14 @@ export function ProfileScreen({ user, account, historySettings, onNavigate, onHo
       {historySettings ? <ProfileSettings history={historySettings} /> : null}
       <AppButton label="Đăng xuất" variant="secondary" onPress={() => setConfirmLogout(true)} colors={colors} />
     </>}
+    <ProfileLegalLinks />
+    {canDeleteAccount ? (
+      <Pressable accessibilityRole="button" accessibilityLabel="Xóa tài khoản" onPress={() => onNavigate('/account/delete-account')}
+        style={[styles.row, styles.deleteRow, { backgroundColor: colors.surface, borderColor: colors.danger }]}>
+        <Text style={[typography.bodyBold, styles.rowLabel, { color: colors.danger }]}>Xóa tài khoản</Text>
+        <Text accessible={false} style={[typography.titleMedium, { color: colors.danger }]}>›</Text>
+      </Pressable>
+    ) : null}
     <SheetDialog visible={confirmLogout} title="Đăng xuất?" showClose={false}
       onClose={() => { if (!pending) setConfirmLogout(false); }} colors={colors}>
       <Text style={[typography.body, { color: colors.text }]}>Bạn có thể tiếp tục sử dụng ứng dụng với tài khoản khách</Text>
@@ -102,4 +112,5 @@ const styles = StyleSheet.create({
   rows: { borderRadius: radii.lg, borderWidth: 1 },
   row: { minHeight: 56, paddingVertical: spacing.md, paddingHorizontal: spacing.lg, flexDirection: 'row', alignItems: 'center', gap: spacing.md },
   rowLabel: { flex: 1 },
+  deleteRow: { borderWidth: 1, borderRadius: radii.lg },
 });
