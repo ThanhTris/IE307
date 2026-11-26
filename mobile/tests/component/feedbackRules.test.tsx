@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { act, useState } from 'react';
 import { fireEvent, render, screen, waitFor } from '@testing-library/react-native';
 import { Text } from 'react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
@@ -78,6 +78,19 @@ test('FailureNotice attaches Báo lỗi action inside the floating Toast for une
   expect(screen.queryByTestId('failure-callout')).toBeNull();
   expect(screen.getByTestId('toast-error')).toBeOnTheScreen();
   expect(screen.getByRole('button', { name: 'Báo lỗi hoặc cần trợ giúp' })).toBeOnTheScreen();
+});
+
+test('the reason for being moved stays for 8 seconds, longer than an ordinary toast', async () => {
+  jest.useFakeTimers();
+  try {
+    clearIncident();
+    setIncident(incidentFor({ code: 'ROOM_TERMINAL', title: 'Chủ phòng đã hủy phòng' }, 'home', 'room/lobby'));
+    await wrap(<HelpProvider segments={['']}><FailureNotice destination="home" colors={colors} /></HelpProvider>);
+    await act(async () => { jest.advanceTimersByTime(7500); });
+    expect(screen.getByText('Chủ phòng đã hủy phòng')).toBeOnTheScreen();
+    await act(async () => { jest.advanceTimersByTime(1500); });
+    expect(screen.queryByText('Chủ phòng đã hủy phòng')).toBeNull();
+  } finally { jest.useRealTimers(); }
 });
 
 function UpgradeToastHarness({ onHelp }: { onHelp: () => void }) {

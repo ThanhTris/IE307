@@ -115,6 +115,10 @@ export function mapErrorHelper(err: unknown): ApiError {
     if (errObj.status === 429) {
       return { messageKey: 'RATE_LIMITED', message: 'Too many requests' };
     }
+    // Same meaning as in the auth transport: the server did not serve the request, and its outcome is unknown.
+    if (errObj.status >= 500) {
+      return { messageKey: 'NETWORK_ERROR', message: 'Server unavailable' };
+    }
   }
 
   if (errObj.message && typeof errObj.message === 'string' && errObj.message.includes('Network')) {

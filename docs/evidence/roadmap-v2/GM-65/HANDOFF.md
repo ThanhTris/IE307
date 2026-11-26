@@ -38,6 +38,10 @@ Chuyển trang dùng `leaveAfterFailure` (lý do giữ trong bộ nhớ, không 
 | 8. Tài khoản | Chưa làm |
 | Hồ sơ: ADR-030, `GM-65.http`, script tạo GitHub Issue, FIGMA_PARITY, comment PR #219 | Chưa làm |
 
+## Toast (Trí duyệt giao diện 2026-11-26)
+
+Quy cách ở [FEEDBACK_TOAST_NOTIFICATION](../../../design/FEEDBACK_TOAST_NOTIFICATION.md), kết quả kiểm ở [CHECKS](CHECKS.md). Màn khác có thanh tiêu đề cao hơn 64dp cần kiểm lại vị trí. HTTP ≥ 500 giờ là `NETWORK_ERROR`, nên các luồng "chưa rõ kết quả" gửi lại cùng `requestId` (lưu khẩu vị tự phục hồi sau một lần 503).
+
 ## Chạy lại
 
 1. QA: `npm run qa:start -- --run-id <id> --api-port 54591 --db-port 54592 --mail-port 54594` rồi `npm run qa:verify -- --run-id <id>`.

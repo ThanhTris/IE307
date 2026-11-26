@@ -5,6 +5,9 @@ import { clearIncident, useIncident } from '../../errors/incident';
 import type { Incident } from '../../errors/failure';
 import { ToastNotice, useToast } from './Toast';
 
+/** The reason for being moved must outlast the screen change; it is gone from the app once the toast hides. */
+export const DESTINATION_TOAST_MS = 8000;
+
 /**
  * Shown on the screen the person was sent to (Home or Sign-in) as a floating Toast (0px layout footprint)
  * so it never pushes the page content down. Falls back to inline ToastNotice in isolated tests without ToastProvider.
@@ -22,6 +25,7 @@ export function FailureNotice({ destination }: ComponentThemeProps & { destinati
       title: incident.title,
       message: incident.message,
       tone,
+      duration: DESTINATION_TOAST_MS,
       ...(report && help ? {
         actionLabel: 'Báo lỗi',
         actionAccessibilityLabel: 'Báo lỗi hoặc cần trợ giúp',

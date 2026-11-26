@@ -55,6 +55,28 @@ Môi trường: nhánh `claude/gm-65-ui-review` = `272a76e4`; QA riêng `gm65-ui
 5. Mở app với phiên tài khoản cũ không còn trên server thì hiện **"Phiên khách đã hết hạn"** (ảnh 18); cần tái hiện có kiểm soát trước khi kết luận.
 6. Đếm lỗi để hiện "Báo lỗi" cộng dồn qua các mã khác nhau (503 rồi mất kết nối thì lần 2 đã có chip). Có thể chấp nhận; ghi để Trí quyết.
 
+## Toast mới và 3 lỗi thông báo (2026-11-26, sau khi Trí duyệt giao diện)
+
+Trí chấm ảnh xem thử và trả lời "duyệt" cho giao diện toast: bố cục hai tầng, nền tô theo tone, Thông tin màu xanh dương, hiện đủ nội dung. Đây là duyệt giao diện trong chat, không phải nghiệm thu GM-65. Vấn đề 1–4 ở trên được xử lý như sau; vấn đề 5, 6 giữ nguyên.
+
+Thay đổi: `Toast.tsx` (bố cục, vị trí `insets.top + 64`, không giới hạn dòng, màu `info`); `StatusNotice` giữ màu xanh lá cho chữ trên trang tone `info`; `FailureNotice` hiện 8 giây; `mapErrorHelper` coi HTTP ≥ 500 (không kèm mã nghiệp vụ) là `NETWORK_ERROR`; màn khách đổi câu 401 khi tạo khách thành "Chưa tạo được phiên khách — Hãy thử lại."
+
+| Kiểm | Kết quả |
+| --- | --- |
+| typecheck, lint, check:architecture, check:expo (offline) | Đạt |
+| Jest đầy đủ `--maxWorkers=2` | 1584 đạt, 0 lỗi, 1 bỏ qua. Chạy mặc định nhiều worker từng có vài ca lỗi không cố định; các bộ lỗi ở lần chạy thứ hai chạy tuần tự đạt 37/37 |
+
+Ảnh: [`avd-20261126/toast-v2/`](avd-20261126/toast-v2/). Ảnh 01–03 là **màn xem thử** Trí đã chấm (file tạm, đã xóa; chữ 200% là nhân cỡ chữ, không phải cỡ chữ hệ thống). Ảnh 04–06 là app thật với code mới.
+
+| Ca trên AVD (app thật) | Kết quả | Ảnh |
+| --- | --- | --- |
+| Lưu khẩu vị, 503 một lần | App tự gửi lại cùng yêu cầu, lưu thành công, về Phòng chờ, không báo lỗi (trước đây hiện "Chưa lưu được thay đổi") | — |
+| Lưu khẩu vị, 503 liên tục | Toast "Chưa rõ kết quả lưu. Hãy thử lại." dưới tiêu đề, Quay lại không bị che, lựa chọn được giữ | 04 |
+| Rời phòng, 503 | Toast "Không kết nối được máy chủ" dưới tiêu đề, ở lại phòng. Lần chụp trước không thấy toast là do chụp lệch thời điểm | 05 (khung hình từ quay màn hình) |
+| Chủ phòng hủy phòng | Toast xanh dương; quay màn hình thấy khoảng 7 s (12,5–19,5 s), gồm khoảng 2 s nền trắng lúc chuyển màn và khoảng 5 s trên Trang chủ. Đồng hồ chạy từ trước khi Trang chủ hiện, giải thích số đo khoảng 3 s với bản cũ | 06 |
+
+Ghi nhận: Trang chủ không có thanh tiêu đề nên toast che một phần câu "Hôm nay cả nhóm ăn gì?" trong lúc hiện. Chưa chạy lại trên app thật với code cuối: câu 401 ở màn khách (chỉ có Jest), 503 khi vào phòng (đã thấy câu "Không kết nối được máy chủ" trên bản chưa chỉnh màu/số dòng), chế độ tối và cỡ chữ hệ thống 200%, toast trong hộp thoại.
+
 ## Chưa chạy / chưa xong
 
 - **AVD phòng chờ:** lỗi mạng khi bắt đầu, bị loại khỏi phòng: **Not run** trên máy.

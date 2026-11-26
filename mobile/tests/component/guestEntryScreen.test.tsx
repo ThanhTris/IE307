@@ -189,3 +189,14 @@ test('failed session recovery stays visible on welcome and reveals help pill on 
   expect(screen.getByRole('button', { name: guestLabel })).toBeDisabled();
   expect(onContinue).not.toHaveBeenCalled();
 });
+
+test('a rejected signup never claims a session expired, because none exists yet', async () => {
+  const onContinue = jest.fn().mockResolvedValue({ messageKey: 'AUTH_REQUIRED' });
+  await render(<GuestEntryScreen onContinue={onContinue} onComplete={jest.fn()} />);
+  await openName();
+  await fireEvent.changeText(screen.getByLabelText('Tên khách'), 'Minh');
+  await fireEvent.press(screen.getByRole('button', { name: 'Tiếp tục' }));
+  expect(await screen.findByText('Chưa tạo được phiên khách')).toBeOnTheScreen();
+  expect(screen.queryByText(/hết hạn/)).toBeNull();
+  expect(screen.getByRole('button', { name: 'Thử lại' })).toBeOnTheScreen();
+});

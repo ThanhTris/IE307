@@ -1,10 +1,11 @@
 import { CONTAINER_STYLE } from '../layout/ScreenContainer';
 import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState, type PropsWithChildren } from 'react';
-import { Animated, PanResponder, Pressable, StyleSheet, View } from 'react-native';
+import { Animated, PanResponder, Pressable, StyleSheet, useWindowDimensions, View } from 'react-native';
 import { Text } from '../forms/ScaledText';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { appTextScales, useAppPreferences } from '../../lib/AppPreferences';
 import { useShellTheme } from '../../lib/useShellTheme';
-import { radii, spacing, typography } from '../../theme/tokens';
+import { darkColors, radii, spacing, typography } from '../../theme/tokens';
 import { AppIcon } from '../icons/AppIcon';
 
 /**
@@ -12,7 +13,7 @@ import { AppIcon } from '../icons/AppIcon';
  * - error (red): the API / server refused or could not be reached;
  * - success (green): something was created, added, edited or deleted;
  * - warning (amber): offline, data may be stale, or the action was blocked and needs another step;
- * - info (soft sage): room exit or non-blocking navigation info floating above page content.
+ * - info (blue): room exit or non-blocking navigation info floating above page content; blue so it never reads as success.
  * Events caused by someone else (invites, accepted requests, results) are NOT toasts: see NotificationBanner.
  */
 export type ToastTone = 'success' | 'error' | 'warning' | 'info';
@@ -43,14 +44,14 @@ export const toastPalette: Record<ToastTone, ToneTokens> = {
   success: { accent: '#16A34A', background: '#ECFDF3', border: '#BBF7D0', text: '#14532D', iconBg: 'rgba(22,163,74,0.12)' },
   error: { accent: '#DC2626', background: '#FEF2F2', border: '#FECACA', text: '#7F1D1D', iconBg: 'rgba(220,38,38,0.12)' },
   warning: { accent: '#D97706', background: '#FFFBEB', border: '#FDE68A', text: '#78350F', iconBg: 'rgba(217,119,6,0.12)' },
-  info: { accent: '#1D6F42', background: '#EEF7F0', border: '#B9DFC3', text: '#14452B', iconBg: 'rgba(29,111,66,0.12)' },
+  info: { accent: '#2563EB', background: '#EFF6FF', border: '#BFDBFE', text: '#1E3A8A', iconBg: 'rgba(37,99,235,0.12)' },
 };
 
 export const darkToastPalette: Record<ToastTone, ToneTokens> = {
   success: { accent: '#4ADE80', background: '#14291D', border: '#1E462D', text: '#ECFDF5', iconBg: 'rgba(74,222,128,0.16)' },
   error: { accent: '#F87171', background: '#2D1619', border: '#542429', text: '#FEF2F2', iconBg: 'rgba(248,113,113,0.16)' },
   warning: { accent: '#FBBF24', background: '#2B2111', border: '#4F3B19', text: '#FFFBEB', iconBg: 'rgba(251,191,36,0.16)' },
-  info: { accent: '#4ADE80', background: '#16271E', border: '#284936', text: '#ECFDF5', iconBg: 'rgba(74,222,128,0.16)' },
+  info: { accent: '#60A5FA', background: '#14213A', border: '#24406B', text: '#EFF6FF', iconBg: 'rgba(96,165,250,0.18)' },
 };
 
 /** Guess a tone from Vietnamese copy when the caller did not pass one. */
@@ -68,6 +69,10 @@ const ToastContext = createContext<ToastApi | null>(null);
 type ToastHosts = { items: ToastItem[]; dismiss: (id: number) => void; top: number; register: (id: number) => () => void };
 const ToastItemsContext = createContext<ToastHosts | null>(null);
 export const useToast = () => useContext(ToastContext);
+
+/** Toasts sit below the screen header, so "Quay lại" stays visible and tappable while one is showing. */
+export const TOAST_HEADER_CLEARANCE = 64;
+const BADGE_SIZE = 28;
 
 let nextId = 0;
 let nextHostId = 0;
@@ -131,7 +136,7 @@ export function ToastHost() {
 function ToastLayer({ hostId }: { hostId: number }) {
   const visible = useContext(ToastItemsContext), insets = useSafeAreaInsets();
   if (!visible || visible.top !== hostId) return null;
-  return <View pointerEvents="box-none" style={[styles.host, { top: insets.top + spacing.sm }]}>
+  return <View pointerEvents="box-none" style={[styles.host, { top: insets.top + TOAST_HEADER_CLEARANCE }]}>
     {visible.items.map(item => <ToastCard key={item.id} item={item} onDone={visible.dismiss} />)}
   </View>;
 }
@@ -141,6 +146,11 @@ function ToastCard({ item, onDone }: { item: ToastItem; onDone: (id: number) => 
   const [progress] = useState(() => new Animated.Value(0));
   const [drag] = useState(() => new Animated.Value(0));
   const palette = (dark ? darkToastPalette : toastPalette)[item.tone];
+  const { textSize } = useAppPreferences(), { fontScale } = useWindowDimensions();
+  // Keeps the icon, the first title line and "×" on one axis at any text size.
+  const titleLine = typography.bodyBold.lineHeight * appTextScales[textSize] * fontScale;
+  const sideOffset = Math.max(0, (titleLine - BADGE_SIZE) / 2);
+  const titleOffset = Math.max(0, (BADGE_SIZE - titleLine) / 2);
   const hide = useCallback(() => {
     Animated.timing(progress, { toValue: 0, duration: 200, useNativeDriver: true }).start(() => onDone(item.id));
   }, [progress, onDone, item.id]);
@@ -164,25 +174,27 @@ function ToastCard({ item, onDone }: { item: ToastItem; onDone: (id: number) => 
   ]}>
     <Pressable testID={`toast-${item.tone}`} accessibilityRole="alert" accessibilityLiveRegion="polite"
       onPress={() => { item.onPress?.(); hide(); }} style={styles.row}>
-      <View style={[styles.iconBadge, { backgroundColor: palette.iconBg }]}>
-        <AppIcon name={item.tone} size={20} color={palette.accent} />
+      <View style={[styles.badge, { backgroundColor: palette.iconBg, marginTop: sideOffset }]}>
+        <AppIcon name={item.tone} size={18} color={palette.accent} />
       </View>
       <View style={styles.texts}>
-        <Text style={[styles.title, { color: palette.text }]}>{item.title}</Text>
-        {item.message ? <Text style={[styles.message, { color: palette.text }]}>{item.message}</Text> : null}
+        <View style={styles.header}>
+          <Text style={[styles.title, styles.headerTitle, { color: palette.text, marginTop: titleOffset }]}>{item.title}</Text>
+          <Pressable accessibilityRole="button" accessibilityLabel="Đóng thông báo" hitSlop={8}
+            onPress={event => { event.stopPropagation?.(); hide(); }}
+            style={({ pressed }) => [styles.closeBtn, { marginTop: sideOffset, opacity: pressed ? 0.6 : 0.8 }]}>
+            <AppIcon name="close" size={16} color={palette.text} />
+          </Pressable>
+        </View>
+        {item.message ? <Text style={[styles.body, { color: dark ? '#CBD5E1' : '#4B5563' }]}>{item.message}</Text> : null}
+        {item.actionLabel && item.onAction ? (
+          <Pressable accessibilityRole="button" accessibilityLabel={item.actionAccessibilityLabel ?? item.actionLabel} hitSlop={6}
+            onPress={event => { event.stopPropagation?.(); item.onAction?.(); hide(); }}
+            style={[styles.cardAction, { borderColor: palette.accent, backgroundColor: dark ? darkColors.surface : '#FFFFFF' }]}>
+            <Text style={[styles.cardActionText, { color: item.tone === 'error' ? palette.accent : palette.text }]}>{item.actionLabel}</Text>
+          </Pressable>
+        ) : null}
       </View>
-      {item.actionLabel && item.onAction ? (
-        <Pressable accessibilityRole="button" accessibilityLabel={item.actionAccessibilityLabel ?? item.actionLabel}
-          onPress={event => { event.stopPropagation?.(); item.onAction?.(); hide(); }}
-          style={[styles.actionChip, { borderColor: palette.border, backgroundColor: palette.iconBg }]}>
-          <Text style={[styles.actionText, { color: palette.accent }]}>{item.actionLabel}</Text>
-        </Pressable>
-      ) : null}
-      <Pressable accessibilityRole="button" accessibilityLabel="Đóng thông báo" hitSlop={8}
-        onPress={event => { event.stopPropagation?.(); hide(); }}
-        style={({ pressed }) => [styles.closeBtn, { opacity: pressed ? 0.6 : 0.8 }]}>
-        <AppIcon name="close" size={16} color={palette.text} />
-      </Pressable>
     </Pressable>
   </Animated.View>;
 }
@@ -241,9 +253,15 @@ const styles = StyleSheet.create({
   card: { ...CONTAINER_STYLE, borderRadius: radii.xl, borderWidth: 1, shadowColor: '#000', shadowOpacity: 0.16, shadowRadius: 14, shadowOffset: { width: 0, height: 6 }, elevation: 8 },
   inline: { paddingVertical: spacing.md, paddingHorizontal: spacing.md, elevation: 0, shadowOpacity: 0 },
   inlineRow: { flexDirection: 'row', alignItems: 'center', gap: spacing.md },
-  row: { flexDirection: 'row', alignItems: 'center', gap: spacing.sm, paddingVertical: spacing.md, paddingLeft: spacing.md, paddingRight: spacing.sm },
+  row: { flexDirection: 'row', alignItems: 'flex-start', gap: spacing.md, paddingVertical: spacing.md, paddingLeft: spacing.md, paddingRight: spacing.sm },
   iconBadge: { width: 34, height: 34, borderRadius: 17, alignItems: 'center', justifyContent: 'center' },
+  badge: { width: BADGE_SIZE, height: BADGE_SIZE, borderRadius: BADGE_SIZE / 2, alignItems: 'center', justifyContent: 'center' },
   texts: { flex: 1, minWidth: 0, gap: 2 },
+  header: { flexDirection: 'row', alignItems: 'flex-start', gap: spacing.sm },
+  headerTitle: { flex: 1 },
+  body: { ...typography.caption, fontSize: 13, lineHeight: 19, paddingRight: spacing.sm },
+  cardAction: { alignSelf: 'flex-start', marginTop: spacing.sm, minHeight: 36, paddingHorizontal: spacing.lg, paddingVertical: 6, borderRadius: radii.pill, borderWidth: 1, justifyContent: 'center' },
+  cardActionText: { ...typography.caption, fontSize: 13, lineHeight: 19, fontFamily: 'InterSemiBold' },
   title: { ...typography.bodyBold },
   message: { ...typography.caption, lineHeight: 18 },
   actionChip: { paddingHorizontal: spacing.md, minHeight: 32, borderRadius: radii.pill, borderWidth: 1, alignItems: 'center', justifyContent: 'center' },

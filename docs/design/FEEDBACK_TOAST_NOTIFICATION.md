@@ -6,7 +6,7 @@ Chốt với chủ dự án ngày 2026-11-12. Áp dụng cho mọi màn của ap
 
 | Loại | Khi nào dùng | Hiển thị | Ví dụ |
 |---|---|---|---|
-| **Toast** | Kết quả của chính thao tác người dùng vừa làm: lỗi API/BE, hoặc tạo/thêm/sửa/xóa thành công; cảnh báo ngoại tuyến hay dữ liệu cũ | Trượt xuống từ trên cùng, tự tắt sau 3 giây, chạm để tắt | "Đã gửi lời mời kết bạn", "Chưa gửi được phiếu", "Đang ngoại tuyến" |
+| **Toast** | Kết quả của chính thao tác người dùng vừa làm: lỗi API/BE, hoặc tạo/thêm/sửa/xóa thành công; cảnh báo ngoại tuyến hay dữ liệu cũ | Nổi dưới thanh tiêu đề (không đẩy nội dung), tự tắt; chạm, vuốt lên hoặc bấm × để tắt | "Đã gửi lời mời kết bạn", "Chưa gửi được phiếu", "Đang ngoại tuyến" |
 | **Thông báo** | Sự kiện do **người khác** gây ra | Hộp thư + push; nếu app đang mở thì hiện thêm banner thông báo (nền trắng, icon chuông, 5 giây), chạm để mở nơi liên quan | Lời mời kết bạn, được chấp nhận kết bạn, mời vào phòng, phòng bắt đầu, có kết quả, phòng bị hủy |
 | **Trạng thái trong trang** | Tình trạng của màn hình, không phải kết quả một thao tác | Chữ căn giữa trên trang (không khung, không toast), skeleton khi đang tải, nút hành động nếu cần | "Phòng đã kết thúc", "Chưa có bữa ăn đã lưu", "Cần cấp quyền vị trí" |
 
@@ -17,7 +17,19 @@ Chốt với chủ dự án ngày 2026-11-12. Áp dụng cho mọi màn của ap
 | `error` | Đỏ `#DC2626` | Máy chủ từ chối, lỗi mạng, không lưu/gửi được |
 | `success` | Xanh lá `#16A34A` | Tạo, thêm, sửa, xóa thành công |
 | `warning` | Vàng `#D97706` | Ngoại tuyến, dữ liệu có thể đã cũ, thao tác bị chặn cần bước khác (form chưa hợp lệ, phòng vừa thay đổi) |
-| `info` | Xanh dương | Chỉ giữ để tương thích; không dùng cho code mới |
+| `info` | Xanh dương `#2563EB` | Báo vì sao bị chuyển màn (phòng bị hủy, hết hạn) và thông tin không chặn thao tác; không dùng cho kết quả thao tác thành công |
+
+Nền toast tô theo tone ở cả chế độ sáng và tối. Chữ trên trang của `StatusNotice` tone `info` vẫn dùng màu xanh lá của app.
+
+## Bố cục toast (Trí duyệt ngày 2026-11-26, GM-65)
+
+- Hàng đầu: icon, tiêu đề, nút × cùng canh trên.
+- Mô tả nằm dưới tiêu đề, thẳng lề trái với tiêu đề; chữ xám trung tính.
+- Nút hành động (ví dụ "Báo lỗi") nằm riêng một hàng dưới mô tả, dạng viền.
+- Toast chỉ có tiêu đề giữ một hàng.
+- Hiện đủ tiêu đề và mô tả, **không giới hạn số dòng, không cắt "…"**; vì vậy viết nội dung ngắn gọn.
+- Vị trí: `insets.top + TOAST_HEADER_CLEARANCE` (64dp), chừa thanh tiêu đề và nút Quay lại.
+- Thời lượng: có nút hành động 6 giây; lỗi, cảnh báo, thông tin có mô tả 4,5 giây; còn lại 3 giây; lý do ở màn đích (`FailureNotice`) 8 giây.
 
 Mọi chỗ gọi toast phải truyền `tone` tường minh. `toneFromText` chỉ còn là đường dự phòng. Toast không còn tone `notification`: sự kiện do người khác gây ra dùng banner riêng (mục dưới).
 

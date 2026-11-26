@@ -44,7 +44,8 @@ export function StatusNotice({
       <View style={styles.action}>{button}</View>
     </View>;
   }
-  const accent = tone ? toastPalette[tone].accent : activeColors.muted;
+  // Page states keep the app green for "info"; the blue belongs to the floating toast only.
+  const accent = !tone ? activeColors.muted : tone === 'info' ? activeColors.primary : toastPalette[tone].accent;
   return <View accessibilityRole="summary" accessibilityLiveRegion="polite" style={styles.root}>
     {tone ? <AppIcon name={tone} size={22} color={accent} /> : null}
     <Text accessibilityRole="header" style={[styles.plainTitle, { color: activeColors.text }]}>{title}</Text>

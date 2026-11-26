@@ -118,7 +118,11 @@ export function GuestEntryScreen({ onContinue, onComplete, session, onSignIn, on
   };
 
   const needsRestore = session?.issue === 'restore-unavailable' || session?.issue === 'session-recovery-required';
-  const description = failure ? describeError({ messageKey: failure.errorCode }) : undefined;
+  // There is no session yet on this screen, so a rejected signup must not say that one has expired.
+  const signupRejected = failure?.errorCode === 'AUTH_REQUIRED' && failure.action === 'create_guest';
+  const description = !failure ? undefined : signupRejected
+    ? { ...describeError({ messageKey: failure.errorCode }), title: 'Chưa tạo được phiên khách', message: 'Hãy thử lại.', action: 'retry' as const }
+    : describeError({ messageKey: failure.errorCode });
   const showProgressiveHelp = (code?: ErrorCode) =>
     code === 'MALFORMED_RESPONSE' || code === 'CONTRACT_MISMATCH' || failureCount >= 2;
   const blockedContext: ReportContext = failure
