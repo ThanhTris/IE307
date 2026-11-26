@@ -53,7 +53,7 @@ export type HomeScreenProps = {
 
 
 export function HomeScreen({ repository, liveSession, activeRoom, onReturnToRoom, roomRevision, onCreate, onJoin, onResume, onFriends, onQuickInvite, onDevResult, onDevRoundTwo, onDevFlashcard, onDevIcons, onHistory, onInbox, onProfile, onTutorial }: HomeScreenProps) {
-  const { colors } = useShellTheme();
+  const { colors, dark } = useShellTheme();
   const { unread: unreadInbox } = useInboxBadge();
   const { textStyle } = useAppFonts();
   const insets = useSafeAreaInsets();
@@ -166,7 +166,7 @@ export function HomeScreen({ repository, liveSession, activeRoom, onReturnToRoom
         <Text accessibilityRole="header" style={[homeStyles.title, { color: colors.text }, textStyle(700)]}>{'Hôm nay\ncả nhóm ăn gì?'}</Text>
       </View>
 
-      <BrandBanner colors={colors} titleTextStyle={textStyle(700)} illustrationSource={require('../../../../assets/brand/home/friends-dining-slot.png')} />
+      <BrandBanner colors={colors} dark={dark} titleTextStyle={textStyle(700)} illustrationSource={require('../../../../assets/brand/home/friends-dining-slot.png')} />
 
       <View style={homeStyles.entryGroup}>
       <View style={homeStyles.actions}>

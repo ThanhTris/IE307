@@ -7,8 +7,10 @@ export function BrandBanner({
   title = 'Hợp gu cả nhóm,\nvui trọn bữa ăn.',
   titleTextStyle,
   illustrationSource,
+  dark = false,
   colors,
-}: ComponentThemeProps & { title?: string; titleTextStyle?: TextStyle; illustrationSource?: ImageSourcePropType }) {
+}: ComponentThemeProps & { title?: string; titleTextStyle?: TextStyle; illustrationSource?: ImageSourcePropType; dark?: boolean }) {
+  const fullIllustration = require('../../../../assets/brand/friends-dining.png');
   return (
     <View style={[styles.brandBanner, { backgroundColor: colors?.warm }]}>
       <Text accessibilityRole="summary" style={[styles.brandBannerTitle, { color: colors?.text }, titleTextStyle]}>
@@ -16,10 +18,10 @@ export function BrandBanner({
       </Text>
       <Image
         testID="brand-banner-illustration"
-        source={illustrationSource ?? require('../../../../assets/brand/friends-dining.png')}
+        source={dark ? fullIllustration : illustrationSource ?? fullIllustration}
         accessible={false}
-        resizeMode="contain"
-        style={[styles.brandBannerImage, illustrationSource ? { width: 148 } : undefined]}
+        resizeMode={dark ? 'cover' : 'contain'}
+        style={[styles.brandBannerImage, illustrationSource && !dark ? styles.lightSlot : undefined]}
       />
     </View>
   );
@@ -36,4 +38,5 @@ const styles = StyleSheet.create({
   },
   brandBannerTitle: { flex: 1, fontSize: 16, lineHeight: 22, fontWeight: '700' },
   brandBannerImage: { width: '46%', height: 116, alignSelf: 'center' },
+  lightSlot: { width: 148 },
 });

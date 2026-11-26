@@ -62,7 +62,7 @@ type Props = {
 };
 
 export function DeleteAccountScreen({ user, deletion, onBack, onSignInAgain }: Props) {
-  const { colors } = useShellTheme();
+  const { colors, dark } = useShellTheme();
   const [error, setError] = useState<ApiError>();
   const [leaving, setLeaving] = useState(false);
   const loginRequired = error?.messageKey === 'AUTH_REQUIRED';
@@ -131,7 +131,8 @@ export function DeleteAccountScreen({ user, deletion, onBack, onSignInAgain }: P
     <Controller control={form.control} name="confirmation" render={({ field, fieldState }) => (
       <FormField colors={colors} label="Nhập XÓA để xác nhận" placeholder={confirmationPhrase} value={field.value}
         onChangeText={field.onChange} autoCapitalize="characters" autoCorrect={false} maxLength={24}
-        editable={!busy && !loginRequired} error={fieldState.error?.message} />
+        editable={!busy && !loginRequired} error={fieldState.error?.message}
+        inputStyle={{ minHeight: 54, backgroundColor: dark ? colors.soft : '#FFFFFF' }} />
     )} />
     {needsPassword ? <Controller control={form.control} name="password" render={({ field, fieldState }) => (
       <PasswordField label="Mật khẩu hiện tại" value={field.value} onChange={field.onChange}
