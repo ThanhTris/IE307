@@ -52,6 +52,7 @@ export function AccountAccessScreen({ flow, account, isGuest, recoveryForCurrent
   const signingIn = flow === 'sign-in';
   const signingUp = flow === 'sign-up';
   const hero = stage === 'details' && (signingIn || signingUp) ? flow : undefined;
+  const hasAccountConflict = error?.details?.reason === 'email_exists' || error?.details?.reason === 'user_already_exists';
   const inputStyle = { minHeight: 54, backgroundColor: dark ? colors.soft : '#FFFFFF' };
 
   useEffect(() => () => clearTimeout(noticeTimer.current), []);
@@ -124,8 +125,8 @@ export function AccountAccessScreen({ flow, account, isGuest, recoveryForCurrent
     setEmail(address);
     if (signingUp) return void run('Đang gửi mã…', () => account.signUp({ email: address, password, displayName: name.trim() }),
       () => goTo('code'), showSignupError);
-    if (linking) return goTo('password');
-    void run('Đang gửi mã…', () => sendRecoveryCode(address), () => goTo('code'), showRequestError);
+    const request = linking ? () => account.linkEmail(address) : () => sendRecoveryCode(address);
+    void run('Đang gửi mã…', request, () => goTo('code'), showRequestError);
   }
 
   function showSignupError(error: ApiError) {
@@ -160,7 +161,7 @@ export function AccountAccessScreen({ flow, account, isGuest, recoveryForCurrent
     const controller = proof.current ??= new AbortController();
     void run('Đang xác minh…', () => account.verifyCode(email, code,
       linking ? 'email_change' : recovery ? 'recovery' : 'signup', controller.signal),
-      recovery ? () => goTo('password') : linking ? () => goTo('done') : onComplete, () => setCode(''));
+    recovery || linking ? () => goTo('password') : onComplete, () => setCode(''));
   }
 
   function savePassword() {
@@ -172,15 +173,6 @@ export function AccountAccessScreen({ flow, account, isGuest, recoveryForCurrent
     clearError();
     setValidation('');
     if (Object.values(invalid).some(Boolean)) return;
-    if (linking) {
-      void run('Đang gửi mã…', () => account.linkEmail(email, password), () => goTo('code'), failure => {
-        if (failure.details?.reason === 'email_exists' || failure.details?.reason === 'user_already_exists') {
-          goTo('details');
-          setFieldErrors({ email: accountErrorMessage(failure) });
-        } else showSignupError(failure);
-      });
-      return;
-    }
     if (!proof.current) return setValidation('Mã xác minh đã hết hạn. Hãy bắt đầu lại.');
     const { signal } = proof.current;
     void run('Đang lưu mật khẩu…', () => account.setPassword(password, signal), () => goTo('done'), error => {
@@ -193,8 +185,8 @@ export function AccountAccessScreen({ flow, account, isGuest, recoveryForCurrent
   }
 
   const title = stage === 'code' ? recovery ? 'Mã đặt lại mật khẩu' : 'Xác minh email'
-    : stage === 'password' ? 'Đặt mật khẩu mới' : stage === 'done' ? linking ? 'Đã liên kết email' : 'Đã lưu mật khẩu' : titles[flow];
-  const detailLabel = signingIn ? 'Đăng nhập' : signingUp ? 'Tạo tài khoản' : linking ? 'Tiếp tục' : 'Gửi mã xác minh';
+    : stage === 'password' ? 'Đặt mật khẩu mới' : stage === 'done' ? 'Đã lưu mật khẩu' : titles[flow];
+  const detailLabel = signingIn ? 'Đăng nhập' : signingUp ? 'Tạo tài khoản' : 'Gửi mã xác minh';
   const showExistingAccount = signingIn || signingUp || linking;
   return <AccountFormFrame title={title} hero={hero} onBack={back} busy={busy} error={error}>
     {validation ? <Text accessibilityRole="alert" style={[typography.body, { color: colors.danger }]}>{validation}</Text> : null}
@@ -202,7 +194,7 @@ export function AccountAccessScreen({ flow, account, isGuest, recoveryForCurrent
       {recovery || linking || (signingIn && isGuest) ? <Text style={[typography.body, { color: colors.text }]}>
         {recovery ? recoveryForCurrentAccount ? 'Nhập email của tài khoản đang đăng nhập để nhận mã đặt lại mật khẩu.'
           : 'Nhập email để nhận mã đặt lại mật khẩu.' : linking
-          ? 'Đặt mật khẩu rồi xác minh email để giữ hồ sơ, bạn bè và lịch sử của phiên khách này.'
+          ? 'Xác minh email rồi đặt mật khẩu để giữ hồ sơ, bạn bè và lịch sử của phiên khách này.'
           : 'Đăng nhập sẽ chuyển sang dữ liệu của tài khoản đó. Để giữ dữ liệu phiên khách, hãy liên kết email trong Cá nhân.'}
       </Text> : null}
       {signingUp ? <FormField label="Tên hiển thị" value={name} onChangeText={value => { setName(value); clearFieldError('name'); }}
@@ -224,6 +216,7 @@ export function AccountAccessScreen({ flow, account, isGuest, recoveryForCurrent
       {showExistingAccount ? <AppButton variant="quiet" disabled={busy} colors={colors}
         label={signingIn ? isGuest ? 'Liên kết email cho phiên khách' : 'Chưa có tài khoản? Đăng ký' : 'Đã có tài khoản? Đăng nhập'}
         onPress={() => navigate(signingIn ? isGuest ? 'link' : 'sign-up' : 'sign-in')} /> : null}
+      {hasAccountConflict && linking ? <Text style={[typography.caption, { color: colors.muted }]}>Dữ liệu của phiên khách vẫn được giữ trên thiết bị.</Text> : null}
     </> : null}
     {stage === 'code' ? <>
       <View style={styles.codeIntro}>
@@ -248,8 +241,7 @@ export function AccountAccessScreen({ flow, account, isGuest, recoveryForCurrent
         error={fieldErrors.password} disabled={busy} isNew />
       <PasswordField label="Nhập lại mật khẩu mới" value={confirmation} onChange={value => { setConfirmation(value); clearFieldError('confirmation'); }}
         error={fieldErrors.confirmation} disabled={busy} isNew />
-      {linking ? <Text style={[typography.body, { color: colors.muted }]}>Email chỉ được liên kết sau khi bạn nhập đúng mã xác minh.</Text> : null}
-      <AppButton label={pending ?? (linking ? 'Gửi mã xác minh' : 'Lưu mật khẩu')} loading={busy} onPress={savePassword} colors={colors} />
+      <AppButton label={pending ?? 'Lưu mật khẩu'} loading={busy} onPress={savePassword} colors={colors} />
     </> : null}
     {stage === 'done' ? <>
       <Text accessibilityLiveRegion="polite" style={[typography.body, { color: colors.text }]}>

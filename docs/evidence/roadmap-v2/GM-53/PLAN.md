@@ -10,7 +10,7 @@ Tuấn thực hiện, Trí review. Gate live 26/11/2026 trả `READY_TO_CLAIM`.
 | 2 | Nối API GM-49, xác minh mật khẩu email và identity, giữ idempotency khi retry, dọn phiên sau ACK. Kiểm contract, race, lỗi và dọn local. |
 | 3 | Nối Hồ sơ, form xác nhận, pending/Back/error và liên kết pháp lý. Kiểm route sản phẩm, tương tác và điều hướng. |
 | 4 | Chạy kiểm tra tự động, ghi CHECKS, HANDOFF, FIGMA_PARITY, chuẩn bị môi trường và ca kiểm Expo. |
-| 5 | Tuấn kiểm trên Expo Go Android AVD nối QA thật. Bổ sung kết quả, ảnh và commit evidence sau khi có kết quả thực tế. |
+| 5 | Tuấn kiểm Expo Go trên điện thoại Android. Trí thực hiện lượt AVD nối QA thật. Bổ sung kết quả và ảnh theo từng thiết bị. |
 
 Đầu vào trên main: GM-35 qua PR #182 (`d9332f7`), GM-49 qua PR #205
 (`7de174a`), GM-50 qua PR #219 (`7996126`). [Task](../../../../tasks/backlog/GM-53.md)

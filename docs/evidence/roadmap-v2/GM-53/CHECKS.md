@@ -36,13 +36,14 @@ trả 401 cho POST không bearer, `qa:verify` đạt và runner HTTP GM-49 đạ
 
 ### Hồi quy sau lượt Expo Go trên điện thoại thật
 
-- QA GoTrue và Mailpit xác nhận gửi email kèm mật khẩu vẫn giữ phiên
+- Ở revision `4031bfb`, QA GoTrue và Mailpit xác nhận gửi email kèm mật khẩu vẫn giữ phiên
   khách, địa chỉ chưa đăng nhập được trước OTP. OTP chuyển đúng UUID
   sang tài khoản email và đăng nhập được bằng mật khẩu mới. Sau khi
   đóng riêng phiên xác minh mật khẩu, bearer của app vẫn xóa được tài
   khoản và nhận lại cùng ACK khi gửi lại UUID.
-- Jest Auth transport, Auth session và xóa tài khoản đạt 89/89 ca. Bộ UI
-  luồng truy cập tài khoản đạt, gồm quay lại từ màn đặt mật khẩu khách.
+- Jest Auth transport, Auth session và xóa tài khoản đạt 89/89 ca trước
+  lần khôi phục thứ tự liên kết. Bộ UI luồng truy cập tài khoản đạt trên
+  revision tương ứng.
 - Jest quyền app đạt 9/9 ca. Các bộ UI xóa tài khoản, Trang chủ,
   component chung và route khách đạt 61/61 ca khi chạy lại với timeout
   30 giây trên Windows. Lượt đầu dùng timeout mặc định có ca timeout
@@ -53,6 +54,23 @@ trả 401 cho POST không bearer, `qa:verify` đạt và runner HTTP GM-49 đạ
   cấu hình Git subprocess và quyền tạo symlink Windows.
 - Chờ Tuấn kiểm lại ca hồi quy trên Expo Go điện thoại thật và Trí
   kiểm lượt AVD. Xem danh sách trong [HANDOFF](HANDOFF.md).
+
+### Kiểm lại sau khi khôi phục thứ tự OTP trước mật khẩu
+
+- QA `gm53-1126`: GoTrue và Mailpit xác nhận OTP liên kết đúng UUID
+  khi chưa đặt mật khẩu. Phiên vừa liên kết vẫn gọi được Auth, còn
+  đăng nhập bằng mật khẩu bị từ chối cho đến khi có mật khẩu.
+- Khôi phục bằng OTP đặt được mật khẩu cho cùng UUID. Đăng nhập, xác
+  minh lại mật khẩu và xóa tài khoản qua Edge đều đạt. Đăng nhập sau
+  xóa bị từ chối.
+- Lượt đầu gặp HTTP 504 lúc thử Auth. Lượt tiếp theo hoàn thành trên
+  cùng stack với tài khoản QA mới. Trạng thái trên thiết bị và ảnh đối
+  chiếu vẫn ghi riêng sau lượt kiểm thực tế.
+- Jest đạt 108/108 ca trong 6 bộ Auth và tài khoản, gồm quay lại sau
+  OTP mà vẫn giữ phiên liên kết. TypeScript, ESLint trên các tệp sửa
+  và kiểm kiến trúc đạt.
+- Gate `--verify-outputs` với `origin/main` ở `35c60f1` trả
+  `READY_FOR_MERGE_REVIEW`. Lượt AVD và ảnh đối chiếu vẫn chờ Trí.
 
 Lượt full Jest đầu gặp timeout ở màn kết quả và dừng sau khi source
 thay đổi. Bộ màn kết quả đã đạt ở lượt kiểm tập trung, chạy với

@@ -98,25 +98,31 @@ test('linking highlights an invalid email without calling Auth', async () => {
   await render(<AccountAccessScreen flow="link" account={{ linkEmail } as unknown as AccountService}
     isGuest onBack={jest.fn()} onNavigate={jest.fn()} onComplete={jest.fn()} />);
   await fireEvent.changeText(screen.getByLabelText('Email'), 'sai-email');
-  await fireEvent.press(screen.getByRole('button', { name: 'Tiếp tục' }));
+  await fireEvent.press(screen.getByRole('button', { name: 'Gửi mã xác minh' }));
   expectFieldError('Email', 'Nhập địa chỉ email hợp lệ.');
   expect(linkEmail).not.toHaveBeenCalled();
 });
 
-test('back from setting a guest password cancels without changing the guest account', async () => {
-  const linkEmail = jest.fn();
-  const verifyCode = jest.fn();
+test('a guest verifies the link code before opening the password screen and can leave without saving', async () => {
+  const linkEmail = jest.fn().mockResolvedValue({ ok: true, data: undefined });
+  const verifyCode = jest.fn().mockResolvedValue({ ok: true, data: undefined });
+  const setPassword = jest.fn();
   const onBack = jest.fn();
-  await render(<AccountAccessScreen flow="link" account={{ linkEmail, verifyCode } as unknown as AccountService}
+  const account = { linkEmail, verifyCode, setPassword, discardPasswordProof: jest.fn() } as unknown as AccountService;
+  await render(<AccountAccessScreen flow="link" account={account}
     isGuest onBack={onBack} onNavigate={jest.fn()} onComplete={jest.fn()} />);
   await fireEvent.changeText(screen.getByLabelText('Email'), 'tuan@example.test');
-  await fireEvent.press(screen.getByRole('button', { name: 'Tiếp tục' }));
-  expect(screen.getByText('Đặt mật khẩu mới')).toBeOnTheScreen();
-  await fireEvent.changeText(screen.getByLabelText('Mật khẩu mới'), 'Fixture!123');
+  await fireEvent.press(screen.getByRole('button', { name: 'Gửi mã xác minh' }));
+  expect(linkEmail).toHaveBeenCalledWith('tuan@example.test');
+  expect(screen.queryByLabelText('Mật khẩu mới')).toBeNull();
+
+  await fireEvent.changeText(screen.getByLabelText('Mã xác minh'), '123456');
+  await fireEvent.press(screen.getByRole('button', { name: 'Xác minh mã' }));
+  expect(verifyCode).toHaveBeenCalledWith('tuan@example.test', '123456', 'email_change', expect.any(AbortSignal));
+  expect(screen.getByLabelText('Mật khẩu mới')).toBeOnTheScreen();
   await fireEvent.press(screen.getByRole('button', { name: 'Quay lại' }));
   expect(onBack).toHaveBeenCalledTimes(1);
-  expect(linkEmail).not.toHaveBeenCalled();
-  expect(verifyCode).not.toHaveBeenCalled();
+  expect(setPassword).not.toHaveBeenCalled();
 });
 
 test('sign-in shows credential rejection as a toast without marking either field', async () => {

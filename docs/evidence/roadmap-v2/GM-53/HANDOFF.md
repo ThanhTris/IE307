@@ -21,9 +21,9 @@ base `d7b89f2`. Xem [kế hoạch](PLAN.md), [kết quả kiểm](CHECKS.md) và
   GM-49 thu hồi trong giao dịch.
 - Tham chiếu upstream: [GM-35](../GM-35/HANDOFF.md),
   [GM-49](../GM-49/HANDOFF.md) và [GM-50](../GM-50/HANDOFF.md).
-- Liên kết khách chuyển sang thứ tự email → đặt mật khẩu → xác minh OTP.
-  Quay lại từ màn đặt mật khẩu về Cá nhân mà chưa gửi yêu cầu liên kết.
-  GoTrue chỉ chuyển cùng UUID sang tài khoản email sau khi xác minh OTP.
+- Liên kết khách theo thứ tự email → xác minh OTP → đặt mật khẩu.
+  GoTrue chuyển cùng UUID sang tài khoản email ngay sau OTP. Quay lại từ
+  màn đặt mật khẩu giữ nguyên liên kết và phiên hiện tại.
 
 ## Bước 5 — kiểm Expo Go trên AVD
 
@@ -109,9 +109,9 @@ Ca hồi quy sau lượt Expo Go trên điện thoại thật:
 - Cho lượt kiểm lại trên điện thoại QA ngày 26/11/2026, cờ xin quyền của
   bản cài đặt được đặt lại. Lần đăng nhập kế tiếp phải thấy màn xin quyền.
   Các quyền Android đã cấp cho Expo Go vẫn hiển thị là đã cấp.
-- Với khách, vào Liên kết email, nhập email rồi quay lại từ màn Đặt mật khẩu
-  mới. Kiểm Cá nhân vẫn là Khách. Thử lại trọn luồng bằng OTP và đăng
-  nhập bằng mật khẩu vừa đặt.
+- Với khách, nhập email rồi xác minh OTP. Quay lại từ màn Đặt mật khẩu mới,
+  kiểm Cá nhân có email đã liên kết. Kiểm trên một khách QA khác rằng lưu
+  mật khẩu sau OTP cho phép đăng nhập bằng mật khẩu vừa đặt.
 - Với tài khoản email, nhập cùng một giá trị ở cả ba ô Đổi mật khẩu. Nếu
   mật khẩu hiện tại nhập sai, ô hiện tại báo sai. Nếu đúng, ô mật khẩu mới
   yêu cầu chọn giá trị khác.
@@ -122,19 +122,17 @@ ca mô phỏng và ghi riêng các ca Auth/REST/Edge thật. Bổ sung commit/bu
 Android/AVD, SDK Expo, run ID, thao tác, expected/actual và ảnh vào
 [CHECKS](CHECKS.md), [FIGMA_PARITY](FIGMA_PARITY.md).
 
-### Thứ tự liên kết email chờ Trí quyết định
+### Tài khoản đã liên kết email nhưng chưa đặt mật khẩu
 
-Yêu cầu từ lượt kiểm Expo Go là **nhập email → xác minh OTP → đặt mật khẩu**.
-Nếu người dùng bấm quay lại từ màn đặt mật khẩu, khách phải giữ nguyên UUID,
-phiên và dữ liệu, đồng thời email vẫn chưa được liên kết. Với GoTrue hiện
-hành, xác minh OTP loại `email_change` cho khách đã hoàn tất liên kết và
-chuyển ngay sang tài khoản email. [Tài liệu Supabase Auth](https://supabase.com/docs/guides/auth/auth-anonymous#link-an-email--phone-identity)
+Xác minh OTP `email_change` trên GoTrue hoàn tất liên kết và giữ nguyên
+UUID. Nếu người dùng quay lại hoặc đóng app ở màn Đặt mật khẩu mới, phiên
+đã liên kết vẫn dùng được khi còn hiệu lực. Đăng nhập bằng mật khẩu và
+xác nhận mật khẩu khi xóa tài khoản cần mật khẩu đã đặt.
+[Tài liệu Supabase Auth](https://supabase.com/docs/guides/auth/auth-anonymous#link-an-email--phone-identity)
 
-Luồng hiện tại tiếp tục đặt mật khẩu trước OTP. Khi review PR, nhờ Trí
-quyết định có duyệt thay đổi hợp đồng Auth để xác minh OTP riêng và chỉ
-hoàn tất liên kết sau khi lưu mật khẩu hay không. Nếu duyệt, ca nghiệm thu
-gồm OTP sai hoặc hết hạn, quay lại hoặc đóng app sau OTP, và hoàn tất liên
-kết đúng UUID rồi đăng nhập bằng mật khẩu mới.
+Dùng **Quên mật khẩu** với email đã liên kết để nhận OTP khôi phục, đặt
+mật khẩu, rồi đăng nhập hoặc xác nhận xóa tài khoản bằng mật khẩu mới.
+Đưa tình huống bỏ qua bước đặt mật khẩu vào PR để Trí xem khi review.
 
 Khi xong, dừng Expo/Edge. Với Edge được mở trong terminal, nhấn Ctrl+C
 ở terminal Edge. Với run `gm53-1126`, PID của launcher đã lưu trong

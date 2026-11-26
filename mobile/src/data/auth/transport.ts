@@ -178,12 +178,10 @@ export class AuthHttpTransport implements AuthPort {
     return this.accountTokens(await this.request('verify', 'POST', { email, token: code, type: kind }));
   }
 
-  async linkEmail(token: string, emailInput: string, password?: string): Promise<SessionUser> {
+  async linkEmail(token: string, emailInput: string): Promise<SessionUser> {
     const email = normalizeEmail(emailInput);
-    if (!validEmail(email) || (password !== undefined && !validNewPassword(password))) {
-      throw new AuthFailure({ messageKey: 'INVALID_INPUT' });
-    }
-    return userDto(await this.request('user', 'PUT', { email, ...(password === undefined ? {} : { password }) }, token));
+    if (!validEmail(email)) throw new AuthFailure({ messageKey: 'INVALID_INPUT' });
+    return userDto(await this.request('user', 'PUT', { email }, token));
   }
 
   async accountProfile(token: string): Promise<AccountProfile> {
