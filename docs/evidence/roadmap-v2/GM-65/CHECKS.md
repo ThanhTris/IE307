@@ -72,12 +72,16 @@ Thay đổi: `Toast.tsx` (bố cục, vị trí `insets.top + 64`, không giới
 | --- | --- | --- |
 | Lưu khẩu vị, 503 một lần | App tự gửi lại cùng yêu cầu, lưu thành công, về Phòng chờ, không báo lỗi (trước đây hiện "Chưa lưu được thay đổi") | — |
 | Lưu khẩu vị, 503 liên tục | Toast "Chưa rõ kết quả lưu. Hãy thử lại." dưới tiêu đề, Quay lại không bị che, lựa chọn được giữ | 04 |
-| Rời phòng, 503 | Toast "Không kết nối được máy chủ" dưới tiêu đề, ở lại phòng. Lần chụp trước không thấy toast là do chụp lệch thời điểm | 05 (khung hình từ quay màn hình) |
+| Rời phòng, 503 | **Chưa đạt hẳn: thấy toast ở 1/2 lần.** Lần 1: hai ảnh chụp sau khi bấm không có toast. Lần 2: toast "Không kết nối được máy chủ" dưới tiêu đề, ở lại phòng; bản quay bắt đầu trễ (codec phải thử lại) nên chỉ bắt được đoạn cuối. Chưa rõ vì sao lần 1 không thấy (có thể do chuyển lớp toast từ hộp thoại xác nhận về màn chính) | 05 (khung hình từ quay màn hình) |
 | Chủ phòng hủy phòng | Toast xanh dương; quay màn hình thấy khoảng 7 s (12,5–19,5 s), gồm khoảng 2 s nền trắng lúc chuyển màn và khoảng 5 s trên Trang chủ. Đồng hồ chạy từ trước khi Trang chủ hiện, giải thích số đo khoảng 3 s với bản cũ | 06 |
 
 Ghi nhận: Trang chủ không có thanh tiêu đề nên toast che một phần câu "Hôm nay cả nhóm ăn gì?" trong lúc hiện. Chưa chạy lại trên app thật với code cuối: câu 401 ở màn khách (chỉ có Jest), 503 khi vào phòng (đã thấy câu "Không kết nối được máy chủ" trên bản chưa chỉnh màu/số dòng), chế độ tối và cỡ chữ hệ thống 200%, toast trong hộp thoại.
 
 ## Chưa chạy / chưa xong
+
+- Giai đoạn B, bước 1: kiểm toast khi rời phòng gặp 503 ngay lúc hộp thoại xác nhận đóng (im lặng khi rời phòng lỗi vi phạm AC1).
+- Vị trí toast 64dp là cố định: chỉ kiểm ở chữ 100%; tiêu đề ở cỡ chữ lớn có thể vẫn bị che.
+- Bản `ToastNotice` dự phòng khi không có provider (chỉ dùng trong test) còn bố cục một hàng cũ.
 
 - **AVD phòng chờ:** lỗi mạng khi bắt đầu, bị loại khỏi phòng: **Not run** trên máy.
 - AVD: vòng 1/2, kết quả + quán, Bạn bè/Lịch sử/Hộp thư (cần tài khoản email), gửi email, hàng đợi gửi lại khi mất mạng, TalkBack: **Not run**.

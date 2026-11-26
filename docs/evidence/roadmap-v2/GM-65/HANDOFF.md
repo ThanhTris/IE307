@@ -28,7 +28,7 @@ Chuyển trang dùng `leaveAfterFailure` (lý do giữ trong bộ nhớ, không 
 | Nền: bảng mô tả lỗi, gửi báo lỗi + hàng đợi, màn Báo lỗi, migration `0068`, test SQL | Xong phần code và test |
 | Màn khách (vào bằng khách) | Xong, đã xem AVD |
 | Gỡ biểu tượng báo lỗi trên tiêu đề, giữ mục trong Cá nhân | Xong |
-| **1. Phòng chờ** | **Code + test xong. Đang dở: tái hiện trên AVD (hủy phòng, lỗi mạng) và chờ Trí xác nhận** |
+| **1. Phòng chờ** | **Code + test xong. AVD: chủ phòng hủy đã tái hiện; rời phòng 503 thấy toast 1/2 lần, cần kiểm lại. Chưa chạy: lỗi mạng khi bắt đầu, bị loại khỏi phòng. Chờ Trí xác nhận** |
 | 2. Thiết lập & khẩu vị | Chưa làm |
 | 3. Vòng 1 / Vòng 2 (thêm Back Android; vòng 2 không quay về vòng 1) | Chưa làm |
 | 4. Kết quả + quán gần đây | Chưa làm |
