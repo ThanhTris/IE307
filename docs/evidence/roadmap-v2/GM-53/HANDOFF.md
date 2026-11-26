@@ -32,6 +32,18 @@ Nếu stack còn chạy, từ thư mục gốc kiểm bằng
 `npm run qa:verify -- --run-id gm53-1126` rồi dùng `gm53-1126` cho
 terminal Expo bên dưới. Edge của stack này đã phục vụ route delete-account.
 
+Sau khi mở lại Docker, kiểm riêng endpoint vì `qa:verify` không probe
+Edge. Nếu gateway trả 502 và container Edge đang dừng, khởi động lại
+đúng container QA, chờ sẵn sàng rồi kiểm lại. POST không có bearer phải
+trả 401 từ hàm. Nếu worker đã dừng, chạy lại `qa:worker-start`.
+
+```powershell
+docker start supabase_edge_runtime_gm03qa-gm53-1126
+npm run qa:worker-start -- --run-id gm53-1126
+npm run qa:verify -- --run-id gm53-1126
+curl.exe -s -o NUL -w "%{http_code}" -X POST http://127.0.0.1:54381/functions/v1/delete-account
+```
+
 Nếu cần dựng stack mới, từ thư mục gốc chọn các cổng còn trống, cài
 root dependencies nếu thiếu, rồi xác minh stack ngay sau khi tạo.
 

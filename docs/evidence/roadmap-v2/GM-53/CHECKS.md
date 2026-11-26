@@ -22,12 +22,17 @@ của từng lượt kiểm bên dưới.
 | Repo và task indexes | `python scripts/validate_repository.py`, `python scripts/task_readiness.py --check-docs` | Pass sau khi có đầy đủ hồ sơ. |
 | Python regression | `python -m unittest discover -s tests -p 'test_*.py'` | Lượt đầy đủ 731 ca có 11 fail, 2 error, 7 skip. 141 ca của ba bộ validator/project gate/readiness chạy lại đều Pass sau khi hồ sơ có đủ file. Hai error môi trường Windows còn lại ở git init và quyền symlink. |
 | Gate trước review | `python scripts/task_readiness.py --task GM-53 --gate merge --base-ref origin/main --verify-outputs` | READY_FOR_MERGE_REVIEW ở kiểm đầu vào, file và ownership. Bước AVD trong AC còn chờ kết quả. |
-| Expo Go AVD nối Auth/REST/worker/Edge | Các ca [HANDOFF](HANDOFF.md#bước-5--kiểm-expo-go-trên-avd) | Not run. Tuấn thực hiện bước 5 và bổ sung revision, AVD, Expo, QA run, ảnh và actual. |
+| Expo Go AVD nối Auth/REST/worker/Edge | Các ca [HANDOFF](HANDOFF.md#bước-5--kiểm-expo-go-trên-avd) | Not run. Tuấn kiểm Expo Go trên điện thoại thật và bàn giao lượt AVD cho Trí. |
 | Visual / trợ năng | Đối chiếu [FIGMA_PARITY](FIGMA_PARITY.md) | Not run trên AVD, chưa có ảnh app. |
 
 Jest chạy với Node 24.20.0, npm 11.19.0 và SDK 58.0.25. QA riêng dùng
 API 54381, DB 54382 và Mailpit 54384. Phiên bản ứng dụng và dữ liệu
 dùng để đo visual phải được ghi tại lượt AVD.
+
+Khi kiểm lại ngày 26/11/2026, gateway QA trả 502 vì container Edge đã
+dừng. Sau khi khởi động lại Edge và worker của `gm53-1126`, endpoint
+trả 401 cho POST không bearer, `qa:verify` đạt và runner HTTP GM-49 đạt
+33 ca, gồm xóa khách, xóa tài khoản email và thử lại cùng request ID.
 
 Lượt full Jest đầu gặp timeout ở màn kết quả và dừng sau khi source
 thay đổi. Bộ màn kết quả đã đạt ở lượt kiểm tập trung, chạy với
