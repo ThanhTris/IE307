@@ -21,7 +21,7 @@ export function BrandBanner({
         source={dark ? fullIllustration : illustrationSource ?? fullIllustration}
         accessible={false}
         resizeMode={dark ? 'cover' : 'contain'}
-        style={[styles.brandBannerImage, illustrationSource && !dark ? styles.lightSlot : undefined]}
+        style={[styles.brandBannerImage, dark ? styles.darkSlot : illustrationSource && styles.lightSlot]}
       />
     </View>
   );
@@ -37,6 +37,8 @@ const styles = StyleSheet.create({
     paddingLeft: spacing.xl,
   },
   brandBannerTitle: { flex: 1, fontSize: 16, lineHeight: 22, fontWeight: '700' },
-  brandBannerImage: { width: '46%', height: 116, alignSelf: 'center' },
-  lightSlot: { width: 148 },
+  brandBannerImage: { width: '46%', height: 116, alignSelf: 'flex-end' },
+  // Offset the transparent padding or contain margin to meet the clipped banner edge.
+  darkSlot: { transform: [{ translateY: 8 }] },
+  lightSlot: { width: 148, transform: [{ translateY: 6 }] },
 });
