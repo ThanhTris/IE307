@@ -7,6 +7,7 @@ from tempfile import TemporaryDirectory
 from urllib.error import HTTPError
 from urllib.request import HTTPRedirectHandler, Request, build_opener
 
+import gm47_illustrations as illustrations
 from gm47_release_editorial import ARTWORK, OUTPUT, build, gm41, storage_bucket, storage_object_key
 
 
@@ -26,10 +27,12 @@ def main():
                            help='Verify a complete human-reviewed pair for this UUID. Default is every prepared pair.')
     selection.add_argument('--dish-list', type=Path,
                            help='Verify the exact UUIDs in reviewed-dish-ids.txt from an upload batch')
+    parser.add_argument('--with-illustrations', action='store_true',
+                        help='Verify shared illustration pairs for the dishes still missing photos')
     args = parser.parse_args()
     bucket = storage_bucket(args.bucket_url)
     inventory = gm41.dc.load_json(ARTWORK)
-    build(artwork=inventory)
+    _, report = build(artwork=inventory)
     reviewed = {row['dishId']: row for row in inventory['images']}
     if args.dish_list is not None:
         try:
@@ -48,23 +51,34 @@ def main():
     prefixes = [prefix.strip('/') for prefix in (args.image_prefix, args.thumbnail_prefix)]
     if prefixes[0] == prefixes[1]:
         parser.error('Main and thumbnail objects must have different paths')
-    opener = build_opener(NoRedirect)
-    verified = []
+    entries = []
     for dish_id in sorted(requested):
         row = reviewed[dish_id]
         for asset, prefix in zip((row, row['thumbnail']), prefixes, strict=True):
             key = asset['objectKey']
             filename = key.rsplit('/', 1)[-1]
             stored_key = storage_object_key(f'{prefix}/{filename}' if prefix else filename, key)
-            try:
-                request = Request(f'{bucket}/{stored_key}', headers={'Accept-Encoding': 'identity'})
-                with opener.open(request, timeout=15) as response:
-                    data = response.read(asset['bytes'] + 1)
-            except HTTPError as error:
-                raise RuntimeError(f'{stored_key}: HTTP {error.code}') from None
-            if len(data) != asset['bytes'] or sha256(data).hexdigest() != asset['sha256']:
-                raise ValueError(f'Storage bytes differ from the reviewed inventory for {stored_key}')
-            verified.append({'objectKey': key, 'storedObjectKey': stored_key, 'sha256': asset['sha256']})
+            entries.append((asset, stored_key))
+    if args.with_illustrations:
+        assets = illustrations.load()
+        groups = {entry['groupCode'] for entry in report['illustrationPlan'].values()}
+        for group in sorted(groups):
+            row = assets[group]
+            for asset in (row['image'], row['thumbnail']):
+                entries.append((asset, asset['objectKey']))
+
+    opener = build_opener(NoRedirect)
+    verified = []
+    for asset, stored_key in entries:
+        try:
+            request = Request(f'{bucket}/{stored_key}', headers={'Accept-Encoding': 'identity'})
+            with opener.open(request, timeout=15) as response:
+                data = response.read(asset['bytes'] + 1)
+        except HTTPError as error:
+            raise RuntimeError(f'{stored_key}: HTTP {error.code}') from None
+        if len(data) != asset['bytes'] or sha256(data).hexdigest() != asset['sha256']:
+            raise ValueError(f'Storage bytes differ from the reviewed inventory for {stored_key}')
+        verified.append({'objectKey': asset['objectKey'], 'storedObjectKey': stored_key, 'sha256': asset['sha256']})
     receipt = {
         'bucketPublicUrl': bucket, 'candidateDatasetVersion': args.candidate_version,
         'checkedAt': datetime.now(timezone.utc).isoformat(timespec='seconds').replace('+00:00', 'Z'),

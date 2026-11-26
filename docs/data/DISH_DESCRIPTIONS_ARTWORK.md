@@ -6,7 +6,7 @@ Candidate QA `1.4.4` nhận 253 UUID từ [GM-41 v1.3.0](https://github.com/Than
 
 - Tâm đã xác nhận 253/253 mô tả tự viết và 188/188 URL tham khảo dữ kiện. [Mô tả theo UUID](../../data-preparation/editorial/gm47-release/descriptions.json)
 - Tâm đã xác nhận 136 cặp WebP từ Commons. Ảnh chính có cạnh ngắn 600–750 px và tối đa 200.000 byte mỗi tệp. Ảnh nhỏ 400×300 px. Gói ảnh có 272 tệp WebP, tổng 16.914.034 byte ảnh. [Hồ sơ ảnh theo UUID](../../data-preparation/editorial/gm47-release/artwork-candidates.json)
-- 117 món cần ảnh có giấy phép mở hoặc ảnh nhóm tự chụp. [Danh sách phân công theo lô](../evidence/roadmap-v2/GM-47/PHOTO_ASSIGNMENTS.md)
+- 117 món đang thiếu ảnh thật đã được gán minh họa có giấy phép theo 14 nhóm cho bản nộp đầu. Tiếp tục tìm nguồn mở hoặc tự chụp theo lô. [Danh sách phân công](../evidence/roadmap-v2/GM-47/PHOTO_ASSIGNMENTS.md) · [Quyết định của Trí](https://github.com/ThanhTris/IE307/pull/217#issuecomment-7181026504)
 - Trí phụ trách bucket staging và upload theo GM-52. Tâm tạo receipt từ ảnh đã tải, kiểm SHA-256 trước khi gắn URL. Tuấn nhận ảnh nhỏ và ghi công cho [GM-64](https://github.com/ThanhTris/IE307/issues/213). [Bàn giao](../evidence/roadmap-v2/GM-47/HANDOFF.md)
 
 | Bữa | Món | Có mô tả | Có cặp WebP đã xác nhận | Có URL trong bundle QA |

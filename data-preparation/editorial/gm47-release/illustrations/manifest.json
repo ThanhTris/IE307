@@ -1,0 +1,370 @@
+{
+  "version": 1,
+  "iconPackage": "@expo/vector-icons@15.1.1",
+  "assets": [
+    {
+      "kind": "category_illustration",
+      "groupCode": "family:rice",
+      "groupLabel": "Cơm",
+      "icon": "rice",
+      "source": "https://pictogrammers.com/library/mdi/icon/rice/",
+      "author": "Pictogrammers",
+      "license": "Apache-2.0",
+      "licenseUrl": "https://pictogrammers.com/docs/general/license/",
+      "usageRights": "licensed",
+      "attribution": "Ảnh minh họa nhóm Cơm · biểu tượng rice của Pictogrammers (Apache-2.0), đã dàn trang và xuất WebP.",
+      "image": {
+        "objectKey": "illustrations/4479ad8a-6caf-5419-98e6-31186df1d866.webp",
+        "width": 800,
+        "height": 600,
+        "bytes": 4586,
+        "sha256": "bb6a8f375801a4f4e1146ed5edfa2ae1da48edc913420690fef7e28277cc9597"
+      },
+      "thumbnail": {
+        "objectKey": "illustrations/thumbnails/4479ad8a-6caf-5419-98e6-31186df1d866.webp",
+        "width": 400,
+        "height": 300,
+        "bytes": 2324,
+        "sha256": "08321e10e299e54355d0c7f4ebd88b9b1955dd2651022d1aa19d114024bdbf80"
+      }
+    },
+    {
+      "kind": "category_illustration",
+      "groupCode": "family:bun",
+      "groupLabel": "Bún / Phở",
+      "icon": "noodles",
+      "source": "https://pictogrammers.com/library/mdi/icon/noodles/",
+      "author": "Pictogrammers",
+      "license": "Apache-2.0",
+      "licenseUrl": "https://pictogrammers.com/docs/general/license/",
+      "usageRights": "licensed",
+      "attribution": "Ảnh minh họa nhóm Bún / Phở · biểu tượng noodles của Pictogrammers (Apache-2.0), đã dàn trang và xuất WebP.",
+      "image": {
+        "objectKey": "illustrations/a9578f20-3680-5536-a40a-8e23e5271bf0.webp",
+        "width": 800,
+        "height": 600,
+        "bytes": 4454,
+        "sha256": "961e08a51ac3f90127127e11e8c99420375333f66faa53c9d7a0d83bb4ea6f52"
+      },
+      "thumbnail": {
+        "objectKey": "illustrations/thumbnails/a9578f20-3680-5536-a40a-8e23e5271bf0.webp",
+        "width": 400,
+        "height": 300,
+        "bytes": 2362,
+        "sha256": "a92dcd18624b7b12ecff7c3fe6a34f9cf36af3737a79853b65f34cde49f001e6"
+      }
+    },
+    {
+      "kind": "category_illustration",
+      "groupCode": "family:noodles",
+      "groupLabel": "Mì / Miến / Hủ tiếu",
+      "icon": "pasta",
+      "source": "https://pictogrammers.com/library/mdi/icon/pasta/",
+      "author": "Pictogrammers",
+      "license": "Apache-2.0",
+      "licenseUrl": "https://pictogrammers.com/docs/general/license/",
+      "usageRights": "licensed",
+      "attribution": "Ảnh minh họa nhóm Mì / Miến / Hủ tiếu · biểu tượng pasta của Pictogrammers (Apache-2.0), đã dàn trang và xuất WebP.",
+      "image": {
+        "objectKey": "illustrations/469f6682-1d88-5d28-8485-0b5712a0136d.webp",
+        "width": 800,
+        "height": 600,
+        "bytes": 4222,
+        "sha256": "1886f39b239aecc2d5dde2d4ac29fdadc8a91521aabf2b2920249d692fbf9c6e"
+      },
+      "thumbnail": {
+        "objectKey": "illustrations/thumbnails/469f6682-1d88-5d28-8485-0b5712a0136d.webp",
+        "width": 400,
+        "height": 300,
+        "bytes": 2192,
+        "sha256": "904fde166f928e115967ea07c39ea718938d85307351ef6997fc6055d7eed29a"
+      }
+    },
+    {
+      "kind": "category_illustration",
+      "groupCode": "family:hotpot",
+      "groupLabel": "Lẩu & Nướng",
+      "icon": "pot-steam",
+      "source": "https://pictogrammers.com/library/mdi/icon/pot-steam/",
+      "author": "Pictogrammers",
+      "license": "Apache-2.0",
+      "licenseUrl": "https://pictogrammers.com/docs/general/license/",
+      "usageRights": "licensed",
+      "attribution": "Ảnh minh họa nhóm Lẩu & Nướng · biểu tượng pot-steam của Pictogrammers (Apache-2.0), đã dàn trang và xuất WebP.",
+      "image": {
+        "objectKey": "illustrations/efc19ecb-57b7-5240-93ea-b7017cc3e7f4.webp",
+        "width": 800,
+        "height": 600,
+        "bytes": 4474,
+        "sha256": "9ae000691329559084e50bffc02dde35e3915c163ef098bd9b1cf2b333d5327b"
+      },
+      "thumbnail": {
+        "objectKey": "illustrations/thumbnails/efc19ecb-57b7-5240-93ea-b7017cc3e7f4.webp",
+        "width": 400,
+        "height": 300,
+        "bytes": 2262,
+        "sha256": "487d596aff683dbee901f41ae6ecc4204f27f87e3d74ea48a378036444234206"
+      }
+    },
+    {
+      "kind": "category_illustration",
+      "groupCode": "family:banh_mi",
+      "groupLabel": "Bánh mì / Xôi",
+      "icon": "bread-slice",
+      "source": "https://pictogrammers.com/library/mdi/icon/bread-slice/",
+      "author": "Pictogrammers",
+      "license": "Apache-2.0",
+      "licenseUrl": "https://pictogrammers.com/docs/general/license/",
+      "usageRights": "licensed",
+      "attribution": "Ảnh minh họa nhóm Bánh mì / Xôi · biểu tượng bread-slice của Pictogrammers (Apache-2.0), đã dàn trang và xuất WebP.",
+      "image": {
+        "objectKey": "illustrations/756c92f5-af8d-50de-b63f-b2ad1c9057b0.webp",
+        "width": 800,
+        "height": 600,
+        "bytes": 3746,
+        "sha256": "e7dba2f89e6cad96093d482315ac71712ac655bfe419b92beac954699d9658d7"
+      },
+      "thumbnail": {
+        "objectKey": "illustrations/thumbnails/756c92f5-af8d-50de-b63f-b2ad1c9057b0.webp",
+        "width": 400,
+        "height": 300,
+        "bytes": 1942,
+        "sha256": "acbfcba74070a3f21fae4aff6bf21cb70dc5d13f6e71934bf87e360f01fcd8c9"
+      }
+    },
+    {
+      "kind": "category_illustration",
+      "groupCode": "family:porridge",
+      "groupLabel": "Cháo / Súp",
+      "icon": "bowl-mix",
+      "source": "https://pictogrammers.com/library/mdi/icon/bowl-mix/",
+      "author": "Pictogrammers",
+      "license": "Apache-2.0",
+      "licenseUrl": "https://pictogrammers.com/docs/general/license/",
+      "usageRights": "licensed",
+      "attribution": "Ảnh minh họa nhóm Cháo / Súp · biểu tượng bowl-mix của Pictogrammers (Apache-2.0), đã dàn trang và xuất WebP.",
+      "image": {
+        "objectKey": "illustrations/4a2a286f-b681-5559-98f0-1d1fd53814df.webp",
+        "width": 800,
+        "height": 600,
+        "bytes": 3836,
+        "sha256": "031143a6989cc1aab7601267b1f3810fce148ae68f7c499ab1615dc578f33dc2"
+      },
+      "thumbnail": {
+        "objectKey": "illustrations/thumbnails/4a2a286f-b681-5559-98f0-1d1fd53814df.webp",
+        "width": 400,
+        "height": 300,
+        "bytes": 1958,
+        "sha256": "3d91c29ea06386c72e078ca6cad10fc0e0a09397385cde9820c133c52756f6ee"
+      }
+    },
+    {
+      "kind": "category_illustration",
+      "groupCode": "snack:fried",
+      "groupLabel": "Đồ chiên & Xiên que",
+      "icon": "french-fries",
+      "source": "https://pictogrammers.com/library/mdi/icon/french-fries/",
+      "author": "Pictogrammers",
+      "license": "Apache-2.0",
+      "licenseUrl": "https://pictogrammers.com/docs/general/license/",
+      "usageRights": "licensed",
+      "attribution": "Ảnh minh họa nhóm Đồ chiên & Xiên que · biểu tượng french-fries của Pictogrammers (Apache-2.0), đã dàn trang và xuất WebP.",
+      "image": {
+        "objectKey": "illustrations/13a856c9-30b9-50de-ac50-325d5088743d.webp",
+        "width": 800,
+        "height": 600,
+        "bytes": 4366,
+        "sha256": "cf9db436c71549a040a49db5b8cb9c88b76b94920046bb21c042dda897d9435b"
+      },
+      "thumbnail": {
+        "objectKey": "illustrations/thumbnails/13a856c9-30b9-50de-ac50-325d5088743d.webp",
+        "width": 400,
+        "height": 300,
+        "bytes": 2284,
+        "sha256": "fa82a897dbea1bcbe9dbd539db6651840276905c0bc47f4a6d01e6eb98f5e6bb"
+      }
+    },
+    {
+      "kind": "category_illustration",
+      "groupCode": "snack:savory_cake",
+      "groupLabel": "Các loại bánh mặn",
+      "icon": "pretzel",
+      "source": "https://pictogrammers.com/library/mdi/icon/pretzel/",
+      "author": "Pictogrammers",
+      "license": "Apache-2.0",
+      "licenseUrl": "https://pictogrammers.com/docs/general/license/",
+      "usageRights": "licensed",
+      "attribution": "Ảnh minh họa nhóm Các loại bánh mặn · biểu tượng pretzel của Pictogrammers (Apache-2.0), đã dàn trang và xuất WebP.",
+      "image": {
+        "objectKey": "illustrations/5c144016-cb8c-5d87-9d5b-c32fd36e78ca.webp",
+        "width": 800,
+        "height": 600,
+        "bytes": 5730,
+        "sha256": "1f1b16748a3b9aa9bab19024bf94ae46e29bc30ad160593390f3d8910140c3aa"
+      },
+      "thumbnail": {
+        "objectKey": "illustrations/thumbnails/5c144016-cb8c-5d87-9d5b-c32fd36e78ca.webp",
+        "width": 400,
+        "height": 300,
+        "bytes": 2800,
+        "sha256": "63d93cbf7d907a228c8bf92b84b62c6063005875196530976b071326eca8fa3d"
+      }
+    },
+    {
+      "kind": "category_illustration",
+      "groupCode": "snack:mixed",
+      "groupLabel": "Món trộn & Cuốn",
+      "icon": "food-variant",
+      "source": "https://pictogrammers.com/library/mdi/icon/food-variant/",
+      "author": "Pictogrammers",
+      "license": "Apache-2.0",
+      "licenseUrl": "https://pictogrammers.com/docs/general/license/",
+      "usageRights": "licensed",
+      "attribution": "Ảnh minh họa nhóm Món trộn & Cuốn · biểu tượng food-variant của Pictogrammers (Apache-2.0), đã dàn trang và xuất WebP.",
+      "image": {
+        "objectKey": "illustrations/04713055-0e6a-5178-bda1-9fc3d2465eba.webp",
+        "width": 800,
+        "height": 600,
+        "bytes": 3960,
+        "sha256": "9b03cffb8e476c87252d6b4dc1a1de16a267452d1d6af8ae0be0af28840281fc"
+      },
+      "thumbnail": {
+        "objectKey": "illustrations/thumbnails/04713055-0e6a-5178-bda1-9fc3d2465eba.webp",
+        "width": 400,
+        "height": 300,
+        "bytes": 2036,
+        "sha256": "bafd02c757e1312a0069c96ed966a9883b36afa1267393c1fcac88b4be00f23c"
+      }
+    },
+    {
+      "kind": "category_illustration",
+      "groupCode": "snack:seafood",
+      "groupLabel": "Ốc & Hải sản",
+      "icon": "fish",
+      "source": "https://pictogrammers.com/library/mdi/icon/fish/",
+      "author": "Pictogrammers",
+      "license": "Apache-2.0",
+      "licenseUrl": "https://pictogrammers.com/docs/general/license/",
+      "usageRights": "licensed",
+      "attribution": "Ảnh minh họa nhóm Ốc & Hải sản · biểu tượng fish của Pictogrammers (Apache-2.0), đã dàn trang và xuất WebP.",
+      "image": {
+        "objectKey": "illustrations/ab3e3a69-7163-510d-80cd-5ec00f222139.webp",
+        "width": 800,
+        "height": 600,
+        "bytes": 4340,
+        "sha256": "f3778bb6de0afdf4fcb7344c885c745721319baff9d435bcff0cb00cc95b73d8"
+      },
+      "thumbnail": {
+        "objectKey": "illustrations/thumbnails/ab3e3a69-7163-510d-80cd-5ec00f222139.webp",
+        "width": 400,
+        "height": 300,
+        "bytes": 2224,
+        "sha256": "c1a13600b982bbdce2b386b8b672a898de354a525931f56efb03aadd54dcdc15"
+      }
+    },
+    {
+      "kind": "category_illustration",
+      "groupCode": "snack:sweet_cake",
+      "groupLabel": "Bánh ngọt",
+      "icon": "cake",
+      "source": "https://pictogrammers.com/library/mdi/icon/cake/",
+      "author": "Pictogrammers",
+      "license": "Apache-2.0",
+      "licenseUrl": "https://pictogrammers.com/docs/general/license/",
+      "usageRights": "licensed",
+      "attribution": "Ảnh minh họa nhóm Bánh ngọt · biểu tượng cake của Pictogrammers (Apache-2.0), đã dàn trang và xuất WebP.",
+      "image": {
+        "objectKey": "illustrations/3803d8f4-26e3-545a-a2a7-cc33f1e1d27d.webp",
+        "width": 800,
+        "height": 600,
+        "bytes": 4448,
+        "sha256": "9fe086885882ad6f5898e31bba2dc89ed791ed79c5c19b5ee2d09c32bff46ce2"
+      },
+      "thumbnail": {
+        "objectKey": "illustrations/thumbnails/3803d8f4-26e3-545a-a2a7-cc33f1e1d27d.webp",
+        "width": 400,
+        "height": 300,
+        "bytes": 2284,
+        "sha256": "6574cb59e5cb9f8fb82a833850e30bcd52704ee1a3aa1b00fd5945d5b7e60dd3"
+      }
+    },
+    {
+      "kind": "category_illustration",
+      "groupCode": "snack:che",
+      "groupLabel": "Chè & Kem",
+      "icon": "ice-cream",
+      "source": "https://pictogrammers.com/library/mdi/icon/ice-cream/",
+      "author": "Pictogrammers",
+      "license": "Apache-2.0",
+      "licenseUrl": "https://pictogrammers.com/docs/general/license/",
+      "usageRights": "licensed",
+      "attribution": "Ảnh minh họa nhóm Chè & Kem · biểu tượng ice-cream của Pictogrammers (Apache-2.0), đã dàn trang và xuất WebP.",
+      "image": {
+        "objectKey": "illustrations/e63ad19e-05b1-520b-8b5f-ceedd446ea70.webp",
+        "width": 800,
+        "height": 600,
+        "bytes": 4810,
+        "sha256": "20a4735104670745b9ab25ae62a8908240f98ab68042e2dcef3ae2b07a011695"
+      },
+      "thumbnail": {
+        "objectKey": "illustrations/thumbnails/e63ad19e-05b1-520b-8b5f-ceedd446ea70.webp",
+        "width": 400,
+        "height": 300,
+        "bytes": 2352,
+        "sha256": "5eca5af3c6d579104e98fb04fa81c20845123894b59303d8dc50789cdf4a2362"
+      }
+    },
+    {
+      "kind": "category_illustration",
+      "groupCode": "snack:fruit",
+      "groupLabel": "Trái cây & Đồ chua",
+      "icon": "fruit-citrus",
+      "source": "https://pictogrammers.com/library/mdi/icon/fruit-citrus/",
+      "author": "Pictogrammers",
+      "license": "Apache-2.0",
+      "licenseUrl": "https://pictogrammers.com/docs/general/license/",
+      "usageRights": "licensed",
+      "attribution": "Ảnh minh họa nhóm Trái cây & Đồ chua · biểu tượng fruit-citrus của Pictogrammers (Apache-2.0), đã dàn trang và xuất WebP.",
+      "image": {
+        "objectKey": "illustrations/7f6d158f-beda-5bb3-8d79-4a35efac5373.webp",
+        "width": 800,
+        "height": 600,
+        "bytes": 5502,
+        "sha256": "fae7571658ff577590c9bfefe089dd5c00fe77b39e4a5168e26e750127c95e70"
+      },
+      "thumbnail": {
+        "objectKey": "illustrations/thumbnails/7f6d158f-beda-5bb3-8d79-4a35efac5373.webp",
+        "width": 400,
+        "height": 300,
+        "bytes": 2788,
+        "sha256": "b5a614197cf64c734c102b14a26b200f188c784a16f37c34a28350d33379783b"
+      }
+    },
+    {
+      "kind": "category_illustration",
+      "groupCode": "snack:dry",
+      "groupLabel": "Đồ ăn vặt khô",
+      "icon": "cookie",
+      "source": "https://pictogrammers.com/library/mdi/icon/cookie/",
+      "author": "Pictogrammers",
+      "license": "Apache-2.0",
+      "licenseUrl": "https://pictogrammers.com/docs/general/license/",
+      "usageRights": "licensed",
+      "attribution": "Ảnh minh họa nhóm Đồ ăn vặt khô · biểu tượng cookie của Pictogrammers (Apache-2.0), đã dàn trang và xuất WebP.",
+      "image": {
+        "objectKey": "illustrations/bc373877-424c-5f95-8431-6448a3090e8b.webp",
+        "width": 800,
+        "height": 600,
+        "bytes": 5000,
+        "sha256": "16dc39eabb92b23e8ad272bf2a1a3e3f234ec383895184f2efc5300a8f9168ac"
+      },
+      "thumbnail": {
+        "objectKey": "illustrations/thumbnails/bc373877-424c-5f95-8431-6448a3090e8b.webp",
+        "width": 400,
+        "height": 300,
+        "bytes": 2516,
+        "sha256": "b32ea7abc3543e42b1e49204dfc82719be1b2847207e710f0bede6d41813b793"
+      }
+    }
+  ]
+}

@@ -9,6 +9,7 @@ from zipfile import ZIP_DEFLATED, ZipFile
 
 from PIL import Image
 
+import gm47_illustrations as illustrations
 from gm47_release_editorial import ARTWORK, OUTPUT, build, gm41
 
 
@@ -20,7 +21,11 @@ def main():
                       help='Refresh the checked-in file metadata from the prepared derivatives')
     mode.add_argument('--reviewed-only', action='store_true',
                       help='Export only human-approved pairs for the Storage upload')
+    parser.add_argument('--with-illustrations', action='store_true',
+                        help='Include the category icons, licence and assignments in the reviewed upload ZIP')
     args = parser.parse_args()
+    if args.with_illustrations and not args.reviewed_only:
+        parser.error('--with-illustrations requires --reviewed-only')
     artwork = gm41.dc.load_json(ARTWORK)
     rows = artwork['images']
     if args.reviewed_only:
@@ -66,12 +71,35 @@ def main():
     writer.writerows(report['missingArtwork'])
     OUTPUT.mkdir(parents=True, exist_ok=True)
     archive_name = 'gm47-storage-reviewed.zip' if args.reviewed_only else 'gm47-storage-handoff.zip'
+    if args.with_illustrations:
+        archive_name = 'gm47-storage-with-illustrations.zip'
+        asset_groups = illustrations.load()
+        assigned = sorted({entry['groupCode'] for entry in report['illustrationPlan'].values()})
     archive = OUTPUT / archive_name
     with TemporaryDirectory(dir=OUTPUT) as directory:
         temporary = Path(directory) / archive.name
         with ZipFile(temporary, 'w', compression=ZIP_DEFLATED) as pack:
             for key, value in files.items():
                 pack.writestr(key, value)
+            if args.with_illustrations:
+                for group in assigned:
+                    row = asset_groups[group]
+                    for asset in (row['image'], row['thumbnail']):
+                        key = asset['objectKey']
+                        path = illustrations.DIRECTORY / key.removeprefix('illustrations/')
+                        with Image.open(path) as picture:
+                            if picture.format != 'WEBP' or picture.size != (asset['width'], asset['height']):
+                                raise ValueError(f'Invalid illustration WebP: {key}')
+                        pack.write(path, key)
+                    credits.extend([f"## {row['groupLabel']}", '', row['attribution'], '',
+                                    f"- [Nguồn icon]({row['source']})",
+                                    f"- [Giấy phép {row['license']}]({row['licenseUrl']})", ''])
+                pack.write(illustrations.DIRECTORY / 'LICENSE-APACHE-2.0.txt', 'LICENSE-APACHE-2.0.txt')
+                pack.writestr('illustration-assignments.json', gm41.dc.encoded({
+                    'candidateSha256': report['candidateSha256'],
+                    'assignments': report['illustrationPlan'],
+                    'assets': [asset_groups[group] for group in assigned],
+                }))
             pack.writestr('ATTRIBUTION.md', '\n'.join(credits))
             if args.reviewed_only:
                 pack.writestr('reviewed-dish-ids.txt', ''.join(f"{row['dishId']}\n" for row in rows))
@@ -86,7 +114,9 @@ def main():
         temporary.replace(archive)
     if args.write_metadata:
         ARTWORK.write_bytes(metadata)
-    if args.reviewed_only:
+    if args.with_illustrations:
+        print(f"{len(rows)} human-reviewed photo pairs and {len(assigned)} illustration pairs: {archive}")
+    elif args.reviewed_only:
         print(f'{len(rows)} human-reviewed pairs, {sum(map(len, files.values()))} bytes: {archive}')
     else:
         print(f"{len(files)} WebP files and {len(report['missingArtwork'])} pending dishes: {archive}")

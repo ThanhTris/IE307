@@ -5,6 +5,7 @@ from pathlib import Path
 import re
 from urllib.parse import urlsplit
 
+import gm47_illustrations as illustrations
 import release_v1_catalogue as upstream
 
 
@@ -96,8 +97,8 @@ def validate_photo_origin(row):
         raise ValueError(f"GM-47 photo source date is after review for {row['dishId']}")
 
 
-def attach_storage(receipt, available, dishes, sources, version):
-    """Bind human-reviewed photos whose bytes were verified after the upload."""
+def attach_storage(receipt, available, dishes, sources, version, illustration_assets, illustration_groups):
+    """Bind reviewed photos and marked category artwork with verified Storage bytes."""
     bucket = storage_bucket(receipt['bucketPublicUrl'])
     release_version = receipt['candidateDatasetVersion']
     if (not re.fullmatch(r'(0|[1-9][0-9]*)(\.(0|[1-9][0-9]*)){2}', release_version)
@@ -131,8 +132,39 @@ def attach_storage(receipt, available, dishes, sources, version):
         dishes[dish_id]['artwork'] = {key: row[key] for key in ('usageRights', 'license', 'attribution')} | {
             'url': url, 'sourceRef': ref,
         }
-        linked[dish_id] = {'url': url, 'thumbnailUrl': f'{bucket}/{stored[thumb_key]}', 'sourceRef': ref}
+        linked[dish_id] = {
+            'kind': 'photo', 'url': url, 'thumbnailUrl': f'{bucket}/{stored[thumb_key]}', 'sourceRef': ref,
+        }
         used.update((main_key, thumb_key))
+
+    groups = {}
+    for group, row in illustration_assets.items():
+        assets = (row['image'], row['thumbnail'])
+        keys = tuple(asset['objectKey'] for asset in assets)
+        if not any(key in verified for key in keys):
+            continue
+        if any(stored.get(key) != key or verified.get(key, {}).get('sha256') != asset['sha256']
+               for key, asset in zip(keys, assets, strict=True)):
+            raise ValueError(f'Storage receipt is missing a verified illustration pair for {group}')
+        groups[group] = (row, keys)
+        used.update(keys)
+    for dish_id, group in illustration_groups.items():
+        if group not in groups or dish_id in linked:
+            continue
+        row, (main_key, thumb_key) = groups[group]
+        ref = gm41.ft.stable_id('source', f"gm47:illustration:{row['source']}:{row['license']}")
+        fields = {key: row[key] for key in ('usageRights', 'license', 'attribution')}
+        sources.setdefault(ref, {
+            **gm41.record(ref), **fields, 'enteredBy': 'gm47-editorial',
+            'checkedAt': receipt['checkedAt'], 'locator': row['source'],
+        })
+        url = f'{bucket}/{main_key}'
+        dishes[dish_id]['artwork'] = {**fields, 'url': url, 'sourceRef': ref}
+        linked[dish_id] = {
+            **fields, 'kind': illustrations.KIND, 'groupCode': group, 'groupLabel': row['groupLabel'],
+            'url': url, 'thumbnailUrl': f'{bucket}/{thumb_key}', 'sourceRef': ref,
+            'source': row['source'], 'licenseUrl': row['licenseUrl'], 'author': row['author'],
+        }
     if used != verified.keys():
         raise ValueError('Storage receipt contains objects outside the reviewed artwork inventory')
     return release_version, linked
@@ -258,11 +290,22 @@ def build(*, artwork=None, storage_receipt=None):
     missing_artwork = [dict(pending[dish_id], batch=name) for name, ids in groups.items()
                        for dish_id in sorted(ids & pending.keys())]
 
+    illustration_assets = illustrations.load()
+    illustration_groups = illustrations.assignments(dishes[dish_id] for dish_id in sorted(pending))
+    illustration_plan = {
+        dish_id: {'kind': illustrations.KIND, 'groupCode': group,
+                  'groupLabel': illustration_assets[group]['groupLabel'],
+                  'objectKey': illustration_assets[group]['image']['objectKey'],
+                  'thumbnailObjectKey': illustration_assets[group]['thumbnail']['objectKey']}
+        for dish_id, group in illustration_groups.items()
+    }
+
     bundle['datasetVersion'] = edit['candidateDatasetVersion']
     linked = {}
     if storage_receipt is not None:
         bundle['datasetVersion'], linked = attach_storage(
-            storage_receipt, available_artwork, dishes, sources, bundle['datasetVersion']
+            storage_receipt, available_artwork, dishes, sources, bundle['datasetVersion'],
+            illustration_assets, illustration_groups,
         )
         entities['dataSources'] = list(sources.values())
     upstream.validate(bundle)
@@ -283,6 +326,8 @@ def build(*, artwork=None, storage_receipt=None):
         'humanReviewedArtwork': sum(row['aiCheck']['verdict'] == 'real_photo' for row in available_artwork.values()),
         'thumbnailBytes': sum(row['thumbnail']['bytes'] for row in available_artwork.values()),
         'linkedArtwork': linked,
+        'linkedIllustrations': sum(row['kind'] == illustrations.KIND for row in linked.values()),
+        'illustrationPlan': illustration_plan,
         'artworkBatches': {
             name: {'dishes': len(ids), 'prepared': len(ids & available_artwork.keys()),
                    'pending': len(ids & pending.keys())}
@@ -341,7 +386,7 @@ if __name__ == '__main__':
                              ', '.join(sorted({review['checkedBy'] for review in row['reviews']})),
                              ', '.join(sorted({review['checkedAt'] for review in row['reviews']})),
                              len(row['prechecks']), ' '.join(review['dishId'] for review in row['prechecks'])))
-    paths = (upstream.BUNDLE, upstream.MANIFEST, gm41.SCHEMA, INPUT, ARTWORK, HANDOFF)
+    paths = (upstream.BUNDLE, upstream.MANIFEST, gm41.SCHEMA, INPUT, ARTWORK, HANDOFF, illustrations.MANIFEST)
     manifest = {
         'schemaVersion': candidate['contractVersion'], 'datasetVersion': candidate['datasetVersion'],
         'usageScope': candidate['usageScope'], 'fixtureOnly': candidate['fixtureOnly'], 'status': 'draft',

@@ -1,5 +1,13 @@
 # GM-47 · Kiểm thử
 
+## Minh họa theo nhóm ngày 26/11/2026
+
+- Áp dụng quyết định của Trí cho bản nộp đầu. Giữ 136 ảnh thật đã duyệt. Gán 117 món đang thiếu vào 14 nhóm từ taxonomy GM-41 theo thứ tự nhóm hiện có, ưu tiên nhóm bữa chính nếu món thuộc cả hai loại. 117 link web tiếp tục dùng để nhận diện món khi tìm ảnh thật. [Quyết định của Trí](https://github.com/ThanhTris/IE307/pull/217#issuecomment-7181026504) · [Danh sách món cần ảnh thật](PHOTO_ASSIGNMENTS.md)
+- Bàn giao 14 cặp WebP (800×600 và 400×300, tổng 95.798 byte) dựng từ Material Design Icons trong gói `@expo/vector-icons@15.1.1` đã khóa ở app. Mỗi ảnh có chữ **MINH HỌA**. Manifest ghi nguồn icon, tác giả, Apache-2.0, ghi công và SHA. Kiểm toàn bộ 300 WebP trong ZIP và đối chiếu kích thước, byte, SHA cùng 253 UUID. [Giấy phép Material Design Icons](https://pictogrammers.com/docs/general/license/)
+- Bundle QA offline `1.4.4` giữ cùng SHA và đạt 32/33. Kiểm với receipt fixture dựng từ byte thật trong ZIP cho kết quả 33/33 với 136 ảnh thật và 117 minh họa. Fixture kiểm ánh xạ và gate offline. Hai URL mẫu trên staging (một ảnh thật và một minh họa) trả HTTP 400. Trí còn phụ trách upload, sau đó cần chạy receipt và GM-03 QA trên staging thật.
+- 13 test GM-47 đạt. Bộ Python chạy 741 test và bỏ qua 6. Validator repo, task indexes và kiểm diff đạt.
+- Rà theo tên của 117 món trên các nguồn Trí đề xuất. Tìm được hai ứng viên chờ Tâm duyệt gồm Cơm bò (Commons, CC BY-SA 3.0) và Ốc len xào dừa (Flickr, CC BY 2.0). Bộ nhập cần hỗ trợ nguồn Flickr trước khi thêm ảnh Ốc len xào dừa. Còn 115 món chưa có ứng viên đạt trong lượt rà này. Openverse trả 403. [Kết quả theo từng món](PHOTO_SOURCE_AUDIT.md)
+
 ## Xử lý review bca5e95 ngày 25/11/2026
 
 - Tâm xác nhận 12 ảnh Commons qua JSON xuất lúc 18:25 ICT. Đã so SHA bundle, đối chiếu 12 UUID và SHA của từng ảnh trên trang duyệt với byte WebP. Cả 12 có `aiCheck.checkedBy = "Tâm"` và `verdict = "real_photo"`. Gói tải có 136 cặp, gồm 272 WebP, tổng 16.914.034 byte ảnh. [Review của Trí](https://github.com/ThanhTris/IE307/pull/217#issuecomment-7159904392)

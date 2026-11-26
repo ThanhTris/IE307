@@ -56,6 +56,43 @@ class ReleaseEditorialTest(unittest.TestCase):
                 self.assertEqual(opener.open.call_count, 2)
                 self.assertEqual(receipt_path.read_bytes(), receipt)
 
+    def test_illustrations_require_matching_storage_pairs_and_cover_missing_photos(self):
+        artwork = editorial.gm41.dc.load_json(editorial.ARTWORK)
+        assets = editorial.illustrations.load()
+        _, offline = editorial.build(artwork=artwork)
+        self.assertEqual(set(offline['illustrationPlan']), {row['dishId'] for row in offline['missingArtwork']})
+        self.assertEqual(offline['linkedIllustrations'], 0)
+        receipt = {
+            'bucketPublicUrl': 'https://staging.example.invalid/storage/v1/object/public/dish-images',
+            'candidateDatasetVersion': '1.4.5',
+            'checkedAt': '2026-11-26T00:00:00Z',
+            'objects': [
+                {key: asset[key] for key in ('objectKey', 'sha256')}
+                for row in assets.values() for asset in (row['image'], row['thumbnail'])
+            ],
+        }
+        artwork_row = artwork['images'][0]
+        artwork_row['aiCheck'].update(
+            verdict='real_photo', checkedBy='Người kiểm fixture', checkedAt='2026-11-26T00:00:00Z',
+        )
+        receipt['objects'].extend({key: asset[key] for key in ('objectKey', 'sha256')}
+                                  for asset in (artwork_row, artwork_row['thumbnail']))
+        bundle, report = editorial.build(artwork=artwork, storage_receipt=receipt)
+        self.assertEqual(report['linkedIllustrations'], len(offline['illustrationPlan']))
+        self.assertEqual(report['linkedArtwork'][artwork_row['dishId']]['kind'], 'photo')
+        for dish in bundle['entities']['dishes']:
+            plan = offline['illustrationPlan'].get(dish['id'])
+            if plan:
+                linked = report['linkedArtwork'][dish['id']]
+                self.assertEqual(linked['kind'], 'category_illustration')
+                self.assertEqual(linked['groupCode'], plan['groupCode'])
+                self.assertEqual(dish['artwork']['url'], f"{receipt['bucketPublicUrl']}/{plan['objectKey']}")
+                self.assertTrue(dish['artwork']['attribution'].startswith('Ảnh minh họa nhóm '))
+        broken = deepcopy(receipt)
+        broken['objects'][1]['sha256'] = '0' * 64
+        with self.assertRaisesRegex(ValueError, 'verified illustration pair'):
+            editorial.build(artwork=artwork, storage_receipt=broken)
+
     def test_batch_changes_editorial_fields_only(self):
         base, digest = editorial.load_baseline()
         candidate, report = editorial.build()

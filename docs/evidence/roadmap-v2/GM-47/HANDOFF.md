@@ -33,6 +33,19 @@ Dựng bằng Python có Pillow 13.0.0 và WebP encoder cùng bản. Lệnh ki�
 - Tâm đã chọn ảnh tham khảo cho 117 món còn thiếu cặp ảnh. Dùng [ảnh tham khảo theo UUID và lô](WEB_PHOTO_SELECTIONS.json) để nhận diện món khi tìm nguồn có giấy phép mở hoặc tự chụp. Ảnh tham khảo web nằm ngoài luồng bundle và Storage.
 - Theo quyết định của Trí, GM-51 dùng mô tả do nhóm biên tập và URL để đối chiếu dữ kiện. CSV chỉ ghi `team_authored_fact_reference` khi tất cả mô tả dùng URL đó đã được người kiểm xác nhận. Các cột `prechecked_dish_ids` và `reviewed_dish_ids` ghi kết quả rà. Tâm đã xác nhận 253 mô tả. Đủ 188 URL đạt `team_authored_fact_reference`. Xem [CHECKS](CHECKS.md).
 
+### Bộ minh họa theo nhóm cho bản nộp đầu
+
+Theo [quyết định của Trí](https://github.com/ThanhTris/IE307/pull/217#issuecomment-7181026504), 117 món đang thiếu ảnh thật dùng 14 minh họa theo nhóm từ bộ icon có sẵn trong app. Gói tham khảo web tiếp tục chỉ dùng để nhận diện món. Lượt tìm ảnh thật có hai ứng viên chờ Tâm duyệt. [Kết quả rà 117 món](PHOTO_SOURCE_AUDIT.md)
+
+```sh
+python data-preparation/scripts/gm47_storage_handoff.py --reviewed-only --with-illustrations
+```
+
+Gói `.work/gm47-release-editorial/gm47-storage-with-illustrations.zip` chứa 136 cặp ảnh thật, 14 cặp minh họa, giấy phép Apache-2.0 và `illustration-assignments.json` theo UUID. Trí giữ nguyên đường dẫn `illustrations/<id>.webp` và `illustrations/thumbnails/<id>.webp` khi upload minh họa. Ảnh thật theo đường dẫn ảnh chính và ảnh nhỏ của lô đã chốt.
+
+- Sau khi Trí xác nhận đã tải minh họa, thêm `--with-illustrations` vào lệnh receipt bên dưới. Receipt kiểm đủ hai tệp của mỗi nhóm có dùng. Bộ dựng chỉ gắn minh họa cho UUID đang thiếu ảnh thật. Khi có ảnh thật mới, tải theo UUID món và cập nhật receipt/bundle để giữ đúng nguồn và ghi công. Bộ minh họa dùng chung cho nhiều món.
+- GM-64 nhận `linkedArtwork[dishId].kind` là `photo` hoặc `category_illustration`; mục minh họa có thêm `groupCode`, `groupLabel`, `thumbnailUrl`, nguồn và giấy phép. Ghi công trong bundle bắt đầu bằng “Ảnh minh họa nhóm” để tương thích contract hiện hành.
+
 ### Sau khi Trí xác nhận upload
 
 Trí đã cung cấp [URL bucket staging](https://cijknqhnmzdsturkzyiz.supabase.co/storage/v1/object/public/dish-images/). Theo [runbook GM-52](https://github.com/ThanhTris/IE307/pull/216), đường dẫn dự kiến là `<dishId>.webp` cho ảnh chính và `thumbnails/<dishId>.webp` cho ảnh nhỏ. Cần Trí xác nhận các đường dẫn và UUID của lô đã upload.
