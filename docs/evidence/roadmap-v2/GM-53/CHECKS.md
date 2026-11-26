@@ -22,6 +22,7 @@ của từng lượt kiểm bên dưới.
 | Repo và task indexes | `python scripts/validate_repository.py`, `python scripts/task_readiness.py --check-docs` | Pass sau khi có đầy đủ hồ sơ. |
 | Python regression | `python -m unittest discover -s tests -p 'test_*.py'` | Lượt đầy đủ 731 ca có 11 fail, 2 error, 7 skip. 141 ca của ba bộ validator/project gate/readiness chạy lại đều Pass sau khi hồ sơ có đủ file. Hai error môi trường Windows còn lại ở git init và quyền symlink. |
 | Gate trước review | `python scripts/task_readiness.py --task GM-53 --gate merge --base-ref origin/main --verify-outputs` | READY_FOR_MERGE_REVIEW ở kiểm đầu vào, file và ownership. Bước AVD trong AC còn chờ kết quả. |
+| Expo Go trên điện thoại Android thật | Xác nhận của Tuấn ngày 26/11/2026 | Đã chạy kiểm thủ công. Chưa có SHA bản mở trên điện thoại hoặc kết quả từng ca để đối chiếu. |
 | Expo Go AVD nối Auth/REST/worker/Edge | Các ca [HANDOFF](HANDOFF.md#bước-5--kiểm-expo-go-trên-avd) | Not run. Tuấn kiểm Expo Go trên điện thoại thật và bàn giao lượt AVD cho Trí. |
 | Visual / trợ năng | Đối chiếu [FIGMA_PARITY](FIGMA_PARITY.md) | Not run trên AVD, chưa có ảnh app. |
 
@@ -52,8 +53,11 @@ trả 401 cho POST không bearer, `qa:verify` đạt và runner HTTP GM-49 đạ
   validator tài liệu đạt. Python toàn repo chạy 731 ca khi dùng
   dependency có sẵn trong workspace. Còn ba ca lỗi liên quan đến
   cấu hình Git subprocess và quyền tạo symlink Windows.
-- Chờ Tuấn kiểm lại ca hồi quy trên Expo Go điện thoại thật và Trí
-  kiểm lượt AVD. Xem danh sách trong [HANDOFF](HANDOFF.md).
+- Tuấn xác nhận đã kiểm Expo Go trên điện thoại thật ngày 26/11/2026.
+  Phản hồi trong quá trình thử đã dẫn đến các sửa đổi về banner sáng/tối,
+  bố cục Cá nhân, luồng xóa tài khoản, quyền theo bản cài đặt và luồng
+  mật khẩu. Hồ sơ chưa có kết quả từng ca hoặc xác nhận ảnh đối chiếu
+  trên revision cuối. Lượt AVD được bàn giao cho Trí.
 
 ### Kiểm lại sau khi khôi phục thứ tự OTP trước mật khẩu
 

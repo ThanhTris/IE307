@@ -27,6 +27,10 @@ base `d7b89f2`. Xem [kế hoạch](PLAN.md), [kết quả kiểm](CHECKS.md) và
 
 ## Bước 5 — kiểm Expo Go trên AVD
 
+Tuấn xác nhận đã kiểm thủ công bằng Expo Go trên điện thoại Android
+ngày 26/11/2026. Xem [CHECKS](CHECKS.md) để biết phạm vi bằng chứng.
+Trí nhận lượt AVD Chặng 3A để chạy và ghi kết quả.
+
 Dùng stack QA riêng và tài khoản thử nghiệm vì xóa là thao tác thật.
 Không dùng môi trường production. Mở Docker Desktop và Android AVD.
 
