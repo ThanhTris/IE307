@@ -1,0 +1,8 @@
+title: Gì Cũng Được — Thông tin pháp lý
+description: Chính sách quyền riêng tư, điều khoản và hỗ trợ của ứng dụng Gì Cũng Được.
+url: https://thanhtris.github.io
+baseurl: /IE307
+markdown: kramdown
+plugins: []
+exclude:
+  - README.md
