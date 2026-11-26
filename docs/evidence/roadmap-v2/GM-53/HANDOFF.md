@@ -122,6 +122,20 @@ ca mô phỏng và ghi riêng các ca Auth/REST/Edge thật. Bổ sung commit/bu
 Android/AVD, SDK Expo, run ID, thao tác, expected/actual và ảnh vào
 [CHECKS](CHECKS.md), [FIGMA_PARITY](FIGMA_PARITY.md).
 
+### Thứ tự liên kết email chờ Trí quyết định
+
+Yêu cầu từ lượt kiểm Expo Go là **nhập email → xác minh OTP → đặt mật khẩu**.
+Nếu người dùng bấm quay lại từ màn đặt mật khẩu, khách phải giữ nguyên UUID,
+phiên và dữ liệu, đồng thời email vẫn chưa được liên kết. Với GoTrue hiện
+hành, xác minh OTP loại `email_change` cho khách đã hoàn tất liên kết và
+chuyển ngay sang tài khoản email. [Tài liệu Supabase Auth](https://supabase.com/docs/guides/auth/auth-anonymous#link-an-email--phone-identity)
+
+Luồng hiện tại tiếp tục đặt mật khẩu trước OTP. Khi review PR, nhờ Trí
+quyết định có duyệt thay đổi hợp đồng Auth để xác minh OTP riêng và chỉ
+hoàn tất liên kết sau khi lưu mật khẩu hay không. Nếu duyệt, ca nghiệm thu
+gồm OTP sai hoặc hết hạn, quay lại hoặc đóng app sau OTP, và hoàn tất liên
+kết đúng UUID rồi đăng nhập bằng mật khẩu mới.
+
 Khi xong, dừng Expo/Edge. Với Edge được mở trong terminal, nhấn Ctrl+C
 ở terminal Edge. Với run `gm53-1126`, PID của launcher đã lưu trong
 `.work/qa/gm53-1126/gm53-edge.pid`. Chỉ dừng launcher nếu kiểm lại nó là
