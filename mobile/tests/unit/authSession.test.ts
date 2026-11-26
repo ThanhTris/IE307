@@ -145,6 +145,27 @@ test('recovery token only authorizes a password change and never replaces the gu
   expect(await s.storage.load()).toEqual(initial);
 });
 
+test('password change checks credentials before comparing the proposed password', async () => {
+  const s = accountSetup();
+  await s.session.restoreSession();
+  const email = 'tester@example.test';
+  const correct = '12345678';
+  const wrong = '01234567';
+  await s.account.signIn({ email, password: correct });
+
+  s.transport.signIn.mockRejectedValueOnce(new AuthFailure({ messageKey: 'INVALID_INPUT', details: { reason: 'invalid_credentials' } }));
+  await expect(s.account.changePassword(wrong, wrong)).resolves.toMatchObject({
+    ok: false, error: { details: { reason: 'invalid_credentials' } },
+  });
+  await expect(s.account.changePassword(correct, correct)).resolves.toMatchObject({
+    ok: false, error: { details: { reason: 'same_password' } },
+  });
+  expect(s.transport.updatePassword).not.toHaveBeenCalled();
+
+  await expect(s.account.changePassword(correct, wrong)).resolves.toMatchObject({ ok: true });
+  expect(s.transport.updatePassword).toHaveBeenCalledWith(accountSession.accessToken, wrong, correct);
+});
+
 test('guest is persisted before becoming active; returned user cannot mutate stored identity', async () => {
   const s = setup();
   const result = await s.session.createGuestSession({ displayName: ' Trí ', requestId: 'fixture-request' });

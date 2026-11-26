@@ -61,8 +61,7 @@ export function AccountEditScreen({ kind, user, account, onBack, onRecovery }: {
     }
     const invalid: FieldErrors = {
       currentPassword: !currentPassword ? 'Nhập mật khẩu hiện tại.' : undefined,
-      password: !password ? 'Nhập mật khẩu mới.' : newPasswordError(password)
-        ?? (password === currentPassword ? 'Chọn mật khẩu khác với mật khẩu hiện tại.' : undefined),
+      password: !password ? 'Nhập mật khẩu mới.' : newPasswordError(password),
       confirmation: !confirmation ? 'Nhập lại mật khẩu mới.'
         : password !== confirmation ? 'Hai mật khẩu mới chưa khớp.' : undefined,
     };

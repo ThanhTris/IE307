@@ -98,6 +98,9 @@ export function createAccountService(auth: AccountTransport, session: SessionMan
       try {
         requireIdentity(current.user.id, fresh.user.id);
         assertCurrent();
+        if (password === currentPassword) {
+          throw new AuthFailure({ messageKey: 'INVALID_INPUT', details: { reason: 'same_password' } });
+        }
         const updated = await auth.updatePassword(current.accessToken, password, currentPassword);
         requireIdentity(current.user.id, updated.id);
       } finally {
