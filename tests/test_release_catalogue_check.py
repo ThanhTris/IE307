@@ -36,6 +36,16 @@ class ReleaseCatalogueCheckTests(unittest.TestCase):
         self.assertTrue(rc.artwork_ok({**base, 'usageRights': 'public_domain', 'attribution': None}))
         self.assertFalse(rc.artwork_ok(None))
 
+    def test_category_illustration_is_counted_apart_from_photos(self):
+        base = {'url': 'https://example.test/a.webp', 'usageRights': 'licensed', 'license': 'Apache-2.0',
+                'attribution': 'Ảnh minh họa nhóm Cơm · biểu tượng rice (Apache-2.0)'}
+        self.assertTrue(rc.is_illustration(base))
+        self.assertFalse(rc.is_illustration({**base, 'attribution': 'Ảnh: A / Wikimedia Commons, CC BY 4.0'}))
+        self.assertFalse(rc.is_illustration({**base, 'url': None}))
+        self.assertFalse(rc.is_illustration(None))
+        advisory = rc.evaluate(rc.DEFAULT_BUNDLE)['advisory']
+        self.assertEqual(advisory['Món dùng ảnh minh họa nhóm']['actual'], 0)
+
     def test_json_report_and_exit_code(self):
         with tempfile.TemporaryDirectory() as tmp:
             out = Path(tmp) / 'report.json'
