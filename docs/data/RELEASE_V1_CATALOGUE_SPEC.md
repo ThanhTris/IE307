@@ -34,7 +34,7 @@ Trí review cả ba. GM-51 chỉ bắt đầu phát hành khi GM-41 và GM-47 Do
 | Mỗi miền (Bắc, Trung, Nam, Tây) | **25 mỗi miền** | `cuisineIds` chứa ID miền |
 | Mỗi vị (6 vị) | **15 mỗi vị** | Xem bảng vị bên dưới |
 | Mô tả | **100% món** | `description` không rỗng |
-| Ảnh | **100% món** | Xem mục 5 |
+| Ảnh | **100% món** | Có ảnh hoặc ảnh minh họa có quyền, xem mục 5 |
 | Giá quan sát | Khuyến nghị ≥ 80% món | Ít nhất một `priceReferences` cho món |
 
 Một món được tính cho nhiều bữa, nhiều nhóm, nhiều miền và nhiều vị cùng lúc, miễn mỗi giá trị có nguồn.
@@ -76,7 +76,7 @@ Một món được tính cho nhiều bữa, nhiều nhóm, nhiều miền và n
 
 ## 5. Ảnh
 
-Mỗi món một ảnh **đúng món đó** (nhìn ra được món, không phải ảnh minh họa chung), đủ các trường của `artwork`:
+**100% món có ảnh hoặc ảnh minh họa có quyền** (Trí chốt 2026-11-26, [quyết định trên PR #217](https://github.com/ThanhTris/IE307/pull/217#issuecomment-7181026504)). Mỗi món ưu tiên một ảnh chụp **đúng món đó** (nhìn ra được món). Món chưa tìm được ảnh chụp có quyền thì dùng ảnh minh họa theo nhóm món (xem "Ảnh minh họa theo nhóm" bên dưới). Cả hai loại đều đủ các trường của `artwork`:
 
 | Trường | Yêu cầu |
 | --- | --- |
@@ -90,7 +90,7 @@ Mỗi món một ảnh **đúng món đó** (nhìn ra được món, không ph�
 
 **Không được dùng:** ảnh không rõ license; ảnh có điều kiện NC (phi thương mại) hoặc ND (không chỉnh sửa, vì app sẽ cắt và nén); ảnh từ Google Images, Foody, ShopeeFood, GrabFood, trang quán hay mạng xã hội khi chưa có văn bản cho phép; ảnh do AI tạo.
 
-**Không dùng ảnh do AI tạo (bắt buộc, Trí chốt 2026-11-25).** Mọi ảnh trong catalogue phải là ảnh chụp thật của món: không dùng ảnh do AI tạo, và không dùng ảnh đã chỉnh bằng AI làm đổi món hoặc thêm chi tiết không có thật (cắt, xoay, chỉnh sáng, nén vẫn được). Luật này áp dụng cho mọi ảnh, gồm ảnh Wikimedia, ảnh từ nguồn khác và ảnh nhóm tự chụp. Người kiểm ảnh ghi kết quả vào trường `aiCheck` của từng ảnh trong hồ sơ ảnh của GM-47:
+**Không dùng ảnh do AI tạo (bắt buộc, Trí chốt 2026-11-25).** Mọi ảnh chụp trong catalogue phải là ảnh chụp thật của món (ảnh minh họa theo nhóm theo đoạn riêng bên dưới, cũng không được tạo bằng AI): không dùng ảnh do AI tạo, và không dùng ảnh đã chỉnh bằng AI làm đổi món hoặc thêm chi tiết không có thật (cắt, xoay, chỉnh sáng, nén vẫn được). Luật này áp dụng cho mọi ảnh, gồm ảnh Wikimedia, ảnh từ nguồn khác và ảnh nhóm tự chụp. Người kiểm ảnh ghi kết quả vào trường `aiCheck` của từng ảnh chụp trong hồ sơ ảnh của GM-47:
 
 | Trường `aiCheck` | Nội dung |
 | --- | --- |
@@ -102,9 +102,16 @@ Mỗi món một ảnh **đúng món đó** (nhìn ra được món, không ph�
 
 Từ chối ảnh thuộc danh mục AI-generated, ảnh không rõ nguồn gốc, ảnh có dấu hiệu AI (chữ méo, vật thể biến dạng, chi tiết lặp bất thường) và khung hình cắt từ video khi không xác minh được người đăng là chủ video. Ảnh không có EXIF thì kiểm thêm người tải lên và trang nguồn; còn nghi ngờ thì thay ảnh khác. Ảnh nhóm tự chụp phải giữ file gốc có EXIF làm bằng chứng trong `permissionEvidence`.
 
+### Ảnh minh họa theo nhóm
+
+- **Khi nào dùng:** chỉ cho món chưa tìm được ảnh chụp có quyền. Ảnh minh họa dùng chung cho các món cùng nhóm. Có ảnh chụp thật thì thay theo UUID món và cập nhật ghi công.
+- **Nguồn được phép:** nhóm tự vẽ, icon có sẵn trong app, hoặc nguồn CC0. Không dùng ảnh web chưa có quyền để làm minh họa, không tạo bằng AI. Bộ đầu tiên của GM-47 dựng từ Material Design Icons trong gói `@expo/vector-icons` của app (Apache-2.0), có chữ "MINH HỌA" trên ảnh.
+- **Metadata:** đánh dấu là ảnh minh họa, không phải ảnh món, để GM-64 hiển thị đúng: `linkedArtwork[dishId].kind = category_illustration` kèm `groupCode`; `artwork.attribution` bắt đầu bằng "Ảnh minh họa nhóm".
+- **Bằng chứng:** thay cho `aiCheck`, hồ sơ minh họa (`manifest.json`) ghi nguồn, tác giả, license, ghi công, kích thước và SHA của từng tệp; license yêu cầu kèm văn bản thì để file license trong gói bàn giao. CHECKS ghi danh sách món đang dùng ảnh minh họa.
+
 **Kỹ thuật:** cạnh ngắn ≥ 600 px, tỉ lệ gần 4:3, xuất WebP hoặc JPEG ≤ 200 KB mỗi ảnh. Ghi tổng dung lượng trong CHECKS.
 
-**Món không tìm được ảnh hợp lệ:** báo Trí trước khi phát hành để quyết chụp riêng hay bỏ món. Không đưa món thiếu ảnh vào bundle production.
+**Món không tìm được ảnh chụp hợp lệ:** dùng ảnh minh họa theo nhóm và báo Trí danh sách để quyết tự chụp hay giữ ảnh minh họa; không bắt buộc đủ ảnh chụp cho bản nộp đầu. Không đưa vào bundle production món không có ảnh nào.
 
 ## 6. Nguồn dữ liệu
 
@@ -128,15 +135,15 @@ Nguồn hợp lệ là trang công khai truy cập lại được: menu quán (�
 3. Import và readback trên QA đạt; tạo được phòng 20 món cho cả bốn bữa.
 4. CHECKS ghi số món từng đợt, kết quả các lệnh trên và commit.
 
-**GM-47 Done lại khi:** cùng lệnh kiểm PASS cả hai mục mô tả và ảnh trên bundle đã gộp; mọi ảnh có bằng chứng license trong CHECKS; tổng dung lượng ảnh được ghi.
+**GM-47 Done lại khi:** cùng lệnh kiểm PASS cả hai mục mô tả và ảnh trên bundle đã gộp; mọi ảnh có bằng chứng license trong CHECKS; CHECKS ghi số ảnh chụp, số món dùng ảnh minh họa và danh sách các món đó; tổng dung lượng ảnh được ghi.
 
 **GM-51 phát hành khi:** lệnh kiểm PASS **toàn bộ** trên bundle production (không còn `test_demo`), quyền dùng nguồn mô tả đã xác nhận, readback trên staging khớp hash và số món.
 
 ## 9. Quyết định của Trí (2026-11-23)
 
-- **Lưu trữ ảnh: đã chốt.** Bucket công khai trên Supabase Storage của từng môi trường. Trí thiết lập bucket qua GM-52 (staging và production); Tâm bàn giao tệp ảnh và gắn `url` theo UUID món. Khoảng 250 ảnh × 200 KB ≈ 50 MB, nằm trong gói miễn phí. Không trỏ thẳng ảnh Wikimedia vì có thể đổi hoặc chặn. Mỗi món có ảnh đủ chất lượng theo mục 5 và một bản nhỏ cho danh sách (GM-47, GM-64).
+- **Lưu trữ ảnh: đã chốt.** Bucket công khai trên Supabase Storage của từng môi trường. Trí thiết lập bucket qua GM-52 (staging và production); Tâm bàn giao tệp ảnh và gắn `url` theo UUID món. Khoảng 250 ảnh × 200 KB ≈ 50 MB, nằm trong gói miễn phí. Không trỏ thẳng ảnh Wikimedia vì có thể đổi hoặc chặn. Mỗi món có ảnh hoặc ảnh minh họa theo mục 5, đủ chất lượng, kèm một bản nhỏ cho danh sách (GM-47, GM-64).
 - **Hiển thị ghi công trong app: đã chốt.** Thêm màn "Nguồn ảnh" trong Hồ sơ liệt kê tên món, tác giả, license và nguồn của mọi ảnh; giữ ghi công sẵn có ở màn món thắng (WinnerCelebration). Người làm: Tuấn, trong [GM-64](../../tasks/backlog/GM-64.md). Không hiện ghi công trên thẻ bầu chọn.
-- **Phân việc ảnh:** Tâm giữ danh sách món thiếu ảnh và kiểm ảnh đúng món, tác giả, license; việc tìm hoặc chụp chia theo 6 lô bàn giao của Vinh trong `data-preparation/editorial/release-v1/`. Món không tìm được ảnh hợp lệ thì báo Trí quyết chụp riêng hay bỏ khỏi bản phát hành; không dùng ảnh không rõ license.
+- **Phân việc ảnh:** Tâm giữ danh sách món thiếu ảnh và kiểm ảnh đúng món, tác giả, license; việc tìm hoặc chụp chia theo 6 lô bàn giao của Vinh trong `data-preparation/editorial/release-v1/`. Món không tìm được ảnh chụp hợp lệ thì dùng ảnh minh họa theo nhóm và báo Trí danh sách (thay cách xử lý "chụp riêng hay bỏ món" trước đây, quyết định 2026-11-26); không dùng ảnh không rõ license.
 
 ## 10. AI agent không được làm
 

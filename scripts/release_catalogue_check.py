@@ -37,6 +37,8 @@ FLOOR = {
 }
 ADVISORY = {'price_ratio': 0.8}
 RIGHTS = {'licensed', 'public_domain', 'granted'}
+# Spec section 5: a shared category illustration is told apart from a dish photo by its attribution prefix.
+ILLUSTRATION_PREFIX = 'Ảnh minh họa nhóm'
 
 
 def flavour_hits(flavor: dict | None) -> set[str]:
@@ -56,6 +58,10 @@ def artwork_ok(artwork: dict | None) -> bool:
     if not artwork or not artwork.get('url') or artwork.get('usageRights') not in RIGHTS or not artwork.get('license'):
         return False
     return bool(artwork.get('attribution')) or artwork.get('usageRights') == 'public_domain'
+
+
+def is_illustration(artwork: dict | None) -> bool:
+    return artwork_ok(artwork) and (artwork.get('attribution') or '').startswith(ILLUSTRATION_PREFIX)
 
 
 def evaluate(bundle: Path) -> dict:
@@ -93,7 +99,10 @@ def evaluate(bundle: Path) -> dict:
     need('Món có ảnh hợp lệ (url, quyền, license, ghi công)', n - len(no_art), n,
          passed=n > 0 and len(no_art) <= n * (1 - FLOOR['artwork_ratio']), names=no_art)
 
+    illustrated = sum(is_illustration(r['dish'].get('artwork')) for r in rows)
     advisory = {
+        'Món có ảnh chụp hợp lệ': {'actual': n - len(no_art) - illustrated, 'target': None},
+        'Món dùng ảnh minh họa nhóm': {'actual': illustrated, 'target': None},
         'Món có giá quan sát': {'actual': sum(r['prices'] > 0 for r in rows), 'target': round(ADVISORY['price_ratio'] * n)},
         'Món có nhiệt độ': {'actual': sum(bool(r['temperature']) for r in rows), 'target': None},
     }
