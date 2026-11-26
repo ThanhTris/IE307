@@ -16,4 +16,6 @@ export interface SessionSnapshot {
   status: SessionStatus;
   user: SessionUser | null;
   issue: SessionIssue;
+  /** Public hint distinguishing an expired account session from a guest one when `user` is null. */
+  lastKnownGuest?: boolean;
 }

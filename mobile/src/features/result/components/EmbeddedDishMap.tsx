@@ -42,7 +42,7 @@ export function EmbeddedDishMap({ dishName, height = 380, onFailed }: { dishName
           </Pressable>
         </MapFrame>
         {/* A Modal is its own window: toasts raised while it is open need a host here. */}
-        <ToastHost />
+        {expanded ? <ToastHost /> : null}
       </View>
     </Modal>
   </>;

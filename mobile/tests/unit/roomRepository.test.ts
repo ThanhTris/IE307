@@ -668,5 +668,14 @@ describe('LiveRoomRepository (GM-25)', () => {
         expect(res.data.preferences.cuisineIds).toEqual(['c1']);
       }
     });
+
+    it('previewJoin maps broken/non-boolean RPC responses to MALFORMED_RESPONSE instead of ROOM_NOT_FOUND', async () => {
+      const client = createMockClient();
+      client.callRpc = jest.fn().mockResolvedValue({ broken: true });
+      const repo = createRoomRepository({ client });
+      const res = await repo.previewJoin('GCD234');
+      expect(res.ok).toBe(false);
+      if (!res.ok) expect(res.error.messageKey).toBe('MALFORMED_RESPONSE');
+    });
   });
 });

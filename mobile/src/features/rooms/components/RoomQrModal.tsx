@@ -112,7 +112,7 @@ export function RoomQrModal({ visible, code, onClose, onCopyLink }: RoomQrModalP
           </View>
         </Pressable>
       </Pressable>
-      <ToastHost />
+      {visible ? <ToastHost /> : null}
     </Modal>
   );
 }

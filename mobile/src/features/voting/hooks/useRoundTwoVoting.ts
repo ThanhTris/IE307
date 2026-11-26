@@ -706,7 +706,7 @@ export function useRoundTwoVoting({
           if (describeError(res.error).reportable) {
             recordLastFailure({ errorCode: res.error.messageKey, screen: 'room/final-round', action: 'submit_ballot', requestId: intent.requestId });
           }
-          setErrorMessage(res.error.message || describeError(res.error).message);
+          setErrorMessage(describeError(res.error).message);
         }
       } else if (api) {
         const req = {
@@ -776,7 +776,7 @@ export function useRoundTwoVoting({
           }
         } else {
           setSubmissionState('error');
-          setErrorMessage(res.error.message || 'Lỗi gửi phiếu');
+          setErrorMessage(describeError(res.error).message);
         }
       } else {
         // Pure mock fallback

@@ -5,7 +5,8 @@ import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { StatusNotice } from '../../src/shared/ui/feedback/StatusNotice';
 import { FailureNotice } from '../../src/shared/ui/feedback/FailureNotice';
 import { RequestBanner } from '../../src/shared/ui/feedback/RequestBanner';
-import { ToastNotice, ToastProvider } from '../../src/shared/ui/feedback/Toast';
+import { SheetDialog } from '../../src/shared/ui/dialogs/SheetDialog';
+import { ToastNotice, ToastProvider, useToast } from '../../src/shared/ui/feedback/Toast';
 import { NotificationProvider, useNotifications } from '../../src/shared/ui/feedback/NotificationBanner';
 import { HelpProvider } from '../../src/features/support/HelpProvider';
 import { incidentFor } from '../../src/shared/errors/failure';
@@ -118,4 +119,24 @@ test('ToastProvider upgrades an active Toast in-place on 2nd failure with Báo l
   expect(screen.getAllByTestId('toast-error')).toHaveLength(1);
   await fireEvent.press(screen.getByRole('button', { name: 'Báo lỗi hoặc cần trợ giúp' }));
   expect(onHelp).toHaveBeenCalledTimes(1);
+});
+
+function ClosedModalToastHarness() {
+  const [open, setOpen] = useState(true);
+  const toast = useToast();
+  return <>
+    <SheetDialog visible={open} title="Xác nhận rời phòng?" onClose={() => setOpen(false)} colors={colors}>
+      <Text onPress={() => {
+        setOpen(false);
+        toast?.show({ title: 'Không kết nối được máy chủ', message: 'Thử lại sau.', tone: 'error' });
+      }}>leave-fail</Text>
+    </SheetDialog>
+  </>;
+}
+
+test('closing a SheetDialog does not leave a ghost ToastHost stealing root toasts (leave-503)', async () => {
+  await wrap(<ClosedModalToastHarness />);
+  await fireEvent.press(screen.getByText('leave-fail'));
+  await waitFor(() => expect(screen.getByTestId('toast-error')).toBeOnTheScreen());
+  expect(screen.getByText('Không kết nối được máy chủ')).toBeOnTheScreen();
 });

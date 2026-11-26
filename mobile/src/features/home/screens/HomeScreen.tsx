@@ -23,6 +23,7 @@ export type HomeLiveSession = {
   status: SessionStatus;
   issue: SessionIssue;
   user: SessionUser | null;
+  lastKnownGuest?: boolean;
   isInitializing: boolean;
   ensureSession: (displayName: string) => Promise<boolean>;
   restoreSession: () => Promise<boolean>;
@@ -42,19 +43,15 @@ export type HomeScreenProps = {
   onFriends?: () => void;
   /** Quick room with one friend: setup opens with that friend invited. */
   onQuickInvite?: (friendUserId: string) => void;
-  /** Development builds only: opens the result-screen preview. */
-  onDevResult?: () => void;
-  onDevRoundTwo?: () => void;
-  onDevFlashcard?: () => void;
-  onDevIcons?: () => void;
   onHistory?: () => void;
   onInbox?: () => void;
   onProfile?: () => void;
+  onSignIn?: () => void;
   onTutorial?: () => void;
 };
 
 
-export function HomeScreen({ repository, liveSession, activeRoom, onReturnToRoom, roomRevision, onCreate, onJoin, onResume, onFriends, onQuickInvite, onDevResult, onDevRoundTwo, onDevFlashcard, onDevIcons, onHistory, onInbox, onProfile, onTutorial }: HomeScreenProps) {
+export function HomeScreen({ repository, liveSession, activeRoom, onReturnToRoom, roomRevision, onCreate, onJoin, onResume, onFriends, onQuickInvite, onHistory, onInbox, onProfile, onSignIn, onTutorial }: HomeScreenProps) {
   const { colors } = useShellTheme();
   const { unread: unreadInbox } = useInboxBadge();
   const { textStyle } = useAppFonts();
@@ -125,6 +122,7 @@ export function HomeScreen({ repository, liveSession, activeRoom, onReturnToRoom
       setGuestBusy(false);
     }
   };
+  const revokedWasAccount = liveSession.user?.isGuest === false || liveSession.lastKnownGuest === false;
   const sessionNotice = !liveSession.isInitializing && !sessionReady
     ? liveSession.issue === 'no-session'
       ? <StatusNotice title="Chưa có phiên" message="Chọn Tạo phòng hoặc Tham gia phòng để bắt đầu với tên của bạn." colors={colors} />
@@ -133,7 +131,9 @@ export function HomeScreen({ repository, liveSession, activeRoom, onReturnToRoom
         : liveSession.issue === 'restore-unavailable'
           ? <ToastNotice title="Chưa kết nối được máy chủ" message="Thông tin tài khoản vẫn được giữ trên máy. Kiểm tra mạng rồi thử lại." actionLabel="Thử lại" onAction={() => { void liveSession.restoreSession(); }} tone="warning" />
           : liveSession.issue === 'session-revoked' || liveSession.status === 'lost'
-            ? <ToastNotice title="Phiên đăng nhập đã hết hạn" message="Bắt đầu lại để tiếp tục sử dụng ứng dụng." actionLabel="Bắt đầu lại" onAction={() => { void liveSession.logout(); }} tone="warning" />
+            ? revokedWasAccount && onSignIn
+              ? <ToastNotice title="Phiên đăng nhập đã hết hạn" message="Đăng nhập lại để tiếp tục." actionLabel="Đăng nhập lại" onAction={onSignIn} tone="warning" />
+              : <ToastNotice title="Phiên đăng nhập đã hết hạn" message="Bắt đầu lại để tiếp tục sử dụng ứng dụng." actionLabel="Bắt đầu lại" onAction={() => { void liveSession.logout(); }} tone="warning" />
             : liveSession.issue === 'storage-unavailable' || liveSession.issue === 'unknown-error'
               ? <ToastNotice title="Không đọc được phiên đã lưu" message="Bắt đầu lại để tiếp tục sử dụng ứng dụng." actionLabel="Bắt đầu lại" onAction={() => { void liveSession.logout(); }} tone="error" />
               : liveSession.issue === 'signup-uncertain' || liveSession.status === 'blocked'
@@ -151,7 +151,7 @@ export function HomeScreen({ repository, liveSession, activeRoom, onReturnToRoom
     { id: 'profile', label: 'Cá nhân', icon: 'profile' as const, onPress: openProfile },
   ];
 
-  if (liveSession.issue === 'session-revoked' && !liveSession.isInitializing && liveSession.user?.isGuest !== false && dismissedExpiry !== liveSession) {
+  if (liveSession.issue === 'session-revoked' && !liveSession.isInitializing && !revokedWasAccount && dismissedExpiry !== liveSession) {
     return <GuestSessionExpiredScreen onReset={liveSession.logout} onHome={() => setDismissedExpiry(liveSession)} />;
   }
 
@@ -212,16 +212,14 @@ export function HomeScreen({ repository, liveSession, activeRoom, onReturnToRoom
         </View>
         {isGuest ? <Text style={[homeStyles.emptyFriends, { color: colors.muted }, textStyle(400)]}>Đăng nhập để mở kèo nhanh với bạn bè.</Text> : <>
         {friends.loading ? <LoadingState label="Đang tải bạn bè" colors={colors} /> : null}
-        {friends.error ? <StatusNotice title="Chưa tải được bạn bè" message={describeError({ messageKey: friends.error }).message} actionLabel="Tải lại bạn bè" onAction={friends.retry} tone="error" colors={colors} /> : null}
+        {friends.error ? <>
+          <ToastNotice title="Chưa tải được bạn bè" message={describeError({ messageKey: friends.error }).message} tone="error" />
+          <AppButton label="Tải lại bạn bè" variant="secondary" onPress={friends.retry} colors={colors} />
+        </> : null}
         {friends.data && sessionReady && quickFriends.length === 0 ? <Text style={[homeStyles.emptyFriends, { color: colors.muted }, textStyle(400)]}>Mời bạn để bắt đầu kèo nhanh.</Text> : null}
         {sessionReady && !friends.loading && !friends.error ? <AvatarRow items={quickFriends.slice(0, 4).map(friend => ({ id: friend.friendUserId, label: friend.displayName }))} onAdd={openFriends} onSelect={onQuickInvite} labelTextStyle={textStyle(600)} colors={colors} /> : null}
         </>}
       </View>
-
-      {onDevResult ? <Pressable accessibilityRole="button" onPress={onDevResult} style={homeStyles.devLink}><Text style={[homeStyles.devLinkText, { color: colors.muted }, textStyle(500)]}>Xem thử giao diện kết quả (chỉ bản dev)</Text></Pressable> : null}
-      {onDevIcons ? <Pressable accessibilityRole="button" onPress={onDevIcons} style={homeStyles.devLink}><Text style={[homeStyles.devLinkText, { color: colors.muted }, textStyle(500)]}>Xem bộ icon (chỉ bản dev)</Text></Pressable> : null}
-      {onDevFlashcard ? <Pressable accessibilityRole="button" onPress={onDevFlashcard} style={homeStyles.devLink}><Text style={[homeStyles.devLinkText, { color: colors.muted }, textStyle(500)]}>Xem thử flashcard đầy đủ (chỉ bản dev)</Text></Pressable> : null}
-      {onDevRoundTwo ? <Pressable accessibilityRole="button" onPress={onDevRoundTwo} style={homeStyles.devLink}><Text style={[homeStyles.devLinkText, { color: colors.muted }, textStyle(500)]}>Xem thử giao diện vòng 2 (chỉ bản dev)</Text></Pressable> : null}
 
       {sessionLoading ? <StatusNotice title="Đang khôi phục phiên…" colors={colors} /> : null}
     </ScrollView>
@@ -244,8 +242,6 @@ export function HomeScreen({ repository, liveSession, activeRoom, onReturnToRoom
 
 
 const homeStyles = StyleSheet.create({
-  devLink: { alignItems: 'center', paddingVertical: 12 },
-  devLinkText: { fontSize: 12, lineHeight: 18, textDecorationLine: 'underline' },
   root: { flex: 1 },
   content: { flexGrow: 1, padding: CONTAINER_GUTTER, paddingTop: spacing.xs, paddingBottom: spacing.xxl, gap: spacing.xxl, ...CONTAINER_STYLE },
   modeLabel: { alignSelf: 'flex-start', overflow: 'hidden', paddingHorizontal: spacing.md, paddingVertical: spacing.xs, borderRadius: radii.pill, fontSize: 12, lineHeight: 18 },

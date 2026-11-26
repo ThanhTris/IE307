@@ -210,11 +210,25 @@ export function VoteScreen({
     );
   }
 
+  const sentSubmitToast = submissionState === 'error' && errorMessage ? (() => {
+    const showSubmitHelp = Boolean(help && submitFailureCode && describeError({ messageKey: submitFailureCode }).reportable
+      && (submitRetryCount >= 2 || submitFailureCode === 'MALFORMED_RESPONSE' || submitFailureCode === 'CONTRACT_MISMATCH'));
+    return <ToastNotice
+      title="Chưa gửi được phiếu"
+      message={errorMessage}
+      tone="error"
+      triggerKey={submitRetryCount}
+      actionLabel={showSubmitHelp ? 'Báo lỗi' : undefined}
+      actionAccessibilityLabel={showSubmitHelp ? 'Báo lỗi hoặc cần trợ giúp' : undefined}
+      onAction={showSubmitHelp ? () => help!.open({ errorCode: submitFailureCode!, screen: 'room/vote', action: 'submit_ballot' }) : undefined}
+    />;
+  })() : null;
+
   // Round 1 found no winner: the dialog covers the whole screen and the app moves on to round 2, so nothing of round 1
   // is drawn behind it, only the plain background.
   if (roundTwoNotice) {
     return <SafeAreaView style={[styles.root, { backgroundColor: colors.background }]}>
-      {submissionState === 'error' && errorMessage ? <ToastNotice title="Chưa gửi được phiếu" message={errorMessage} tone="error" /> : null}
+      {sentSubmitToast}
       {waitingError ? <ToastNotice title={waitingError} tone="error" /> : null}
       {roundTwoDialog}
     </SafeAreaView>;
@@ -224,7 +238,7 @@ export function VoteScreen({
     const sent = submissionState === 'pending' || submissionState === 'ack';
     return (
       <SafeAreaView style={[styles.root, { backgroundColor: colors.background }]}>
-        {submissionState === 'error' && errorMessage ? <ToastNotice title="Chưa gửi được phiếu" message={errorMessage} tone="error" /> : null}
+        {sentSubmitToast}
         {waitingError ? <ToastNotice title={waitingError} tone="error" /> : null}
         {sent ? (
           <>

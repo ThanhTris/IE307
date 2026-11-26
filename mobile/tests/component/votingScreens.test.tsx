@@ -872,7 +872,7 @@ describe('GM-26 Reviewer Audit Fixes (Trí 2026-11-06)', () => {
         if (callCount === 1) {
           return Promise.resolve({
             ok: false,
-            error: { code: 'NETWORK_ERROR', messageKey: 'NETWORK_ERROR', message: 'Mạng chập chờn' },
+            error: { code: 'NETWORK_ERROR', messageKey: 'NETWORK_ERROR', message: 'Server unavailable' },
           });
         }
         return Promise.resolve({
@@ -903,8 +903,9 @@ describe('GM-26 Reviewer Audit Fixes (Trí 2026-11-06)', () => {
     await user.press(submitBtn);
 
     await waitFor(() => {
-      expect(screen.getByText('Mạng chập chờn')).toBeOnTheScreen();
+      expect(screen.getByText(/Kiểm tra mạng rồi thử lại/)).toBeOnTheScreen();
     });
+    expect(screen.queryByText('Server unavailable')).toBeNull();
 
     const retryBtn = screen.getByRole('button', { name: 'Thử lại' });
     await user.press(retryBtn);

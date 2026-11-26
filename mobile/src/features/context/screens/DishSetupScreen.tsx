@@ -25,7 +25,7 @@ export function DishSetupScreen({ draft, onChange, onBack, onContinue, onSchedul
   return <DishSetupFrame title="Tạo phòng" onBack={onBack} busy={busy} footer={<AppButton label="Chọn khẩu vị →" colors={colors} disabled={!!invalid || busy || submitDisabled} loading={busy} onPress={onContinue} />}>
     {notice ? <ToastNotice title={notice} tone={noticeTone} /> : null}
     {readOnly ? <StatusNotice title="Chỉ chủ phòng được sửa thiết lập" message="Bạn vẫn có thể chọn khẩu vị riêng." colors={colors} /> : null}
-    {invalid ? <StatusNotice title={invalid} colors={colors} /> : null}
+    {invalid ? <ToastNotice title={invalid} tone="warning" /> : null}
     {heading('Buổi ăn', true)}<ChoiceGrid>{mealOptions.map(item => <SetupChoice key={item.id} fill label={item.label} icon={item.icon} stacked compact selected={draft.mealSlot === item.id} disabled={disabled} onPress={() => { if (guard) guard({ ...draft, mealSlot: item.id }); else onChange(changeSetupMeal(draft, item.id, now())); }} />)}</ChoiceGrid>
     {heading('Thời gian', true)}<SetupTimeMode scheduled={draft.timeMode === 'scheduled'} scheduleOpen={scheduleOpen} disabled={disabled} onNow={() => onChange(switchToNow(draft, now()))} onSchedule={onSchedule} />
     {draft.timeMode === 'scheduled' && draft.desiredAt && Number.isFinite(Date.parse(draft.desiredAt)) ? <SetupScheduleSummary value={draft.desiredAt} onEdit={onSchedule} disabled={disabled} /> : null}

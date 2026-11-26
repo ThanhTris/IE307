@@ -190,10 +190,13 @@ export class LiveRoomRepository implements RoomRepository {
     const revision = ++this.identityRevision;
     const recoveringRejectedSession = this.sessionSnapshot.issue === 'session-recovery-required';
     let storedSessionExists: boolean | undefined;
+    let storedGuestFlag: boolean | undefined;
 
     if (this.session && this.sessionStorage) {
       try {
-        storedSessionExists = Boolean(await this.sessionStorage.load());
+        const storedSession = await this.sessionStorage.load();
+        storedSessionExists = Boolean(storedSession);
+        storedGuestFlag = storedSession?.user?.isGuest;
       } catch {
         this.updateSessionSnapshot({ status: 'blocked', user: null, issue: 'storage-unavailable' });
         return { ok: false, error: { messageKey: 'UNKNOWN_ERROR' } };
@@ -215,26 +218,34 @@ export class LiveRoomRepository implements RoomRepository {
 
     if (revision !== this.identityRevision) return result;
     if (result.ok) {
-      this.updateSessionSnapshot({ status: 'active', user: result.data, issue: 'none' });
+      this.updateSessionSnapshot({ status: 'active', user: result.data, issue: 'none', lastKnownGuest: result.data.isGuest });
     } else if (!this.session) {
-      this.updateSessionSnapshot({ status: 'empty', user: null, issue: result.error.messageKey === 'AUTH_REQUIRED' ? 'no-session' : 'restore-unavailable' });
+      const preservedGuest = this.sessionSnapshot.user?.isGuest ?? this.sessionSnapshot.lastKnownGuest;
+      this.updateSessionSnapshot({
+        status: 'empty',
+        user: null,
+        issue: result.error.messageKey === 'AUTH_REQUIRED' ? 'no-session' : 'restore-unavailable',
+        ...(preservedGuest !== undefined ? { lastKnownGuest: preservedGuest } : {}),
+      });
     } else {
       const status = readManagerStatus(this.session);
+      const preservedGuest = storedGuestFlag ?? this.sessionSnapshot.user?.isGuest ?? this.sessionSnapshot.lastKnownGuest;
+      const guestMeta = preservedGuest !== undefined ? { lastKnownGuest: preservedGuest } : {};
       const noSavedSession = storedSessionExists === false
         || (storedSessionExists === undefined && result.error.messageKey === 'AUTH_REQUIRED' && this.sessionSnapshot.status === 'empty');
       const next = recoveringRejectedSession && result.error.messageKey === 'AUTH_REQUIRED'
-        ? { status: 'lost' as const, user: null, issue: 'session-revoked' as const }
+        ? { status: 'lost' as const, user: null, issue: 'session-revoked' as const, ...guestMeta }
         : recoveringRejectedSession && status === 'blocked'
-          ? { status: 'blocked' as const, user: null, issue: 'unknown-error' as const }
+          ? { status: 'blocked' as const, user: null, issue: 'unknown-error' as const, ...guestMeta }
           : recoveringRejectedSession
-            ? { status: 'lost' as const, user: null, issue: 'session-recovery-required' as const }
+            ? { status: 'lost' as const, user: null, issue: 'session-recovery-required' as const, ...guestMeta }
             : noSavedSession
         ? { status: 'empty' as const, user: null, issue: 'no-session' as const }
         : result.error.messageKey === 'AUTH_REQUIRED'
-          ? { status: 'lost' as const, user: null, issue: 'session-revoked' as const }
+          ? { status: 'lost' as const, user: null, issue: 'session-revoked' as const, ...guestMeta }
           : status === 'blocked'
-            ? { status: 'blocked' as const, user: null, issue: result.error.messageKey === 'UNKNOWN_ERROR' ? 'storage-unavailable' as const : 'unknown-error' as const }
-            : { status: 'empty' as const, user: null, issue: 'restore-unavailable' as const };
+            ? { status: 'blocked' as const, user: null, issue: result.error.messageKey === 'UNKNOWN_ERROR' ? 'storage-unavailable' as const : 'unknown-error' as const, ...guestMeta }
+            : { status: 'empty' as const, user: null, issue: 'restore-unavailable' as const, ...guestMeta };
       this.updateSessionSnapshot(next);
     }
     return result;
@@ -250,7 +261,7 @@ export class LiveRoomRepository implements RoomRepository {
   publishAccountSession(user: SessionUser | null) {
     ++this.identityRevision;
     this.updateSessionSnapshot(user
-      ? { status: 'active', user, issue: 'none' }
+      ? { status: 'active', user, issue: 'none', lastKnownGuest: user.isGuest }
       : { status: 'blocked', user: null, issue: 'storage-unavailable' });
   }
 
@@ -266,7 +277,7 @@ export class LiveRoomRepository implements RoomRepository {
     }
     if (revision !== this.identityRevision) return result;
     if (result.ok) {
-      this.updateSessionSnapshot({ status: 'active', user: result.data.user, issue: 'none' });
+      this.updateSessionSnapshot({ status: 'active', user: result.data.user, issue: 'none', lastKnownGuest: result.data.user.isGuest });
     } else if (this.session) {
       const status = readManagerStatus(this.session);
       if (['NETWORK_ERROR', 'TIMEOUT', 'MALFORMED_RESPONSE'].includes(result.error.messageKey)) {
@@ -366,7 +377,7 @@ export class LiveRoomRepository implements RoomRepository {
           error?: { messageKey?: string; code?: string; details?: Record<string, unknown> };
         };
 
-        if (raw && !raw.ok) {
+        if (raw && raw.ok === false) {
           const errCode = (raw.error?.messageKey || raw.error?.code || 'ROOM_NOT_FOUND') as ErrorCode;
           return { ok: false, error: { messageKey: errCode } };
         }

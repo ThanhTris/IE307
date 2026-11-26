@@ -30,7 +30,7 @@ export function RequireActiveSession({ children, onHome, onSignIn, loading }: {
     try { await live.logout(); } finally { setBusy(false); target(); }
   };
 
-  const isAccount = live.user?.isGuest === false;
+  const isAccount = live.user?.isGuest === false || live.lastKnownGuest === false;
   let title = 'Chưa có phiên';
   let message = 'Về màn hình chính để bắt đầu phiên làm việc trước khi mở phòng.';
   let primaryLabel: string | undefined;

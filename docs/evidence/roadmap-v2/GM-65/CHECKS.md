@@ -92,3 +92,52 @@ Ghi nhận: Trang chủ không có thanh tiêu đề nên toast che một phần
 ## Quan sát cần xử lý
 
 - Màn Tham gia phòng từng hiện "Liên kết bị chặn" sau khi mở lại app bằng liên kết `exp://` của Expo Go, và không tự kiểm mã khi còn cảnh báo. Không do PR này; xem ở bước "Vào phòng".
+
+---
+
+## Kiểm toàn diện trên AVD, Backend QA & Sửa lỗi Production (2026-11-26)
+
+Môi trường kiểm: nhánh `ui_error_handling_redesign` (dựa trên `4e260952`, đẩy lên `feat/gm-65-error-recovery` / PR #221); QA stack riêng `gm65-prod-avd` (API `54621`, DB `54622`, Mailpit `54624`, đủ 54 migration gồm `0068`, `dish_policy_worker` chạy thật); `scripts/gm65_fault_proxy.mjs` (cổng `54625`); `scripts/gm65_peer.mjs` (peer tạo phòng, mời bạn, bắt đầu, bỏ phiếu); AVD `Medium_Phone_API_37.0` (1080×2400, Expo Go SDK 58).
+
+### 1. Sửa lỗi phát hiện trong kiểm thử & Yêu cầu trực tiếp của chủ dự án
+
+1. **Ghost `<ToastHost />` / `<NotificationHost />` trong Modal đóng (`leave-503` im lặng trước đây):**
+   - Sửa chỉ mount host khi modal mở tại `mobile/src/shared/ui/dialogs/SheetDialog.tsx`, `mobile/src/features/rooms/components/RoomQrModal.tsx`, `mobile/src/features/result/components/EmbeddedDishMap.tsx`.
+   - Kiểm lại trên AVD thật tại Phòng chờ: **3/3 lần** rời phòng gặp 503 đều tắt dialog và hiện Toast lỗi rõ ràng ([`25_lobby_leave_503_confirmed_3of3.png`](avd-20261126-full/25_lobby_leave_503_confirmed_3of3.png)).
+2. **Nới `headerClearance` theo `fontScale` & `ToastNotice` dự phòng 2 tầng:**
+   - Sửa `mobile/src/shared/ui/feedback/Toast.tsx` (`64dp` cơ sở, nhân tới `1.85×` khi `fontScale > 1.2`).
+3. **Phiên tài khoản email bị thu hồi báo nhầm `"Phiên khách đã hết hạn"`:**
+   - Giữ `lastKnownGuest` trong `sessionState.ts`, `roomRepository.ts`, `RoomRepositoryProvider.tsx`, `index.tsx`, `HomeScreen.tsx`, `RequireActiveSession.tsx`. Kiểm AVD xác nhận điều hướng về Trang chủ với đúng nút `"Đăng nhập lại"` ([`10_account_session_revoked_signin.png`](avd-20261126-full/10_account_session_revoked_signin.png)).
+4. **Phản hồi `{ broken: true }` ở `previewJoin` & 3 thông báo inline cũ:**
+   - Sửa trong `roomRepository.ts`, `ScheduleSheet.tsx`, `DishSetupScreen.tsx`, `VoteScreen.tsx`, `FlashcardRoundView.tsx` ([`18`](avd-20261126-full/18_join_malformed_report_fixed.png), [`21`](avd-20261126-full/21_schedule_past_time_toast.png)).
+5. **Chuỗi tiếng Anh thô `"Server unavailable"` lọt ra Toast khi gửi phiếu Vòng 1 & Vòng 2:**
+   - Sửa `useRoundOneVoting.ts` (L796, L841) và `useRoundTwoVoting.ts` (L709, L779) dùng `describeError(res.error).message`; cập nhật `votingScreens.test.tsx` (`29/29 passed`). Kiểm AVD xác nhận hiện đúng Toast tiếng Việt + chip `"Báo lỗi"` ở hàng 2 ([`31`](avd-20261126-full/31_vote_r1_submit_503_retry2_toast_chip.png), [`34`](avd-20261126-full/34_final_round_r2_cap_and_submit_503_retry2.png)).
+6. **Gọn hóa thẻ lỗi bạn bè trên Trang chủ & gỡ toàn bộ UI/code `"chỉ bản dev"` (theo yêu cầu chủ dự án):**
+   - `HomeScreen.tsx`: khi `friends.error`, hiện `<ToastNotice>` nổi phía trên và chỉ giữ duy nhất nút `"Tải lại bạn bè"` trong thẻ `KÈO NHANH VỚI BẠN THÂN` ([`12_home_friends_503.png`](avd-20261126-full/12_home_friends_503.png)).
+   - Xóa 4 nút preview `"chỉ bản dev"` trên Trang chủ, `mobile/src/app/dev/*`, `devResultCases.ts` và `richFlashcardDishes` trong `fixtures.ts` ([`11_home_normal.png`](avd-20261126-full/11_home_normal.png)).
+
+### 2. Bằng chứng AVD & Backend đã kiểm thật
+
+- **43 ảnh chụp AVD đã xem trực quan** tại [`avd-20261126-full/`](avd-20261126-full/): `01`–`36`, `38`–`44` (Welcome, Khách 503/401/malformed, Đăng nhập/Đăng ký/Thu hồi phiên, Trang chủ 0px shift `[63,263][1017,495]`, Vào phòng đủ trường hợp, Tạo phòng & Hẹn giờ, Khẩu vị 503 giữ chọn + lưu sạch, Phòng chờ `leave-503` 3/3 + host start 503 + hủy phòng + bị loại + mời bạn 503, Vòng 1 & Vòng 2 cap 2/2 + 503 x2, Kết quả Top 3 + Google Map + callout vị trí bị chặn + lỗi tải kết quả/quán, Bạn bè, Hộp thư, Lịch sử, Sửa hồ sơ lỗi giữ chữ nhập, và Báo lỗi offline).
+- **Hàng đợi báo lỗi offline → mở lại app đẩy lên DB QA thật:** Tắt hẳn ứng dụng (`am force-stop host.exp.exponent`), mở lại app ở mạng bình thường để `AppProviders` gọi `flushErrorReports()`; truy vấn bảng `gm65_private.error_reports` xác nhận bản ghi `GCD-A2CA1D54F0 | NETWORK_ERROR | history | load | 0.1.0 | android | AVD_offline_queue_test | f | new` được lưu đầy đủ và chỉ gồm trường allowlist ([`44`](avd-20261126-full/44_report_offline_queued_then_flushed_db.png)).
+- **HTTP test thật (`supabase/tests/http/GM-65.http`):** **9/9 PASS** trên QA `127.0.0.1:54621` (khách & user 200, idempotent `clientReportId`, chặn email/JWT/tên sai format/khóa lạ 400, chặn rate-limit cuộc gọi thứ 11 trả 429, và `gm65_admin_list_error_reports` lược bỏ `reporter_id`/`install_id`).
+- **CLI tạo Issue (`scripts/gm65_reports_to_issues.py`):** chạy `--help` exit 0 và `--dry-run` trên QA `127.0.0.1:54621` xuất 2 preview `GCD-*` sạch PII.
+
+### 3. Kiểm tra tự động sau cùng (sau lần sửa code & tài liệu cuối)
+
+| Kiểm | Kết quả |
+| --- | --- |
+| `mobile`: `npm run typecheck`, `npm run lint`, `npm run check:architecture`, `npm run check:expo` | Đạt (`0` lỗi) |
+| `mobile`: `npx jest --maxWorkers=2` | **104/105 suite đạt (1 bỏ qua do live env), 1588/1589 test đạt (1 bỏ qua), 0 lỗi** |
+| `node --test scripts/gm65_fault_proxy.test.mjs` & `python scripts/gm65_reports_to_issues.py --help` | 3/3 đạt & exit 0 |
+| `python scripts/validate_repository.py` & `python scripts/task_readiness.py --check-docs` | Đạt (`exit 0`) |
+| `python scripts/task_readiness.py --task GM-65 --gate merge --base-ref origin/main --verify-outputs` | Các đầu ra của GM-65 đã có đủ; vẫn **BLOCKED_ARTIFACTS** tại gate ngoài `GM-50` (chưa merge vào `origin/main`) |
+
+### 4. Chưa chạy / Còn lại (trung thực phạm vi)
+
+- **3 ảnh AVD chưa hoàn tất do sự cố `SystemUI` crash-loop / `NO_INPUT_CHANNEL` trên Android API 37 (đã xóa 3 file ảnh lỗi khỏi thư mục bằng chứng):**
+  - `37_result_no_consensus.png`: màn `NO_CONSENSUS` thật từ `gm65_peer.mjs` (mới dừng ở bước tạo phòng).
+  - `45_dark_mode_font200_header_clear.png`: Chế độ Tối + `font_scale = 2.0` hệ thống.
+  - `46_talkback_labels_verified.png`: lượt kiểm đọc TalkBack trực tiếp trên màn lỗi (đã kiểm `accessibilityRole`/`content-desc` qua Jest và UI XML dump `1.0×`).
+- **Cổng phụ thuộc ngoài `GM-50` (PR #219):** cần merge `GM-50` vào `origin/main` và khai báo mục báo lỗi kỹ thuật trong `PRIVACY_POLICY.md` / Data safety trước khi merge GM-65.
+- **Chặng USB thiết bị thật:** thực hiện ở GM-33/34 theo `AGENTS.md`.

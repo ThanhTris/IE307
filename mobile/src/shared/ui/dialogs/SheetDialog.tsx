@@ -60,8 +60,8 @@ export function SheetDialog({
         </KeyboardAvoidingView>
       </SafeAreaView>
       </View>
-      <ToastHost />
-      <NotificationHost />
+      {visible ? <ToastHost /> : null}
+      {visible ? <NotificationHost /> : null}
     </Modal>
   );
 }

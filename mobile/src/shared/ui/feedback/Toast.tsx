@@ -135,8 +135,11 @@ export function ToastHost() {
 
 function ToastLayer({ hostId }: { hostId: number }) {
   const visible = useContext(ToastItemsContext), insets = useSafeAreaInsets();
+  const { textSize } = useAppPreferences(), { fontScale } = useWindowDimensions();
   if (!visible || visible.top !== hostId) return null;
-  return <View pointerEvents="box-none" style={[styles.host, { top: insets.top + TOAST_HEADER_CLEARANCE }]}>
+  const scale = appTextScales[textSize] * fontScale;
+  const headerClearance = scale > 1.2 ? Math.round(TOAST_HEADER_CLEARANCE * Math.min(scale, 1.85)) : TOAST_HEADER_CLEARANCE;
+  return <View pointerEvents="box-none" style={[styles.host, { top: insets.top + headerClearance }]}>
     {visible.items.map(item => <ToastCard key={item.id} item={item} onDone={visible.dismiss} />)}
   </View>;
 }
@@ -230,20 +233,20 @@ export function ToastNotice({ title, message, tone, duration, actionLabel, actio
   const palette = (dark ? darkToastPalette : toastPalette)[resolvedTone];
   return <View accessibilityRole="alert" style={[styles.card, styles.inline, { backgroundColor: palette.background, borderColor: palette.border }]}>
     <View style={styles.inlineRow}>
-      <View style={[styles.iconBadge, { backgroundColor: palette.iconBg }]}>
+      <View style={[styles.badge, { backgroundColor: palette.iconBg }]}>
         <AppIcon name={resolvedTone} size={18} color={palette.accent} />
       </View>
       <View style={styles.texts}>
         <Text style={[styles.title, { color: palette.text }]}>{title}</Text>
-        {message ? <Text style={[styles.message, { color: palette.text }]}>{message}</Text> : null}
+        {message ? <Text style={[styles.body, { color: dark ? '#CBD5E1' : '#4B5563' }]}>{message}</Text> : null}
+        {actionLabel && onAction ? (
+          <Pressable accessibilityRole="button" accessibilityLabel={actionAccessibilityLabel ?? actionLabel}
+            onPress={onAction}
+            style={[styles.cardAction, { borderColor: palette.accent, backgroundColor: dark ? darkColors.surface : '#FFFFFF' }]}>
+            <Text style={[styles.cardActionText, { color: resolvedTone === 'error' ? palette.accent : palette.text }]}>{actionLabel}</Text>
+          </Pressable>
+        ) : null}
       </View>
-      {actionLabel && onAction ? (
-        <Pressable accessibilityRole="button" accessibilityLabel={actionAccessibilityLabel ?? actionLabel}
-          onPress={onAction}
-          style={[styles.actionChip, { borderColor: palette.border, backgroundColor: palette.iconBg }]}>
-          <Text style={[styles.actionText, { color: palette.accent }]}>{actionLabel}</Text>
-        </Pressable>
-      ) : null}
     </View>
   </View>;
 }

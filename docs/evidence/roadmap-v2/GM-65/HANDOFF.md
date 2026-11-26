@@ -1,55 +1,48 @@
-# GM-65 — Bàn giao: đang ở bước nào
+# GM-65 — Bàn giao kỹ thuật & Tiến độ hiện tại
 
-Task [GM-65](../../../../tasks/backlog/GM-65.md) (issue #220). Nhánh `feat/gm-65-error-recovery`.
+- **Task:** [GM-65](../../../../tasks/backlog/GM-65.md) (GitHub issue #220)
+- **PR / Nhánh:** [PR #221](https://github.com/ThanhTris/IE307/pull/221) — nhánh `feat/gm-65-error-recovery` (**Draft**, chờ Trí nghiệm thu và chờ `GM-50` merge vào `origin/main`)
+- **Chủ sở hữu & Người duyệt:** Trí (`ThanhTris`)
 
-## Quyết định của Trí (2026-11-25)
+## 1. Quy tắc & Kiến trúc xử lý lỗi đã hoàn chỉnh
 
-- Bỏ khung lỗi trên trang. Lỗi API hiện toast đỏ.
-- Báo lỗi **không** xuất hiện ở mọi màn: gặp sự cố thì app đưa người dùng về đúng chỗ theo logic từng màn, lối "Báo lỗi" chỉ ở chỗ đó, kèm mã lỗi. Giữ thêm một mục "Báo lỗi" trong Cá nhân. Không có biểu tượng trên tiêu đề.
-- Khách không có chuông thông báo (giữ luật GM-35).
-- Báo lỗi mặc định gửi lên server; cần gấp thì gửi email.
+1. **Bảng ánh xạ lỗi tập trung (`mobile/src/shared/errors/describeError.ts`):** Toàn bộ `ErrorCode` ánh xạ thống nhất sang tiêu đề, mô tả tiếng Việt, đúng 1 hành động tiếp theo (`retry` / `reload` / `signIn` / `home` / `none`) và cờ `reportable`. Không lộ mã nội bộ hay chuỗi thô như `"Server unavailable"`.
+2. **Phân tầng UI 5 lớp & Toast v2 (`docs/design/FEEDBACK_TOAST_NOTIFICATION.md`, `mobile/src/shared/ui/feedback/Toast.tsx`):**
+   - Lỗi nhập liệu tại trường giữ viền đỏ dưới ô (`FormField`).
+   - Lỗi thao tác API dùng Toast nổi 2 tầng không đẩy bố cục (`0px` shift), tự nới khoảng tránh thanh tiêu đề (`64dp` × tối đa `1.85` theo `fontScale`), chip `"Báo lỗi"` chỉ mở ở hàng 2 khi cùng thao tác lỗi từ lần 2 hoặc gặp `MALFORMED_RESPONSE` / `CONTRACT_MISMATCH`.
+   - Lỗi toàn trang dùng `ErrorRecovery`; mất phòng/phiên quay về Trang chủ/Đăng nhập giữ ngữ cảnh trong bộ nhớ (`leaveAfterFailure`, `FailureNotice` 8s).
+   - Các `Modal` (`SheetDialog`, `RoomQrModal`, `EmbeddedDishMap`) chỉ mount `<ToastHost />` / `<NotificationHost />` khi đang mở.
+3. **Báo lỗi kỹ thuật ẩn danh & Hàng đợi offline (`supabase/migrations/0068_gm65_error_reports.sql`, `errorReport.ts`, `ReportErrorSheet.tsx`):**
+   - RPC `public.report_app_error(payload jsonb)` (`security definer`, allowlist 13 khóa, cấm tuyệt đối JWT/email/mật khẩu/OTP/phiếu bầu/mã phòng/tọa độ/body thô, idempotent qua `clientReportId` trả `GCD-...`, rate limit 10/giờ theo `install_id` hoặc `reporter_id` + 500/giờ toàn hệ thống, tự dọn sau 30 ngày).
+   - Hàng đợi tối đa 3 báo lỗi trong `SecureStore` (`gcd.error_reports.queue.v1`), tự đẩy lại khi mở app (`AppProviders.tsx` → `flushErrorReports()`).
+   - Operator đọc bản ghi đã lọc PII qua `public.gm65_admin_list_error_reports(only_new)` bằng `scripts/gm65_reports_to_issues.py` (`--dry-run` mặc định, `--apply` mới tạo issue GitHub).
 
-## Quy tắc điều hướng (`mobile/src/shared/errors/failure.ts`)
+## 2. Danh sách thay đổi & Đầu ra đã bàn giao trên nhánh
 
-| Nhóm mã | Đích |
-| --- | --- |
-| Mạng, hết giờ chờ, phản hồi lỗi, lỗi lạ | Ở lại, Thử lại, được báo lỗi |
-| `RATE_LIMITED`, lỗi nhập liệu | Ở lại, không báo lỗi |
-| `VERSION_CONFLICT`, `CONTEXT_CHANGED`, `INVALID_ROOM_STATE` | Ở lại, tải lại |
-| Trong phòng/kết quả: `ROOM_NOT_FOUND`, `ROOM_TERMINAL`, `ROOM_EXPIRED`, `NOT_MEMBER`, `CONTRACT_MISMATCH` | Trang chủ, kèm lý do |
-| `AUTH_REQUIRED` | Khách → Trang chủ; tài khoản → Đăng nhập |
+- **App mobile & Sửa lỗi phát hiện khi test thật:**
+  - Sửa Ghost `ToastHost` trong modal đóng (`SheetDialog.tsx`, `RoomQrModal.tsx`, `EmbeddedDishMap.tsx`) → `leave-503` trên AVD đạt **3/3**.
+  - Nới `headerClearance` theo `fontScale` & đồng bộ `ToastNotice` fallback (`Toast.tsx`).
+  - Sửa mất phiên email bị nhầm sang hết hạn khách (`sessionState.ts`, `roomRepository.ts`, `RoomRepositoryProvider.tsx`, `index.tsx`, `HomeScreen.tsx`, `RequireActiveSession.tsx`).
+  - Sửa `previewJoin` khi server trả sai định dạng và bỏ 3 thông báo inline cũ (`roomRepository.ts`, `ScheduleSheet.tsx`, `DishSetupScreen.tsx`, `VoteScreen.tsx`, `FlashcardRoundView.tsx`).
+  - Sửa chuỗi tiếng Anh `"Server unavailable"` lọt ra Toast Vòng 1 & Vòng 2 (`useRoundOneVoting.ts`, `useRoundTwoVoting.ts`, `votingScreens.test.tsx`).
+  - Sửa theo góp ý trực tiếp của Trí: thẻ `"KÈO NHANH VỚI BẠN THÂN"` trên `HomeScreen.tsx` khi lỗi tải bạn bè chỉ giữ Toast nổi phía trên và duy nhất nút `"Tải lại bạn bè"` trong thẻ; gỡ toàn bộ 4 nút preview `"chỉ bản dev"`, thư mục route `mobile/src/app/dev/*`, `devResultCases.ts` và `richFlashcardDishes` trong `fixtures.ts`.
+- **Tài liệu & Công cụ GM-65:**
+  - [ADR-030-error-reports.md](../../../architecture/decisions/ADR-030-error-reports.md)
+  - [supabase/tests/http/GM-65.http](../../../../supabase/tests/http/GM-65.http) (9/9 ca đạt trên QA thật)
+  - [supabase/tests/GM-65_error_reports.test.sql](../../../../supabase/tests/GM-65_error_reports.test.sql) (18/18 ca đạt trên QA thật)
+  - [scripts/gm65_reports_to_issues.py](../../../../scripts/gm65_reports_to_issues.py) (đã kiểm `--dry-run` trên QA thật)
+  - [scripts/gm65_peer.mjs](../../../../scripts/gm65_peer.mjs) (hỗ trợ test đa người dùng trên QA)
+  - [FIGMA_PARITY.md](FIGMA_PARITY.md), [CHECKS.md](CHECKS.md), [avd-20261126-full/](avd-20261126-full/) (43 ảnh AVD đã xem trực quan)
 
-Chuyển trang dùng `leaveAfterFailure` (lý do giữ trong bộ nhớ, không qua URL); màn đích hiện `FailureNotice`.
+## 3. Việc còn lại để hoàn tất & merge
 
-## Tiến độ
+1. **Cổng phụ thuộc `GM-50` (PR #219):** `GM-50` phải được merge vào `origin/main` và bổ sung thông tin thu thập báo lỗi kỹ thuật vào `PRIVACY_POLICY.md` / Data safetyAnswers (kèm chốt email hỗ trợ) để mở khóa `task_readiness --gate merge`.
+2. **Nếu Trí yêu cầu bổ sung 3 ảnh AVD còn thiếu:** chạy lại `37` (`NO_CONSENSUS` thực tế), `45` (Dark Mode + `font_scale = 2.0`), và `46` (lượt đọc TalkBack trực tiếp). (Trong đợt ngày 2026-11-26, 3 ca này dừng lại do `SystemUI` crash-loop / `NO_INPUT_CHANNEL` trên Android API 37 emulator khi đổi `font_scale = 2.0`.)
+3. **Migration `0068` & file đụng chung:** số `0068` tạm sau `0067` (GM-54); khi merge cần đối chiếu thứ tự migration hosted với GM-52/GM-54 và thông báo cho Tuấn (GM-53, GM-64), Trang (GM-54), Trung (GM-62) nếu sửa chung `HomeScreen`, `LobbyScreen`, `ProfileScreen`, `AccountFormFrame`.
 
-| Bước | Trạng thái |
-| --- | --- |
-| Nền: bảng mô tả lỗi, gửi báo lỗi + hàng đợi, màn Báo lỗi, migration `0068`, test SQL | Xong phần code và test |
-| Màn khách (vào bằng khách) | Xong, đã xem AVD |
-| Gỡ biểu tượng báo lỗi trên tiêu đề, giữ mục trong Cá nhân | Xong |
-| **1. Phòng chờ** | **Code + test xong. AVD: chủ phòng hủy đã tái hiện; rời phòng 503 thấy toast 1/2 lần, cần kiểm lại. Chưa chạy: lỗi mạng khi bắt đầu, bị loại khỏi phòng. Chờ Trí xác nhận** |
-| 2. Thiết lập & khẩu vị | Chưa làm |
-| 3. Vòng 1 / Vòng 2 (thêm Back Android; vòng 2 không quay về vòng 1) | Chưa làm |
-| 4. Kết quả + quán gần đây | Chưa làm |
-| 5. Vào phòng | Chưa làm |
-| 6. Mất phiên chung (`RequireActiveSession` thêm "Đăng nhập lại") | Chưa làm; `FailureNotice` đã đặt ở màn đăng nhập |
-| 7. Bạn bè / Lịch sử / Hộp thư | Chưa làm |
-| 8. Tài khoản | Chưa làm |
-| Hồ sơ: ADR-030, `GM-65.http`, script tạo GitHub Issue, FIGMA_PARITY, comment PR #219 | Chưa làm |
+## 4. Hướng dẫn chạy lại QA & kiểm tra nhanh
 
-## Toast (Trí duyệt giao diện 2026-11-26)
-
-Quy cách ở [FEEDBACK_TOAST_NOTIFICATION](../../../design/FEEDBACK_TOAST_NOTIFICATION.md), kết quả kiểm ở [CHECKS](CHECKS.md). Màn khác có thanh tiêu đề cao hơn 64dp cần kiểm lại vị trí. HTTP ≥ 500 giờ là `NETWORK_ERROR`, nên các luồng "chưa rõ kết quả" gửi lại cùng `requestId` (lưu khẩu vị tự phục hồi sau một lần 503).
-
-## Chạy lại
-
-1. QA: `npm run qa:start -- --run-id <id> --api-port 54591 --db-port 54592 --mail-port 54594` rồi `npm run qa:verify -- --run-id <id>`.
-2. SQL: chạy `supabase/tests/GM-65_error_reports.test.sql` bằng `psql` trong container DB của lượt QA (mọi thay đổi được rollback).
-3. App: `mobile/` trỏ `EXPO_PUBLIC_SUPABASE_URL` vào QA (hoặc proxy giả lỗi), `adb reverse`, `npx expo start --go --localhost`.
-
-## Lưu ý khi phối hợp
-
-- Số migration `0068` là tạm (`0067` dành cho GM-54), đổi theo thứ tự merge. Hosted cần áp khi merge (GM-52).
-- PR chạm `GuestEntryScreen`, `LobbyScreen`, `useLobby`, `HomeScreen`, `ProfileScreen`, `AccountFormFrame`: báo Tuấn (GM-53, GM-64), Trang (GM-54), Trung (GM-62) để tránh xung đột.
-- Email hỗ trợ lấy từ PR #219, chờ Trí xác nhận trước khi phát hành.
+1. Khởi tạo QA riêng: `npm run qa:start -- --run-id gm65-qa --api-port 54621 --db-port 54622 --mail-port 54624` rồi `npm run qa:verify -- --run-id gm65-qa`.
+2. Chạy SQL & HTTP: chạy `supabase/tests/GM-65_error_reports.test.sql` qua `psql` và gửi các request trong `supabase/tests/http/GM-65.http` vào cổng QA.
+3. App AVD: bật `node scripts/gm65_fault_proxy.mjs 54621 54625 .work/gm65/rule.json`, trỏ `EXPO_PUBLIC_SUPABASE_URL=http://127.0.0.1:54625`, chạy `adb reverse` cho `8081` & `54625`.
+4. Dừng QA khi xong: `npm run qa:stop -- --run-id gm65-qa`.

@@ -25,6 +25,7 @@ export interface RoomRepositoryContextValue {
   status: SessionStatus;
   issue: SessionIssue;
   user: SessionUser | null;
+  lastKnownGuest?: boolean;
   /** Always 'real': the app has no mock mode. Kept so callers can assert the live path. */
   mode: 'real';
   isInitializing: boolean;
@@ -215,6 +216,7 @@ function ConfiguredRoomRepositoryProvider({
     status: snapshot.status,
     issue: snapshot.issue,
     user: snapshot.user,
+    lastKnownGuest: snapshot.lastKnownGuest,
     mode: 'real',
     isInitializing,
     restoreSession,

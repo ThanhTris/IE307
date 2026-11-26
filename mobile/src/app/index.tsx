@@ -36,13 +36,12 @@ export default function IndexRoute() {
       onReturnToRoom={room => router.replace(resumeHref(room))}
       onFriends={() => router.push('/friends')}
       onQuickInvite={friendUserId => router.push({ pathname: '/room/setup', params: { invite: friendUserId } })}
-      onDevResult={__DEV__ ? () => router.push('/dev/result' as never) : undefined}
-      onDevRoundTwo={__DEV__ ? () => router.push('/dev/round-two' as never) : undefined}
-      onDevFlashcard={__DEV__ ? () => router.push('/dev/flashcard' as never) : undefined}
-      onDevIcons={__DEV__ ? () => router.push('/dev/icons' as never) : undefined}
       onHistory={() => router.push('/history')}
       onInbox={() => router.push('/inbox')}
       onProfile={() => router.push('/profile')}
+      onSignIn={() => {
+        void live.logout().then(() => router.replace({ pathname: '/account/[flow]', params: { flow: 'sign-in' } }));
+      }}
       onTutorial={() => router.push('/tutorial')}
     />
   );
