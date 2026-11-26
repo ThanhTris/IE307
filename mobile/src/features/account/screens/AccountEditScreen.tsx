@@ -35,10 +35,14 @@ export function AccountEditScreen({ kind, user, account, onBack, onRecovery }: {
   const busy = !!pending;
   const title = editingProfile ? 'Sửa hồ sơ' : 'Đổi mật khẩu';
 
-  function clearPasswords() {
-    setCurrentPassword('');
+  function clearNewPasswords() {
     setPassword('');
     setConfirmation('');
+  }
+
+  function clearPasswords() {
+    setCurrentPassword('');
+    clearNewPasswords();
   }
 
   function clearFieldError(field: keyof FieldErrors) {
@@ -66,20 +70,24 @@ export function AccountEditScreen({ kind, user, account, onBack, onRecovery }: {
         : password !== confirmation ? 'Hai mật khẩu mới chưa khớp.' : undefined,
     };
     setFieldErrors(invalid);
-    if (Object.values(invalid).some(Boolean)) return;
+    if (Object.values(invalid).some(Boolean)) {
+      if (password && (invalid.password || (confirmation && invalid.confirmation))) clearNewPasswords();
+      return;
+    }
     void run('Đang cập nhật mật khẩu…', () => account.changePassword(currentPassword, password), () => {
       clearPasswords();
       setSaved(true);
     }, failure => {
-      clearPasswords();
       const reason = failure.details?.reason;
       if (reason === 'current_password_invalid' || reason === 'invalid_credentials') {
+        setCurrentPassword('');
         setFieldErrors({ currentPassword: 'Mật khẩu hiện tại chưa đúng.' });
         clearError();
       } else if (reason === 'weak_password' || reason === 'same_password') {
+        clearNewPasswords();
         setFieldErrors({ password: accountErrorMessage(failure) });
         clearError();
-      }
+      } else clearPasswords();
     });
   }
 
