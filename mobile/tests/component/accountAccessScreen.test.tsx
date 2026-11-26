@@ -98,9 +98,25 @@ test('linking highlights an invalid email without calling Auth', async () => {
   await render(<AccountAccessScreen flow="link" account={{ linkEmail } as unknown as AccountService}
     isGuest onBack={jest.fn()} onNavigate={jest.fn()} onComplete={jest.fn()} />);
   await fireEvent.changeText(screen.getByLabelText('Email'), 'sai-email');
-  await fireEvent.press(screen.getByRole('button', { name: 'Gửi mã xác minh' }));
+  await fireEvent.press(screen.getByRole('button', { name: 'Tiếp tục' }));
   expectFieldError('Email', 'Nhập địa chỉ email hợp lệ.');
   expect(linkEmail).not.toHaveBeenCalled();
+});
+
+test('back from setting a guest password cancels without changing the guest account', async () => {
+  const linkEmail = jest.fn();
+  const verifyCode = jest.fn();
+  const onBack = jest.fn();
+  await render(<AccountAccessScreen flow="link" account={{ linkEmail, verifyCode } as unknown as AccountService}
+    isGuest onBack={onBack} onNavigate={jest.fn()} onComplete={jest.fn()} />);
+  await fireEvent.changeText(screen.getByLabelText('Email'), 'tuan@example.test');
+  await fireEvent.press(screen.getByRole('button', { name: 'Tiếp tục' }));
+  expect(screen.getByText('Đặt mật khẩu mới')).toBeOnTheScreen();
+  await fireEvent.changeText(screen.getByLabelText('Mật khẩu mới'), 'Fixture!123');
+  await fireEvent.press(screen.getByRole('button', { name: 'Quay lại' }));
+  expect(onBack).toHaveBeenCalledTimes(1);
+  expect(linkEmail).not.toHaveBeenCalled();
+  expect(verifyCode).not.toHaveBeenCalled();
 });
 
 test('sign-in shows credential rejection as a toast without marking either field', async () => {

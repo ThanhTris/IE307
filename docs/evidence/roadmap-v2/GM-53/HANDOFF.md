@@ -21,6 +21,9 @@ base `d7b89f2`. Xem [kế hoạch](PLAN.md), [kết quả kiểm](CHECKS.md) và
   GM-49 thu hồi trong giao dịch.
 - Tham chiếu upstream: [GM-35](../GM-35/HANDOFF.md),
   [GM-49](../GM-49/HANDOFF.md) và [GM-50](../GM-50/HANDOFF.md).
+- Liên kết khách chuyển sang thứ tự email → đặt mật khẩu → xác minh OTP.
+  Quay lại từ màn đặt mật khẩu về Cá nhân mà chưa gửi yêu cầu liên kết.
+  GoTrue chỉ chuyển cùng UUID sang tài khoản email sau khi xác minh OTP.
 
 ## Bước 5 — kiểm Expo Go trên AVD
 

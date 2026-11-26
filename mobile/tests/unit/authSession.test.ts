@@ -87,11 +87,16 @@ test('email linking preserves guest UUID and advances the identity epoch', async
   await s.session.restoreSession();
   const before = s.session.getGeneration();
   const proof = new AbortController().signal;
+  expect(await s.account.linkEmail('tester@example.test', 'Fixture!123')).toMatchObject({ ok: true });
+  expect(s.transport.linkEmail).toHaveBeenCalledWith(initial.accessToken, 'tester@example.test', 'Fixture!123');
+  expect(await s.storage.load()).toMatchObject({ user });
+  expect(s.session.getGeneration()).toBe(before);
   expect(await s.account.verifyCode('tester@example.test', '012345', 'email_change', proof)).toMatchObject({ ok: true });
   expect(s.session.getGeneration()).toBeGreaterThan(before);
   expect(s.clearPrivateData).not.toHaveBeenCalled();
   expect(await s.storage.load()).toMatchObject({ user: { id: user.id, isGuest: false } });
-  expect(await s.account.setPassword('Fixture!123', proof)).toMatchObject({ ok: true });
+  expect(await s.account.setPassword('Fixture!123', proof)).toMatchObject({ ok: false });
+  expect(s.transport.updatePassword).not.toHaveBeenCalled();
 });
 
 test('account recovery only sends to the authenticated account email', async () => {

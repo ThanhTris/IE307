@@ -12,7 +12,7 @@ function requireIdentity(expected: string, received: string): void {
 
 /** Only the session manager can persist a token. A recovery proof stays in memory and never becomes the app session. */
 export function createAccountService(auth: AccountTransport, session: SessionManager) {
-  let proof: { scope: AbortSignal; session: StoredSession; generation: number; kind: 'link' | 'recovery' } | undefined;
+  let proof: { scope: AbortSignal; session: StoredSession; generation: number } | undefined;
   const run = session.runAccountOperation.bind(session);
   return {
     signIn: (credentials: AccountCredentials) => run(async ({ adopt }) => {
@@ -32,10 +32,11 @@ export function createAccountService(auth: AccountTransport, session: SessionMan
       }
       await auth.sendCode(address, 'recovery');
     }),
-    linkEmail: (email: string) => run(async ({ requireSession }) => {
+    linkEmail: (email: string, password?: string) => run(async ({ requireSession, assertCurrent }) => {
       const current = await requireSession();
       if (!current.user.isGuest) throw new AuthFailure({ messageKey: 'VERSION_CONFLICT' });
-      const updated = await auth.linkEmail(current.accessToken, email);
+      assertCurrent();
+      const updated = await auth.linkEmail(current.accessToken, email, password);
       requireIdentity(current.user.id, updated.id);
       if (!updated.isGuest) throw new AuthFailure({ messageKey: 'MALFORMED_RESPONSE' });
     }),
@@ -49,30 +50,28 @@ export function createAccountService(auth: AccountTransport, session: SessionMan
         await context.adopt(verified, 'link');
       } else if (kind === 'signup') {
         await context.adopt(verified, 'sign-in');
-      }
-      if (kind === 'recovery' && scope.aborted) {
+      } else if (scope.aborted) {
         await auth.logout(verified.accessToken).catch(() => undefined);
-      } else if (kind !== 'signup' && !scope.aborted) {
-        proof = { scope, session: verified, generation: session.getGeneration(), kind: previous ? 'link' : 'recovery' };
+      } else {
+        proof = { scope, session: verified, generation: session.getGeneration() };
       }
     }),
     discardPasswordProof: (scope: AbortSignal) => {
       if (proof?.scope !== scope) return;
       const discarded = proof;
       proof = undefined;
-      if (discarded.kind === 'recovery') void auth.logout(discarded.session.accessToken).catch(() => undefined);
+      void auth.logout(discarded.session.accessToken).catch(() => undefined);
     },
-    setPassword: (password: string, scope: AbortSignal) => run(async ({ assertCurrent, requireSession }) => {
+    setPassword: (password: string, scope: AbortSignal) => run(async ({ assertCurrent }) => {
       const challenge = proof;
       if (!challenge || scope.aborted || challenge.scope !== scope || challenge.generation !== session.getGeneration()) {
         throw new AuthFailure({ messageKey: 'AUTH_REQUIRED' });
       }
-      const authorized = challenge.kind === 'link' ? await requireSession() : challenge.session;
-      requireIdentity(challenge.session.user.id, authorized.user.id);
+      const authorized = challenge.session;
       const updated = await auth.updatePassword(authorized.accessToken, password);
       requireIdentity(authorized.user.id, updated.id);
       if (proof === challenge) proof = undefined;
-      if (challenge.kind === 'recovery') await auth.logout(authorized.accessToken).catch(() => undefined);
+      await auth.logout(authorized.accessToken).catch(() => undefined);
       assertCurrent();
     }),
     getProfile: () => run(async ({ requireSession }) => {
