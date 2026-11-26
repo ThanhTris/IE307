@@ -7,10 +7,12 @@ let doneThisRun = false;
 export async function isPermissionsOnboarded(userId?: string): Promise<boolean> {
   if (doneThisRun) return true;
   try {
-    if ((await SecureStore.getItemAsync(ONBOARDED_KEY)) === 'true') {
+    const installationStatus = await SecureStore.getItemAsync(ONBOARDED_KEY);
+    if (installationStatus === 'true') {
       doneThisRun = true;
       return true;
     }
+    if (installationStatus === 'false') return false; // An explicit reset supersedes legacy account flags.
     // Promote the existing account-scoped flag the first time an upgraded app sees it.
     if (userId && (await SecureStore.getItemAsync(`${ONBOARDED_KEY}.${userId}`)) === 'true') {
       await markPermissionsOnboarded();

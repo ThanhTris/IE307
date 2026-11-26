@@ -31,3 +31,12 @@ test('an answer from a legacy account is promoted to the installation flag', asy
   await expect(startApp().isPermissionsOnboarded('first-user')).resolves.toBe(true);
   await expect(startApp().isPermissionsOnboarded('second-user')).resolves.toBe(true);
 });
+
+test('an explicit installation reset is not restored from an older account flag', async () => {
+  mockDeviceStorage.set('gcd.permissions.onboarded.v1', 'false');
+  mockDeviceStorage.set('gcd.permissions.onboarded.v1.first-user', 'true');
+  const app = startApp();
+  await expect(app.isPermissionsOnboarded('first-user')).resolves.toBe(false);
+  await app.markPermissionsOnboarded();
+  await expect(startApp().isPermissionsOnboarded('second-user')).resolves.toBe(true);
+});

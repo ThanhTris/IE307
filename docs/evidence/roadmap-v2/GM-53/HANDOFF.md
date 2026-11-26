@@ -106,6 +106,9 @@ Ca hồi quy sau lượt Expo Go trên điện thoại thật:
 - Hoàn tất màn xin quyền, đăng xuất rồi đăng nhập cùng hoặc khác tài khoản.
   Màn xin quyền lần đầu không hiện lại. Quyền thực tế vẫn lấy từ hệ điều hành
   khi dùng tính năng.
+- Cho lượt kiểm lại trên điện thoại QA ngày 26/11/2026, cờ xin quyền của
+  bản cài đặt được đặt lại. Lần đăng nhập kế tiếp phải thấy màn xin quyền.
+  Các quyền Android đã cấp cho Expo Go vẫn hiển thị là đã cấp.
 - Với khách, vào Liên kết email, nhập email rồi quay lại từ màn Đặt mật khẩu
   mới. Kiểm Cá nhân vẫn là Khách. Thử lại trọn luồng bằng OTP và đăng
   nhập bằng mật khẩu vừa đặt.
