@@ -21,7 +21,7 @@ export function BrandBanner({
         source={dark ? fullIllustration : illustrationSource ?? fullIllustration}
         accessible={false}
         resizeMode={dark ? 'cover' : 'contain'}
-        style={[styles.brandBannerImage, dark ? styles.darkSlot : illustrationSource && styles.lightSlot]}
+        style={[styles.brandBannerImage, dark ? styles.darkSlot : illustrationSource ? styles.lightSlot : undefined]}
       />
     </View>
   );
