@@ -8,7 +8,7 @@ jest.mock('expo-secure-store', () => ({
 function startApp() {
   let onboarding!: typeof import('../../src/features/permissions/services/permissionsOnboarding');
   jest.isolateModules(() => {
-    onboarding = require('../../src/features/permissions/services/permissionsOnboarding');
+    onboarding = jest.requireActual('../../src/features/permissions/services/permissionsOnboarding');
   });
   return onboarding;
 }

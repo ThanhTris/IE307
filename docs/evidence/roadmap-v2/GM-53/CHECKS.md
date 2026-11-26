@@ -34,6 +34,26 @@ dừng. Sau khi khởi động lại Edge và worker của `gm53-1126`, endpoint
 trả 401 cho POST không bearer, `qa:verify` đạt và runner HTTP GM-49 đạt
 33 ca, gồm xóa khách, xóa tài khoản email và thử lại cùng request ID.
 
+### Hồi quy sau lượt Expo Go trên điện thoại thật
+
+- QA GoTrue và Mailpit xác nhận gửi email kèm mật khẩu vẫn giữ phiên
+  khách, địa chỉ chưa đăng nhập được trước OTP. OTP chuyển đúng UUID
+  sang tài khoản email và đăng nhập được bằng mật khẩu mới. Sau khi
+  đóng riêng phiên xác minh mật khẩu, bearer của app vẫn xóa được tài
+  khoản và nhận lại cùng ACK khi gửi lại UUID.
+- Jest Auth transport, Auth session và xóa tài khoản đạt 89/89 ca. Bộ UI
+  luồng truy cập tài khoản đạt, gồm quay lại từ màn đặt mật khẩu khách.
+- Jest quyền app đạt 9/9 ca. Các bộ UI xóa tài khoản, Trang chủ,
+  component chung và route khách đạt 61/61 ca khi chạy lại với timeout
+  30 giây trên Windows. Lượt đầu dùng timeout mặc định có ca timeout
+  và lỗi điều hướng ở các ca theo sau.
+- TypeScript, ESLint trên các tệp chỉnh sửa, kiểm kiến trúc và
+  validator tài liệu đạt. Python toàn repo chạy 731 ca khi dùng
+  dependency có sẵn trong workspace. Còn ba ca lỗi liên quan đến
+  cấu hình Git subprocess và quyền tạo symlink Windows.
+- Chờ Tuấn kiểm lại ca hồi quy trên Expo Go điện thoại thật và Trí
+  kiểm lượt AVD. Xem danh sách trong [HANDOFF](HANDOFF.md).
+
 Lượt full Jest đầu gặp timeout ở màn kết quả và dừng sau khi source
 thay đổi. Bộ màn kết quả đã đạt ở lượt kiểm tập trung, chạy với
 `--testTimeout=20000` trên máy Windows này. Cấu hình và giới hạn

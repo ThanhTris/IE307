@@ -97,6 +97,22 @@ phục/xóa phiên của app trước khi tạo khách QA.
 | Link / version | Mở lần lượt Quyền riêng tư, Điều khoản và Hỗ trợ. Kiểm URL đúng và trở lại app được. Đối chiếu phiên bản trên Hồ sơ với bản đang chạy. |
 | Hiển thị | Chụp ở 412dp rồi thử 320/360dp, chữ 200%, tối và TalkBack. Kiểm label, thứ tự focus, vùng chạm, bàn phím, safe area và nút gửi nhìn được khi cuộn. |
 
+Ca hồi quy sau lượt Expo Go trên điện thoại thật:
+
+- Bật chế độ tối ở Trang chủ. Kiểm ảnh bàn ăn hòa với nền banner, không
+  thấy khung nền sáng quanh ảnh.
+- Ở Cá nhân, kiểm nút xóa có thùng rác trong nhóm Tài khoản và Đăng xuất
+  nằm dưới Thông tin ứng dụng. So nền ô XÓA với ô mật khẩu ở sáng và tối.
+- Hoàn tất màn xin quyền, đăng xuất rồi đăng nhập cùng hoặc khác tài khoản.
+  Màn xin quyền lần đầu không hiện lại. Quyền thực tế vẫn lấy từ hệ điều hành
+  khi dùng tính năng.
+- Với khách, vào Liên kết email, nhập email rồi quay lại từ màn Đặt mật khẩu
+  mới. Kiểm Cá nhân vẫn là Khách. Thử lại trọn luồng bằng OTP và đăng
+  nhập bằng mật khẩu vừa đặt.
+- Với tài khoản email, nhập cùng một giá trị ở cả ba ô Đổi mật khẩu. Nếu
+  mật khẩu hiện tại nhập sai, ô hiện tại báo sai. Nếu đúng, ô mật khẩu mới
+  yêu cầu chọn giá trị khác.
+
 Các mã 403/409/429/5xx và thời gian Retry-After được kiểm trong unit
 tests. Nếu dùng phản hồi QA giả lập để tái lập trên AVD, ghi rõ đó là
 ca mô phỏng và ghi riêng các ca Auth/REST/Edge thật. Bổ sung commit/build,
