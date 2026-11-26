@@ -4,7 +4,8 @@ from datetime import datetime, timezone
 from hashlib import sha256
 from pathlib import Path
 from tempfile import TemporaryDirectory
-from urllib.error import HTTPError
+from time import sleep
+from urllib.error import HTTPError, URLError
 from urllib.request import HTTPRedirectHandler, Request, build_opener
 
 import gm47_illustrations as illustrations
@@ -14,6 +15,22 @@ from gm47_release_editorial import ARTWORK, OUTPUT, build, gm41, storage_bucket,
 class NoRedirect(HTTPRedirectHandler):
     def redirect_request(self, req, fp, code, msg, headers, newurl):
         return None
+
+
+def fetch(opener, request, byte_limit, stored_key):
+    for attempt in range(3):
+        try:
+            with opener.open(request, timeout=15) as response:
+                return response.read(byte_limit)
+        except HTTPError as error:
+            transient = error.code in (408, 429, 500, 502, 503, 504)
+            error.close()
+            if not transient or attempt == 2:
+                raise RuntimeError(f'{stored_key}: HTTP {error.code}') from None
+        except (URLError, OSError) as error:
+            if attempt == 2:
+                raise RuntimeError(f'{stored_key}: {error}') from None
+        sleep(1 << attempt)
 
 
 def main():
@@ -70,12 +87,8 @@ def main():
     opener = build_opener(NoRedirect)
     verified = []
     for asset, stored_key in entries:
-        try:
-            request = Request(f'{bucket}/{stored_key}', headers={'Accept-Encoding': 'identity'})
-            with opener.open(request, timeout=15) as response:
-                data = response.read(asset['bytes'] + 1)
-        except HTTPError as error:
-            raise RuntimeError(f'{stored_key}: HTTP {error.code}') from None
+        request = Request(f'{bucket}/{stored_key}', headers={'Accept-Encoding': 'identity'})
+        data = fetch(opener, request, asset['bytes'] + 1, stored_key)
         if len(data) != asset['bytes'] or sha256(data).hexdigest() != asset['sha256']:
             raise ValueError(f'Storage bytes differ from the reviewed inventory for {stored_key}')
         verified.append({'objectKey': asset['objectKey'], 'storedObjectKey': stored_key, 'sha256': asset['sha256']})
