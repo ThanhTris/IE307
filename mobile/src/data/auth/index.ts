@@ -25,5 +25,5 @@ export function createAuthenticatedApiClient(config: AuthHttpConfig & {
     baseUrl: config.baseUrl, publicKey: config.publicKey, authSession: session,
     fetchFn: config.fetchFn, defaultTimeoutMs: config.timeoutMs,
   });
-  return { session, client, storage, account: createAccountService(auth, session) };
+  return { session, client, storage, auth, account: createAccountService(auth, session) };
 }

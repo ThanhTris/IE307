@@ -247,11 +247,12 @@ export class LiveRoomRepository implements RoomRepository {
     }
   }
 
-  publishAccountSession(user: SessionUser | null) {
+  publishAccountSession(user: SessionUser | null, deletionStatus?: 'empty' | 'blocked') {
     ++this.identityRevision;
     this.updateSessionSnapshot(user
       ? { status: 'active', user, issue: 'none' }
-      : { status: 'blocked', user: null, issue: 'storage-unavailable' });
+      : deletionStatus === 'empty' ? { status: 'empty', user: null, issue: 'no-session' }
+        : { status: 'blocked', user: null, issue: 'storage-unavailable' });
   }
 
   async createGuestSession(displayName: string, requestId?: string): Promise<WriteResult<SessionResponse>> {
