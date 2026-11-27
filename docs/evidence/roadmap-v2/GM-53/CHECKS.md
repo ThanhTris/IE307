@@ -125,6 +125,7 @@ khoản đang đăng nhập như màn Đổi mật khẩu.
 | Jest tài khoản và xóa | 71/71 ca trong 5 bộ. Kiểm email thấy lối khôi phục, khách không thấy, route chỉ gửi OTP cho email đang đăng nhập, và nút khóa khi POST xóa đang chờ. TypeScript, ESLint và kiểm kiến trúc đạt. |
 | Auth, Mailpit và Edge trên `gm53-1126` | Pass. OTP liên kết cùng UUID trước khi đặt mật khẩu. OTP khôi phục cho phép đặt mật khẩu, đăng nhập lại và xóa với ACK. GoTrue trả 403 khi đóng phiên cũ đã bị thu hồi, trường hợp tương ứng `AUTH_REQUIRED` mà app đã xử lý khi đăng xuất. Đăng nhập sau xóa bị từ chối. |
 | Android export | Pass. `npx expo export --platform android --output-dir ../.work/gm53-recovery-android` tạo bundle Hermes `entry-2ba4af112f9ecd014d6b4e9c7537a7a8.hbc`. |
+| Trọn luồng trên Expo Go điện thoại Android | Pass theo xác nhận của Tuấn ngày 27/11/2026 sau hướng dẫn chạy bản `8e95361`. Ca kiểm gồm liên kết email qua OTP, Back ở màn đặt mật khẩu, mở Quên mật khẩu từ màn xóa, khôi phục qua OTP, đăng nhập lại và xóa tài khoản theo đúng luồng yêu cầu. |
 | Trọn luồng trên AVD | Not run cho thay đổi này. Máy thực hiện chưa có Android Emulator hoặc AVD được cấu hình. Ca tái lập ở [HANDOFF](HANDOFF.md#bước-5--kiểm-expo-go-trên-avd). |
 
 Lượt full Jest đầu gặp timeout ở màn kết quả và dừng sau khi source

@@ -147,8 +147,20 @@ khẩu hiện tại, áp dụng cả khi quên mật khẩu. Khách vẫn chỉ 
 
 Sau khi đặt mật khẩu, bấm **Quay lại đăng nhập** để kết thúc phiên cũ.
 Đăng nhập lại bằng mật khẩu mới rồi xác nhận xóa. Kiểm Auth và Edge đã
-xác nhận đường này trên QA. Lượt thao tác trọn luồng trên AVD vẫn chờ
-thực hiện. [Kết quả kiểm](CHECKS.md#khôi-phục-mật-khẩu-từ-màn-xóa-tài-khoản)
+xác nhận đường này trên QA. Tuấn xác nhận trọn luồng đạt trên Expo Go
+điện thoại Android ngày 27/11/2026. Lượt AVD vẫn chờ thực hiện.
+[Kết quả kiểm](CHECKS.md#khôi-phục-mật-khẩu-từ-màn-xóa-tài-khoản)
+
+### Đề xuất UX của Tuấn cho tài khoản email đang đăng nhập
+
+Khi mở **Quên mật khẩu?** từ màn Xóa tài khoản, sau khi xác minh OTP và
+đặt mật khẩu mới, đưa người dùng về **Cá nhân** với phiên đăng nhập hợp
+lệ. Người dùng có thể mở lại màn xóa và xác nhận bằng mật khẩu mới.
+
+Đề xuất chờ Trí xem xét. Trên QA, GoTrue đã thu hồi phiên cũ sau khi
+đặt lại mật khẩu. Nếu triển khai, cần xác nhận cách duy trì hoặc cấp
+lại phiên cho đúng tài khoản, đồng thời giữ bước xác minh mật khẩu
+trước lệnh xóa. Luồng hiện tại vẫn dùng **Quay lại đăng nhập**.
 
 Khi xong, dừng Expo/Edge. Với Edge được mở trong terminal, nhấn Ctrl+C
 ở terminal Edge. Với run `gm53-1126`, PID của launcher đã lưu trong
