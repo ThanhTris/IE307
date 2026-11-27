@@ -16,6 +16,7 @@
    - [`mobile/.env.example`](../../../../mobile/.env.example): Documents optional `EXPO_PUBLIC_APP_ENV` and `EXPO_PUBLIC_ANDROID_CERT_SHA1`.
 2. **Minimum Version Gate (Fail-Open)**:
    - [`supabase/migrations/0067_gm54_app_min_version.sql`](../../../../supabase/migrations/0067_gm54_app_min_version.sql): Private config table `gm54_private.app_release_config` (RLS forced, direct access revoked) + read-only public RPC `public.get_app_version_policy(text)` (`security definer set search_path = pg_catalog`, granted to `anon, authenticated, service_role`), seeded `'android'` at `'1.0.0'`.
+   - [`supabase/tests/database/GM-54_app_min_version.test.sql`](../../../../supabase/tests/database/GM-54_app_min_version.test.sql): pgTAP SQL test suite (`19` assertions) verifying schema version `0.32.0`, `SECURITY DEFINER` + `search_path = pg_catalog`, `anon`/`authenticated`/`service_role` execute grants vs `gm54_private` denial + forced RLS, normalized platform fallback, null unknown platform response, and live `minimum_version` bump reflection.
    - [`supabase/tests/http/GM-54.http`](../../../../supabase/tests/http/GM-54.http): Anon read & direct-table denial contract requests.
    - [`mobile/src/features/release/services/minimumVersion.ts`](../../../../mobile/src/features/release/services/minimumVersion.ts), [`UpdateRequiredScreen.tsx`](../../../../mobile/src/features/release/screens/UpdateRequiredScreen.tsx), and [`mobile/src/app/_layout.tsx`](../../../../mobile/src/app/_layout.tsx): Numeric semver check + HTTPS store host allowlist + fail-open on network/HTTP/schema errors (`TC-REL-003`, `TC-REL-004`).
 3. **Runtime Safety, Push Hiding, & Places / Maps Compliance**:
@@ -38,7 +39,7 @@
 
 ## 3. Operator Actions Needed Before `GM-58` / `GM-59`
 
-1. Review and approve the `expo-splash-screen@~58.0.15` lockfile change and merge PR into `main` (re-running `python scripts/task_readiness.py --task GM-54 --gate merge --base-ref origin/main --verify-outputs` with a `read:project`-scoped token).
+1. Review and approve the `expo-splash-screen@~58.0.15` lockfile change and confirm how to handle the `BLOCKED_ON_BASE` ownership check on [`placesRepository.ts`](../../../../mobile/src/features/result/services/placesRepository.ts) (owned by `GM-30`, modified here for Android package/SHA-1 headers and TTL cache) before merging PR into `main` via `python scripts/task_readiness.py --task GM-54 --gate merge --base-ref origin/main --verify-outputs` (with a `read:project`-scoped token).
 2. Run `eas init` inside `mobile/` cleanly once Expo project ownership is confirmed, configure EAS Environment Secrets per profile (`staging` / `production`: `EXPO_PUBLIC_SUPABASE_URL`, `EXPO_PUBLIC_SUPABASE_PUBLISHABLE_KEY`, optional `EXPO_PUBLIC_GOOGLE_PLACES_API_KEY`, `EXPO_PUBLIC_ANDROID_CERT_SHA1` matching Google Cloud Android restriction).
-3. Apply `supabase/migrations/0067_gm54_app_min_version.sql` to QA local / staging / production databases and verify `supabase/tests/http/GM-54.http`.
+3. Run `npm run qa:start` + `supabase/tests/http/GM-54.http` on a loopback-compatible Linux/macOS QA host (Windows local Supabase stack + pgTAP `GM-54_app_min_version.test.sql` + PostgREST checks already verified), and apply `0067_gm54_app_min_version.sql` to staging / production databases.
 4. Trigger `eas build -p android --profile preview` (APK) and `--profile production` (AAB) and capture real APK/AAB SHA-256 + device screenshots for `GM-58` and `GM-59`.

@@ -1,6 +1,6 @@
 # GM-54 minimum app version RPC contract checks.
-# Run against QA local (or staging) Supabase REST endpoint with anon/publishable key.
-@baseUrl = http://127.0.0.1:54385
+# Use 54361 for npm run qa:start (DEFAULT_QA_PORTS) or 54321 for npm run backend:start.
+@baseUrl = http://127.0.0.1:54361
 @publicKey = REPLACE_WITH_QA_PUBLIC_KEY
 
 ### 1. Read minimum Android app version policy anonymously (expected: HTTP 200 with minimumVersion '1.0.0')

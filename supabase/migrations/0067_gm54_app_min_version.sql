@@ -37,7 +37,7 @@ security definer
 set search_path = pg_catalog
 as $$
 declare
-  v_platform text := pg_catalog.coalesce(pg_catalog.nullif(pg_catalog.lower(pg_catalog.btrim(p_platform)), ''), 'android');
+  v_platform text := coalesce(nullif(pg_catalog.lower(pg_catalog.btrim(p_platform)), ''), 'android');
   v_row gm54_private.app_release_config%rowtype;
 begin
   if v_platform not in ('android') then
