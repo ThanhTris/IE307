@@ -1,0 +1,224 @@
+{
+  "bundle": ".work/gm51-hosted-release/staging/dishes.json",
+  "datasetVersion": "1.5.0",
+  "usageScope": "production",
+  "pass": true,
+  "checks": [
+    {
+      "check": "Tổng số món",
+      "actual": 253,
+      "required": 250,
+      "pass": true
+    },
+    {
+      "check": "Bữa breakfast",
+      "actual": 68,
+      "required": 60,
+      "pass": true
+    },
+    {
+      "check": "Bữa lunch",
+      "actual": 100,
+      "required": 60,
+      "pass": true
+    },
+    {
+      "check": "Bữa dinner",
+      "actual": 72,
+      "required": 60,
+      "pass": true
+    },
+    {
+      "check": "Bữa snack",
+      "actual": 114,
+      "required": 80,
+      "pass": true
+    },
+    {
+      "check": "Nhóm bữa chính · Cơm",
+      "actual": 28,
+      "required": 10,
+      "pass": true
+    },
+    {
+      "check": "Nhóm bữa chính · Bún / Phở",
+      "actual": 27,
+      "required": 10,
+      "pass": true
+    },
+    {
+      "check": "Nhóm bữa chính · Mì / Miến / Hủ tiếu",
+      "actual": 22,
+      "required": 10,
+      "pass": true
+    },
+    {
+      "check": "Nhóm bữa chính · Lẩu & Nướng",
+      "actual": 35,
+      "required": 10,
+      "pass": true
+    },
+    {
+      "check": "Nhóm bữa chính · Bánh mì / Xôi",
+      "actual": 13,
+      "required": 10,
+      "pass": true
+    },
+    {
+      "check": "Nhóm bữa chính · Cháo / Súp",
+      "actual": 21,
+      "required": 10,
+      "pass": true
+    },
+    {
+      "check": "Nhóm ăn vặt · Đồ chiên & Xiên que",
+      "actual": 19,
+      "required": 10,
+      "pass": true
+    },
+    {
+      "check": "Nhóm ăn vặt · Các loại bánh mặn",
+      "actual": 22,
+      "required": 10,
+      "pass": true
+    },
+    {
+      "check": "Nhóm ăn vặt · Món trộn & Cuốn",
+      "actual": 12,
+      "required": 10,
+      "pass": true
+    },
+    {
+      "check": "Nhóm ăn vặt · Ốc & Hải sản",
+      "actual": 12,
+      "required": 10,
+      "pass": true
+    },
+    {
+      "check": "Nhóm ăn vặt · Bánh ngọt",
+      "actual": 17,
+      "required": 10,
+      "pass": true
+    },
+    {
+      "check": "Nhóm ăn vặt · Chè & Kem",
+      "actual": 16,
+      "required": 10,
+      "pass": true
+    },
+    {
+      "check": "Nhóm ăn vặt · Trái cây & Đồ chua",
+      "actual": 11,
+      "required": 10,
+      "pass": true
+    },
+    {
+      "check": "Nhóm ăn vặt · Đồ ăn vặt khô",
+      "actual": 17,
+      "required": 10,
+      "pass": true
+    },
+    {
+      "check": "Miền · Miền Bắc",
+      "actual": 29,
+      "required": 25,
+      "pass": true
+    },
+    {
+      "check": "Miền · Miền Trung",
+      "actual": 27,
+      "required": 25,
+      "pass": true
+    },
+    {
+      "check": "Miền · Miền Nam",
+      "actual": 36,
+      "required": 25,
+      "pass": true
+    },
+    {
+      "check": "Miền · Miền Tây",
+      "actual": 43,
+      "required": 25,
+      "pass": true
+    },
+    {
+      "check": "Vị · Cay",
+      "actual": 21,
+      "required": 15,
+      "pass": true
+    },
+    {
+      "check": "Vị · Chua / Chua cay",
+      "actual": 18,
+      "required": 15,
+      "pass": true
+    },
+    {
+      "check": "Vị · Ngọt",
+      "actual": 48,
+      "required": 15,
+      "pass": true
+    },
+    {
+      "check": "Vị · Mặn / Đậm đà",
+      "actual": 21,
+      "required": 15,
+      "pass": true
+    },
+    {
+      "check": "Vị · Thanh đạm",
+      "actual": 15,
+      "required": 15,
+      "pass": true
+    },
+    {
+      "check": "Vị · Béo / Ngậy",
+      "actual": 20,
+      "required": 15,
+      "pass": true
+    },
+    {
+      "check": "Món thiếu mealSlots",
+      "actual": 0,
+      "required": 0,
+      "pass": true
+    },
+    {
+      "check": "Món không thuộc nhóm hiển thị nào",
+      "actual": 0,
+      "required": 0,
+      "pass": true
+    },
+    {
+      "check": "Món có mô tả",
+      "actual": 253,
+      "required": 253,
+      "pass": true
+    },
+    {
+      "check": "Món có ảnh hợp lệ (url, quyền, license, ghi công)",
+      "actual": 253,
+      "required": 253,
+      "pass": true
+    }
+  ],
+  "advisory": {
+    "Món có ảnh chụp hợp lệ": {
+      "actual": 136,
+      "target": null
+    },
+    "Món dùng ảnh minh họa nhóm": {
+      "actual": 117,
+      "target": null
+    },
+    "Món có giá quan sát": {
+      "actual": 137,
+      "target": 202
+    },
+    "Món có nhiệt độ": {
+      "actual": 36,
+      "target": null
+    }
+  }
+}
