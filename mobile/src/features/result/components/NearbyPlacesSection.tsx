@@ -9,11 +9,11 @@ import { ToastNotice } from '../../../shared/ui/feedback/Toast';
 import { useResultAction } from '../hooks/useResultAction';
 import { nearbyPlaces, type ResultMapRenderer } from '../services/nearbyPresentation';
 import { nearbyMatches, type NearbyState, type NearbyStatus, type ResultPresentationActions, type ScoredResult } from '../services/resultPresentation';
-import { EmbeddedDishMap } from './EmbeddedDishMap';
+import { EmbeddedDishMap, dishMapUrl } from './EmbeddedDishMap';
 import { ResultMapCard } from './ResultMapCard';
 
 const copy: Record<NearbyStatus, string> = { ready: 'Chưa tìm thấy quán phù hợp', loading: 'Đang tìm quán', empty: 'Chưa tìm thấy quán phù hợp', error: 'Không tải được danh sách quán', permission: 'Cần cấp quyền vị trí để tìm quán gần bạn', denied: 'Cần cấp quyền vị trí để tìm quán gần bạn', blocked: 'Quyền vị trí đang bị chặn', 'location-off': 'Dịch vụ vị trí đang tắt', offline: 'Bạn đang ngoại tuyến', unsupported: 'Chưa thể hiển thị bản đồ' };
-export function NearbyPlacesSection({ result, state, renderMap, actions }: { result: ScoredResult; state?: NearbyState; renderMap?: ResultMapRenderer; actions: ResultPresentationActions }) {
+export function NearbyPlacesSection({ result, state, renderMap, mapApiKey, actions }: { result: ScoredResult; state?: NearbyState; renderMap?: ResultMapRenderer; mapApiKey?: string; actions: ResultPresentationActions }) {
   const { colors } = useShellTheme(), { textStyle } = useAppFonts(), action = useResultAction(result.resultId);
   const [selected, setSelected] = useState<string>();
   const [mapFailed, setMapFailed] = useState(false);
@@ -23,6 +23,7 @@ export function NearbyPlacesSection({ result, state, renderMap, actions }: { res
   const external = (kind: 'maps' | 'tiktok' | 'youtube', includePlace = false) => { void action.run(kind === 'maps' ? 'Mở bản đồ' : kind, actions.onExternalAction ? () => actions.onExternalAction!(kind, { resultId: result.resultId, dishId: result.winner!.dishId, dishName: result.winner!.name, ...(includePlace && place ? { place } : {}) }) : undefined); };
   const pending = status === 'loading' || action.busy;
   const needsSettings = status === 'blocked' || status === 'location-off';
+  const showEmbeddedMap = !mapFailed && Boolean(dishMapUrl(result.winner.name, mapApiKey));
   return <View style={styles.group}>
     <Text accessibilityRole="header" style={[styles.heading, { color: colors.text }, textStyle(700)]}>Quán ăn gần đây</Text>
     {place ? <>
@@ -32,9 +33,9 @@ export function NearbyPlacesSection({ result, state, renderMap, actions }: { res
       {status !== 'ready' && status !== 'loading' ? <PlacesStatus status={status} /> : null}
       {state?.fetchedAt && Number.isFinite(Date.parse(state.fetchedAt)) ? <Text style={[styles.caption, { color: colors.muted }, textStyle(400)]}>{state.cached ? 'Thông tin lần trước' : 'Cập nhật'}: {new Date(state.fetchedAt).toLocaleString('vi-VN', { timeZone: 'Asia/Ho_Chi_Minh', hour12: false })}</Text> : null}
     </> : <View accessibilityLiveRegion="polite" style={styles.notice}>
-      {!mapFailed ? <EmbeddedDishMap dishName={result.winner.name} onFailed={() => setMapFailed(true)} /> : null}
+      {showEmbeddedMap ? <EmbeddedDishMap dishName={result.winner.name} apiKey={mapApiKey} onFailed={() => setMapFailed(true)} /> : null}
       {status === 'loading' ? <View accessibilityRole="progressbar" accessibilityLabel="Đang tìm quán" style={styles.group}><SkeletonBlock height={156} radius={16} colors={colors} /><SkeletonBlock width="60%" height={14} colors={colors} /></View> : null}
-      {state && !matched ? <ToastNotice title="Thông tin quán chưa khớp kết quả" tone="error" /> : status !== 'loading' ? <PlacesStatus status={status} withMap={!mapFailed} /> : null}
+      {state && !matched ? <ToastNotice title="Thông tin quán chưa khớp kết quả" tone="error" /> : status !== 'loading' ? <PlacesStatus status={status} withMap={showEmbeddedMap} /> : null}
       <LinkButton label="Mở Google Maps" icon={<MaterialCommunityIcons name="google-maps" size={20} color={colors.onPrimary} />} primary colors={colors} disabled={!actions.onExternalAction || action.busy} onPress={() => external('maps')} />
       {needsSettings ? <AppButton label="Mở cài đặt vị trí" colors={colors} disabled={!actions.onOpenSettings || pending} onPress={() => { void action.run('Mở cài đặt vị trí', actions.onOpenSettings); }} /> : null}
     </View>}

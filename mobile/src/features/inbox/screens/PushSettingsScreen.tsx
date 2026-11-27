@@ -6,7 +6,14 @@ import { AppButton, AppHeader, StatusNotice } from '../../../shared/ui';
 import { useShellTheme } from '../../../shared/lib/useShellTheme';
 import type { RoomRepository } from '../../rooms/services/roomRepository';
 import { createNativePushService } from '../services/nativePush';
-import { clearPushRegistrationSecrets, getActivePushDriver, getPushDeviceId, isGm29QaPushEnabled, pushSetupIssue } from '../services/expoPushDriver';
+import {
+  clearPushRegistrationSecrets,
+  getActivePushDriver,
+  getPushDeviceId,
+  isGm29QaPushEnabled,
+  isPushFeatureConfigured,
+  pushSetupIssue,
+} from '../services/expoPushDriver';
 import { ToastNotice } from '../../../shared/ui/feedback/Toast';
 import { CONTAINER_STYLE, CONTAINER_GUTTER } from '../../../shared/ui/layout/ScreenContainer';
 
@@ -18,6 +25,7 @@ export function PushSettingsScreen({ repository, onHome, onInbox }: {
   const { colors } = useShellTheme();
   const driver = getActivePushDriver();
   const qaPushEnabled = isGm29QaPushEnabled();
+  const pushConfigured = isPushFeatureConfigured();
   const setupIssue = pushSetupIssue();
   const [permission, setPermission] = useState<'granted' | 'denied' | 'unknown'>('unknown');
   const [busy, setBusy] = useState(false);
@@ -161,6 +169,23 @@ export function PushSettingsScreen({ repository, onHome, onInbox }: {
       setQaBusy(false);
     }
   };
+
+  if (!pushConfigured) {
+    return (
+      <SafeAreaView style={[styles.root, { backgroundColor: colors.background }]}>
+        <AppHeader title="Hộp thư" onPressBrand={onHome} colors={colors} />
+        <ScrollView contentContainerStyle={styles.content}>
+          <View style={[styles.card, { backgroundColor: colors.surface, borderColor: colors.line }]}>
+            <Text style={[styles.title, { color: colors.text }]}>Hộp thư trong ứng dụng đang hoạt động</Text>
+            <Text style={[styles.body, { color: colors.muted }]}>
+              Lời mời và kết quả mới vẫn hiển thị trong Hộp thư và thanh thông báo khi mở ứng dụng.
+            </Text>
+            <AppButton label="Mở Hộp thư" onPress={onInbox} colors={colors} />
+          </View>
+        </ScrollView>
+      </SafeAreaView>
+    );
+  }
 
   return (
     <SafeAreaView style={[styles.root, { backgroundColor: colors.background }]}>

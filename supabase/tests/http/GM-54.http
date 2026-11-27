@@ -1,0 +1,22 @@
+# GM-54 minimum app version RPC contract checks.
+# Run against QA local (or staging) Supabase REST endpoint with anon/publishable key.
+@baseUrl = http://127.0.0.1:54385
+@publicKey = REPLACE_WITH_QA_PUBLIC_KEY
+
+### 1. Read minimum Android app version policy anonymously (expected: HTTP 200 with minimumVersion '1.0.0')
+POST {{baseUrl}}/rest/v1/rpc/get_app_version_policy
+apikey: {{publicKey}}
+Content-Type: application/json
+
+{"p_platform":"android"}
+
+### 2. Unknown platform returns explicit null policy instead of server error (expected: HTTP 200, minimumVersion: null)
+POST {{baseUrl}}/rest/v1/rpc/get_app_version_policy
+apikey: {{publicKey}}
+Content-Type: application/json
+
+{"p_platform":"ios"}
+
+### 3. Private schema table cannot be read directly via PostgREST (expected: HTTP 401/403/404)
+GET {{baseUrl}}/rest/v1/app_release_config
+apikey: {{publicKey}}
