@@ -36,6 +36,8 @@ FLOOR = {
     'artwork_ratio': 1.0,
 }
 ADVISORY = {'price_ratio': 0.8}
+# Spec section 2, set by Trí on 2026-11-27: at most this share may lack a dish photo, rounded down.
+MAX_NO_PHOTO_RATIO = 0.10
 RIGHTS = {'licensed', 'public_domain', 'granted'}
 # Spec section 5: a shared category illustration is told apart from a dish photo by its attribution prefix.
 ILLUSTRATION_PREFIX = 'Ảnh minh họa nhóm'
@@ -64,7 +66,7 @@ def is_illustration(artwork: dict | None) -> bool:
     return artwork_ok(artwork) and (artwork.get('attribution') or '').startswith(ILLUSTRATION_PREFIX)
 
 
-def evaluate(bundle: Path) -> dict:
+def evaluate(bundle: Path, require_photo_ratio: bool = False) -> dict:
     data, rows = cov.build(bundle)
     n = len(rows)
     results: list[dict] = []
@@ -100,6 +102,19 @@ def evaluate(bundle: Path) -> dict:
          passed=n > 0 and len(no_art) <= n * (1 - FLOOR['artwork_ratio']), names=no_art)
 
     illustrated = sum(is_illustration(r['dish'].get('artwork')) for r in rows)
+    if require_photo_ratio:
+        has_photo = lambda r: artwork_ok(r['dish'].get('artwork')) and not is_illustration(r['dish'].get('artwork'))
+        scopes = [('Cả bộ', rows)]
+        scopes += [(f'Nhóm bữa chính · {label}',
+                    [r for r in rows if label in r['main'] and set(r['meals']) - {'snack'}]) for label in cov.MAIN_GROUPS]
+        scopes += [(f'Nhóm ăn vặt · {label}',
+                    [r for r in rows if label in r['snack'] and 'snack' in r['meals']]) for label in cov.SNACK_GROUPS]
+        for label, scope in scopes:
+            lacking = [r['dish']['name'] for r in scope if not has_photo(r)]
+            allowed = int(len(scope) * MAX_NO_PHOTO_RATIO)
+            need(f'Thiếu ảnh chụp tối đa 10% · {label}', len(lacking), allowed,
+                 passed=bool(scope) and len(lacking) <= allowed, names=lacking)
+
     advisory = {
         'Món có ảnh chụp hợp lệ': {'actual': n - len(no_art) - illustrated, 'target': None},
         'Món dùng ảnh minh họa nhóm': {'actual': illustrated, 'target': None},
@@ -117,8 +132,10 @@ def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     parser.add_argument('--bundle', type=Path, default=DEFAULT_BUNDLE)
     parser.add_argument('--json', type=Path, help='write the full report as JSON')
+    parser.add_argument('--require-photo-ratio', action='store_true',
+                        help='also require dish photos (not illustrations) for all but 10%% of dishes, overall and per group')
     args = parser.parse_args()
-    report = evaluate(args.bundle)
+    report = evaluate(args.bundle, args.require_photo_ratio)
     print(f"Bundle {report['bundle']} · dataset {report['datasetVersion']} · {report['usageScope']}")
     for r in report['checks']:
         mark = 'PASS' if r['pass'] else 'FAIL'
