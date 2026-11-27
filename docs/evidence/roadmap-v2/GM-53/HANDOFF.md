@@ -28,8 +28,10 @@ base `d7b89f2`. Xem [kế hoạch](PLAN.md), [kết quả kiểm](CHECKS.md) và
 ## Bước 5 — kiểm Expo Go trên AVD
 
 Tuấn xác nhận đã kiểm thủ công bằng Expo Go trên điện thoại Android
-ngày 26/11/2026. Xem [CHECKS](CHECKS.md) để biết phạm vi bằng chứng.
-Trí nhận lượt AVD Chặng 3A để chạy và ghi kết quả.
+ngày 26/11/2026. Ngày 27/11, Trí chạy một phần AVD Chặng 3A và sửa lỗi
+bàn phím bằng `ef6ee889`. Trí kiểm lại ca 320dp và chữ 200%, Tuấn xác
+nhận đã kiểm lại lỗi bàn phím trên Expo Go điện thoại thật.
+[Bằng chứng và các ca còn chờ](CHECKS.md#avd-chặng-3a-và-kiểm-lại-bàn-phím-ngày-27112026)
 
 Dùng stack QA riêng và tài khoản thử nghiệm vì xóa là thao tác thật.
 Không dùng môi trường production. Mở Docker Desktop và Android AVD.
@@ -136,7 +138,8 @@ xác nhận mật khẩu khi xóa tài khoản cần mật khẩu đã đặt.
 
 Dùng **Quên mật khẩu** với email đã liên kết để nhận OTP khôi phục, đặt
 mật khẩu, rồi đăng nhập hoặc xác nhận xóa tài khoản bằng mật khẩu mới.
-Đưa tình huống bỏ qua bước đặt mật khẩu vào PR để Trí xem khi review.
+Trí đã tái hiện tình huống trên AVD. Màn xóa vẫn yêu cầu mật khẩu hiện
+tại. Cách xử lý trong sản phẩm chờ Trí quyết định trên PR #223.
 
 Khi xong, dừng Expo/Edge. Với Edge được mở trong terminal, nhấn Ctrl+C
 ở terminal Edge. Với run `gm53-1126`, PID của launcher đã lưu trong

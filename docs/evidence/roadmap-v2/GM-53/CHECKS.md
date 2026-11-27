@@ -23,8 +23,9 @@ của từng lượt kiểm bên dưới.
 | Python regression | `python -m unittest discover -s tests -p 'test_*.py'` | Lượt đầy đủ 731 ca có 11 fail, 2 error, 7 skip. 141 ca của ba bộ validator/project gate/readiness chạy lại đều Pass sau khi hồ sơ có đủ file. Hai error môi trường Windows còn lại ở git init và quyền symlink. |
 | Gate trước review | `python scripts/task_readiness.py --task GM-53 --gate merge --base-ref origin/main --verify-outputs` | READY_FOR_MERGE_REVIEW ở kiểm đầu vào, file và ownership. Bước AVD trong AC còn chờ kết quả. |
 | Expo Go trên điện thoại Android thật | Xác nhận của Tuấn ngày 26/11/2026 | Đã chạy kiểm thủ công. Chưa có SHA bản mở trên điện thoại hoặc kết quả từng ca để đối chiếu. |
-| Expo Go AVD nối Auth/REST/worker/Edge | Các ca [HANDOFF](HANDOFF.md#bước-5--kiểm-expo-go-trên-avd) | Not run. Tuấn kiểm Expo Go trên điện thoại thật và bàn giao lượt AVD cho Trí. |
-| Visual / trợ năng | Đối chiếu [FIGMA_PARITY](FIGMA_PARITY.md) | Not run trên AVD, chưa có ảnh app. |
+| Kiểm lại bàn phím trên Expo Go điện thoại thật | Xác nhận của Tuấn ngày 27/11/2026 sau khi nhận `ef6ee889` | Pass cho lỗi bàn phím của màn Xóa tài khoản. Bề ngang và cỡ chữ của điện thoại chưa được ghi trong kết quả. |
+| Expo Go AVD nối Auth/REST/worker/Edge | [Kết quả của Trí trên PR #223](https://github.com/ThanhTris/IE307/pull/223#issuecomment-7206330070) | Đạt một phần. Lỗi bàn phím đã sửa và kiểm lại. Xem bảng kết quả bên dưới. |
+| Visual / trợ năng | Đối chiếu [FIGMA_PARITY](FIGMA_PARITY.md) | Bàn phím 320dp và chữ 200% đạt sau sửa. Đối chiếu node Figma, TalkBack và các cấu hình còn thiếu vẫn Not run. |
 
 Jest chạy với Node 24.20.0, npm 11.19.0 và SDK 58.0.25. QA riêng dùng
 API 54381, DB 54382 và Mailpit 54384. Phiên bản ứng dụng và dữ liệu
@@ -57,7 +58,8 @@ trả 401 cho POST không bearer, `qa:verify` đạt và runner HTTP GM-49 đạ
   Phản hồi trong quá trình thử đã dẫn đến các sửa đổi về banner sáng/tối,
   bố cục Cá nhân, luồng xóa tài khoản, quyền theo bản cài đặt và luồng
   mật khẩu. Hồ sơ chưa có kết quả từng ca hoặc xác nhận ảnh đối chiếu
-  trên revision cuối. Lượt AVD được bàn giao cho Trí.
+  trên revision cuối. Kết quả AVD của Trí và xác nhận bàn phím của Tuấn
+  được ghi trong mục ngày 27/11/2026 bên dưới.
 
 ### Kiểm lại sau khi khôi phục thứ tự OTP trước mật khẩu
 
@@ -74,7 +76,42 @@ trả 401 cho POST không bearer, `qa:verify` đạt và runner HTTP GM-49 đạ
   OTP mà vẫn giữ phiên liên kết. TypeScript, ESLint trên các tệp sửa
   và kiểm kiến trúc đạt.
 - Gate `--verify-outputs` với `origin/main` ở `35c60f1` trả
-  `READY_FOR_MERGE_REVIEW`. Lượt AVD và ảnh đối chiếu vẫn chờ Trí.
+  `READY_FOR_MERGE_REVIEW` tại lượt kiểm ngày 26/11/2026.
+
+### AVD Chặng 3A và kiểm lại bàn phím ngày 27/11/2026
+
+Trí chạy lượt đầu trên `261b4c7a`, Android API 37, Expo Go 58.0.5,
+QA GM-03 `gm53-1127-000055` có Auth, REST, worker và Edge. Stack đã
+dừng sau lượt kiểm. Ảnh hiện lưu trên máy người review.
+[Báo cáo AVD của Trí](https://github.com/ThanhTris/IE307/pull/223#issuecomment-7206330070)
+
+| Ca | Kết quả |
+| --- | --- |
+| Xóa tài khoản, 320dp, chữ 200%, có bàn phím | Trên `261b4c7a`, bàn phím che ô XÓA và hai nút. `ef6ee889` đặt `KeyboardAvoidingView` dùng `behavior="padding"` trên Android. Trí ghép bản sửa lên revision đã kiểm và xác nhận thấy ô XÓA, cuộn tới cả hai nút. Ở kích thước gốc, hai nút nằm trên bàn phím. Đóng bàn phím không để lại khoảng trống. |
+| Đăng ký, 320dp, chữ 200%, có bàn phím | Trí kiểm riêng trên nhánh từ `main` có bản sửa, thấy được ô mật khẩu và cuộn tới hai nút. |
+| Kiểm lại trên điện thoại thật | Tuấn xác nhận lỗi bàn phím của màn Xóa tài khoản đã được sửa khi dùng Expo Go sau khi đồng bộ `ef6ee889`. |
+| HTTP GM-49 và các luồng xóa | 33/33 kiểm tra HTTP đạt. Hủy về Hồ sơ, nhập sai cụm hiện lỗi dưới ô. Xóa khách và email đúng mật khẩu về Welcome, tài khoản không còn trong DB. Mật khẩu sai giữ phiên và xóa ô mật khẩu. |
+| Bấm đôi, Back và Hủy | Khi tạm dừng Edge, màn đang xử lý khóa Back và Hủy. Kong ghi đúng một POST và trả 200. |
+| Mất kết nối và thử lại | Khi dừng Kong, lỗi xảy ra ở bước xác minh mật khẩu, người dùng vẫn ở form và tài khoản còn. Khi Kong hoạt động, nhập lại mật khẩu và xóa được. Thử lại cùng `requestId` sau khi đã gửi lệnh xóa vẫn Not run trên AVD. |
+| Phòng và phiên | Khách đang trong phòng được nhắc rời hoặc hủy phòng, sau khi hủy có thể thử lại để xóa. Phiên khách bị thu hồi hiện lỗi và nút về màn chào mừng hoạt động. Mở lại app sau khi xóa vẫn ở Welcome. |
+| Quyền, legal, phiên bản và dark mode | Màn xin quyền hiện lần đầu và bỏ qua khi đăng nhập lại. Phiên bản 0.1.0 khớp cấu hình. Cả ba link mở trình duyệt, privacy hiển thị, terms và support còn trắng sau 6 giây. Cả ba HTTP 200 từ host. Màn Xóa tài khoản, Trang chủ và Cá nhân đã được xem ở chế độ tối. Email được che ở màn OTP. |
+
+Trí báo 74/74 ca trong 6 bộ tài khoản, hồ sơ và phiên trên `ef6ee889`.
+TypeScript, ESLint thư mục account, kiểm kiến trúc, validator và merge
+gate đạt trong lượt đó. [Bản sửa và kết quả kiểm lại](https://github.com/ThanhTris/IE307/pull/223#issuecomment-7207748920)
+
+**Còn Not run trên AVD:** TalkBack, đối chiếu ảnh theo node Figma, 360dp,
+chữ 200% ở bề ngang thường, phiên email hết hạn, đăng nhập lại bằng tài
+khoản đã xóa, quay lại app từ trình duyệt, vị trí Đăng xuất, so nền hai ô
+xác nhận ở chế độ tối, kiểm lịch sử và nháp của khách mới sau xóa, đặt
+mật khẩu sau OTP rồi đăng nhập, hồi quy ba ô Đổi mật khẩu giống nhau,
+và kiểm bàn phím ở Đăng nhập, Sửa hồ sơ, Đổi mật khẩu. Cần xác nhận
+terms và support hiển thị trong trình duyệt trên thiết bị.
+
+**Chờ Trí:** quyết định tình huống email đã liên kết nhưng chưa đặt mật
+khẩu. Góp ý UX nhắc nhập lại mật khẩu khi lần thử trước dừng ở bước
+xác minh vẫn mở. PR #221 cũng sửa `AccountFormFrame`. Nhánh của PR merge
+sau cần kiểm lại diff và xử lý xung đột sau khi đồng bộ với `main`.
 
 Lượt full Jest đầu gặp timeout ở màn kết quả và dừng sau khi source
 thay đổi. Bộ màn kết quả đã đạt ở lượt kiểm tập trung, chạy với
