@@ -108,10 +108,24 @@ mật khẩu sau OTP rồi đăng nhập, hồi quy ba ô Đổi mật khẩu gi
 và kiểm bàn phím ở Đăng nhập, Sửa hồ sơ, Đổi mật khẩu. Cần xác nhận
 terms và support hiển thị trong trình duyệt trên thiết bị.
 
-**Chờ Trí:** quyết định tình huống email đã liên kết nhưng chưa đặt mật
-khẩu. Góp ý UX nhắc nhập lại mật khẩu khi lần thử trước dừng ở bước
-xác minh vẫn mở. PR #221 cũng sửa `AccountFormFrame`. Nhánh của PR merge
-sau cần kiểm lại diff và xử lý xung đột sau khi đồng bộ với `main`.
+Góp ý UX nhắc nhập lại mật khẩu khi lần thử trước dừng ở bước xác minh
+vẫn mở. PR #221 cũng sửa `AccountFormFrame`. Nhánh của PR merge sau cần
+kiểm lại diff và xử lý xung đột sau khi đồng bộ với `main`.
+
+### Khôi phục mật khẩu từ màn Xóa tài khoản
+
+Theo quyết định ngày 27/11/2026, form email có dòng gợi ý và nút
+**Quên mật khẩu?** khi yêu cầu mật khẩu hiện tại. Nút khóa trong lúc
+gửi. Luồng dùng cùng route và chính sách khôi phục theo email của tài
+khoản đang đăng nhập như màn Đổi mật khẩu.
+[Quyết định của Trí](https://github.com/ThanhTris/IE307/pull/223#issuecomment-7213447136)
+
+| Bằng chứng | Kết quả |
+| --- | --- |
+| Jest tài khoản và xóa | 71/71 ca trong 5 bộ. Kiểm email thấy lối khôi phục, khách không thấy, route chỉ gửi OTP cho email đang đăng nhập, và nút khóa khi POST xóa đang chờ. TypeScript, ESLint và kiểm kiến trúc đạt. |
+| Auth, Mailpit và Edge trên `gm53-1126` | Pass. OTP liên kết cùng UUID trước khi đặt mật khẩu. OTP khôi phục cho phép đặt mật khẩu, đăng nhập lại và xóa với ACK. GoTrue trả 403 khi đóng phiên cũ đã bị thu hồi, trường hợp tương ứng `AUTH_REQUIRED` mà app đã xử lý khi đăng xuất. Đăng nhập sau xóa bị từ chối. |
+| Android export | Pass. `npx expo export --platform android --output-dir ../.work/gm53-recovery-android` tạo bundle Hermes `entry-2ba4af112f9ecd014d6b4e9c7537a7a8.hbc`. |
+| Trọn luồng trên AVD | Not run cho thay đổi này. Máy thực hiện chưa có Android Emulator hoặc AVD được cấu hình. Ca tái lập ở [HANDOFF](HANDOFF.md#bước-5--kiểm-expo-go-trên-avd). |
 
 Lượt full Jest đầu gặp timeout ở màn kết quả và dừng sau khi source
 thay đổi. Bộ màn kết quả đã đạt ở lượt kiểm tập trung, chạy với

@@ -5,6 +5,7 @@ import { Linking, Text } from 'react-native';
 import * as SecureStore from 'expo-secure-store';
 import ProfileRoute from '../../src/app/profile';
 import DeleteAccountRoute from '../../src/app/account/delete-account';
+import AccountRoute from '../../src/app/account/[flow]';
 import { RoomRepositoryProvider } from '../../src/bootstrap/RoomRepositoryProvider';
 import { getDurableOutbox } from '../../src/data/local/outbox';
 
@@ -48,6 +49,7 @@ async function openProfile(isGuest: boolean, deletionReply: (options: RequestIni
         : response(400, { error_code: 'invalid_credentials' });
     }
     if (path.endsWith('/auth/v1/logout?scope=local')) return response(204, null);
+    if (path.endsWith('/auth/v1/recover')) return response(200, {});
     if (path.endsWith('/functions/v1/delete-account')) return deletionReply(options!);
     return response(200, { ok: true, data: { personal: false, group: false } });
   });
@@ -57,6 +59,7 @@ async function openProfile(isGuest: boolean, deletionReply: (options: RequestIni
     </RoomRepositoryProvider>,
     profile: ProfileRoute,
     'account/delete-account': DeleteAccountRoute,
+    'account/[flow]': AccountRoute,
     welcome: () => <Text>Welcome</Text>,
   }, { initialUrl: '/profile' });
   await screen.findByRole('button', { name: 'Xóa tài khoản' });
@@ -78,6 +81,7 @@ test('guest enters from Hồ sơ, blocks Back and duplicate submit, cleans priva
   await fireEvent.press(screen.getByRole('button', { name: 'Xóa tài khoản' }));
   expect(screen).toHavePathname('/account/delete-account');
   expect(screen.queryByLabelText('Mật khẩu hiện tại')).toBeNull();
+  expect(screen.queryByRole('button', { name: 'Quên mật khẩu?' })).toBeNull();
   expect(screen.getByRole('button', { name: 'Xóa tài khoản' })).toBeDisabled();
   await confirmPhrase();
   await fireEvent.press(screen.getByRole('button', { name: 'Xóa tài khoản' }));
@@ -119,6 +123,48 @@ test('email password error stays in the form, and network retry sends the origin
   await waitFor(() => expect(screen).toHavePathname('/welcome'));
   expect(reply.mock.calls[1]![0].body).toBe(reply.mock.calls[0]![0].body);
   expect(reply.mock.calls[1]![0].headers).toMatchObject({ Authorization: 'Bearer fixture-access' });
+});
+
+test('email deletion opens recovery scoped to the signed-in account', async () => {
+  const reply = jest.fn();
+  const send = await openProfile(false, reply);
+  await fireEvent.press(screen.getByRole('button', { name: 'Xóa tài khoản' }));
+  expect(screen.getByLabelText('Mật khẩu hiện tại')).toBeOnTheScreen();
+  expect(screen.getByText(/đăng nhập lại để xóa tài khoản/)).toBeOnTheScreen();
+  await fireEvent.press(screen.getByRole('button', { name: 'Quên mật khẩu?' }));
+  await waitFor(() => expect(screen).toHavePathname('/account/recovery'));
+  expect(screen.getByText('Nhập email của tài khoản đang đăng nhập để nhận mã đặt lại mật khẩu.')).toBeOnTheScreen();
+
+  await fireEvent.changeText(screen.getByLabelText('Email'), 'other@example.test');
+  await fireEvent.press(screen.getByRole('button', { name: 'Gửi mã xác minh' }));
+  expect(await screen.findByText('Nhập email của tài khoản đang đăng nhập.')).toBeOnTheScreen();
+  expect(send.mock.calls.some(([url]) => String(url).endsWith('/auth/v1/recover'))).toBe(false);
+  await fireEvent.changeText(screen.getByLabelText('Email'), 'tester@example.test');
+  await fireEvent.press(screen.getByRole('button', { name: 'Gửi mã xác minh' }));
+  expect(await screen.findByLabelText('Mã xác minh')).toBeOnTheScreen();
+  expect(send).toHaveBeenCalledWith('http://localhost:54321/auth/v1/recover', expect.objectContaining({
+    body: JSON.stringify({ email: 'tester@example.test' }),
+  }));
+  expect(reply).not.toHaveBeenCalled();
+});
+
+test('email recovery cannot open while a deletion request is pending', async () => {
+  let release!: () => void;
+  const reply = jest.fn(() => new Promise<Response>(resolve => {
+    release = () => resolve(response(409, { ok: false, error: { messageKey: 'ACTIVE_ROOM' } }));
+  }));
+  await openProfile(false, reply);
+  await fireEvent.press(screen.getByRole('button', { name: 'Xóa tài khoản' }));
+  await confirmPhrase();
+  await fireEvent.changeText(screen.getByLabelText('Mật khẩu hiện tại'), 'right');
+  await fireEvent.press(screen.getByRole('button', { name: 'Xóa tài khoản' }));
+  await waitFor(() => expect(reply).toHaveBeenCalledTimes(1));
+  const recovery = screen.getByRole('button', { name: 'Quên mật khẩu?' });
+  expect(recovery).toBeDisabled();
+  await fireEvent.press(recovery);
+  expect(screen).toHavePathname('/account/delete-account');
+  await act(async () => { release(); });
+  expect(await screen.findByText(/rời hoặc hủy phòng chờ/)).toBeOnTheScreen();
 });
 
 test('legal rows use the GM-50 browser URLs', async () => {

@@ -59,9 +59,10 @@ type Props = {
   deletion: AccountDeletion;
   onBack: () => void;
   onSignInAgain: () => Promise<boolean>;
+  onRecovery: () => void;
 };
 
-export function DeleteAccountScreen({ user, deletion, onBack, onSignInAgain }: Props) {
+export function DeleteAccountScreen({ user, deletion, onBack, onSignInAgain, onRecovery }: Props) {
   const { colors, dark } = useShellTheme();
   const [error, setError] = useState<ApiError>();
   const [leaving, setLeaving] = useState(false);
@@ -134,10 +135,20 @@ export function DeleteAccountScreen({ user, deletion, onBack, onSignInAgain }: P
         editable={!busy && !loginRequired} error={fieldState.error?.message}
         inputStyle={{ minHeight: 54, backgroundColor: dark ? colors.soft : '#FFFFFF' }} />
     )} />
-    {needsPassword ? <Controller control={form.control} name="password" render={({ field, fieldState }) => (
-      <PasswordField label="Mật khẩu hiện tại" value={field.value} onChange={field.onChange}
-        disabled={busy || loginRequired} error={fieldState.error?.message} />
-    )} /> : null}
+    {needsPassword ? <>
+      <Controller control={form.control} name="password" render={({ field, fieldState }) => (
+        <PasswordField label="Mật khẩu hiện tại" value={field.value} onChange={field.onChange}
+          disabled={busy || loginRequired} error={fieldState.error?.message} />
+      )} />
+      <Text style={[typography.body, { color: colors.muted }]}>
+        Chưa đặt hoặc quên mật khẩu? Hãy đặt mật khẩu rồi đăng nhập lại để xóa tài khoản.
+      </Text>
+      <AppButton label="Quên mật khẩu?" variant="quiet" disabled={busy || loginRequired} colors={colors} onPress={() => {
+        if (busy || submitting.current || loginRequired) return;
+        form.resetField('password');
+        onRecovery();
+      }} />
+    </> : null}
     {error ? <Text accessibilityRole="alert" accessibilityLiveRegion="polite" style={[typography.body, { color: colors.danger }]}>
       {error.details?.reason === 'SIGN_OUT_FAILED' ? 'Chưa dọn xong phiên trên thiết bị. Hãy thử lại.' : errorMessage(error)}
     </Text> : null}

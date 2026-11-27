@@ -10,6 +10,9 @@ base `d7b89f2`. Xem [kế hoạch](PLAN.md), [kết quả kiểm](CHECKS.md) và
   bản hiển thị lấy từ cấu hình Expo của bản đang chạy.
 - Form nhập **XÓA**. Với email, app xác minh mật khẩu trên GoTrue của
   phiên hiện tại. Phiên xác minh tạm không được lưu hoặc đưa vào app.
+  Khi cần mật khẩu, có lối **Quên mật khẩu?** ngay dưới ô nhập. Luồng
+  khôi phục dùng email của tài khoản đang đăng nhập. Sau khi đặt mật khẩu,
+  người dùng đăng nhập lại rồi mở lại màn xóa.
 - App gọi GM-49 `POST /functions/v1/delete-account` bằng bearer hiện
   hành, body chỉ có UUID. Khi lỗi có thể thử lại, giữ cùng UUID và bearer
   trong bộ nhớ của phiên. Mật khẩu bị xóa khỏi form khi gửi. Sau force-stop
@@ -95,7 +98,8 @@ phục/xóa phiên của app trước khi tạo khách QA.
 | --- | --- |
 | Khách | Cá nhân → Xóa tài khoản. Bấm Hủy để về Hồ sơ. Mở lại, nhập sai cụm để kiểm nút khóa. Nhập XÓA rồi gửi. App về Welcome sau ACK. |
 | Email | Thử mật khẩu sai. Ô mật khẩu trống lại, thông báo lỗi hiện, phiên vẫn mở. Nhập đúng và gửi. App về Welcome. Thử đăng nhập lại bằng tài khoản đã xóa. |
-| Pending / Back | Dùng độ trễ có kiểm soát ở QA hoặc slow network. Bấm liên tiếp và bấm Back phần cứng khi đang gửi. Chỉ có một yêu cầu và màn vẫn đứng tại chỗ đến khi có kết quả. |
+| Email liên kết nhưng chưa đặt mật khẩu | Tạo khách QA, liên kết email, nhập OTP Mailpit rồi bấm Back ở màn Đặt mật khẩu. Từ **Cá nhân → Xóa tài khoản** bấm **Quên mật khẩu?**, gửi mã cho email đang đăng nhập, nhập OTP, đặt mật khẩu và bấm **Quay lại đăng nhập**. Đăng nhập bằng mật khẩu mới, mở lại màn xóa, xác nhận và kiểm app về Welcome. |
+| Pending / Back | Dùng độ trễ có kiểm soát ở QA hoặc slow network. Bấm liên tiếp và bấm Back phần cứng khi đang gửi. Chỉ có một yêu cầu và màn vẫn đứng tại chỗ đến khi có kết quả. Với tài khoản email, kiểm **Quên mật khẩu?** khóa khi đang gửi. |
 | Mất kết nối | Trên AVD, sau khi mở form thử bỏ `adb reverse` của cổng API. Gửi, kiểm vẫn ở form và giữ phiên. Nối lại cổng, thử lại đến khi server ACK. Xem kiểm tự động cho UUID/bearer lặp lại. |
 | Đang trong phòng | Tạo/phục hồi phòng chờ rồi mở form. Kiểm thông báo yêu cầu rời/hủy phòng hoặc đợi vòng kết thúc. Rời/hủy đúng luồng, quay lại và thử. Dùng phiên khác để kiểm ở vai trò thành viên nếu cần. |
 | Phiên hết hạn | Dùng QA thu hồi phiên qua Auth của tài khoản thử. Kiểm thông báo phiên hết hạn và nút quay lại Welcome để đăng nhập. |
@@ -136,10 +140,15 @@ UUID. Nếu người dùng quay lại hoặc đóng app ở màn Đặt mật kh
 xác nhận mật khẩu khi xóa tài khoản cần mật khẩu đã đặt.
 [Tài liệu Supabase Auth](https://supabase.com/docs/guides/auth/auth-anonymous#link-an-email--phone-identity)
 
-Dùng **Quên mật khẩu** với email đã liên kết để nhận OTP khôi phục, đặt
-mật khẩu, rồi đăng nhập hoặc xác nhận xóa tài khoản bằng mật khẩu mới.
-Trí đã tái hiện tình huống trên AVD. Màn xóa vẫn yêu cầu mật khẩu hiện
-tại. Cách xử lý trong sản phẩm chờ Trí quyết định trên PR #223.
+Trí đã tái hiện tình huống trên AVD và chốt thêm **Quên mật khẩu?** ngay
+trên màn xóa. Lối này hiện cho mọi tài khoản email khi form yêu cầu mật
+khẩu hiện tại, áp dụng cả khi quên mật khẩu. Khách vẫn chỉ có ô XÓA.
+[Quyết định trên PR #223](https://github.com/ThanhTris/IE307/pull/223#issuecomment-7213447136)
+
+Sau khi đặt mật khẩu, bấm **Quay lại đăng nhập** để kết thúc phiên cũ.
+Đăng nhập lại bằng mật khẩu mới rồi xác nhận xóa. Kiểm Auth và Edge đã
+xác nhận đường này trên QA. Lượt thao tác trọn luồng trên AVD vẫn chờ
+thực hiện. [Kết quả kiểm](CHECKS.md#khôi-phục-mật-khẩu-từ-màn-xóa-tài-khoản)
 
 Khi xong, dừng Expo/Edge. Với Edge được mở trong terminal, nhấn Ctrl+C
 ở terminal Edge. Với run `gm53-1126`, PID của launcher đã lưu trong

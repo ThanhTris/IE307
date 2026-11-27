@@ -33,5 +33,8 @@ export default function DeleteAccountRoute() {
   </AccountFormFrame>;
 
   return <DeleteAccountScreen key={live.user.id + ':' + live.user.isGuest}
-    user={live.user} deletion={live.accountDeletion} onBack={back} onSignInAgain={live.logout} />;
+    user={live.user} deletion={live.accountDeletion} onBack={back} onSignInAgain={live.logout}
+    onRecovery={() => router.push({
+      pathname: '/account/[flow]', params: { flow: 'recovery', source: 'change-password' },
+    })} />;
 }

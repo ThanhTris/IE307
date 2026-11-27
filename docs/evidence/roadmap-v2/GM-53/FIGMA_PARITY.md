@@ -9,6 +9,7 @@ nút của hệ thống thiết kế hiện hành.
 | --- | --- | --- | --- |
 | [Hồ sơ tài khoản, 260:1649](https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=260-1649) | `/profile`, thông tin ứng dụng và mục Xóa tài khoản | Xóa tài khoản là một hàng trong nhóm Tài khoản, có icon thùng rác và màu cảnh báo. Đăng xuất nằm sau nhóm Thông tin ứng dụng. | Not run |
 | [Đổi mật khẩu, 260:1857](https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=260-1857) | `/account/delete-account`, form khách/email | Hai ô nhập dùng cùng nền và chiều cao theo theme. Khách chỉ nhập XÓA. Email có ô mật khẩu có che ký tự. Cảnh báo và nút xóa dùng token danger. | Not run |
+| [Đổi mật khẩu, 260:1857](https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=260-1857) | `/account/delete-account`, khôi phục mật khẩu | Dưới ô mật khẩu có gợi ý đăng nhập lại sau khi đặt mật khẩu và nút **Quên mật khẩu?** theo kiểu nút phụ của màn tài khoản. Khách không thấy nút. Khi đang gửi, nút khóa. Xen giữa ô nhập và cụm nút xóa/hủy, mọi thao tác vẫn cuộn tới được ở 320dp và chữ 200%. | Not run |
 | [Đổi mật khẩu đang cập nhật, 801:9991](https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=801-9991) | `/account/delete-account`, đang gửi | Nút báo đang xử lý, form và Back khóa. Không nhảy layout. | Not run |
 | [Đổi mật khẩu lỗi, 801:10030](https://www.figma.com/design/3Ysh0mOAEkAgA5DgZPSC1j?node-id=801-10030) | Lỗi mật khẩu hoặc lỗi API | Sai mật khẩu có lỗi bên dưới ô và trường rỗng. Lỗi mạng giữ xác nhận và có nút Thử lại. | Not run |
 
