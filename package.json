@@ -20,7 +20,7 @@
     "gm22:qa": "python scripts/gm22_admission_check.py",
     "gm22:bruno": "python scripts/gm22_admission_check.py --bruno",
     "gm22:stop": "python scripts/gm22_admission_check.py --cleanup",
-    "test": "node --test tests/backend-runner.test.mjs tests/backend-qa.test.mjs"
+    "test": "node --test tests/backend-runner.test.mjs tests/backend-qa.test.mjs tests/gm52-hosted.test.mjs"
   },
   "devDependencies": { "supabase": "2.120.0" }
 }

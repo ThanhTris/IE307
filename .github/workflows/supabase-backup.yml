@@ -1,0 +1,56 @@
+name: Supabase backup
+# Weekly logical backup of each hosted project. The repository is public, so artifacts are readable by any signed-in GitHub
+# user: the dump is encrypted with BACKUP_PASSPHRASE before upload and the plain file is deleted in the same step.
+on:
+  schedule:
+    - cron: '41 2 * * 0'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  backup:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    strategy:
+      fail-fast: false
+      matrix:
+        target: [staging, production]
+    steps:
+      - name: Install the PostgreSQL 17 client
+        run: |
+          set -euo pipefail
+          sudo install -d /usr/share/postgresql-common/pgdg
+          sudo curl --silent --show-error --fail -o /usr/share/postgresql-common/pgdg/apt.postgresql.org.asc https://www.postgresql.org/media/keys/ACCC4CF8.asc
+          echo "deb [signed-by=/usr/share/postgresql-common/pgdg/apt.postgresql.org.asc] https://apt.postgresql.org/pub/repos/apt $(lsb_release -cs)-pgdg main" | sudo tee /etc/apt/sources.list.d/pgdg.list >/dev/null
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq postgresql-client-17
+      - name: Dump, encrypt and delete the plain file
+        env:
+          DB_URL: ${{ matrix.target == 'production' && secrets.PROD_DB_URL || secrets.STAGING_DB_URL }}
+          BACKUP_PASSPHRASE: ${{ secrets.BACKUP_PASSPHRASE }}
+        run: |
+          set -euo pipefail
+          if [ -z "${DB_URL}" ] || [ -z "${BACKUP_PASSPHRASE}" ]; then
+            echo "::error::DB URL or BACKUP_PASSPHRASE secret for ${{ matrix.target }} is not set (see the runbook)"; exit 1
+          fi
+          stamp=$(date -u +%Y%m%dT%H%M%SZ)
+          plain="${{ matrix.target }}-${stamp}.sql"
+          # Application schemas only: Supabase manages auth/storage/realtime/cron internals itself. auth.users is
+          # dumped separately because rooms and history reference it.
+          pg_dump "${DB_URL}" --no-owner --no-privileges --schema=public --schema='gm*_private' --schema='dish*_private' \
+            --schema=supabase_migrations --file "${plain}"
+          pg_dump "${DB_URL}" --no-owner --no-privileges --data-only --table=auth.users --file "${plain}.auth"
+          cat "${plain}.auth" >> "${plain}" && rm -f "${plain}.auth"
+          test -s "${plain}"
+          printf '%s' "${BACKUP_PASSPHRASE}" | gpg --batch --yes --pinentry-mode loopback --symmetric --cipher-algo AES256 \
+            --passphrase-fd 0 --output "${plain}.gpg" "${plain}"
+          rm -f "${plain}"
+          sha256sum "${plain}.gpg" | tee -a "${GITHUB_STEP_SUMMARY}"
+          echo "BACKUP_FILE=${plain}.gpg" >> "${GITHUB_ENV}"
+      - name: Upload the encrypted dump only
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: supabase-${{ matrix.target }}-backup
+          path: ${{ env.BACKUP_FILE }}
+          if-no-files-found: error
+          retention-days: 14

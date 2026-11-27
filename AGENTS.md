@@ -173,3 +173,7 @@ separate :gm18.2 release. Check generated artifacts with `build --check`; inspec
 the offline `prepare_catalogue_projection.ipynb`. `scripts/gm40_rich_projection_check.py`
 extends owned legacy QA with rich import/SQL/HTTP/restore assertions. No SQL/API,
 production admission, decision policy or automatic Project approval change.
+
+## GM-52 — Supabase staging và production
+
+Đọc [runbook](docs/ops/SUPABASE_HOSTED_RUNBOOK.md) và [handoff](docs/evidence/roadmap-v2/GM-52/HANDOFF.md) trước khi chạm project hosted. Kiểm ledger và hash hàm bằng `scripts/gm52_hosted_parity.py`, smoke bằng `scripts/gm52_hosted_smoke.mjs`, gói build bằng `scripts/gm52_bundle_scan.mjs`. Không reset DB, không sửa migration đã áp, không đưa `service_role`, secret key hay chuỗi kết nối vào repo hoặc app; production chỉ nhận commit đã qua staging. Hồ sơ hosted còn `Not run` đến khi Trí tạo project và GM-51 Done. AI không tự chuyển Done.

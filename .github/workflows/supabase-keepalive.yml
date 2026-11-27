@@ -1,0 +1,36 @@
+name: Supabase keepalive
+# A free Supabase project is paused after about a week without activity. This reads one row (a real Postgres query through
+# PostgREST) from each hosted project every two days. GitHub disables scheduled workflows after roughly 60 days without
+# repository activity: see docs/ops/SUPABASE_HOSTED_RUNBOOK.md for the monthly check and how to re-enable it.
+on:
+  schedule:
+    - cron: '17 3 */2 * *'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  keepalive:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    strategy:
+      fail-fast: false
+      matrix:
+        target: [staging, production]
+    steps:
+      - name: Query one catalogue row from ${{ matrix.target }}
+        env:
+          SUPABASE_URL: ${{ matrix.target == 'production' && secrets.PROD_SUPABASE_URL || secrets.STAGING_SUPABASE_URL }}
+          SUPABASE_PUBLISHABLE_KEY: ${{ matrix.target == 'production' && secrets.PROD_SUPABASE_PUBLISHABLE_KEY || secrets.STAGING_SUPABASE_PUBLISHABLE_KEY }}
+        run: |
+          set -euo pipefail
+          if [ -z "${SUPABASE_URL}" ] || [ -z "${SUPABASE_PUBLISHABLE_KEY}" ]; then
+            echo "::error::Secrets for ${{ matrix.target }} are not set (see the runbook)"; exit 1
+          fi
+          case "${SUPABASE_URL}" in https://*.supabase.co) ;; *) echo "::error::URL must be https://<ref>.supabase.co"; exit 1;; esac
+          status=$(curl --silent --show-error --max-time 30 --output /dev/null --write-out '%{http_code}' \
+            --header "apikey: ${SUPABASE_PUBLISHABLE_KEY}" \
+            "${SUPABASE_URL%/}/rest/v1/dishes?select=id&limit=1")
+          echo "${{ matrix.target }} REST status: ${status}"
+          if [ "${status}" != "200" ]; then
+            echo "::error::${{ matrix.target }} did not answer 200 (got ${status}): the project may be paused or the key rotated"; exit 1
+          fi

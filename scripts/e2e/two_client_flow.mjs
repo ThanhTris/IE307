@@ -123,6 +123,15 @@ const peek = await call(outsider, 'snapshot', { roomId: made.roomId });
 assert.ok(peek.status !== 200 || peek.body.ok === false, 'an outsider must not read the room snapshot');
 step('an outsider is refused the result and the snapshot');
 
+if (argv.includes('--delete-guests')) {
+  // Hosted runs: remove the three guests through the account-deletion Edge Function (GM-49) instead of leaving them behind.
+  for (const user of [host, member, outsider]) {
+    const gone = await fetch(`${base}/functions/v1/delete-account`, { method: 'POST', headers: { apikey: key, authorization: `Bearer ${user.token}`, 'content-type': 'application/json' }, body: JSON.stringify({ requestId: randomUUID() }) });
+    assert.equal(gone.status, 200, `delete-account http ${gone.status}`);
+  }
+  step('the three guests are deleted');
+}
+
 const outDir = resolve(root, '.work/e2e');
 mkdirSync(outDir, { recursive: true });
 const report = { run: runId, target: label, contractVersion, at: new Date().toISOString(), steps: log.map(s => s.step), result: 'Pass' };
