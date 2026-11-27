@@ -437,3 +437,32 @@ it.each([1, 2] as const)('uses the caller identity for host controls in round %s
   expect(host.result.current.isHost).toBe(true);
   expect(host.result.current.canHostEarlyFinish).toBe(false);
 });
+
+it.each([1, 2] as const)('retains loaded R%s pool and calls onExit when a background refresh reports terminal closure', async round => {
+  const base = round === 1 ? snapshot() : snapshot({ state: 'ROUND_2', round: 2, removalCap: 3 });
+  const repo = repository(base);
+  repo.getSnapshot
+    .mockResolvedValueOnce({ ok: true, data: base })
+    .mockResolvedValueOnce({ ok: false, error: { messageKey: 'NETWORK_ERROR' } })
+    .mockResolvedValueOnce({ ok: false, error: { messageKey: 'ROOM_TERMINAL' } });
+  const onExit = jest.fn();
+  const { result } = await renderHook(() => round === 1
+    ? useRoundOneVoting({ repository: repo, roomId, identityId: 'user-bg', onExit })
+    : useRoundTwoVoting({ repository: repo, roomId, identityId: 'user-bg', onExit }));
+  if (round === 1) {
+    await waitFor(() => expect((result.current as ReturnType<typeof useRoundOneVoting>).pool).toHaveLength(10));
+  } else {
+    await waitFor(() => expect((result.current as ReturnType<typeof useRoundTwoVoting>).candidates).toHaveLength(10));
+  }
+
+  await act(async () => result.current.fetchSnapshot());
+  if (round === 1) {
+    expect((result.current as ReturnType<typeof useRoundOneVoting>).pool).toHaveLength(10);
+  } else {
+    expect((result.current as ReturnType<typeof useRoundTwoVoting>).candidates).toHaveLength(10);
+  }
+  expect(onExit).not.toHaveBeenCalled();
+
+  await act(async () => result.current.fetchSnapshot());
+  expect(onExit).toHaveBeenCalledWith(expect.objectContaining({ code: 'ROOM_TERMINAL' }));
+});

@@ -78,7 +78,7 @@ export function ProfileScreen({ user, account, historySettings, onNavigate, onHo
           <Text accessible={false} style={[typography.titleMedium, { color: colors.text }]}>›</Text>
         </Pressable>
       </View>
-      {historySettings ? <ProfileSettings history={historySettings} /> : null}
+      {historySettings ? <ProfileSettings history={historySettings} /> : <ProfileSettings />}
       <AppButton label="Đăng xuất" variant="secondary" onPress={() => setConfirmLogout(true)} colors={colors} />
     </>}
     <SheetDialog visible={confirmLogout} title="Đăng xuất?" showClose={false}

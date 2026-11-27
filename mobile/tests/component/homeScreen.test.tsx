@@ -5,6 +5,7 @@ import type { ReadResult, RoomSnapshot, SessionUser } from '../../src/data/api/c
 import { HomeScreen, type HomeLiveSession } from '../../src/features/home/screens/HomeScreen';
 import { ContinueSessionScreen } from '../../src/features/home/screens/ContinueSessionScreen';
 import { GuestSessionExpiredScreen } from '../../src/features/home/screens/GuestSessionExpiredScreen';
+import { ToastHost, ToastProvider } from '../../src/shared/ui/feedback/Toast';
 
 const user: SessionUser = { id: 'gm09-home-test-user', displayName: 'Minh', isGuest: false, createdAt: '2026-11-01T00:00:00Z' };
 const receipt = { roomId: 'room_mock_001', code: MOCK_DEFAULT_ROOM_CODE, version: 1, role: 'host' as const };
@@ -180,4 +181,39 @@ test('expired guest requires explicit reset, retains an error and locks duplicat
   expect(onReset).toHaveBeenCalledTimes(2); expect(onHome).not.toHaveBeenCalled();
   await act(async () => pending.resolve(true));
   expect(screen.getByRole('button', { name: 'Nhập tên' })).toBeDisabled();
+});
+
+test('a revoked email account never falls into GuestSessionExpiredScreen and offers Đăng nhập lại', async () => {
+  const repository = client();
+  const onSignIn = jest.fn();
+  const revokedAccount: HomeLiveSession = {
+    status: 'lost',
+    issue: 'session-revoked',
+    user: null,
+    lastKnownGuest: false,
+    isInitializing: false,
+    ensureSession: jest.fn(),
+    restoreSession: jest.fn(),
+    logout: jest.fn(),
+  };
+  await render(<HomeScreen repository={repository} liveSession={revokedAccount}
+    onCreate={jest.fn()} onJoin={jest.fn()} onResume={jest.fn()} onSignIn={onSignIn} />);
+  expect(screen.queryByText('Phiên khách đã hết hạn')).toBeNull();
+  expect(screen.getByText('Phiên đăng nhập đã hết hạn')).toBeOnTheScreen();
+  await press('Đăng nhập lại');
+  expect(onSignIn).toHaveBeenCalledTimes(1);
+});
+
+test('friends error on Home shows floating toast and keeps only the retry button in-card without dev links', async () => {
+  const repository = client();
+  jest.spyOn(repository, 'listFriends').mockResolvedValue({ ok: false, error: { messageKey: 'NETWORK_ERROR' } });
+  await render(
+    <ToastProvider>
+      <HomeScreen repository={repository} liveSession={session()} onCreate={jest.fn()} onJoin={jest.fn()} onResume={jest.fn()} />
+      <ToastHost />
+    </ToastProvider>,
+  );
+  await screen.findByRole('button', { name: 'Tải lại bạn bè' });
+  expect(screen.getAllByText('Chưa tải được bạn bè')).toHaveLength(1);
+  expect(screen.queryByText(/chỉ bản dev/i)).toBeNull();
 });

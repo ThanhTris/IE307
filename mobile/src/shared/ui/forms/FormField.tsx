@@ -9,6 +9,7 @@ import {
 import { Text, TextInput } from './ScaledText';
 import type { ReactNode } from 'react';
 import { radii, spacing, typography } from '../../theme/tokens';
+import { AppIcon } from '../icons/AppIcon';
 import type { ComponentThemeProps } from '../types';
 
 export type FormFieldProps = ComponentThemeProps &
@@ -55,6 +56,7 @@ export function FormField({
           {
             backgroundColor: colors?.soft,
             borderColor: error ? colors?.danger : colors?.line,
+            borderWidth: error ? 1.5 : 1,
             color: colors?.text,
           },
           inputStyle,
@@ -64,9 +66,12 @@ export function FormField({
       {trailingAction ? <View style={styles.action}>{trailingAction}</View> : null}
       </View>
       {error ? (
-        <Text accessibilityRole="alert" style={[styles.helper, { color: colors?.danger }]}>
-          {error}
-        </Text>
+        <View style={styles.errorRow}>
+          <AppIcon name="warning" size={14} color={colors?.danger} />
+          <Text accessibilityRole="alert" style={[styles.helper, styles.errorText, { color: colors?.danger }]}>
+            {error}
+          </Text>
+        </View>
       ) : helperText ? (
         <Text style={[styles.helper, { color: colors?.muted }]}>{helperText}</Text>
       ) : null}
@@ -81,5 +86,7 @@ const styles = StyleSheet.create({
   withAction: { justifyContent: 'center' },
   actionInset: { paddingRight: 52 },
   action: { position: 'absolute', right: 2 },
+  errorRow: { flexDirection: 'row', alignItems: 'center', gap: 6, marginTop: 2 },
+  errorText: { flex: 1 },
   helper: { ...typography.caption },
 });

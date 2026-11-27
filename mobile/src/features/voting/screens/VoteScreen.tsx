@@ -1,19 +1,24 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import {
+  BackHandler,
   ScrollView,
   StyleSheet,
   View,
 } from 'react-native';
 import { Text } from '../../../shared/ui/forms/ScaledText';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import type { ApiClient, PoolDish, RoomResult } from '../../../data/api';
+import type { ApiClient, ErrorCode, PoolDish, RoomResult } from '../../../data/api';
 import { MOCK_DISHES } from '../fixtures';
 import {
   AppButton,
-  StatusNotice,
+  ErrorRecovery,
   AppHeader,
+  SheetDialog,
   type VoteValue,
 } from '../../../shared/ui';
+import { describeError } from '../../../shared/errors/describeError';
+import type { FailureExit } from '../../../shared/errors/failure';
+import { useHelp } from '../../../shared/help/HelpContext';
 import { useShellTheme } from '../../../shared/lib/useShellTheme';
 import type { VoteScreenScenario } from '../fixtures';
 import { ToastNotice } from '../../../shared/ui/feedback/Toast';
@@ -44,6 +49,7 @@ export type VoteScreenProps = {
   onGoToResult?: (result: RoomResult) => void;
   onGoToNoConsensus?: (result?: RoomResult) => void;
   onBack?: () => void;
+  onExit?: (exit: FailureExit) => void;
 };
 
 export function VoteScreen({
@@ -63,8 +69,11 @@ export function VoteScreen({
   onGoToResult,
   onGoToNoConsensus,
   onBack,
+  onExit,
 }: VoteScreenProps) {
   const { colors } = useShellTheme();
+  const help = useHelp();
+  const [confirmExit, setConfirmExit] = useState(false);
   // Round 1 found no winner: tell the player before the screen moves on to round 2.
   const [roundTwoNotice, setRoundTwoNotice] = useState<PoolDish[] | null>(null);
   const announceRoundTwo = useCallback((candidates: PoolDish[]) => setRoundTwoNotice(candidates), []);
@@ -109,6 +118,9 @@ export function VoteScreen({
     canHostEarlyFinish,
     isLoadingSnapshot,
     snapshotError,
+    snapshotRetryCount,
+    submitFailureCode,
+    submitRetryCount,
     pool: effectivePool,
     fetchSnapshot,
     handleHostEarlyFinish,
@@ -133,6 +145,7 @@ export function VoteScreen({
     onRoundTwo: onGoToFinalRound ? announceRoundTwo : undefined,
     onGoToResult,
     onGoToNoConsensus,
+    onExit,
   });
 
   const pool = effectivePool;
@@ -145,6 +158,26 @@ export function VoteScreen({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [deckFinished, allVoted, submissionState, viewMode]);
 
+  useEffect(() => {
+    if (!repository || shouldShowScenarioPicker || !onBack) return;
+    const subscription = BackHandler.addEventListener('hardwareBackPress', () => {
+      if (confirmExit) { setConfirmExit(false); return true; }
+      setConfirmExit(true);
+      return true;
+    });
+    return () => subscription.remove();
+  }, [repository, shouldShowScenarioPicker, onBack, confirmExit]);
+
+  const leaveDialog = onBack ? (
+    <SheetDialog visible={confirmExit} presentation="dialog" showClose={false} title="Rời màn hình bình chọn?" onClose={() => setConfirmExit(false)} colors={colors}>
+      <Text style={[styles.leaveBody, { color: colors.muted }]}>Nhóm vẫn đang chọn món. Bạn có thể quay lại phòng từ Trang chủ.</Text>
+      <View style={styles.leaveActions}>
+        <AppButton label="Ở lại" variant="secondary" onPress={() => setConfirmExit(false)} colors={colors} style={styles.leaveButton} />
+        <AppButton label="Về trang chủ" variant="danger" onPress={() => { setConfirmExit(false); onBack(); }} colors={colors} style={styles.leaveButton} />
+      </View>
+    </SheetDialog>
+  ) : null;
+
   if (isLoadingSnapshot) {
     return (
       <SafeAreaView style={[styles.root, { backgroundColor: colors.background }]}>
@@ -154,21 +187,48 @@ export function VoteScreen({
   }
 
   if (snapshotError && pool.length === 0) {
+    const desc = describeError({ messageKey: snapshotError as ErrorCode });
+    const showHelp = help && desc.reportable && (snapshotRetryCount >= 2 || desc.code === 'MALFORMED_RESPONSE' || desc.code === 'CONTRACT_MISMATCH');
     return (
       <SafeAreaView style={[styles.root, { backgroundColor: colors.background }]}>
         <AppHeader variant="back" title="Vòng 1" centeredTitle hideDivider onPressBack={onBack} colors={colors} />
         <View style={styles.loadingContainer}>
-          <StatusNotice title="Không thể tải dữ liệu phòng" message={`Lỗi: ${snapshotError}. Vui lòng kiểm tra lại kết nối mạng.`} tone="error" actionLabel="Thử lại tải phòng" onAction={() => void fetchSnapshot()} colors={colors} />
+          <ErrorRecovery
+            variant="empty"
+            heading="Không thể tải dữ liệu phòng"
+            title={desc.title}
+            message={desc.message}
+            note={desc.message}
+            actionLabel="Thử lại tải phòng"
+            onAction={() => void fetchSnapshot()}
+            onHelp={showHelp ? () => help.open({ errorCode: desc.code, screen: 'room/vote', action: 'load_round_one' }) : undefined}
+            colors={colors}
+          />
         </View>
+        {leaveDialog}
       </SafeAreaView>
     );
   }
+
+  const sentSubmitToast = submissionState === 'error' && errorMessage ? (() => {
+    const showSubmitHelp = Boolean(help && submitFailureCode && describeError({ messageKey: submitFailureCode }).reportable
+      && (submitRetryCount >= 2 || submitFailureCode === 'MALFORMED_RESPONSE' || submitFailureCode === 'CONTRACT_MISMATCH'));
+    return <ToastNotice
+      title="Chưa gửi được phiếu"
+      message={errorMessage}
+      tone="error"
+      triggerKey={submitRetryCount}
+      actionLabel={showSubmitHelp ? 'Báo lỗi' : undefined}
+      actionAccessibilityLabel={showSubmitHelp ? 'Báo lỗi hoặc cần trợ giúp' : undefined}
+      onAction={showSubmitHelp ? () => help!.open({ errorCode: submitFailureCode!, screen: 'room/vote', action: 'submit_ballot' }) : undefined}
+    />;
+  })() : null;
 
   // Round 1 found no winner: the dialog covers the whole screen and the app moves on to round 2, so nothing of round 1
   // is drawn behind it, only the plain background.
   if (roundTwoNotice) {
     return <SafeAreaView style={[styles.root, { backgroundColor: colors.background }]}>
-      {submissionState === 'error' && errorMessage ? <ToastNotice title="Chưa gửi được phiếu" message={errorMessage} tone="error" /> : null}
+      {sentSubmitToast}
       {waitingError ? <ToastNotice title={waitingError} tone="error" /> : null}
       {roundTwoDialog}
     </SafeAreaView>;
@@ -178,7 +238,7 @@ export function VoteScreen({
     const sent = submissionState === 'pending' || submissionState === 'ack';
     return (
       <SafeAreaView style={[styles.root, { backgroundColor: colors.background }]}>
-        {submissionState === 'error' && errorMessage ? <ToastNotice title="Chưa gửi được phiếu" message={errorMessage} tone="error" /> : null}
+        {sentSubmitToast}
         {waitingError ? <ToastNotice title={waitingError} tone="error" /> : null}
         {sent ? (
           <>
@@ -207,6 +267,8 @@ export function VoteScreen({
             retry={deckFinished && submissionState === 'error'}
             locked={isLocked}
             canUndo={(deckFinished && submissionState === 'idle') || canUndo}
+            failureCode={submitFailureCode}
+            retryCount={submitRetryCount}
             onVote={(dish, vote) => {
               handleSwipeVote(dish.roundDishId, vote);
               if (activeCardIndex >= pool.length - 1) setDeckFinished(true);
@@ -222,6 +284,7 @@ export function VoteScreen({
             colors={colors}
           />
         )}
+        {leaveDialog}
       </SafeAreaView>
     );
   }
@@ -296,7 +359,7 @@ export function VoteScreen({
               ? 'Phiếu đã được nộp và ghi nhận trên hệ thống.'
               : allVoted
               ? 'Tất cả các món đã được chọn. Nhấn Gửi phiếu để xác nhận.'
-              : `Nút gửi chỉ bật khi đã chọn đủ phiếu cho tất cả các món (${votedCount}/${pool.length}). UNSET không phải là OK.`}
+              : `Hãy chọn đủ tất cả các món trước khi gửi phiếu (${votedCount}/${pool.length}).`}
           </Text>
           <AppButton
             label={
@@ -319,6 +382,7 @@ export function VoteScreen({
           <AppButton label="Quay lại" variant="quiet" onPress={onBack} colors={colors} />
         ) : null}
       </ScrollView>
+      {leaveDialog}
     </SafeAreaView>
   );
 }
@@ -327,6 +391,9 @@ const styles = StyleSheet.create({
   root: { flex: 1 },
   content: { padding: CONTAINER_GUTTER, gap: 16, ...CONTAINER_STYLE },
   loadingContainer: { flex: 1, justifyContent: 'center', alignItems: 'center', padding: 24, gap: 16 },
+  leaveBody: { fontSize: 14, lineHeight: 20 },
+  leaveActions: { flexDirection: 'row', gap: 10 },
+  leaveButton: { flex: 1 },
   loadingText: { fontSize: 14, fontWeight: '600', textAlign: 'center' },
   viewModeRow: { flexDirection: 'row', gap: 10, justifyContent: 'center' },
   viewModeBtn: { flex: 1, minHeight: 44, borderRadius: 10, borderWidth: 1.5, justifyContent: 'center', alignItems: 'center' },

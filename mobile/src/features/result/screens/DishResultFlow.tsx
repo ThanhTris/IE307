@@ -11,9 +11,21 @@ import { DishNoConsensusScreen } from './DishNoConsensusScreen';
 import { LegacyDishResultScreen } from './LegacyDishResultScreen';
 import { NearbyPlacesSection } from '../components/NearbyPlacesSection';
 import type { ResultMapRenderer } from '../services/nearbyPresentation';
+import type { ErrorCode } from '../../../data/api/contracts';
 
-export type DishResultFlowProps = ResultPresentationActions & { input: ResultInput | null; readState?: ResultReadState; members?: readonly ResultCompanion[]; artworkSources?: Readonly<Record<string, ImageSourcePropType>>; celebrate?: boolean; children?: ReactNode; nearby?: NearbyState; renderMap?: ResultMapRenderer };
-export function DishResultFlow({ input, readState = 'ready', members, artworkSources, celebrate = true, children, nearby, renderMap, ...actions }: DishResultFlowProps) {
+export type DishResultFlowProps = ResultPresentationActions & {
+  input: ResultInput | null;
+  readState?: ResultReadState;
+  errorCode?: ErrorCode;
+  retryCount?: number;
+  members?: readonly ResultCompanion[];
+  artworkSources?: Readonly<Record<string, ImageSourcePropType>>;
+  celebrate?: boolean;
+  children?: ReactNode;
+  nearby?: NearbyState;
+  renderMap?: ResultMapRenderer;
+};
+export function DishResultFlow({ input, readState = 'ready', errorCode, retryCount, members, artworkSources, celebrate = true, children, nearby, renderMap, ...actions }: DishResultFlowProps) {
   const result = input?.capability === 'scored-v4' && validScoredResult(input.result) ? input.result : null;
   const winner = readState === 'ready' && result?.status === 'DECIDED' ? result.topDishes.find(entry => entry.isWinner) : undefined;
   const intro = useWinnerCelebration(celebrate && winner ? result!.resultId : undefined);
@@ -26,5 +38,5 @@ export function DishResultFlow({ input, readState = 'ready', members, artworkSou
     if (result?.status === 'NO_CONSENSUS') return <DishNoConsensusScreen {...frame} reason={result.reasonCode as 'EMPTY_INTERSECTION' | 'ALL_REMOVED'} />;
     if (result && winner) return <><DishResultScreen {...frame} result={result} artworkSources={artworkSources} members={members}><NearbyPlacesSection result={result} state={nearby} renderMap={renderMap} actions={actions} />{children}</DishResultScreen>{intro.visible ? <WinnerCelebration key={result.resultId} winner={winner} imageSource={artworkSources?.[winner.dish.dishId]} imageScale={1} onDismiss={intro.dismiss} /> : null}</>;
   }
-  return <DishResultFrame onHome={actions.onHome}><ResultReadNotice state={readState === 'ready' ? 'error' : readState} onRetry={actions.onRetryResult} /></DishResultFrame>;
+  return <DishResultFrame onHome={actions.onHome}><ResultReadNotice state={readState === 'ready' ? 'error' : readState} errorCode={errorCode} retryCount={retryCount} onRetry={actions.onRetryResult} /></DishResultFrame>;
 }

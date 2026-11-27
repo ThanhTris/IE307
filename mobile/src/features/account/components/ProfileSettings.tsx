@@ -2,9 +2,10 @@ import { useEffect, useState } from 'react';
 import { Pressable, StyleSheet, Switch, View, useWindowDimensions } from 'react-native';
 import { Text } from '../../../shared/ui/forms/ScaledText';
 import { useAppPreferences, type AppearanceChoice, type TextSizeChoice } from '../../../shared/lib/AppPreferences';
+import { useHelp } from '../../../shared/help/HelpContext';
 import { useShellTheme } from '../../../shared/lib/useShellTheme';
 import { radii, spacing, typography } from '../../../shared/theme/tokens';
-import { AppButton, SheetDialog } from '../../../shared/ui';
+import { AppButton, AppIcon, SheetDialog } from '../../../shared/ui';
 import { PreferenceChoice } from '../../../shared/ui/forms/PreferenceChoice';
 import { ToastNotice } from '../../../shared/ui/feedback/Toast';
 import type { PersonalHistorySettings } from '../services/profileHistorySettings';
@@ -19,6 +20,7 @@ type Panel = 'appearance' | 'textSize' | 'delete';
 
 export function ProfileSettings({ history }: { history?: PersonalHistorySettings }) {
   const { colors } = useShellTheme();
+  const help = useHelp();
   const preferences = useAppPreferences();
   const { width, fontScale } = useWindowDimensions();
   const stackSettingValues = width <= 360 || fontScale >= 1.5;
@@ -65,7 +67,9 @@ export function ProfileSettings({ history }: { history?: PersonalHistorySettings
   }
 
   function settingRow(label: string, value: string | undefined, next: Panel) {
-    const hasDivider = next === 'appearance' || (next === 'textSize' && Boolean(history));
+    const hasDivider = next === 'appearance'
+      || (next === 'textSize' && (Boolean(history) || Boolean(help)))
+      || (next === 'delete' && Boolean(help));
     return <Pressable accessibilityRole="button" accessibilityLabel={label} accessibilityHint={value}
       disabled={busy || (next !== 'delete' && !preferences.ready)} onPress={() => {
         clearError();
@@ -103,6 +107,16 @@ export function ProfileSettings({ history }: { history?: PersonalHistorySettings
         {settingRow('Giao diện', appearances[preferences.appearance], 'appearance')}
         {settingRow('Cỡ chữ', textSizes[preferences.textSize], 'textSize')}
         {history ? settingRow('Xóa lịch sử', undefined, 'delete') : null}
+        {help ? <Pressable
+          accessibilityRole="button"
+          accessibilityLabel="Trợ giúp & Báo lỗi"
+          onPress={() => help.open()}
+          style={({ pressed }) => [styles.row, { opacity: pressed ? 0.7 : 1 }]}
+        >
+          <AppIcon name="help" size={18} color={colors.muted} />
+          <Text style={[typography.body, styles.label, { color: colors.text }]}>Trợ giúp &amp; Báo lỗi</Text>
+          <Text accessible={false} style={[typography.titleMedium, { color: colors.muted }]}>›</Text>
+        </Pressable> : null}
       </View>
       {loadError ? <AppButton label="Tải lại cài đặt lịch sử" variant="quiet" colors={colors}
         onPress={() => { setLoadError(false); setReload(value => value + 1); }} /> : null}

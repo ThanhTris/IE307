@@ -7,6 +7,7 @@ import { LiveDishResultScreen } from './LiveDishResultScreen';
 import type { ResultRepository } from '../services/resultRepository';
 import type { PlacesConfig } from '../services/placesRepository';
 import type { ResultMapRenderer } from '../services/nearbyPresentation';
+import type { FailureExit } from '../../../shared/errors/failure';
 
 export interface DishResultEntryProps {
   roomId?: string;
@@ -16,6 +17,8 @@ export interface DishResultEntryProps {
   placesConfig?: PlacesConfig;
   renderMap?: ResultMapRenderer;
   onHome: () => void;
+  onSignIn?: () => void;
+  onExit?: (exit: FailureExit) => void;
   onNewSession: () => void;
   onOtherScreen: () => void;
 }
@@ -27,6 +30,8 @@ export function DishResultEntry({
   placesConfig,
   renderMap,
   onHome,
+  onSignIn,
+  onExit,
   onNewSession,
   onOtherScreen,
 }: DishResultEntryProps) {
@@ -36,7 +41,7 @@ export function DishResultEntry({
 
   if (roomId) {
     return (
-      <RequireActiveSession onHome={onHome}>
+      <RequireActiveSession onHome={onHome} onSignIn={onSignIn}>
         <LiveDishResultScreen
           key={`${identity}:${roomId}:${resultId ?? ''}`}
           roomId={roomId}
@@ -45,6 +50,7 @@ export function DishResultEntry({
           placesConfig={placesConfig}
           renderMap={renderMap}
           onHome={onHome}
+          onExit={onExit}
           onNewSession={onNewSession}
           onOtherScreen={onOtherScreen}
         />
@@ -52,7 +58,7 @@ export function DishResultEntry({
     );
   }
   return (
-    <RequireActiveSession onHome={onHome}>
+    <RequireActiveSession onHome={onHome} onSignIn={onSignIn}>
       <DishResultFrame onHome={onHome}>
         <StatusNotice
           title="Chưa thể mở kết quả"

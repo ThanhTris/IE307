@@ -4,7 +4,8 @@ import { Text } from '../../../shared/ui/forms/ScaledText';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useAppFonts } from '../../../bootstrap/AppFontProvider';
 import { useShellTheme } from '../../../shared/lib/useShellTheme';
-import { AppButton, SheetDialog, StatusNotice } from '../../../shared/ui';
+import { AppButton, SheetDialog } from '../../../shared/ui';
+import { ToastNotice } from '../../../shared/ui/feedback/Toast';
 import { parseSchedule, scheduleParts } from '../services/dishSetup';
 import { ScheduleCalendar } from './ScheduleCalendar';
 import { ScheduleWheel } from './ScheduleWheel';
@@ -34,7 +35,7 @@ export function ScheduleSheet({ initial, now, onConfirm, onClose, initialCalenda
           <ScheduleWheel label="Giờ" value={hour} count={24} onChange={value => { setHour(value); setError(undefined); }} rowHeight={rowHeight} rows={rows} />
           <ScheduleWheel label="Phút" value={minute} count={60} onChange={value => { setMinute(value); setError(undefined); }} rowHeight={rowHeight} rows={rows} />
         </View>
-        {error ? <StatusNotice title={error} colors={colors} /> : null}
+        {error ? <ToastNotice title={error} tone="warning" /> : null}
         <AppButton label={`Xác nhận · ${String(hour).padStart(2, '0')}:${String(minute).padStart(2, '0')}`} accessibilityHint="Xác nhận giờ hẹn" onPress={confirm} colors={colors} />
         <AppButton label="Hủy" accessibilityHint="Hủy hẹn giờ và giữ thiết lập trước đó" variant="secondary" onPress={onClose} colors={colors} />
       </>

@@ -11,6 +11,7 @@ import SignupPlate from '../../../../assets/brand/account/signup-plate.svg';
 import SignupBowl from '../../../../assets/brand/account/signup-bowl.svg';
 import { AppHeader, AppIcon, BrandLogo } from '../../../shared/ui';
 import { ToastNotice } from '../../../shared/ui/feedback/Toast';
+import { FailureNotice } from '../../../shared/ui/feedback/FailureNotice';
 import { FOCUSED_STYLE } from '../../../shared/ui/layout/ScreenContainer';
 import { useShellTheme } from '../../../shared/lib/useShellTheme';
 import { spacing, typography } from '../../../shared/theme/tokens';
@@ -61,6 +62,7 @@ export function AccountFormFrame({ title, hero, busy, onBack, error, children }:
           {hero ? <AccountHero variant={hero} busy={!!busy} onBack={onBack} /> : null}
           <View style={[styles.form, hero && styles.heroForm, { backgroundColor: colors.background }]}>
             {hero ? <Text accessibilityRole="header" style={[styles.title, { color: colors.text }]}>{title}</Text> : null}
+            <FailureNotice destination="signIn" colors={colors} />
             {error ? <ToastNotice title="Chưa thể hoàn tất" message={accountErrorMessage(error)} tone="error" /> : null}
             {children}
           </View>

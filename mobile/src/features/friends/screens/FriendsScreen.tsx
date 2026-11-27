@@ -3,7 +3,9 @@ import { Pressable, Share, StyleSheet, View } from 'react-native';
 import { Text } from '../../../shared/ui/forms/ScaledText';
 import * as Clipboard from 'expo-clipboard';
 import * as Linking from 'expo-linking';
-import type { Friend, InboxItem, SocialIdentity } from '../../../data/api/contracts';
+import type { ErrorCode, Friend, InboxItem, SocialIdentity } from '../../../data/api/contracts';
+import { describeError } from '../../../shared/errors/describeError';
+import { recordLastFailure } from '../../../shared/errors/incident';
 import { useInboxBadge } from '../../../shared/lib/inboxBadge';
 import { useShellTheme } from '../../../shared/lib/useShellTheme';
 import { AppButton, AppIcon, FormField, SkeletonBlock, type AppIconName, LoadingState, SheetDialog, StatusNotice, ApiFeatureFrame, SwipeToDeleteRow } from '../../../shared/ui';
@@ -16,6 +18,7 @@ type Props = {
   inboxRepository?: InboxRepository;
   onNavigate: (path: string) => void;
   onHome: () => void;
+  onAuthExpired?: () => void;
   /** Set when opened from the lobby so Back returns there. */
   onBack?: () => void;
   /** Pre-filled search, e.g. a friend code from a shared link. */
@@ -24,7 +27,7 @@ type Props = {
 type PendingAction = { kind: 'unfriend'; friend: Friend } | null;
 const FRIEND_CODE = /^[A-HJ-NP-Z2-9]{10}$/;
 
-export function FriendsScreen({ repository, inboxRepository, onNavigate, onHome, onBack, initialSearch = '' }: Props) {
+export function FriendsScreen({ repository, inboxRepository, onNavigate, onHome, onAuthExpired, onBack, initialSearch = '' }: Props) {
   const { colors } = useShellTheme();
   const [identity, setIdentity] = useState<SocialIdentity | null>(null);
   const [friends, setFriends] = useState<Friend[]>([]);
@@ -62,9 +65,15 @@ export function FriendsScreen({ repository, inboxRepository, onNavigate, onHome,
         repository.listFriends(),
         inboxRepository?.list(),
       ]);
-      if (!who.ok) { setIdentity(null); setFriends([]); setError(who.error.messageKey); }
-      else if (!list.ok) { setIdentity(who.data); setFriends([]); setError(list.error.messageKey); }
-      else {
+      if (!who.ok) {
+        if (who.error.messageKey === 'AUTH_REQUIRED' && onAuthExpired) { onAuthExpired(); return; }
+        setIdentity(null); setFriends([]); setError(who.error.messageKey);
+        recordLastFailure({ errorCode: who.error.messageKey, screen: 'friends', action: 'load', occurredAt: new Date().toISOString() });
+      } else if (!list.ok) {
+        if (list.error.messageKey === 'AUTH_REQUIRED' && onAuthExpired) { onAuthExpired(); return; }
+        setIdentity(who.data); setFriends([]); setError(list.error.messageKey);
+        recordLastFailure({ errorCode: list.error.messageKey, screen: 'friends', action: 'list_friends', occurredAt: new Date().toISOString() });
+      } else {
         setIdentity(who.data);
         setFriends(list.data);
         if (inbox) {
@@ -77,11 +86,12 @@ export function FriendsScreen({ repository, inboxRepository, onNavigate, onHome,
       setFriends([]);
       setIncoming([]);
       setError('NETWORK_ERROR');
+      recordLastFailure({ errorCode: 'NETWORK_ERROR', screen: 'friends', action: 'load', occurredAt: new Date().toISOString() });
     } finally {
       setLoading(false);
       setRefreshing(false);
     }
-  }, [inboxRepository, repository]);
+  }, [inboxRepository, onAuthExpired, repository]);
 
   // A friend request arrived or was accepted while this list is open: refresh it.
   useEffect(() => {
@@ -104,6 +114,7 @@ export function FriendsScreen({ repository, inboxRepository, onNavigate, onHome,
       if (await job()) { setMessage(okMessage); setMessageTone('success'); await load(true); }
     } catch {
       setMessage('Không kết nối được máy chủ. Hãy tải lại trước khi thử tiếp.'); setMessageTone('error');
+      recordLastFailure({ errorCode: 'NETWORK_ERROR', screen: 'friends', action: 'friend_action', occurredAt: new Date().toISOString() });
     } finally {
       lock.current = false;
       setBusy(false);
@@ -111,7 +122,12 @@ export function FriendsScreen({ repository, inboxRepository, onNavigate, onHome,
   };
   const invite = (code: string, name: string) => run(async () => {
     const result = await repository.invite({ friendCode: code });
-    if (!result.ok) { setMessage(`Chưa hoàn tất · ${errorMessage(result.error.messageKey)}`); setMessageTone('error'); return false; }
+    if (!result.ok) {
+      if (result.error.messageKey === 'AUTH_REQUIRED' && onAuthExpired) { onAuthExpired(); return false; }
+      setMessage(`Chưa hoàn tất · ${errorMessage(result.error.messageKey)}`); setMessageTone('error');
+      recordLastFailure({ errorCode: result.error.messageKey, screen: 'friends', action: 'invite_friend', occurredAt: new Date().toISOString() });
+      return false;
+    }
     setSearch('');
     // Said straight away (not through the shared message state) so it always shows.
     toast?.show({ title: 'Đã gửi lời mời kết bạn', message: `${name} cần đồng ý lời mời của bạn.`, tone: 'success' });
@@ -123,7 +139,12 @@ export function FriendsScreen({ repository, inboxRepository, onNavigate, onHome,
     setAction(null);
     void run(async () => {
       const result = await repository.removeFriend(friend.friendUserId);
-      if (!result.ok) { setMessage(`Chưa hoàn tất · ${errorMessage(result.error.messageKey)}`); setMessageTone('error'); return false; }
+      if (!result.ok) {
+        if (result.error.messageKey === 'AUTH_REQUIRED' && onAuthExpired) { onAuthExpired(); return false; }
+        setMessage(`Chưa hoàn tất · ${errorMessage(result.error.messageKey)}`); setMessageTone('error');
+        recordLastFailure({ errorCode: result.error.messageKey, screen: 'friends', action: 'remove_friend', occurredAt: new Date().toISOString() });
+        return false;
+      }
       return true;
     }, 'Đã xóa khỏi danh sách bạn bè.');
   };
@@ -131,7 +152,7 @@ export function FriendsScreen({ repository, inboxRepository, onNavigate, onHome,
   const answerIncoming = async (item: InboxItem, kind: 'accept' | 'reject') => {
     if (!inboxRepository || lock.current) return;
     const invitationId = item.metadata?.invitationId;
-    if (typeof invitationId !== 'string') { setMessage('Lời mời thiếu mã từ máy chủ.'); setMessageTone('error'); return; }
+    if (typeof invitationId !== 'string') { setMessage('Lời mời này không còn hợp lệ. Hãy tải lại.'); setMessageTone('error'); return; }
     lock.current = true;
     setBusy(true);
     setMessage('');
@@ -139,12 +160,19 @@ export function FriendsScreen({ repository, inboxRepository, onNavigate, onHome,
       const result = kind === 'accept'
         ? await inboxRepository.acceptFriend(invitationId)
         : await inboxRepository.rejectFriend(invitationId);
-      if (!result.ok) { setMessage(errorMessage(result.error.messageKey)); setMessageTone('error'); await load(true); return; }
+      if (!result.ok) {
+        if (result.error.messageKey === 'AUTH_REQUIRED' && onAuthExpired) { onAuthExpired(); return; }
+        setMessage(errorMessage(result.error.messageKey)); setMessageTone('error');
+        recordLastFailure({ errorCode: result.error.messageKey, screen: 'friends', action: `friend_${kind}`, occurredAt: new Date().toISOString() });
+        await load(true);
+        return;
+      }
       if (kind === 'accept') syncFriends();
       inboxRepository.markHandled(item.eventId);
       await load(true);
     } catch {
       setMessage('Chưa rõ máy chủ đã nhận thao tác chưa. Tải lại danh sách để kiểm tra.'); setMessageTone('error');
+      recordLastFailure({ errorCode: 'NETWORK_ERROR', screen: 'friends', action: `friend_${kind}`, occurredAt: new Date().toISOString() });
       await load(true);
     } finally {
       lock.current = false;
@@ -305,16 +333,7 @@ function initialFrom(value: string): string {
 }
 
 export function errorMessage(key: string): string {
-  const messages: Record<string, string> = {
-    AUTH_REQUIRED: 'Phiên không còn hợp lệ. Hãy khôi phục phiên rồi thử lại.',
-    NOT_PARTNER: 'Hai tài khoản chưa có quan hệ bạn bè phù hợp.',
-    NOT_RECIPIENT: 'Tài khoản hiện tại không phải người nhận lời mời.',
-    INVITE_EXPIRED: 'Lời mời đã hết hạn. Hãy tải lại hộp thư.',
-    NETWORK_ERROR: 'Không kết nối được máy chủ. Dữ liệu cũ không được dùng thay response mới.',
-    TIMEOUT: 'Máy chủ phản hồi quá thời gian. Tải lại để kiểm tra trạng thái trước khi thử lại.',
-    UNKNOWN_ERROR: 'Máy chủ chưa trả dữ liệu dùng được. Hãy thử tải lại.',
-  };
-  return messages[key] ?? `Máy chủ từ chối yêu cầu (${key}).`;
+  return describeError({ messageKey: key as ErrorCode }).message;
 }
 
 const styles = StyleSheet.create({

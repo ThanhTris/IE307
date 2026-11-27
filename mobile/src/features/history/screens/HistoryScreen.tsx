@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { BackHandler, Pressable, StyleSheet, Switch, useWindowDimensions, View } from 'react-native';
 import { Text } from '../../../shared/ui/forms/ScaledText';
+import { recordLastFailure } from '../../../shared/errors/incident';
 import { useShellTheme } from '../../../shared/lib/useShellTheme';
 import { AppButton, AppIcon, LoadingState, SheetDialog, StatusNotice, ApiFeatureFrame } from '../../../shared/ui';
 import { errorMessage } from '../../friends/screens/FriendsScreen';
@@ -21,11 +22,11 @@ function withTimeout<T extends { ok: boolean }>(task: Promise<T>, ms: number): P
   });
 }
 
-type Props = { repository: HistoryRepository; onNavigate: (path: string) => void; onHome: () => void };
+type Props = { repository: HistoryRepository; onNavigate: (path: string) => void; onHome: () => void; onAuthExpired?: () => void };
 type HistoryFilter = 'all' | 'decided' | 'no-consensus';
 type PendingAction = { kind: 'delete'; item: HistoryRow } | null;
 
-export function HistoryScreen({ repository, onNavigate, onHome }: Props) {
+export function HistoryScreen({ repository, onNavigate, onHome, onAuthExpired }: Props) {
   const { colors } = useShellTheme();
   const { fontScale } = useWindowDimensions();
   const largeText = fontScale >= 1.5;
@@ -67,6 +68,8 @@ export function HistoryScreen({ repository, onNavigate, onHome }: Props) {
     try {
       const result = await withTimeout(repository.fetch(), HISTORY_LOAD_TIMEOUT_MS);
       if (!result.ok) {
+        if (result.error.messageKey === 'AUTH_REQUIRED' && onAuthExpired) { onAuthExpired(); return; }
+        recordLastFailure({ errorCode: result.error.messageKey, screen: 'history', action: 'load', occurredAt: new Date().toISOString() });
         const cached = result.error.messageKey === 'NETWORK_ERROR' || result.error.messageKey === 'TIMEOUT'
           ? repository.cached() ?? await repository.cachedDurable().catch(() => undefined)
           : undefined;
@@ -87,6 +90,7 @@ export function HistoryScreen({ repository, onNavigate, onHome }: Props) {
         setStale(false);
       }
     } catch {
+      recordLastFailure({ errorCode: 'NETWORK_ERROR', screen: 'history', action: 'load', occurredAt: new Date().toISOString() });
       const cached = repository.cached() ?? await repository.cachedDurable().catch(() => undefined);
       if (cached) {
         setItems(cached.items.filter(item => item.scope === 'personal'));
@@ -103,7 +107,7 @@ export function HistoryScreen({ repository, onNavigate, onHome }: Props) {
       setLoading(false);
       setRefreshing(false);
     }
-  }, [repository]);
+  }, [onAuthExpired, repository]);
 
   useEffect(() => {
     const timer = setTimeout(() => { void load(); }, 0);
@@ -121,11 +125,17 @@ export function HistoryScreen({ repository, onNavigate, onHome }: Props) {
     setConsentBusy(true);
     try {
       const result = await repository.updateConsent({ scope: 'personal', consent: next });
-      if (!result.ok) { toast?.show({ title: 'Chưa cập nhật được', message: errorMessage(result.error.messageKey), tone: 'error' }); return; }
+      if (!result.ok) {
+        if (result.error.messageKey === 'AUTH_REQUIRED' && onAuthExpired) { onAuthExpired(); return; }
+        recordLastFailure({ errorCode: result.error.messageKey, screen: 'history', action: 'update_consent', occurredAt: new Date().toISOString() });
+        toast?.show({ title: 'Chưa cập nhật được', message: errorMessage(result.error.messageKey), tone: 'error' });
+        return;
+      }
       setConsent(next);
       await load(true);
       toast?.show({ title: next ? 'Đã bật lưu lịch sử' : 'Đã tắt lưu lịch sử', message: next ? 'Các bữa chốt từ giờ sẽ được lưu 30 ngày.' : 'Các bữa chốt từ giờ sẽ không được lưu.', tone: 'success' });
     } catch {
+      recordLastFailure({ errorCode: 'NETWORK_ERROR', screen: 'history', action: 'update_consent', occurredAt: new Date().toISOString() });
       toast?.show({ title: 'Chưa cập nhật được', message: 'Không kết nối được máy chủ.', tone: 'error' });
     } finally {
       setConsentBusy(false);
@@ -147,7 +157,12 @@ export function HistoryScreen({ repository, onNavigate, onHome }: Props) {
     setMessage(null);
     try {
       const result = await repository.delete(historyIdOf(item));
-      if (!result.ok) { setMessage({ text: errorMessage(result.error.messageKey), tone: 'error' }); return false; }
+      if (!result.ok) {
+        if (result.error.messageKey === 'AUTH_REQUIRED' && onAuthExpired) { onAuthExpired(); return false; }
+        recordLastFailure({ errorCode: result.error.messageKey, screen: 'history', action: 'delete_history', occurredAt: new Date().toISOString() });
+        setMessage({ text: errorMessage(result.error.messageKey), tone: 'error' });
+        return false;
+      }
       repository.invalidate();
       setFetchedAt('');
       setSelectedHistoryId(null);
@@ -155,6 +170,7 @@ export function HistoryScreen({ repository, onNavigate, onHome }: Props) {
       await load(true);
       return true;
     } catch {
+      recordLastFailure({ errorCode: 'NETWORK_ERROR', screen: 'history', action: 'delete_history', occurredAt: new Date().toISOString() });
       setMessage({ text: 'Chưa rõ máy chủ đã nhận thao tác hay chưa. Tải lại lịch sử để kiểm tra trạng thái.', tone: 'error' });
       await load(true);
       return false;
@@ -190,10 +206,13 @@ export function HistoryScreen({ repository, onNavigate, onHome }: Props) {
           <Switch accessibilityLabel="Lưu lịch sử bữa ăn" value={consent} disabled={consentBusy} onValueChange={value => { void toggleConsent(value); }} trackColor={{ false: colors.line, true: colors.primary }} />
         </View> : null}
 
-        {stale && fetchedAt ? <>
-          <ToastNotice title="Đang ngoại tuyến" message={`Dữ liệu lưu lúc ${new Date(fetchedAt).toLocaleString()} · có thể đã cũ`} tone="warning" />
-          <AppButton label="Thử lại" variant="quiet" onPress={() => { void load(true); }} disabled={refreshing || busy} loading={refreshing} colors={colors} />
-        </> : null}
+        {stale && fetchedAt ? <ToastNotice
+          title="Đang ngoại tuyến"
+          message={`Dữ liệu lưu lúc ${new Date(fetchedAt).toLocaleString()} · có thể đã cũ`}
+          tone="warning"
+          actionLabel={refreshing || busy ? undefined : 'Thử lại'}
+          onAction={() => { void load(true); }}
+        /> : null}
         {loading ? <LoadingState label="Đang tải lịch sử" colors={colors} /> : null}
         {!loading && error && !stale ? <StatusNotice title="Chưa tải được lịch sử" message={errorMessage(error)} tone="error" actionLabel="Thử lại" onAction={() => { void load(true); }} colors={colors} /> : null}
 
@@ -230,7 +249,7 @@ export function HistoryScreen({ repository, onNavigate, onHome }: Props) {
       </View>
 
       <SheetDialog visible={action !== null} title="Xóa mục lịch sử?" onClose={() => { if (!busy) setAction(null); }} colors={colors}>
-        {action ? <Text style={[styles.caption, { color: colors.text }]}>{`Gửi yêu cầu xóa mục “${historyTitle(action.item)}”. Máy chủ sẽ áp dụng quyền sở hữu và quyền nhóm.`}</Text> : null}
+        {action ? <Text style={[styles.caption, { color: colors.text }]}>{`Xóa mục “${historyTitle(action.item)}” khỏi lịch sử bữa ăn cá nhân của bạn?`}</Text> : null}
         {action ? <AppButton label="Xác nhận xóa" variant="danger" onPress={() => void confirm()} loading={busy} colors={colors} /> : null}
       </SheetDialog>
     </ApiFeatureFrame>

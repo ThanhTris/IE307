@@ -245,12 +245,12 @@ describe('GM-25 Review Feedback Regression Suite', () => {
     await user.type(screen.getByLabelText('Tên khách'), 'Trang');
     await user.press(screen.getByRole('button', { name: 'Tạo phiên rồi tạo phòng' }));
 
-    expect(await screen.findByText('Chưa xác định được kết quả tạo phiên')).toBeOnTheScreen();
+    expect(await screen.findByText('Chưa xác nhận được lần tạo trước')).toBeOnTheScreen();
     expect(fixture.auth.createGuest).toHaveBeenCalledTimes(1);
     expect(client.getDiscoveryContext).not.toHaveBeenCalled();
     expect(client.createRoom).not.toHaveBeenCalled();
 
-    await user.press(screen.getByRole('button', { name: 'Xóa phiên cục bộ rồi thử lại' }));
+    await user.press(screen.getAllByRole('button', { name: 'Bắt đầu lại' })[0]!);
     await waitFor(() => expect(repository.getSessionSnapshot()).toMatchObject({ status: 'empty', issue: 'no-session' }));
     await user.press(screen.getByRole('button', { name: 'Tạo phiên rồi tạo phòng' }));
     expect(await screen.findByRole('button', { name: 'Tiếp tục thiết lập' })).toBeOnTheScreen();
@@ -264,13 +264,13 @@ describe('GM-25 Review Feedback Regression Suite', () => {
     const repository = new LiveRoomRepository({ client: createMockApiClient(), session: fixture.manager });
     await renderLiveEntry(repository);
 
-    expect(await screen.findByText('Chưa khôi phục được phiên')).toBeOnTheScreen();
+    expect(await screen.findByText('Chưa kết nối được máy chủ')).toBeOnTheScreen();
     expect(fixture.storage.clear).not.toHaveBeenCalled();
     expect(fixture.auth.createGuest).not.toHaveBeenCalled();
     expect(screen.getByRole('button', { name: 'Tạo phòng' })).toBeDisabled();
 
     fixture.auth.verify.mockImplementation(async () => sampleUser);
-    await user.press(screen.getByRole('button', { name: 'Thử khôi phục phiên' }));
+    await user.press(screen.getByRole('button', { name: 'Thử lại' }));
     expect(await screen.findByRole('button', { name: 'Tạo phòng' })).toBeEnabled();
     expect(repository.getSessionSnapshot()).toMatchObject({ status: 'active', user: { displayName: 'Trí Thanh' } });
     expect(fixture.auth.createGuest).not.toHaveBeenCalled();
@@ -290,10 +290,10 @@ describe('GM-25 Review Feedback Regression Suite', () => {
     };
     await render(<HomeScreen repository={createMockApiClient()} liveSession={liveSession} onCreate={jest.fn()} onJoin={jest.fn()} onResume={jest.fn()} />);
 
-    expect(screen.getByText('Phiên cần khôi phục')).toBeOnTheScreen();
-    expect(screen.getByRole('button', { name: 'Thử khôi phục phiên' })).toBeEnabled();
+    expect(screen.getByText('Cần mở lại phiên làm việc')).toBeOnTheScreen();
+    expect(screen.getByRole('button', { name: 'Thử kết nối lại' })).toBeEnabled();
     expect(screen.getByRole('button', { name: 'Tạo phòng' })).toBeDisabled();
-    await user.press(screen.getByRole('button', { name: 'Thử khôi phục phiên' }));
+    await user.press(screen.getByRole('button', { name: 'Thử kết nối lại' }));
     expect(restoreSession).toHaveBeenCalledTimes(1);
   });
 
@@ -386,7 +386,7 @@ describe('GM-25 Review Feedback Regression Suite', () => {
 
     // Host start fails with VERSION_CONFLICT.
     await user.press(screen.getByRole('button', { name: 'Bắt đầu chọn món' }));
-    expect(await screen.findByText('VERSION_CONFLICT')).toBeOnTheScreen();
+    expect(await screen.findByText('Phòng đã được cập nhật. Hãy thử lại.')).toBeOnTheScreen();
 
     // Must have refetched snapshot!
     await waitFor(() => expect(getSnapshotMock).toHaveBeenCalledTimes(2));
@@ -442,7 +442,7 @@ describe('GM-25 Review Feedback Regression Suite', () => {
 
     await screen.findByText('Thành viên (2)');
     await user.press(screen.getByRole('button', { name: 'Bắt đầu chọn món' }));
-    expect(await screen.findByText('Cần ít nhất 2 thành viên trong phòng trước khi bắt đầu.')).toBeOnTheScreen();
+    expect(await screen.findByText('Mời thêm bạn bè rồi thử lại.')).toBeOnTheScreen();
   });
 
   // --- Point 4: Request ID stability & retry on uncertain errors ---
@@ -473,7 +473,7 @@ describe('GM-25 Review Feedback Regression Suite', () => {
 
     // First press results in TIMEOUT (uncertain outcome)
     await user.press(screen.getByRole('button', { name: 'Bắt đầu chọn món' }));
-    expect(await screen.findByText('TIMEOUT')).toBeOnTheScreen();
+    expect(await screen.findByText('Chờ vài giây rồi thử lại.')).toBeOnTheScreen();
     const firstCallRequestId = startRoundMock.mock.calls[0][0].requestId;
     expect(firstCallRequestId).toBeTruthy();
 
@@ -541,7 +541,7 @@ describe('GM-25 Review Feedback Regression Suite', () => {
 
     await screen.findByText('Thành viên (2)');
     expect(await screen.findByText('Chưa thể bắt đầu')).toBeOnTheScreen();
-    expect(screen.getByText('Chưa có món phù hợp với bối cảnh. Hãy sửa điểm ăn hoặc giờ.')).toBeOnTheScreen();
+    expect(screen.getByText('Đổi bộ lọc rồi thử lại.')).toBeOnTheScreen();
 
     const startBtn = screen.getByRole('button', { name: 'Bắt đầu chọn món' });
     expect(startBtn.props.accessibilityState.disabled).toBe(true);

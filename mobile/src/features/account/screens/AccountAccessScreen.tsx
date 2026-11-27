@@ -9,6 +9,8 @@ import type { AccountService } from '../../../data/auth';
 import type { ApiError } from '../../../data/api/contracts';
 import { normalizeEmail, validDisplayName, validEmail } from '../../../data/auth/validation';
 import { AppButton, FormField } from '../../../shared/ui';
+import { ToastNotice } from '../../../shared/ui/feedback/Toast';
+import { recordLastFailure } from '../../../shared/errors/incident';
 import { useShellTheme } from '../../../shared/lib/useShellTheme';
 import { spacing, typography } from '../../../shared/theme/tokens';
 import { AccountFormFrame } from '../components/AccountFormFrame';
@@ -56,6 +58,16 @@ export function AccountAccessScreen({ flow, account, isGuest, recoveryForCurrent
   const inputStyle = { minHeight: 54, backgroundColor: dark ? colors.soft : '#FFFFFF' };
 
   useEffect(() => () => clearTimeout(noticeTimer.current), []);
+
+  useEffect(() => {
+    if (!error) return;
+    recordLastFailure({
+      errorCode: error.messageKey,
+      screen: `account/${flow}`,
+      action: stage,
+      occurredAt: new Date().toISOString(),
+    });
+  }, [error, flow, stage]);
 
   useEffect(() => () => {
     const active = proof.current;
@@ -189,7 +201,7 @@ export function AccountAccessScreen({ flow, account, isGuest, recoveryForCurrent
   const detailLabel = signingIn ? 'Đăng nhập' : signingUp ? 'Tạo tài khoản' : 'Gửi mã xác minh';
   const showExistingAccount = signingIn || signingUp || linking;
   return <AccountFormFrame title={title} hero={hero} onBack={back} busy={busy} error={error}>
-    {validation ? <Text accessibilityRole="alert" style={[typography.body, { color: colors.danger }]}>{validation}</Text> : null}
+    {validation ? <ToastNotice title={validation} tone="error" /> : null}
     {stage === 'details' ? <>
       {recovery || linking || (signingIn && isGuest) ? <Text style={[typography.body, { color: colors.text }]}>
         {recovery ? recoveryForCurrentAccount ? 'Nhập email của tài khoản đang đăng nhập để nhận mã đặt lại mật khẩu.'

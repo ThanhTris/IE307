@@ -5,7 +5,6 @@ import * as Clipboard from 'expo-clipboard';
 import { useAppFonts } from '../../../bootstrap/AppFontProvider';
 import { useShellTheme } from '../../../shared/lib/useShellTheme';
 import { AppIcon } from '../../../shared/ui/icons/AppIcon';
-import { ToastNotice } from '../../../shared/ui/feedback/Toast';
 import { normalizeRoomCode } from '../services/roomEntry';
 
 /** Native glyphs and carets: no transparent IME input over simulated text. */
@@ -45,7 +44,7 @@ export function RoomCodeField({ value, onChange, disabled, error }: { value: str
   };
   return <View style={styles.field}>
     <Text accessibilityRole="header" style={[styles.label, { color: colors.text }, textStyle(700)]}>Mã phòng</Text>
-    <View style={[styles.card, { backgroundColor: dark ? colors.surface : '#FFFFFF', borderColor: error ? colors.danger : colors.line }]}>
+    <View style={[styles.card, { backgroundColor: dark ? colors.surface : '#FFFFFF', borderColor: error ? colors.danger : colors.line, borderWidth: error ? 1.5 : 1 }]}>
       <View style={styles.slots} onLayout={event => setMeasuredWidth(event.nativeEvent.layout.width)}>
         {Array.from({ length: 6 }, (_, index) => <TextInput
           key={index}
@@ -82,13 +81,18 @@ export function RoomCodeField({ value, onChange, disabled, error }: { value: str
         <AppIcon name="copy" size={14} color={colors.text} /><Text style={[styles.pasteText, { color: colors.text }, textStyle(600)]}>Dán</Text>
       </Pressable>
     </View>
-    {error ? <ToastNotice title={error} tone="error" /> : null}
+    {error ? <View style={styles.errorRow}>
+      <AppIcon name="warning" size={16} color={colors.danger} />
+      <Text accessibilityRole="alert" style={[styles.errorText, { color: colors.danger }, textStyle(500)]}>{error}</Text>
+    </View> : null}
   </View>;
 }
 const styles = StyleSheet.create({
-  field: { gap: 20 }, label: { fontSize: 24, lineHeight: 32 },
+  field: { gap: 14 }, label: { fontSize: 24, lineHeight: 32 },
   card: { borderWidth: 1, borderRadius: 20, padding: 16, gap: 12 },
   slots: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
   input: { flexGrow: 1, minWidth: 48, minHeight: 58, borderWidth: 1, borderRadius: 12, paddingHorizontal: 4, paddingVertical: 8, fontSize: 24, lineHeight: 34, textAlign: 'center' },
   paste: { alignSelf: 'flex-end', flexDirection: 'row', alignItems: 'center', gap: 6, borderWidth: 1, borderRadius: 999, paddingHorizontal: 12, minHeight: 32 }, pasteText: { fontSize: 13, lineHeight: 18 },
+  errorRow: { flexDirection: 'row', alignItems: 'center', gap: 6, paddingHorizontal: 4 },
+  errorText: { flex: 1, fontSize: 13, lineHeight: 19 },
 });

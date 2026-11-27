@@ -9,7 +9,6 @@ import type { ErrorCode, Friend, RoomSnapshot } from '../../../data/api';
 import { AppButton, AppIcon, LoadingState, SheetDialog, StatusNotice, SwipeToDeleteRow, type AppIconName } from '../../../shared/ui';
 import { ChoiceIconView } from '../../../shared/ui/icons/ChoiceIcon';
 import { useShellTheme } from '../../../shared/lib/useShellTheme';
-import { errorCopy } from '../services/roomEntry';
 import { createJoinRoomShareMessage } from '../services/joinLinks';
 import { createJoinRoomOpenLink } from '../services/joinLinkUrl';
 import { lobbyMealSummary, lobbyPreferenceRows } from '../services/lobbyPresentation';
@@ -18,6 +17,10 @@ import { RoomQrModal } from '../components/RoomQrModal';
 import { LobbyMealEditor, type MealField } from '../components/LobbyMealEditor';
 import type { DishSetupGateway } from '../../context/services/dishSetupGateway';
 import { ToastNotice } from '../../../shared/ui/feedback/Toast';
+import { ErrorRecovery } from '../../../shared/ui/feedback/ErrorRecovery';
+import { useHelp } from '../../../shared/help/HelpContext';
+import { describeError } from '../../../shared/errors/describeError';
+import type { FailureExit } from '../../../shared/errors/failure';
 import { CONTAINER_STYLE, CONTAINER_GUTTER, ICON_BUTTON_INSET } from '../../../shared/ui/layout/ScreenContainer';
 
 type Colors = ReturnType<typeof useShellTheme>['colors'];
@@ -25,6 +28,8 @@ type Colors = ReturnType<typeof useShellTheme>['colors'];
 export type LobbyScreenProps = {
   onNavigate?: (path: string) => void;
   onHome: () => void;
+  /** Leave the room because this person cannot use it any more. */
+  onExit?: (exit: FailureExit) => void;
   repository: LobbyRepository;
   roomId?: string;
   currentUserId?: string;
@@ -42,6 +47,7 @@ export type LobbyScreenProps = {
 export function LobbyScreen({
   onNavigate,
   onHome,
+  onExit,
   repository,
   roomId,
   currentUserId,
@@ -59,7 +65,8 @@ export function LobbyScreen({
   const [editField, setEditField] = useState<MealField | null>(null);
   const [inviteOpen, setInviteOpen] = useState(false);
   const [copied, setCopied] = useState(false);
-  const lobby = useLobby({ repository, roomId, currentUserId, createRequestId, onStartRound, onHome });
+  const lobby = useLobby({ repository, roomId, currentUserId, createRequestId, onStartRound, onHome, onExit });
+  const help = useHelp();
   const { snapshot, displaySnapshot, loadError, loadState, confirm, setConfirm, notice, busy, busyRef, eligibilityError, viewer, isHost, reload, runWrite } = lobby;
 
   useEffect(() => {
@@ -108,7 +115,7 @@ export function LobbyScreen({
 
       <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.content}>
         {loadState === 'loading' ? <LoadingState label="Đang tải phòng" colors={colors} /> : null}
-        {loadState === 'error' ? <StatusNotice title="Không tải được phòng" message={errorCopy[loadError as ErrorCode] ?? String(loadError)} tone="error" actionLabel="Thử lại" onAction={reload} colors={colors} /> : null}
+        {loadState === 'error' ? <LoadFailure code={loadError as ErrorCode} failureCount={lobby.loadFailureCount} onRetry={reload} colors={colors} /> : null}
         {room && loadState === 'ready' && !viewer ? (
           <StatusNotice
             title={currentUserId ? 'Bạn không thuộc phòng này' : 'Chưa xác định được danh tính phiên'}
@@ -162,8 +169,16 @@ export function LobbyScreen({
 
           <PreferencesCard room={room} disabled={busy || !inLobby || !onEditPreferences} onEdit={() => onEditPreferences?.(room)} colors={colors} />
 
-          {notice ? <ToastNotice title={notice.split(' · ')[0]!} message={notice.split(' · ').slice(1).join(' · ') || undefined} tone={lobby.noticeTone} /> : null}
-          {eligibilityError ? <ToastNotice title="Chưa thể bắt đầu" message={errorCopy[eligibilityError as ErrorCode] ?? 'Chưa đủ món để bắt đầu. Hãy kiểm tra thiết lập phòng rồi thử lại.'} tone="error" /> : null}
+          {notice ? <ToastNotice
+            title={notice.split(' · ')[0]!}
+            message={notice.split(' · ').slice(1).join(' · ') || undefined}
+            tone={lobby.noticeTone}
+            triggerKey={lobby.actionFailureCount}
+            actionLabel={lobby.actionFailure && help && (lobby.actionFailureCount >= 2 || lobby.actionFailure.errorCode === 'MALFORMED_RESPONSE' || lobby.actionFailure.errorCode === 'CONTRACT_MISMATCH') ? 'Báo lỗi' : undefined}
+            actionAccessibilityLabel="Báo lỗi hoặc cần trợ giúp"
+            onAction={lobby.actionFailure && help ? () => help.open(lobby.actionFailure) : undefined}
+          /> : null}
+          {eligibilityError ? <ToastNotice title="Chưa thể bắt đầu" message={describeError({ messageKey: eligibilityError as ErrorCode }).message} tone="error" /> : null}
         </> : null}
       </ScrollView>
 
@@ -191,6 +206,17 @@ export function LobbyScreen({
       </SheetDialog>
     </SafeAreaView>
   );
+}
+
+/** The lobby could not be read: stay here, offer the one next step, and report only after repeated server problems. */
+function LoadFailure({ code, failureCount, onRetry, colors }: { code: ErrorCode; failureCount: number; onRetry: () => void; colors: Colors }) {
+  const help = useHelp();
+  const description = describeError({ messageKey: code });
+  const showHelp = description.reportable && help && (failureCount >= 2 || code === 'MALFORMED_RESPONSE' || code === 'CONTRACT_MISMATCH');
+  return <ErrorRecovery variant="empty" heading="Không tải được phòng" title={description.title} message={description.message}
+    note={description.message} actionLabel="Thử lại" onAction={onRetry}
+    onHelp={showHelp ? () => help.open({ errorCode: description.code, screen: 'room/lobby', action: 'load_room' }) : undefined}
+    colors={colors} />;
 }
 
 function ReadyBadge({ ready, colors }: { ready: boolean; colors: Colors }) {
@@ -293,7 +319,7 @@ function RoomInviteSheet({ visible, onClose, repository, snapshot, busy, colors,
   const full = snapshot.members.length >= 20;
   return <SheetDialog visible={visible} title="Mời thêm bạn" onClose={() => { if (!busy) close(); }} showClose={false} colors={colors}>
     {loading ? <LoadingState label="Đang tải bạn bè" colors={colors} /> : null}
-    {error ? <StatusNotice title="Không tải được bạn bè" message={errorCopy[error as ErrorCode] ?? error} tone="error" actionLabel="Tải lại" onAction={reload} colors={colors} /> : null}
+    {error ? <StatusNotice title="Không tải được bạn bè" message={describeError({ messageKey: error as ErrorCode }).message} tone="error" actionLabel="Tải lại" onAction={reload} colors={colors} /> : null}
     {!loading && !error && eligible.length === 0 ? <View style={styles.inviteEmpty}>
       <View style={[styles.inviteEmptyIcon, { backgroundColor: colors.warm }]}><AppIcon name={full ? 'friends' : 'inviteUser'} size={28} color={colors.primary} /></View>
       <Text accessibilityRole="header" style={[styles.cardTitle, styles.centerText, { color: colors.text }, textStyle(700)]}>

@@ -21,7 +21,12 @@ export default function ProfileRoute() {
   if (!live.isInitializing && live.status === 'empty' && live.issue === 'no-session') return <Redirect href="/welcome" />;
   if (loggingOut && !live.user) return null;
 
-  return <RequireActiveSession onHome={home}>
+  return <RequireActiveSession
+    onHome={home}
+    onSignIn={() => {
+      void live.logout().then(() => router.replace({ pathname: '/account/[flow]', params: { flow: 'sign-in' } }));
+    }}
+  >
     {live.user ? <ProfileScreen
       key={live.user.id + ':' + live.user.isGuest}
       user={live.user}

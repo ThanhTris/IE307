@@ -2,6 +2,8 @@ import { useCallback, useEffect, useRef, useState, type ReactNode } from 'react'
 import { Pressable, StyleSheet, useWindowDimensions, View } from 'react-native';
 import { Text } from '../../../shared/ui/forms/ScaledText';
 import type { InboxItem } from '../../../data/api/contracts';
+import { describeError } from '../../../shared/errors/describeError';
+import { recordLastFailure } from '../../../shared/errors/incident';
 import { useShellTheme } from '../../../shared/lib/useShellTheme';
 import { AppButton, AppIcon, CollectionState, LoadingState, ApiFeatureFrame } from '../../../shared/ui';
 import { useInboxBadge } from '../../../shared/lib/inboxBadge';
@@ -16,6 +18,7 @@ type Props = {
   displayName: string;
   onNavigate: (path: string) => void;
   onHome: () => void;
+  onAuthExpired?: () => void;
   onPushSettings?: () => void;
   isSessionCurrent?: () => boolean;
   openEventId?: string;
@@ -26,7 +29,7 @@ type Props = {
 type AnswerKind = 'accept' | 'reject';
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
-export function InboxScreen({ repository, displayName, onNavigate, onHome, onPushSettings, isSessionCurrent, openEventId, notificationStatus, topNotice }: Props) {
+export function InboxScreen({ repository, displayName, onNavigate, onHome, onAuthExpired, onPushSettings, isSessionCurrent, openEventId, notificationStatus, topNotice }: Props) {
   const { colors } = useShellTheme();
   const { fontScale } = useWindowDimensions();
   const largeText = fontScale >= 1.5;
@@ -67,7 +70,11 @@ export function InboxScreen({ repository, displayName, onNavigate, onHome, onPus
       const known = more ? new Set(itemsRef.current.map(item => item.eventId)) : new Set<string>();
       const result = await repository.list(more ? pageCursor : undefined, known);
       if (!result.ok) {
-        if (!silent) { setItems([]); setCursor(undefined); setError(result.error.messageKey); }
+        if (result.error.messageKey === 'AUTH_REQUIRED' && onAuthExpired) { onAuthExpired(); return; }
+        if (!silent) {
+          setItems([]); setCursor(undefined); setError(result.error.messageKey);
+          recordLastFailure({ errorCode: result.error.messageKey, screen: 'inbox', action: 'list', occurredAt: new Date().toISOString() });
+        }
       } else {
         setItems(current => {
           if (more) return [...current, ...result.data.items];
@@ -84,12 +91,15 @@ export function InboxScreen({ repository, displayName, onNavigate, onHome, onPus
         if (!(silent && !more && itemsRef.current.length > result.data.items.length)) setCursor(result.data.nextCursor);
       }
     } catch {
-      if (!silent) { setItems([]); setCursor(undefined); setError('NETWORK_ERROR'); }
+      if (!silent) {
+        setItems([]); setCursor(undefined); setError('NETWORK_ERROR');
+        recordLastFailure({ errorCode: 'NETWORK_ERROR', screen: 'inbox', action: 'list', occurredAt: new Date().toISOString() });
+      }
     } finally {
       setLoading(false);
       setLoadingMore(false);
     }
-  }, [openEventId, repository]);
+  }, [onAuthExpired, openEventId, repository]);
 
   const markAllRead = async () => {
     if (lock.current || itemsRef.current.length === 0) return;
@@ -220,7 +230,7 @@ export function InboxScreen({ repository, displayName, onNavigate, onHome, onPus
     const pending = { item, kind };
     const invitationId = readInvitationId(pending.item);
     if (!invitationId) {
-      setMessage('Mục này thiếu metadata.invitationId. Không gửi eventId thay thế.');
+      setMessage('Lời mời này thiếu thông tin xác nhận. Hãy tải lại hộp thư.');
       return;
     }
     lock.current = true;
@@ -230,7 +240,9 @@ export function InboxScreen({ repository, displayName, onNavigate, onHome, onPus
       if (pending.item.type === 'room_invite' && pending.kind === 'accept') {
         const result = await repository.acceptRoom(invitationId, displayName);
         if (!result.ok) {
+          if (result.error.messageKey === 'AUTH_REQUIRED' && onAuthExpired) { onAuthExpired(); return; }
           setMessage(errorMessage(result.error.messageKey));
+          recordLastFailure({ errorCode: result.error.messageKey, screen: 'inbox', action: 'accept_room', occurredAt: new Date().toISOString() });
           await load();
           return;
         }
@@ -240,7 +252,13 @@ export function InboxScreen({ repository, displayName, onNavigate, onHome, onPus
         const room = result.data;
         const resolved = await repository.resolveAcceptedRoom(room.roomId);
         if (!resolved.ok) {
-          setMessage(`Lời mời đã được chấp nhận nhưng chưa tải được trạng thái phòng (${resolved.error.messageKey}). Tải lại hộp thư hoặc mở phòng sau; không gửi lại lời chấp nhận.`);
+          if (resolved.error.messageKey === 'AUTH_REQUIRED' && onAuthExpired) { onAuthExpired(); return; }
+          if (resolved.error.messageKey === 'NETWORK_ERROR' || resolved.error.messageKey === 'TIMEOUT') {
+            onNavigate(`/room/lobby?roomId=${encodeURIComponent(room.roomId)}`);
+            return;
+          }
+          setMessage(`Đã nhận lời mời. ${describeError({ messageKey: resolved.error.messageKey }).message}`);
+          recordLastFailure({ errorCode: resolved.error.messageKey, screen: 'inbox', action: 'resolve_accepted_room', occurredAt: new Date().toISOString() });
           await load();
           return;
         }
@@ -253,7 +271,9 @@ export function InboxScreen({ repository, displayName, onNavigate, onHome, onPus
           : await repository.rejectFriend(invitationId)
         : await repository.rejectRoom(invitationId);
       if (!result.ok) {
+        if (result.error.messageKey === 'AUTH_REQUIRED' && onAuthExpired) { onAuthExpired(); return; }
         setMessage(errorMessage(result.error.messageKey));
+        recordLastFailure({ errorCode: result.error.messageKey, screen: 'inbox', action: `${pending.item.type}_${pending.kind}`, occurredAt: new Date().toISOString() });
         await load();
         return;
       }
@@ -264,6 +284,7 @@ export function InboxScreen({ repository, displayName, onNavigate, onHome, onPus
       await load();
     } catch {
       setMessage('Chưa rõ máy chủ đã nhận thao tác hay chưa. Hộp thư đã được tải lại để kiểm tra trạng thái.');
+      recordLastFailure({ errorCode: 'NETWORK_ERROR', screen: 'inbox', action: 'answer_invite', occurredAt: new Date().toISOString() });
       await load();
     } finally {
       lock.current = false;
@@ -282,7 +303,7 @@ export function InboxScreen({ repository, displayName, onNavigate, onHome, onPus
     markOneRead(item);
     const reference = readRoomResultReference(item);
     if (!reference) {
-      setMessage('Thông báo thiếu mã phòng hoặc kết quả từ máy chủ. Không thể mở kết quả bằng nội dung thông báo.');
+      setMessage('Thông báo này không còn đủ thông tin để mở kết quả.');
       return;
     }
     if (lock.current) return;
@@ -292,12 +313,15 @@ export function InboxScreen({ repository, displayName, onNavigate, onHome, onPus
     try {
       const result = await repository.resolveRoomResult(reference.roomId, reference.resultId, reference.contractVersion);
       if (!result.ok) {
-        setMessage(`Không thể mở kết quả đã lưu (${errorMessage(result.error.messageKey)}). Tải lại trạng thái phòng rồi thử lại.`);
+        if (result.error.messageKey === 'AUTH_REQUIRED' && onAuthExpired) { onAuthExpired(); return; }
+        setMessage(`Chưa mở được kết quả đã lưu. ${describeError({ messageKey: result.error.messageKey }).message}`);
+        recordLastFailure({ errorCode: result.error.messageKey, screen: 'inbox', action: 'open_room_result', occurredAt: new Date().toISOString() });
         return;
       }
       onNavigate(roomDestinationPath(result.data));
     } catch {
       setMessage('Không kết nối được để xác minh kết quả với máy chủ. Hãy thử lại khi có mạng.');
+      recordLastFailure({ errorCode: 'NETWORK_ERROR', screen: 'inbox', action: 'open_room_result', occurredAt: new Date().toISOString() });
     } finally {
       lock.current = false;
       setBusy(false);

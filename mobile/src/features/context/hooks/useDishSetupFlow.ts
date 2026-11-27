@@ -49,8 +49,8 @@ export function useDishSetupFlow(gateway: DishSetupGateway, requestId = mockRequ
       const value = await gateway.read(); if (!alive.current) return;
       setData(value); setReadError(false); setNeedsRefresh(false);
       if (!data) { if (value.settings) receiveDraft(clone(value.settings)); const own = clone(value.ownRoomPreferences ?? value.accountDefaults); setPreferences(own); setBaselinePreferences(clone(own)); }
-      say(value.connected ? undefined : 'Bạn đang ngoại tuyến. Nháp chưa đồng bộ.', 'warning');
-    } catch { if (alive.current) { setReadError(true); say('Chưa tải được trạng thái. Hãy thử lại.'); } }
+      say(value.connected ? undefined : 'Bạn đang ngoại tuyến. Các lựa chọn trên máy vẫn được giữ.', 'warning');
+    } catch { if (alive.current) { setReadError(true); say('Chưa tải được dữ liệu. Hãy thử lại.'); } }
     finally { lock.current = false; if (alive.current) setPhase('idle'); }
   };
   const readAcknowledged = async () => {
@@ -63,11 +63,11 @@ export function useDishSetupFlow(gateway: DishSetupGateway, requestId = mockRequ
       if (ack.kind === 'preferences' && !value.ownRoomPreferences) throw new Error('Own preference snapshot missing');
       if (ack.kind === 'cancel' && value.room.state !== 'CLOSED') throw new Error('Cancellation not confirmed');
       setData(value); setReadError(false);
-      if (value.room.state === 'CLOSED') say('Phòng đã đóng. Thay đổi không thể tiếp tục.');
+      if (value.room.state === 'CLOSED') say('Phòng đã đóng.');
       else if (ack.kind === 'settings') { if (value.settings) receiveDraft({ ...clone(value.settings), ...(intent.current?.kind === 'settings' ? { inviteeIds: clone(intent.current.draft.inviteeIds), budget: clone(intent.current.draft.budget), avoidRecent: intent.current.draft.avoidRecent } : {}) }); else draftState.markSaved(); setStage('preferences'); say(undefined); }
       else { const own = clone(value.ownRoomPreferences!); setPreferences(own); setBaselinePreferences(clone(own)); setStage('complete'); say(undefined); }
       acknowledged.current = null; intent.current = null; setPhase('idle');
-    } catch { if (alive.current) { say('Đã nhận xác nhận lưu; chưa tải được trạng thái mới. Chỉ thử đọc lại, không gửi lại.'); setPhase('ack-read'); } }
+    } catch { if (alive.current) { say('Đã lưu nhưng chưa tải lại được phòng. Hãy thử tải lại.'); setPhase('ack-read'); } }
   };
   const send = async (value: SetupIntent) => {
     if (lock.current) return;
@@ -78,22 +78,22 @@ export function useDishSetupFlow(gateway: DishSetupGateway, requestId = mockRequ
       if (reply.code === 'PARTIAL') {
         setPhase('partial'); setData(previous => previous ? { ...previous, room: reply.room } : previous);
         say(reply.pendingStep === 'preferences'
-          ? 'Thiết lập phòng đã lưu; ngân sách hoặc chống lặp chưa lưu. Hãy thử lại phần còn thiếu.'
+          ? 'Đã lưu buổi ăn và số món; ngân sách chưa lưu. Hãy thử lại.'
           : reply.pendingStep === 'consent'
-            ? 'Khẩu vị đã lưu; lựa chọn lưu lịch sử cho tài khoản chưa được xác nhận. Hãy thử lại phần còn thiếu.'
-            : 'Yêu cầu đã được xác nhận một phần; chưa đọc lại được trạng thái mới nhất. Hãy thử tải trạng thái, không gửi lại phần đã xác nhận.', 'warning');
+            ? 'Đã lưu khẩu vị của bạn; tùy chọn lưu lịch sử chưa xác nhận. Hãy thử lại.'
+            : 'Đã lưu một phần; chưa cập nhật được trạng thái mới. Hãy thử tải lại.', 'warning');
         return;
       }
-      if (reply.code === 'UNKNOWN') { setPhase('unknown'); say('Chưa rõ kết quả lưu. Thử lại cùng yêu cầu; không sửa hoặc tạo phòng khác.'); return; }
+      if (reply.code === 'UNKNOWN') { setPhase('unknown'); say('Chưa rõ kết quả lưu. Hãy thử lại.'); return; }
       intent.current = null; setPhase('idle');
       if (reply.code === 'SHORTAGE' && value.kind === 'settings' && Number.isInteger(reply.available) && reply.available! >= 0 && reply.available! < value.draft.dishCount && reply.requested === value.draft.dishCount) {
         setShortage({ available: reply.available!, requested: reply.requested });
         return; // the shortage dialog explains it
       }
       if (reply.code === 'CLOSED') { setData(previous => previous && ({ ...previous, room: previous.room ? { ...previous.room, state: 'CLOSED' } : { id: '', code: '', version: 0, state: 'CLOSED' } })); say('Phòng đã đóng.'); }
-      else if (reply.code === 'STALE') { setNeedsRefresh(true); say('Trạng thái phòng đã đổi. Tải lại trước khi lưu tiếp; nháp được giữ.', 'warning'); }
-      else say('Chưa lưu được thay đổi. Đã giữ nháp; hãy thử lại.');
-    } catch { if (alive.current) { setPhase('unknown'); say('Mất phản hồi. Chưa rõ kết quả lưu; thử lại cùng yêu cầu.'); } }
+      else if (reply.code === 'STALE') { setNeedsRefresh(true); say('Phòng vừa thay đổi. Đang tải lại; lựa chọn của bạn vẫn được giữ.', 'warning'); }
+      else say('Chưa lưu được thay đổi. Lựa chọn vẫn được giữ; hãy thử lại.');
+    } catch { if (alive.current) { setPhase('unknown'); say('Mất kết nối máy chủ. Lựa chọn vẫn được giữ; hãy thử lại.'); } }
     finally { lock.current = false; }
   };
   const submitSettings = () => {

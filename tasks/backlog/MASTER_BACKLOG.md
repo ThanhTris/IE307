@@ -2,7 +2,7 @@
 
 Sinh từ task bằng `python scripts/task_readiness.py --write-docs`; không sửa tay. `--check-docs` kiểm độ mới. Đây là metadata/gate chẩn đoán local, không phải trạng thái GitHub. Gate thực tế đọc Done live trên Project theo ADR-011; xem docs/project/PROJECT_READINESS.md.
 
-64 task sau GM-00: 54 P0 (gồm GM-01), 6 P1, 4 P2. Mã roadmap-v2 tăng theo lộ trình; mọi dependency có số nhỏ hơn task. Owner/reviewer là đề xuất; không kế thừa approval khi đổi scope.
+65 task sau GM-00: 54 P0 (gồm GM-01), 7 P1, 4 P2. Mã roadmap-v2 tăng theo lộ trình; mọi dependency có số nhỏ hơn task. Owner/reviewer là đề xuất; không kế thừa approval khi đổi scope.
 
 | Task | Luồng / bước | Phạm vi | Owner / reviewer | Mức/cỡ | Status | Gate bắt đầu | Start deps | Merge deps | Song song |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
@@ -67,8 +67,9 @@ Sinh từ task bằng `python scripts/task_readiness.py --write-docs`; không s�
 | [GM-59](GM-59.md) | RELEASE / release | Bàn giao bản build Android cho thầy (AAB, APK và hồ sơ store) | Trí / Trí | P0/M | backlog | BLOCKED | [GM-50](GM-50.md), [GM-52](GM-52.md), [GM-54](GM-54.md) | [GM-50](GM-50.md), [GM-52](GM-52.md), [GM-54](GM-54.md), [GM-58](GM-58.md) | — |
 | [GM-60](GM-60.md) | RELEASE / release | App Store: build IPA, TestFlight, hồ sơ store và gửi App Review | Tâm / Trí | P2/L | backlog | BLOCKED | [GM-50](GM-50.md), [GM-52](GM-52.md), [GM-54](GM-54.md) | [GM-50](GM-50.md), [GM-52](GM-52.md), [GM-54](GM-54.md), [GM-58](GM-58.md) | — |
 | [GM-61](GM-61.md) | RELEASE / release | Chốt bàn giao release v1 cho thầy đăng Google Play | Trí / Trí | P0/S | backlog | BLOCKED | [GM-59](GM-59.md) | [GM-59](GM-59.md) | — |
-| [GM-62](GM-62.md) | INTEGRATION / integration | Error Boundary và báo lỗi crash (Sentry) | Trung / Trí | P1/M | backlog | BLOCKED | [GM-05](GM-05.md) | [GM-05](GM-05.md), [GM-54](GM-54.md) | [GM-63](GM-63.md), [GM-64](GM-64.md) |
-| [GM-63](GM-63.md) | QA / qa | Kiểm thử E2E bằng Maestro trên APK | Vinh / Trí | P1/M | backlog | BLOCKED | [GM-56](GM-56.md), [GM-57](GM-57.md) | [GM-56](GM-56.md), [GM-57](GM-57.md), [GM-54](GM-54.md) | [GM-62](GM-62.md), [GM-64](GM-64.md) |
-| [GM-64](GM-64.md) | INTEGRATION / integration | Hiệu năng danh sách và ảnh món | Tuấn / Trí | P1/M | backlog | BLOCKED | [GM-31](GM-31.md) | [GM-31](GM-31.md), [GM-47](GM-47.md), [GM-51](GM-51.md) | [GM-62](GM-62.md), [GM-63](GM-63.md) |
+| [GM-62](GM-62.md) | INTEGRATION / integration | Error Boundary và báo lỗi crash (Sentry) | Trung / Trí | P1/M | backlog | BLOCKED | [GM-05](GM-05.md) | [GM-05](GM-05.md), [GM-54](GM-54.md) | [GM-63](GM-63.md), [GM-64](GM-64.md), [GM-65](GM-65.md) |
+| [GM-63](GM-63.md) | QA / qa | Kiểm thử E2E bằng Maestro trên APK | Vinh / Trí | P1/M | backlog | BLOCKED | [GM-56](GM-56.md), [GM-57](GM-57.md) | [GM-56](GM-56.md), [GM-57](GM-57.md), [GM-54](GM-54.md) | [GM-62](GM-62.md), [GM-64](GM-64.md), [GM-65](GM-65.md) |
+| [GM-64](GM-64.md) | INTEGRATION / integration | Hiệu năng danh sách và ảnh món | Tuấn / Trí | P1/M | backlog | BLOCKED | [GM-31](GM-31.md) | [GM-31](GM-31.md), [GM-47](GM-47.md), [GM-51](GM-51.md) | [GM-62](GM-62.md), [GM-63](GM-63.md), [GM-65](GM-65.md) |
+| [GM-65](GM-65.md) | INTEGRATION / integration | UI báo lỗi, phục hồi và gửi báo lỗi cho quản trị viên | Trí / Trí | P1/L | backlog | BLOCKED | [GM-35](GM-35.md) | [GM-35](GM-35.md), [GM-50](GM-50.md) | [GM-62](GM-62.md), [GM-63](GM-63.md), [GM-64](GM-64.md) |
 
 [Hai gate và thứ tự merge](../../docs/project/TASK_DEPENDENCIES.md) · [Đầu vào/đầu ra](../../docs/project/TASK_HANDOFFS.md) · [Mã cũ–mới](../../docs/project/TASK_RENUMBERING.md). Merge cần cả start deps và merge deps. Song song chỉ áp dụng phần độc lập được ghi trong task; không tự xác nhận nhận việc.

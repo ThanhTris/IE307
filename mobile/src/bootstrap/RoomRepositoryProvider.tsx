@@ -5,7 +5,7 @@ import { Text } from '../shared/ui/forms/ScaledText';
 import * as SecureStore from 'expo-secure-store';
 import { createAuthenticatedApiClient, createSecureSessionStorage, type AccountService } from '../data/auth';
 import type { SessionIssue, SessionSnapshot, SessionStatus } from '../features/rooms/services/sessionState';
-import type { SessionUser } from '../data/api/contracts';
+import type { ApiError, SessionUser } from '../data/api/contracts';
 import { clearPrivateHistoryCache } from '../features/history/services/historyRepository';
 import { clearVoteSession } from '../features/voting/services/voteSessionState';
 import { createNativePushService } from '../features/inbox/services/nativePush';
@@ -25,14 +25,19 @@ export interface RoomRepositoryContextValue {
   status: SessionStatus;
   issue: SessionIssue;
   user: SessionUser | null;
+  lastKnownGuest?: boolean;
   /** Always 'real': the app has no mock mode. Kept so callers can assert the live path. */
   mode: 'real';
   isInitializing: boolean;
   restoreSession: () => Promise<boolean>;
   /** Called only from an explicit user action; never creates after a restore/network failure. */
   ensureSession: (displayName: string) => Promise<boolean>;
+  /** Same action, but says why it failed so the screen can tell the person what to do. */
+  ensureSessionDetailed?: (displayName: string) => Promise<EnsureSessionResult>;
   logout: () => Promise<boolean>;
 }
+
+export type EnsureSessionResult = { ok: true } | { ok: false; error?: ApiError };
 
 const RoomRepositoryContext = createContext<RoomRepositoryContextValue | null>(null);
 
@@ -110,21 +115,23 @@ function ConfiguredRoomRepositoryProvider({
     return result.ok;
   }, [repository]);
 
-  const ensureSession = useCallback(async (displayName: string): Promise<boolean> => {
+  const ensureSessionDetailed = useCallback(async (displayName: string): Promise<EnsureSessionResult> => {
     let current = repository.getSessionSnapshot();
-    if (current.status === 'active' && current.user) return true;
-    if (current.status === 'blocked' || current.status === 'lost') return false;
+    if (current.status === 'active' && current.user) return { ok: true };
+    if (current.status === 'blocked' || current.status === 'lost') return { ok: false };
 
     if (current.issue !== 'no-session') {
       const restored = await repository.restoreSession();
-      if (restored.ok) return true;
+      if (restored.ok) return { ok: true };
       current = repository.getSessionSnapshot();
-      if (current.issue !== 'no-session') return false;
+      if (current.issue !== 'no-session') return { ok: false, error: restored.error };
     }
 
     const created = await repository.createGuestSession(displayName);
-    return created.ok;
+    return created.ok ? { ok: true } : { ok: false, error: created.error };
   }, [repository]);
+  const ensureSession = useCallback(
+    async (displayName: string) => (await ensureSessionDetailed(displayName)).ok, [ensureSessionDetailed]);
 
   const logout = useCallback(async (): Promise<boolean> => {
     const identityId = repository.getSessionSnapshot().user?.id;
@@ -209,12 +216,14 @@ function ConfiguredRoomRepositoryProvider({
     status: snapshot.status,
     issue: snapshot.issue,
     user: snapshot.user,
+    lastKnownGuest: snapshot.lastKnownGuest,
     mode: 'real',
     isInitializing,
     restoreSession,
     ensureSession,
+    ensureSessionDetailed,
     logout,
-  }), [repository, account, snapshot, isInitializing, restoreSession, ensureSession, logout]);
+  }), [repository, account, snapshot, isInitializing, restoreSession, ensureSession, ensureSessionDetailed, logout]);
 
   const roomUpdates = useMemo(() => createRoomSubscription({
     baseUrl,

@@ -3,7 +3,7 @@ import { StyleSheet, View } from 'react-native';
 import { Text } from '../../../shared/ui/forms/ScaledText';
 import { useAppFonts } from '../../../bootstrap/AppFontProvider';
 import { useShellTheme } from '../../../shared/lib/useShellTheme';
-import { AppButton } from '../../../shared/ui';
+import { AppButton, AppIcon } from '../../../shared/ui';
 import { HomeFlowFrame } from '../components/HomeFlowFrame';
 import { ToastNotice } from '../../../shared/ui/feedback/Toast';
 
@@ -25,7 +25,9 @@ export function GuestSessionExpiredScreen({ onReset, onHome }: { onReset: () => 
   };
   return <HomeFlowFrame title="Phiên khách" onHome={() => { if (!locked.current) onHome(); }} busy={busy}>
     <View style={styles.message}>
-      <View accessibilityElementsHidden importantForAccessibility="no-hide-descendants" style={[styles.symbol, { borderColor: colors.line, backgroundColor: colors.warm }]}><Text allowFontScaling={false} style={[styles.exclamation, { color: colors.text }, textStyle(700)]}>!</Text></View>
+      <View accessibilityElementsHidden importantForAccessibility="no-hide-descendants" style={[styles.symbol, { borderColor: colors.line, backgroundColor: colors.warm }]}>
+        <AppIcon name="hourglass" size={38} color={colors.primary} />
+      </View>
       <Text accessibilityRole="header" style={[styles.title, { color: colors.text }, textStyle(700)]}>Phiên khách đã hết hạn</Text>
       <Text style={[styles.description, { color: colors.muted }, textStyle(400)]}>Nhập tên để tiếp tục dùng ứng dụng.</Text>
     </View>

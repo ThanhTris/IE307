@@ -2,7 +2,7 @@
 
 Sinh từ task bằng `python scripts/task_readiness.py --write-docs`; không sửa tay. `--check-docs` kiểm độ mới. Đây là metadata/gate chẩn đoán local, không phải trạng thái GitHub. Gate thực tế đọc Done live trên Project theo ADR-011; xem docs/project/PROJECT_READINESS.md.
 
-64 task sau GM-00: 54 P0 (gồm GM-01), 6 P1, 4 P2. Mã roadmap-v2 tăng theo lộ trình; mọi dependency có số nhỏ hơn task. Owner/reviewer là đề xuất; không kế thừa approval khi đổi scope.
+65 task sau GM-00: 54 P0 (gồm GM-01), 7 P1, 4 P2. Mã roadmap-v2 tăng theo lộ trình; mọi dependency có số nhỏ hơn task. Owner/reviewer là đề xuất; không kế thừa approval khi đổi scope.
 
 ## Hai gate khác nhau
 
@@ -90,6 +90,7 @@ READY_TO_CLAIM: đủ start deps, chưa nhận việc (bao gồm task Needs Upda
 | [GM-62](../../tasks/backlog/GM-62.md) | BLOCKED | [GM-05](../../tasks/backlog/GM-05.md) | BLOCKED | [GM-05](../../tasks/backlog/GM-05.md), [GM-54](../../tasks/backlog/GM-54.md) |
 | [GM-63](../../tasks/backlog/GM-63.md) | BLOCKED | [GM-56](../../tasks/backlog/GM-56.md), [GM-57](../../tasks/backlog/GM-57.md) | BLOCKED | [GM-54](../../tasks/backlog/GM-54.md), [GM-56](../../tasks/backlog/GM-56.md), [GM-57](../../tasks/backlog/GM-57.md) |
 | [GM-64](../../tasks/backlog/GM-64.md) | BLOCKED | [GM-31](../../tasks/backlog/GM-31.md) | BLOCKED | [GM-31](../../tasks/backlog/GM-31.md), [GM-47](../../tasks/backlog/GM-47.md), [GM-51](../../tasks/backlog/GM-51.md) |
+| [GM-65](../../tasks/backlog/GM-65.md) | BLOCKED | [GM-35](../../tasks/backlog/GM-35.md) | BLOCKED | [GM-35](../../tasks/backlog/GM-35.md), [GM-50](../../tasks/backlog/GM-50.md) |
 
 ## Lớp mở khóa bắt đầu
 
@@ -115,7 +116,7 @@ Lớp topo không là barrier cả nhóm hay deadline. Chỉ chờ dependency c�
 | 15 | [GM-33](../../tasks/backlog/GM-33.md), [GM-63](../../tasks/backlog/GM-63.md) | GM-33: Vinh; GM-63: Vinh |
 | 16 | [GM-34](../../tasks/backlog/GM-34.md) | GM-34: Trí |
 | 17 | [GM-35](../../tasks/backlog/GM-35.md), [GM-36](../../tasks/backlog/GM-36.md), [GM-37](../../tasks/backlog/GM-37.md), [GM-38](../../tasks/backlog/GM-38.md) | GM-35: Tuấn; GM-36: Tâm; GM-37: Tuấn; GM-38: Tâm |
-| 18 | [GM-53](../../tasks/backlog/GM-53.md), [GM-54](../../tasks/backlog/GM-54.md) | GM-53: Tuấn; GM-54: Trang |
+| 18 | [GM-53](../../tasks/backlog/GM-53.md), [GM-54](../../tasks/backlog/GM-54.md), [GM-65](../../tasks/backlog/GM-65.md) | GM-53: Tuấn; GM-54: Trang; GM-65: Trí |
 | 19 | [GM-58](../../tasks/backlog/GM-58.md), [GM-59](../../tasks/backlog/GM-59.md), [GM-60](../../tasks/backlog/GM-60.md) | GM-58: Vinh; GM-59: Trí; GM-60: Tâm |
 | 20 | [GM-61](../../tasks/backlog/GM-61.md) | GM-61: Trí |
 
@@ -143,7 +144,7 @@ Lớp topo không là barrier cả nhóm hay deadline. Chỉ chờ dependency c�
 | 15 | [GM-33](../../tasks/backlog/GM-33.md), [GM-55](../../tasks/backlog/GM-55.md) | GM-33: Vinh; GM-55: Trí |
 | 16 | [GM-34](../../tasks/backlog/GM-34.md), [GM-56](../../tasks/backlog/GM-56.md), [GM-57](../../tasks/backlog/GM-57.md) | GM-34: Trí; GM-56: Trang; GM-57: Trang |
 | 17 | [GM-35](../../tasks/backlog/GM-35.md), [GM-36](../../tasks/backlog/GM-36.md), [GM-37](../../tasks/backlog/GM-37.md), [GM-38](../../tasks/backlog/GM-38.md) | GM-35: Tuấn; GM-36: Tâm; GM-37: Tuấn; GM-38: Tâm |
-| 18 | [GM-53](../../tasks/backlog/GM-53.md), [GM-54](../../tasks/backlog/GM-54.md) | GM-53: Tuấn; GM-54: Trang |
+| 18 | [GM-53](../../tasks/backlog/GM-53.md), [GM-54](../../tasks/backlog/GM-54.md), [GM-65](../../tasks/backlog/GM-65.md) | GM-53: Tuấn; GM-54: Trang; GM-65: Trí |
 | 19 | [GM-58](../../tasks/backlog/GM-58.md), [GM-62](../../tasks/backlog/GM-62.md), [GM-63](../../tasks/backlog/GM-63.md) | GM-58: Vinh; GM-62: Trung; GM-63: Vinh |
 | 20 | [GM-59](../../tasks/backlog/GM-59.md), [GM-60](../../tasks/backlog/GM-60.md) | GM-59: Trí; GM-60: Tâm |
 | 21 | [GM-61](../../tasks/backlog/GM-61.md) | GM-61: Trí |
@@ -191,7 +192,10 @@ Lớp topo không là barrier cả nhóm hay deadline. Chỉ chờ dependency c�
 | [GM-49](../../tasks/backlog/GM-49.md), [GM-50](../../tasks/backlog/GM-50.md) | Đạt start gate riêng; contract/version chung; nhánh/file riêng; merge theo bảng trên. |
 | [GM-62](../../tasks/backlog/GM-62.md), [GM-63](../../tasks/backlog/GM-63.md) | Đạt start gate riêng; contract/version chung; nhánh/file riêng; merge theo bảng trên. |
 | [GM-62](../../tasks/backlog/GM-62.md), [GM-64](../../tasks/backlog/GM-64.md) | Đạt start gate riêng; contract/version chung; nhánh/file riêng; merge theo bảng trên. |
+| [GM-62](../../tasks/backlog/GM-62.md), [GM-65](../../tasks/backlog/GM-65.md) | Đạt start gate riêng; contract/version chung; nhánh/file riêng; merge theo bảng trên. |
 | [GM-63](../../tasks/backlog/GM-63.md), [GM-64](../../tasks/backlog/GM-64.md) | Đạt start gate riêng; contract/version chung; nhánh/file riêng; merge theo bảng trên. |
+| [GM-63](../../tasks/backlog/GM-63.md), [GM-65](../../tasks/backlog/GM-65.md) | Đạt start gate riêng; contract/version chung; nhánh/file riêng; merge theo bảng trên. |
+| [GM-64](../../tasks/backlog/GM-64.md), [GM-65](../../tasks/backlog/GM-65.md) | Đạt start gate riêng; contract/version chung; nhánh/file riêng; merge theo bảng trên. |
 
 Không liệt kê mọi cặp có thể song song. Chốt interface và file ownership trong draft PR trước viết; GM-02 UI structure / GM-03 BE structure / GM-04 fields là ba nhánh nền. GM-05 components và GM-07 client/mock có thể làm đồng thời sau đầu vào riêng; GM-08 import chờ schema GM-06. GM-09..14 màn mock nghiệm thu riêng sau components+contract, không chờ API nghiệp vụ. GM-15..23 hoàn thiện BE; GM-24..31 tích hợp UI/API/native; GM-32..34 kiểm thử và release. GM-35..38 chỉ merge sau core. Trạng thái GM-01 theo hồ sơ local: done; Project Done mở dependency baseline theo ADR-011 nhưng không tự viết lại review evidence local hoặc nghiệm thu supplement. Mock không đóng AC native/SQL/dataset thật của task tích hợp.
 

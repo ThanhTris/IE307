@@ -18,10 +18,11 @@ import type { DishSetupGateway } from '../services/dishSetupGateway';
 import { defaultScheduledTime, type SetupRoom, type SetupStage } from '../services/dishSetup';
 import { DishSetupScreen } from './DishSetupScreen';
 import { ToastNotice } from '../../../shared/ui/feedback/Toast';
+import type { FailureExit } from '../../../shared/errors/failure';
 
-export function DishSetupFlow({ gateway, onExit, onLobby, controls, initialInvitees, initialStage = 'setup', initialPanel, initialSchedule, initialSearch, requestId, now = Date.now, canInviteFriends = true }: {
+export function DishSetupFlow({ gateway, onExit, onFailureExit, onLobby, controls, initialInvitees, initialStage = 'setup', initialPanel, initialSchedule, initialSearch, requestId, now = Date.now, canInviteFriends = true }: {
   canInviteFriends?: boolean;
-  gateway: DishSetupGateway; onExit: () => void; onLobby?: (room: SetupRoom, inviteeIds: string[]) => void; initialInvitees?: string[]; controls?: (locked: boolean, stage: SetupStage) => ReactNode;
+  gateway: DishSetupGateway; onExit: () => void; onFailureExit?: (exit: FailureExit) => void; onLobby?: (room: SetupRoom, inviteeIds: string[]) => void; initialInvitees?: string[]; controls?: (locked: boolean, stage: SetupStage) => ReactNode;
   initialStage?: 'setup' | 'preferences'; initialPanel?: 'schedule' | 'calendar' | 'friends' | 'discard'; initialSchedule?: string; initialSearch?: string;
   requestId?: () => string; now?: () => number;
 }) {
@@ -32,7 +33,19 @@ export function DishSetupFlow({ gateway, onExit, onLobby, controls, initialInvit
   const [cancelling, setCancelling] = useState(false);
   const closedNow = flow.data?.room?.state === 'CLOSED';
   const exited = useRef(false);
-  useEffect(() => { if (cancelling && closedNow && !exited.current) { exited.current = true; onExit(); } }, [cancelling, closedNow, onExit]);
+  useEffect(() => {
+    if (!closedNow || exited.current) return;
+    if (cancelling) { exited.current = true; onExit(); return; }
+    if (onFailureExit) {
+      exited.current = true;
+      onFailureExit({
+        code: 'ROOM_TERMINAL',
+        title: flow.data?.closedReason === 'cancelled'
+          ? (flow.data.canEditSettings ? 'Phòng đã bị hủy' : 'Chủ phòng đã hủy phòng')
+          : 'Phòng đã đóng',
+      });
+    }
+  }, [cancelling, closedNow, flow.data?.canEditSettings, flow.data?.closedReason, onExit, onFailureExit]);
   const locked = flow.phase !== 'idle';
   const mealGuard = useMealTimeGuard(next => { if (!locked && flow.data?.canEditSettings) flow.change(next); }, now);
   // Saving preferences goes straight to the lobby instead of an intermediate 'saved' screen.

@@ -561,6 +561,21 @@ export function subscribeToJoinLinks(options: JoinLinkListenerOptions): () => vo
     }
     latestSeq = seq;
     const guardedUrl = guardJoinRoomUrl(rawUrl) ?? rawUrl;
+    if (!isRoomJoinUrlOrPath(guardedUrl)) {
+      let benignAppLaunch = false;
+      if (!guardedUrl.includes('@') && !SUSPICIOUS_PARAM_REGEX.test(guardedUrl)) {
+        try {
+          const protocol = new URL(guardedUrl).protocol.toLowerCase();
+          if (ALLOWED_SCHEMES.has(protocol)) benignAppLaunch = true;
+        } catch {
+          if (guardedUrl.startsWith('gi-cung-duoc://')) benignAppLaunch = true;
+        }
+      }
+      if (benignAppLaunch) {
+        if (source === 'cold') options.onInitialUrlEmpty?.();
+        return;
+      }
+    }
     const parsed = parseJoinRoomUrl(guardedUrl);
     if (parsed.ok) {
       options.onJoinCode(parsed.code, parsed.rawUrl, source);

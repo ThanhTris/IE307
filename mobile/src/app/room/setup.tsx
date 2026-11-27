@@ -1,9 +1,10 @@
-import { useCallback, useEffect, useMemo } from 'react';
+import { useCallback, useEffect, useMemo, useRef } from 'react';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useRoomRepository } from '../../bootstrap/RoomRepositoryProvider';
 import { RequireActiveSession } from '../../features/auth/components/RequireActiveSession';
 import { DishSetupFlow } from '../../features/context/screens/DishSetupFlow';
 import { createLiveDishSetupGateway } from '../../features/context/services/liveDishSetupGateway';
+import { leaveAfterFailure } from '../../features/support/leaveAfterFailure';
 import { queueReady } from '../../features/rooms/services/readyQueue';
 import { createDurableRequestId } from '../../features/rooms/services/roomRepository';
 import type { SetupRoom } from '../../features/context/services/dishSetup';
@@ -21,6 +22,8 @@ export default function DishSetupRoute() {
   const roomId = typeof params.roomId === 'string' && params.roomId ? params.roomId : undefined;
   const initialStage = roomId && params.stage === 'preferences' ? 'preferences' : 'setup';
   const live = useRoomRepository();
+  const guest = useRef(live.user?.isGuest === true);
+  useEffect(() => { if (live.user) guest.current = live.user.isGuest === true; }, [live.user]);
   const back = () => router.dismissTo('/');
   // Friends picked during setup are invited from the lobby once the room exists.
   const toLobby = (room: SetupRoom, inviteeIds: string[]) => router.replace({ pathname: '/room/lobby', params: inviteeIds.length && !roomId ? { roomId: room.id, invite: inviteeIds.join(',') } : { roomId: room.id } });
@@ -42,6 +45,7 @@ export default function DishSetupRoute() {
         initialStage={initialStage}
         requestId={generateRequestId}
         onExit={back}
+        onFailureExit={exit => leaveAfterFailure(router, exit, { screen: 'room/setup', scope: 'room', isGuest: guest.current })}
         onLobby={toLobby}
         initialInvitees={live.user?.isGuest ? undefined : invitees}
         canInviteFriends={!live.user?.isGuest}
