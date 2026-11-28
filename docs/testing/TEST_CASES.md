@@ -1916,13 +1916,13 @@ Tổng cộng 194 test case, 15 module.
 | --- | --- | --- | --- | --- | --- | --- | --- |
 | TC-REL-001 | P0 | functional | e2e | Cài mới chạy được | REQ-REL-01 | — | Not run |
 | TC-REL-002 | P0 | functional | e2e | Nâng cấp từ bản trước giữ phiên | REQ-REL-01 | — | Not run |
-| TC-REL-003 | P0 | functional | unit | Bản app cũ thấy màn Cần cập nhật khi dưới phiên bản tối thiểu | REQ-REL-02 | — | Not run |
-| TC-REL-004 | P0 | resilience | unit | Không đọc được cấu hình phiên bản thì vẫn dùng được | REQ-REL-02 | — | Not run |
+| TC-REL-003 | P0 | functional | unit | Bản app cũ thấy màn Cần cập nhật khi dưới phiên bản tối thiểu | REQ-REL-02 | 2 | Not run |
+| TC-REL-004 | P0 | resilience | unit | Không đọc được cấu hình phiên bản thì vẫn dùng được | REQ-REL-02 | 1 | Not run |
 | TC-REL-005 | P0 | resilience | e2e | Backend tạm ngừng khi review store | REQ-REL-03 | — | Not run |
 | TC-REL-006 | P0 | functional | e2e | Liên kết chính sách và điều khoản mở được khi chưa đăng nhập | REQ-REL-04 | — | Not run |
 | TC-REL-007 | P1 | functional | component | Hiển thị phiên bản app | REQ-REL-04 | — | Not run |
-| TC-REL-008 | P0 | security | unit | Build release không có route dev hay nút QA | REQ-REL-05 | — | Not run |
-| TC-REL-009 | P0 | functional | component | Mục thông báo đẩy ẩn khi chưa cấu hình | REQ-REL-05 | — | Not run |
+| TC-REL-008 | P0 | security | unit | Build release không có route dev hay nút QA | REQ-REL-05 | 2 | Not run |
+| TC-REL-009 | P0 | functional | component | Mục thông báo đẩy ẩn khi chưa cấu hình | REQ-REL-05 | 1 | Not run |
 | TC-REL-010 | P1 | functional | e2e | Phiên bản và build ghi nhận đúng | REQ-REL-01 | — | Not run |
 | TC-REL-011 | P0 | privacy | e2e | Quyền camera và vị trí chỉ khi dùng, không chạy nền | REQ-ENTRY-02 | — | Not run |
 | TC-REL-012 | P0 | functional | e2e | Closed testing và hướng dẫn cho người review | REQ-REL-03 | — | Not run |
@@ -1954,7 +1954,7 @@ Tổng cộng 194 test case, 15 module.
 - **Các bước:**
   1. Mở app.
 - **Kết quả mong đợi:** Hiện màn Cần cập nhật kèm liên kết store.
-- **Tự động hóa:** chưa có — Tính năng của task release v1 chưa merge; test được thêm khi task đó hoàn tất (GM-56/57).
+- **Tự động hóa:** `mobile/tests/component/releaseSafetyAndMap.test.tsx (tag)`, `mobile/tests/unit/minimumVersion.test.ts (tag)`
 
 ### TC-REL-004 — Không đọc được cấu hình phiên bản thì vẫn dùng được
 
@@ -1963,7 +1963,7 @@ Tổng cộng 194 test case, 15 module.
 - **Các bước:**
   1. Mở app.
 - **Kết quả mong đợi:** Vẫn cho dùng bình thường, không chặn người dùng.
-- **Tự động hóa:** chưa có — Tính năng của task release v1 chưa merge; test được thêm khi task đó hoàn tất (GM-56/57).
+- **Tự động hóa:** `mobile/tests/unit/minimumVersion.test.ts (tag)`
 
 ### TC-REL-005 — Backend tạm ngừng khi review store
 
@@ -2000,7 +2000,7 @@ Tổng cộng 194 test case, 15 module.
   1. Mở /dev/icons và các route dev.
   2. Mở màn thông báo đẩy.
 - **Kết quả mong đợi:** Route dev chuyển về Home; không có nút QA; cờ giả lập vô hiệu.
-- **Tự động hóa:** chưa có — Tính năng của task release v1 chưa merge; test được thêm khi task đó hoàn tất (GM-56/57).
+- **Tự động hóa:** `mobile/tests/component/releaseSafetyAndMap.test.tsx (tag)`, `mobile/tests/unit/releaseConfigSafety.test.ts (tag)`
 
 ### TC-REL-009 — Mục thông báo đẩy ẩn khi chưa cấu hình
 
@@ -2009,7 +2009,7 @@ Tổng cộng 194 test case, 15 module.
 - **Các bước:**
   1. Mở Hồ sơ và Cài đặt.
 - **Kết quả mong đợi:** Không hiện mục thông báo đẩy hay lời nhắc thiếu cấu hình; hộp thư và banner vẫn dùng được.
-- **Tự động hóa:** chưa có — Tính năng của task release v1 chưa merge; test được thêm khi task đó hoàn tất (GM-56/57).
+- **Tự động hóa:** `mobile/tests/component/releaseSafetyAndMap.test.tsx (tag)`
 
 ### TC-REL-010 — Phiên bản và build ghi nhận đúng
 

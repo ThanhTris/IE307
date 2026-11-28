@@ -811,9 +811,9 @@ describe('LiveDishResultScreen & DishResultEntry Component Tests', () => {
       // Verifies winner and Top 3 are strictly preserved in real mode even with no key
       expect(screen.getAllByText('Phở bò tái nạm').length).toBeGreaterThan(0);
       expect(screen.getByText('Cơm tấm sườn bì')).toBeTruthy();
-      // No key: the embedded map shows instead, without a stray "no map" caption under it.
-      expect(await screen.findByTestId('embedded-dish-map')).toBeTruthy();
-      expect(screen.queryByText('Chưa thể hiển thị bản đồ')).toBeNull();
+      // No key: do not render legacy output=embed WebView; keep "Mở Google Maps" fallback button active.
+      expect(screen.queryByTestId('embedded-dish-map')).toBeNull();
+      expect(await screen.findByRole('button', { name: 'Mở Google Maps' })).toBeOnTheScreen();
     });
 
     test('DishResultEntry forwards placesConfig to LiveDishResultScreen in real mode', async () => {

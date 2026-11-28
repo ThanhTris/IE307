@@ -40,12 +40,14 @@ export function PermissionsWelcomeScreen({ service, history, onDone }: { service
     return () => { active = false; };
   }, [service]);
 
+  const visibleKinds = KINDS.filter(kind => kind !== 'notifications' || states.notifications !== 'unavailable');
+
   const finish = async (askPermissions: boolean) => {
     if (busy) return;
     setBusy(true);
     try {
       if (askPermissions) {
-        for (const kind of KINDS) {
+        for (const kind of visibleKinds) {
           const outcome = await service.ensure(kind);
           setStates(current => ({ ...current, [kind]: outcome === 'granted' ? 'granted' : outcome === 'unavailable' ? 'unavailable' : 'denied' }));
         }
@@ -64,7 +66,7 @@ export function PermissionsWelcomeScreen({ service, history, onDone }: { service
       <Text accessibilityRole="header" style={[styles.title, { color: colors.text }, textStyle(700)]}>Cho phép để dùng đầy đủ</Text>
       <Text style={[styles.subtitle, { color: colors.muted }, textStyle(400)]}>Bạn có thể đổi lại bất cứ lúc nào trong Cài đặt của điện thoại.</Text>
       <View style={styles.list}>
-        {KINDS.map(kind => {
+        {visibleKinds.map(kind => {
           const state = states[kind];
           const note = state === 'granted' ? 'Đã cho phép' : state === 'unavailable' ? 'Chưa hỗ trợ trên bản này' : '';
           return <View key={kind} style={[styles.row, { borderColor: colors.line, backgroundColor: colors.surface }]}>

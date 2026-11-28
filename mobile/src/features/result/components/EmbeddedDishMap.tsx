@@ -6,27 +6,34 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { ToastHost } from '../../../shared/ui/feedback/Toast';
 import { useShellTheme } from '../../../shared/lib/useShellTheme';
 import { SkeletonBlock } from '../../../shared/ui';
+import { getPlacesApiKeyFromEnv } from '../services/placesRepository';
 
-/** Google Maps search for the winning dish, embedded without an API key. Only google.com/maps pages may load. */
-export function dishMapUrl(dishName: string): string {
+/** Official Google Maps Embed API v1 URL when an API key is configured; returns null otherwise. */
+export function dishMapUrl(dishName: string, apiKey: string | undefined = getPlacesApiKeyFromEnv()): string | null {
+  const trimmedKey = apiKey?.trim();
+  if (!trimmedKey) return null;
   const query = `quán ${dishName.trim()}`.trim();
-  return `https://www.google.com/maps?q=${encodeURIComponent(query)}&hl=vi&output=embed`;
+  return `https://www.google.com/maps/embed/v1/search?key=${encodeURIComponent(trimmedKey)}&q=${encodeURIComponent(query)}&language=vi`;
 }
 
-/** Google refuses the embed page when opened on its own ("must be used in an iframe"), so it is wrapped in one. */
-export function dishMapHtml(dishName: string): string {
-  return `<!doctype html><html><head><meta name="viewport" content="width=device-width,initial-scale=1"><style>html,body{margin:0;height:100%;background:#f3f4f1}iframe{border:0;width:100%;height:100%}</style></head><body><iframe src="${dishMapUrl(dishName)}" allowfullscreen loading="eager" referrerpolicy="no-referrer-when-downgrade"></iframe></body></html>`;
+/** Official Maps Embed iframe wrapper when an API key is present; returns null otherwise so fallback buttons are used. */
+export function dishMapHtml(dishName: string, apiKey?: string): string | null {
+  const embedUrl = dishMapUrl(dishName, apiKey);
+  if (!embedUrl) return null;
+  return `<!doctype html><html><head><meta name="viewport" content="width=device-width,initial-scale=1"><style>html,body{margin:0;height:100%;background:#f3f4f1}iframe{border:0;width:100%;height:100%}</style></head><body><iframe src="${embedUrl}" allowfullscreen loading="eager" referrerpolicy="origin"></iframe></body></html>`;
 }
 
 const BASE_URL = 'https://localhost/';
 const allowed = (url: string) => url === 'about:blank' || url === BASE_URL || /^https:\/\/([a-z0-9-]+\.)*(google\.com|gstatic\.com|googleapis\.com)(\/|\?|$)/i.test(url);
 
-export function EmbeddedDishMap({ dishName, height = 380, onFailed }: { dishName: string; height?: number; onFailed?: () => void }) {
+export function EmbeddedDishMap({ dishName, apiKey, height = 380, onFailed }: { dishName: string; apiKey?: string; height?: number; onFailed?: () => void }) {
   const { colors } = useShellTheme();
   const [expanded, setExpanded] = useState(false);
   const insets = useSafeAreaInsets();
+  const html = dishMapHtml(dishName, apiKey);
+  if (!html) return null;
   return <>
-    <MapFrame dishName={dishName} height={height} onFailed={onFailed} testID="embedded-dish-map">
+    <MapFrame dishName={dishName} html={html} height={height} onFailed={onFailed} testID="embedded-dish-map">
       <Pressable accessibilityRole="button" accessibilityLabel="Phóng to bản đồ" hitSlop={8} onPress={() => setExpanded(true)}
         style={[styles.corner, { backgroundColor: colors.surface, borderColor: colors.line }]}>
         <Ionicons name="expand" size={20} color={colors.text} />
@@ -34,7 +41,7 @@ export function EmbeddedDishMap({ dishName, height = 380, onFailed }: { dishName
     </MapFrame>
     <Modal visible={expanded} animationType="slide" onRequestClose={() => setExpanded(false)}>
       <View style={[styles.full, { backgroundColor: colors.surface }]}>
-        <MapFrame dishName={dishName} height="100%" testID="embedded-dish-map-full">
+        <MapFrame dishName={dishName} html={html} height="100%" testID="embedded-dish-map-full">
           <Pressable accessibilityRole="button" accessibilityLabel="Đóng bản đồ" hitSlop={8} onPress={() => setExpanded(false)}
             // Below the status bar / notch on every phone, not a fixed offset.
             style={[styles.corner, { top: insets.top + 10, backgroundColor: colors.surface, borderColor: colors.line }]}>
@@ -48,7 +55,7 @@ export function EmbeddedDishMap({ dishName, height = 380, onFailed }: { dishName
   </>;
 }
 
-function MapFrame({ dishName, height, onFailed, testID, children }: { dishName: string; height: number | `${number}%`; onFailed?: () => void; testID: string; children?: React.ReactNode }) {
+function MapFrame({ dishName, html, height, onFailed, testID, children }: { dishName: string; html: string; height: number | `${number}%`; onFailed?: () => void; testID: string; children?: React.ReactNode }) {
   const { colors } = useShellTheme();
   const [loading, setLoading] = useState(true);
   // Never leave the skeleton up forever if the page does not report that it finished.
@@ -56,7 +63,7 @@ function MapFrame({ dishName, height, onFailed, testID, children }: { dishName: 
   const full = height === '100%';
   return <View testID={testID} style={[styles.frame, full && styles.frameFull, { height, borderColor: colors.line, backgroundColor: colors.warm }]}>
     <WebView
-      source={{ html: dishMapHtml(dishName), baseUrl: BASE_URL }}
+      source={{ html, baseUrl: BASE_URL }}
       accessibilityLabel={`Bản đồ Google Maps tìm quán ${dishName}`}
       originWhitelist={['https://*', 'about:blank']}
       onShouldStartLoadWithRequest={request => allowed(request.url)}

@@ -60,10 +60,10 @@ Sinh bằng `python scripts/test_cases.py --write`; không sửa tay. Yêu cầu
 | REQ-UI-03 | P0 | TalkBack/VoiceOver đọc đúng nhãn và vai trò, vùng chạm tối thiểu 48dp, có nút thay cử chỉ vuốt, giảm chuyển động được tôn trọng (Active) | TC-RES-015, TC-UI-003, TC-UI-004, TC-UI-005, TC-VOTE1-005 | 5/5 | 3 | 0 |
 | REQ-UI-04 | P0 | Mọi màn có trạng thái loading, rỗng, lỗi, thử lại; chế độ tối không làm mất nội dung hay độ tương phản (Active) | TC-HIS-009, TC-RES-013, TC-SOC-004, TC-UI-007, TC-UI-008, TC-UI-009 | 5/6 | 5 | 0 |
 | REQ-REL-01 | P0 | Cài mới chạy được; nâng cấp từ bản trước giữ phiên và dữ liệu cục bộ hợp lệ (Active) | TC-REL-001, TC-REL-002, TC-REL-010 | 0/3 | 0 | 0 |
-| REQ-REL-02 | P0 | Cổng phiên bản tối thiểu: bản thấp hơn thấy màn "Cần cập nhật" kèm liên kết store; không đọc được cấu hình thì vẫn dùng bình thường (Active) | TC-REL-003, TC-REL-004 | 0/2 | 0 | 0 |
+| REQ-REL-02 | P0 | Cổng phiên bản tối thiểu: bản thấp hơn thấy màn "Cần cập nhật" kèm liên kết store; không đọc được cấu hình thì vẫn dùng bình thường (Active) | TC-REL-003, TC-REL-004 | 2/2 | 0 | 0 |
 | REQ-REL-03 | P0 | Offline hoặc backend lỗi: app không crash, báo lỗi rõ và cho thử lại; không giả offline nhóm (Active) | TC-RT-010, TC-REL-005, TC-REL-012 | 1/3 | 1 | 0 |
 | REQ-REL-04 | P0 | Liên kết chính sách quyền riêng tư, điều khoản, hỗ trợ và hướng dẫn xóa dữ liệu mở được khi chưa đăng nhập; phiên bản app hiển thị (Active) | TC-REL-006, TC-REL-007 | 0/2 | 0 | 0 |
-| REQ-REL-05 | P0 | Build release không chứa route dev, nút QA hay cờ giả lập; mục thông báo đẩy ẩn khi chưa cấu hình (Active) | TC-REL-008, TC-REL-009 | 0/2 | 0 | 0 |
+| REQ-REL-05 | P0 | Build release không chứa route dev, nút QA hay cờ giả lập; mục thông báo đẩy ẩn khi chưa cấu hình (Active) | TC-REL-008, TC-REL-009 | 2/2 | 0 | 0 |
 | REQ-IOS-01 | P0 | iOS: quét QR bằng camera, từ chối quyền thì nhập mã tay; mô tả quyền hiển thị đúng (Active) | TC-IOS-001, TC-IOS-002 | 0/2 | 0 | 0 |
 | REQ-IOS-02 | P0 | iOS: vị trí chỉ khi dùng, từ chối thì Places giữ nguyên kết quả; phiên lưu bằng Keychain khôi phục sau khi mở lại (Active) | TC-IOS-003, TC-IOS-004 | 0/2 | 0 | 0 |
 | REQ-IOS-03 | P0 | iOS: liên kết mở app khi lạnh và khi nóng, tai thỏ, bàn phím và cử chỉ Back hoạt động (Active) | TC-IOS-005, TC-IOS-006 | 0/2 | 0 | 0 |
@@ -128,6 +128,10 @@ Sinh bằng `python scripts/test_cases.py --write`; không sửa tay. Yêu cầu
 | TC-RT-010 | `mobile/tests/component/liveRoomLifecycle.test.tsx::P5: RoomRepositoryProvider throws when forcedMode=real and publicKey is missing`<br>`mobile/tests/integration/gm32ClientStates.test.tsx::G02 inbox distinguishes a failed request from an empty authenticated page` |
 | TC-RT-011 | `mobile/tests/unit/inboxRealtime.test.ts::an expired token closes the channel and it joins again`<br>`mobile/tests/unit/inboxRealtime.test.ts::stopping closes the socket and cancels every timer` |
 | TC-RT-012 | `mobile/tests/unit/roomRealtime.test.ts::temporary token refresh failures keep both retries alive until the room reconnects` |
+| TC-REL-003 | `mobile/tests/component/releaseSafetyAndMap.test.tsx (tag)`<br>`mobile/tests/unit/minimumVersion.test.ts (tag)` |
+| TC-REL-004 | `mobile/tests/unit/minimumVersion.test.ts (tag)` |
+| TC-REL-008 | `mobile/tests/component/releaseSafetyAndMap.test.tsx (tag)`<br>`mobile/tests/unit/releaseConfigSafety.test.ts (tag)` |
+| TC-REL-009 | `mobile/tests/component/releaseSafetyAndMap.test.tsx (tag)` |
 | TC-RES-001 | `mobile/tests/component/liveDishResultScreen.test.tsx::renders DECIDED result with Top 3 podium, winner and price`<br>`mobile/tests/component/dishResultPodium.test.tsx::podium %s shows one dish on each pedestal, in server order` |
 | TC-RES-002 | `mobile/tests/unit/resultRepository.test.ts::maps valid tied podium (dense ranks 1, 1, 2)`<br>`mobile/tests/component/liveDishResultScreen.test.tsx::puts tied dishes on separate pedestals in server order`<br>`mobile/tests/unit/podiumOrder.test.ts::keeps score order and the server order for equal scores` |
 | TC-RES-003 | `supabase/tests/http/GM-20-canonical.http`<br>`supabase/tests/http/GM-21-canonical.http`<br>`supabase/tests/http/GM-57.http (tag)`<br>`scripts/e2e/two_client_flow.mjs (tag)` |

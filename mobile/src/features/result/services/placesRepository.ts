@@ -1,5 +1,7 @@
 import { Linking } from 'react-native';
+import Constants from 'expo-constants';
 import type { ReadResult } from '../../../data/api/contracts';
+import { isDevRuntime } from '../../../shared/lib/appEnv';
 import {
   type LocationAdapter,
   type LocationCoordinates,
@@ -12,8 +14,13 @@ import type { NearbyPlace, NearbyState, NearbyStatus } from './resultPresentatio
 import type { FetchNearbyPlacesParams } from './resultRepository';
 
 /**
- * GM-30 — Places repository and Google Places client integration.
+ * GM-30 / GM-54 — Places repository and Google Places client integration.
  */
+
+export const DEFAULT_ANDROID_PACKAGE = 'vn.gicungduoc.mobile';
+export const DEFAULT_PLACES_CACHE_TTL_MS = 15 * 60 * 1000;
+const MAX_PLACES_CACHE_ENTRIES = 30;
+const PLACES_FIELD_MASK = 'places.id,places.displayName,places.formattedAddress,places.location';
 
 export interface PlacesConfig {
   apiKey?: string;
@@ -21,6 +28,45 @@ export interface PlacesConfig {
   radiusM?: number;
   maxResults?: number;
   isDevSimulated?: boolean;
+  androidPackage?: string;
+  androidCertSha1?: string;
+  cacheTtlMs?: number;
+}
+
+/** Normalize Android signing SHA-1 hex (strip colons/whitespace, uppercase 40 hex chars). */
+export function normalizeAndroidCertSha1(raw?: string): string | undefined {
+  const cleaned = raw?.replace(/[:\s-]/g, '').trim().toUpperCase();
+  return cleaned && /^[0-9A-F]{40}$/.test(cleaned) ? cleaned : undefined;
+}
+
+export function getAndroidPackageFromConfig(): string {
+  return Constants.expoConfig?.android?.package?.trim() || DEFAULT_ANDROID_PACKAGE;
+}
+
+export function getAndroidCertSha1FromEnv(): string | undefined {
+  const extraCert = typeof Constants.expoConfig?.extra?.androidCertSha1 === 'string'
+    ? Constants.expoConfig.extra.androidCertSha1
+    : undefined;
+  return normalizeAndroidCertSha1(process.env.EXPO_PUBLIC_ANDROID_CERT_SHA1 ?? extraCert);
+}
+
+/** Build Google Places (New) HTTP headers including Android app restriction headers. */
+export function buildPlacesRequestHeaders(params: {
+  apiKey: string;
+  androidPackage?: string;
+  androidCertSha1?: string;
+}): Record<string, string> {
+  const headers: Record<string, string> = {
+    'Content-Type': 'application/json',
+    'X-Goog-Api-Key': params.apiKey,
+    'X-Goog-FieldMask': PLACES_FIELD_MASK,
+    'X-Android-Package': params.androidPackage?.trim() || DEFAULT_ANDROID_PACKAGE,
+  };
+  const cert = normalizeAndroidCertSha1(params.androidCertSha1);
+  if (cert) {
+    headers['X-Android-Cert'] = cert;
+  }
+  return headers;
 }
 
 export interface PlacesRepository {
@@ -54,9 +100,16 @@ interface GooglePlacesResponse {
   error?: { code?: number; message?: string; status?: string };
 }
 
+interface CachedPlacesEntry {
+  status: 'ready' | 'empty';
+  places: NearbyPlace[];
+  expiresAt: number;
+}
+
 export class LivePlacesRepository implements PlacesRepository {
   private readonly locationAdapter: LocationAdapter;
   private readonly config: PlacesConfig;
+  private readonly responseCache = new Map<string, CachedPlacesEntry>();
   private currentAbortController: AbortController | null = null;
   private epoch = 0;
   private disposed = false;
@@ -228,25 +281,50 @@ export class LivePlacesRepository implements PlacesRepository {
       };
     }
 
+    const language = this.config.language ?? 'vi';
+    const radiusM = this.config.radiusM ?? DEFAULT_PLACES_RADIUS_M;
+    const maxResults = this.config.maxResults ?? DEFAULT_MAX_PLACES;
+    const cacheTtlMs = this.config.cacheTtlMs ?? DEFAULT_PLACES_CACHE_TTL_MS;
+    const cacheKey = this.buildCacheKey(dishName, coords, language, radiusM, maxResults);
+
+    if (cacheTtlMs > 0) {
+      const cached = this.responseCache.get(cacheKey);
+      if (cached) {
+        if (Date.now() < cached.expiresAt) {
+          return {
+            ok: true,
+            data: {
+              resultId,
+              winnerDishId,
+              status: cached.status,
+              places: cached.places.map(place => ({ ...place })),
+              fetchedAt: new Date().toISOString(),
+            },
+          };
+        }
+        this.responseCache.delete(cacheKey);
+      }
+    }
+
     // Real Google Places API (New) Call directly from app
     try {
       const response = await fetch(GOOGLE_PLACES_API_URL, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'X-Goog-Api-Key': apiKey,
-          'X-Goog-FieldMask': 'places.id,places.displayName,places.formattedAddress,places.location',
-        },
+        headers: buildPlacesRequestHeaders({
+          apiKey,
+          androidPackage: this.config.androidPackage ?? getAndroidPackageFromConfig(),
+          androidCertSha1: this.config.androidCertSha1 ?? getAndroidCertSha1FromEnv(),
+        }),
         body: JSON.stringify({
           textQuery: `quán ${dishName}`,
-          languageCode: this.config.language ?? 'vi',
+          languageCode: language,
           locationBias: coords ? {
             circle: {
               center: { latitude: coords.latitude, longitude: coords.longitude },
-              radius: this.config.radiusM ?? DEFAULT_PLACES_RADIUS_M,
+              radius: radiusM,
             },
           } : undefined,
-          maxResultCount: this.config.maxResults ?? DEFAULT_MAX_PLACES,
+          maxResultCount: maxResults,
         }),
         signal: abortController.signal,
       });
@@ -298,12 +376,21 @@ export class LivePlacesRepository implements PlacesRepository {
         }];
       });
 
+      const status: 'ready' | 'empty' = places.length > 0 ? 'ready' : 'empty';
+      if (cacheTtlMs > 0) {
+        this.writeCache(cacheKey, {
+          status,
+          places: places.map(place => ({ ...place })),
+          expiresAt: Date.now() + cacheTtlMs,
+        });
+      }
+
       return {
         ok: true,
         data: {
           resultId,
           winnerDishId,
-          status: places.length > 0 ? 'ready' : 'empty',
+          status,
           places,
           fetchedAt: new Date().toISOString(),
         },
@@ -368,8 +455,35 @@ export class LivePlacesRepository implements PlacesRepository {
     ];
   }
 
+  private buildCacheKey(
+    dishName: string,
+    coords: LocationCoordinates | null,
+    language: string,
+    radiusM: number,
+    maxResults: number,
+  ): string {
+    const normalizedDish = dishName.trim().toLocaleLowerCase('vi');
+    const coordPart = coords
+      ? `${(Math.round(coords.latitude * 1000) / 1000).toFixed(3)},${(Math.round(coords.longitude * 1000) / 1000).toFixed(3)}`
+      : 'no-coords';
+    return `${normalizedDish}|${coordPart}|${language}|${radiusM}|${maxResults}`;
+  }
+
+  private writeCache(key: string, entry: CachedPlacesEntry): void {
+    if (this.responseCache.has(key)) {
+      this.responseCache.delete(key);
+    } else if (this.responseCache.size >= MAX_PLACES_CACHE_ENTRIES) {
+      const oldestKey = this.responseCache.keys().next().value;
+      if (oldestKey !== undefined) {
+        this.responseCache.delete(oldestKey);
+      }
+    }
+    this.responseCache.set(key, entry);
+  }
+
   dispose(): void {
     this.disposed = true;
+    this.responseCache.clear();
     if (this.currentAbortController) {
       this.currentAbortController.abort();
       this.currentAbortController = null;
@@ -432,11 +546,14 @@ export function createPlacesRepository(options: {
   isDevSimulated?: boolean;
   apiKey?: string;
   locationAdapter?: LocationAdapter;
+  androidPackage?: string;
+  androidCertSha1?: string;
+  cacheTtlMs?: number;
 } = {}): PlacesRepository {
   const envKey = getPlacesApiKeyFromEnv();
   const effectiveKey = options.apiKey ?? envKey;
   const envSimulated = isPlacesSimulatedFromEnv();
-  const isDev = typeof __DEV__ !== 'undefined' ? Boolean(__DEV__) : process.env.NODE_ENV !== 'production';
+  const isDev = isDevRuntime();
   const effectiveSimulated = options.isDevSimulated !== undefined
     ? (isDev ? options.isDevSimulated : false)
     : (isDev && envSimulated);
@@ -446,6 +563,9 @@ export function createPlacesRepository(options: {
     config: {
       apiKey: effectiveKey,
       isDevSimulated: effectiveSimulated,
+      androidPackage: options.androidPackage ?? getAndroidPackageFromConfig(),
+      androidCertSha1: options.androidCertSha1 ?? getAndroidCertSha1FromEnv(),
+      cacheTtlMs: options.cacheTtlMs,
     },
   });
 }

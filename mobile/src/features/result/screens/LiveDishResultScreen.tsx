@@ -27,6 +27,7 @@ import {
 } from '../services/placesRepository';
 import { openExternalAction } from '../services/externalLinks';
 import { defaultResultMapRenderer } from '../components/DefaultResultMapView';
+import { isDevRuntime } from '../../../shared/lib/appEnv';
 import { LiveResultMapView } from '../components/LiveResultMapView';
 
 export interface LiveDishResultScreenProps {
@@ -57,7 +58,7 @@ export function LiveDishResultScreen({
   pollIntervalMs,
 }: LiveDishResultScreenProps) {
   const live = useRoomRepository();
-  const isDev = typeof __DEV__ !== 'undefined' ? Boolean(__DEV__) : process.env.NODE_ENV !== 'production';
+  const isDev = isDevRuntime();
   const envSimulated = isPlacesSimulatedFromEnv();
   const effectiveSimulated = placesConfig?.isDevSimulated !== undefined
     ? (isDev ? placesConfig.isDevSimulated : false)
@@ -325,6 +326,7 @@ export function LiveDishResultScreen({
       nearby={effectiveNearby}
       artworkSources={artworkSources}
       renderMap={renderMap}
+      mapApiKey={placesConfig?.apiKey}
       onHome={onHome}
       onNewSession={onNewSession}
       onRetryResult={handleRetryResult}

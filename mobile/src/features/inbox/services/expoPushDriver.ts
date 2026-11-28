@@ -65,6 +65,16 @@ function available(): boolean {
     && Constants.appOwnership === AppOwnership.Expo);
 }
 
+/** True when an EAS project ID is configured via env or Expo constants. */
+export function hasEasProjectId(): boolean {
+  return Boolean(projectId());
+}
+
+/** True when remote push is configured for this build (EAS Project ID set, or QA push in dev). */
+export function isPushFeatureConfigured(): boolean {
+  return hasEasProjectId() || isGm29QaPushEnabled();
+}
+
 export function pushSetupIssue(): 'android-build-required' | 'eas-project-id-required' | undefined {
   if (!available()) return 'android-build-required';
   if (isGm29QaPushEnabled()) return undefined;

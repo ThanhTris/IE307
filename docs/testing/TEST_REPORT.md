@@ -3,7 +3,7 @@
 Sinh bằng `python scripts/test_cases.py --write` từ `docs/testing/cases` và `docs/testing/results`; không sửa tay. `Not run` nghĩa là chưa có kết quả được ghi, không phải đạt.
 
 - Tổng số test case: **194** (15 module)
-- Có liên kết test tự động: **149**; chưa có: **45**
+- Có liên kết test tự động: **153**; chưa có: **41**
 - Trạng thái: Pass 83, Fail 1, Blocked 0, Partial 10, Not run 100
 
 ## Theo module
@@ -95,13 +95,9 @@ Sinh bằng `python scripts/test_cases.py --write` từ `docs/testing/cases` và
 | TC-RT-013 | e2e |  |
 | TC-REL-001 | e2e |  |
 | TC-REL-002 | e2e |  |
-| TC-REL-003 | unit | Tính năng của task release v1 chưa merge; test được thêm khi task đó hoàn tất (GM-56/57). |
-| TC-REL-004 | unit | Tính năng của task release v1 chưa merge; test được thêm khi task đó hoàn tất (GM-56/57). |
 | TC-REL-005 | e2e |  |
 | TC-REL-006 | e2e |  |
 | TC-REL-007 | component | Tính năng của task release v1 chưa merge; test được thêm khi task đó hoàn tất (GM-56/57). |
-| TC-REL-008 | unit | Tính năng của task release v1 chưa merge; test được thêm khi task đó hoàn tất (GM-56/57). |
-| TC-REL-009 | component | Tính năng của task release v1 chưa merge; test được thêm khi task đó hoàn tất (GM-56/57). |
 | TC-REL-010 | e2e |  |
 | TC-REL-011 | e2e |  |
 | TC-REL-012 | e2e |  |
