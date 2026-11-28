@@ -1,4 +1,4 @@
--- GM-54 / 0067: minimum Android app version config and public.get_app_version_policy(text) RPC.
+-- GM-54 / 0069: minimum Android app version config and public.get_app_version_policy(text) RPC.
 begin;
 create extension if not exists pgtap with schema extensions;
 set local search_path = pg_catalog, public, extensions;
@@ -10,7 +10,7 @@ select extensions.ok(exists(
   where schema_version = '0.32.0'
     and contract_id = 'release-v1/2026-11-23/GM-54.2'
     and upstream_revision = 'GM-35/0066; GM-54 minimum version gate'
-), '0067 migration schema version 0.32.0 is registered');
+), '0069 migration schema version 0.32.0 is registered');
 
 select extensions.ok(exists(
   select 1
