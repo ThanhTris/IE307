@@ -1,21 +1,27 @@
 import * as SecureStore from 'expo-secure-store';
 
-/** Set once the first-run permissions screen was shown to this account on this phone (answered or skipped). */
+/** Installation-level flag. Actual grants are always read from the OS by each feature. */
 const ONBOARDED_KEY = 'gcd.permissions.onboarded.v1';
-/** Remembered in memory too, so a failed SecureStore write cannot send the person back to the screen on every visit. */
-const doneThisRun = new Set<string>();
-const keyFor = (userId?: string) => userId ? `${ONBOARDED_KEY}.${userId}` : ONBOARDED_KEY;
+let doneThisRun = false;
 
 export async function isPermissionsOnboarded(userId?: string): Promise<boolean> {
-  if (doneThisRun.has(keyFor(userId))) return true;
+  if (doneThisRun) return true;
   try {
-    if ((await SecureStore.getItemAsync(keyFor(userId))) === 'true') return true;
-    // Before accounts had their own flag it was one per phone: someone who already answered is not asked again.
-    return userId ? (await SecureStore.getItemAsync(ONBOARDED_KEY)) === 'true' : false;
+    const installationStatus = await SecureStore.getItemAsync(ONBOARDED_KEY);
+    if (installationStatus === 'true') {
+      doneThisRun = true;
+      return true;
+    }
+    if (installationStatus === 'false') return false; // An explicit reset supersedes legacy account flags.
+    // Promote the existing account-scoped flag the first time an upgraded app sees it.
+    if (userId && (await SecureStore.getItemAsync(`${ONBOARDED_KEY}.${userId}`)) === 'true') {
+      await markPermissionsOnboarded();
+    }
+    return doneThisRun;
   } catch { return true; }
 }
 
-export async function markPermissionsOnboarded(userId?: string): Promise<void> {
-  doneThisRun.add(keyFor(userId));
-  try { await SecureStore.setItemAsync(keyFor(userId), 'true'); } catch { /* remembered in memory for this run */ }
+export async function markPermissionsOnboarded(): Promise<void> {
+  doneThisRun = true;
+  try { await SecureStore.setItemAsync(ONBOARDED_KEY, 'true'); } catch { /* remembered in memory for this run */ }
 }

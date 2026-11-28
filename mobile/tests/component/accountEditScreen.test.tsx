@@ -85,7 +85,31 @@ test('password validation identifies each field and provider credential errors t
   await fireEvent.press(screen.getByRole('button', { name: 'Lưu mật khẩu mới' }));
   await fixture.finish({ ok: false, error: { messageKey: 'AUTH_REQUIRED', details: { reason: 'invalid_credentials' } } });
   expectFieldError('Mật khẩu hiện tại', 'Mật khẩu hiện tại chưa đúng.');
+  expect(screen.getByLabelText('Mật khẩu hiện tại')).toHaveProp('value', '');
+  expect(screen.getByLabelText('Mật khẩu mới')).toHaveProp('value', 'Fixture-after!');
+  expect(screen.getByLabelText('Nhập lại mật khẩu mới')).toHaveProp('value', 'Fixture-after!');
+});
+
+test('an invalid new password clears both new fields and keeps the current password', async () => {
+  const fixture = setup('change-password');
+  await fixture.render();
+  await fireEvent.changeText(screen.getByLabelText('Mật khẩu hiện tại'), 'Fixture-before!');
+  await fireEvent.changeText(screen.getByLabelText('Mật khẩu mới'), 'short');
+  await fireEvent.changeText(screen.getByLabelText('Nhập lại mật khẩu mới'), 'short');
+  await fireEvent.press(screen.getByRole('button', { name: 'Lưu mật khẩu mới' }));
+  expect(screen.getByLabelText('Mật khẩu hiện tại')).toHaveProp('value', 'Fixture-before!');
   expect(screen.getByLabelText('Mật khẩu mới')).toHaveProp('value', '');
+  expect(screen.getByLabelText('Nhập lại mật khẩu mới')).toHaveProp('value', '');
+  expect(fixture.account.changePassword).not.toHaveBeenCalled();
+
+  await fireEvent.changeText(screen.getByLabelText('Mật khẩu mới'), 'Fixture-before!');
+  await fireEvent.changeText(screen.getByLabelText('Nhập lại mật khẩu mới'), 'Fixture-before!');
+  await fireEvent.press(screen.getByRole('button', { name: 'Lưu mật khẩu mới' }));
+  await fixture.finish({ ok: false, error: { messageKey: 'INVALID_INPUT', details: { reason: 'same_password' } } });
+  expectFieldError('Mật khẩu mới', 'Hãy chọn mật khẩu khác với mật khẩu hiện tại.');
+  expect(screen.getByLabelText('Mật khẩu hiện tại')).toHaveProp('value', 'Fixture-before!');
+  expect(screen.getByLabelText('Mật khẩu mới')).toHaveProp('value', '');
+  expect(screen.getByLabelText('Nhập lại mật khẩu mới')).toHaveProp('value', '');
 });
 
 test('successful password change confirms completion', async () => {

@@ -9,7 +9,7 @@ export interface SessionConfig {
   /** Required: clear ALL private cache/draft/outbox for the previous identity. */
   clearPrivateData: () => Promise<void>;
   onTokenChange?: (token: string | null) => void;
-  onAccountSessionChange?: (user: SessionUser | null, previousUser: SessionUser | null) => void;
+  onAccountSessionChange?: (user: SessionUser | null, previousUser: SessionUser | null, deletionStatus?: 'empty' | 'blocked') => void;
   now?: () => number;
   sleep?: (ms: number) => Promise<void>;
   random?: () => number;
@@ -21,6 +21,7 @@ interface AccountOperationContext {
   assertCurrent: () => void;
   requireSession: () => Promise<StoredSession>;
   adopt: (session: StoredSession, mode: 'sign-in' | 'link' | 'profile') => Promise<void>;
+  completeDeletion: (userId: string, clearDeletedData: () => Promise<void>) => Promise<void>;
 }
 
 /** Serialized token rotation + immediate logout invalidation; no implicit signup. */
@@ -30,6 +31,7 @@ export class SessionManager implements SessionApi {
   private status: SessionStatus = 'empty';
   private generation = 0;
   private queue: Promise<unknown> = Promise.resolve();
+  private pendingDeletedDataCleanup?: () => Promise<void>;
   constructor(config: SessionConfig) {
     if (typeof config.clearPrivateData !== 'function') throw new Error('Private cache cleanup is required');
     this.config = config;
@@ -55,9 +57,11 @@ export class SessionManager implements SessionApi {
     this.current = null;
     this.status = 'blocked';
     this.publish(null);
+    const clearDeletedData = this.pendingDeletedDataCleanup;
     const results = await Promise.allSettled([
       Promise.resolve().then(() => this.config.storage.clear()),
       Promise.resolve().then(() => this.config.clearPrivateData()),
+      Promise.resolve().then(clearDeletedData).then(() => { this.pendingDeletedDataCleanup = undefined; }),
     ]);
     if (results.some(result => result.status === 'rejected')) throw new AuthFailure({ messageKey: 'UNKNOWN_ERROR' });
     this.status = next;
@@ -217,14 +221,34 @@ export class SessionManager implements SessionApi {
     let generation = this.generation;
     return this.exclusive(async () => {
       const assertCurrent = () => this.check(generation);
-      const notify = (user: SessionUser | null, previousUser: SessionUser | null) => {
-        try { this.config.onAccountSessionChange?.(user, previousUser); } catch { /* Observer only. */ }
+      const notify = (user: SessionUser | null, previousUser: SessionUser | null, deletionStatus?: 'empty' | 'blocked') => {
+        try {
+          if (deletionStatus) this.config.onAccountSessionChange?.(user, previousUser, deletionStatus);
+          else this.config.onAccountSessionChange?.(user, previousUser);
+        } catch { /* Observer only. */ }
       };
       try {
         assertCurrent();
         if (this.status === 'blocked') throw new AuthFailure({ messageKey: 'UNKNOWN_ERROR' });
         const data = await work({
           assertCurrent,
+          completeDeletion: async (userId, clearDeletedData) => {
+            assertCurrent();
+            const previous = this.current?.user;
+            if (!previous || previous.id !== userId || this.status !== 'active') {
+              throw new AuthFailure({ messageKey: 'AUTH_REQUIRED' });
+            }
+            this.pendingDeletedDataCleanup = clearDeletedData;
+            const cleanup = this.cleanup('empty');
+            generation = this.generation;
+            try { await cleanup; }
+            catch {
+              if (this.generation === generation) notify(null, previous, 'blocked');
+              throw new AuthFailure({ messageKey: 'UNKNOWN_ERROR', details: { reason: 'LOCAL_CLEANUP' } });
+            }
+            assertCurrent();
+            notify(null, previous, 'empty');
+          },
           requireSession: async () => {
             assertCurrent();
             if (!this.current || this.status !== 'active') throw new AuthFailure({ messageKey: 'AUTH_REQUIRED' });

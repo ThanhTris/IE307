@@ -6,6 +6,8 @@ import * as SecureStore from 'expo-secure-store';
 import { createAuthenticatedApiClient, createSecureSessionStorage, type AccountService } from '../data/auth';
 import type { SessionIssue, SessionSnapshot, SessionStatus } from '../features/rooms/services/sessionState';
 import type { SessionUser } from '../data/api/contracts';
+import { getDurableOutbox } from '../data/local/outbox';
+import { createAccountDeletion, type AccountDeletion } from '../features/account/services/accountDeletion';
 import { clearPrivateHistoryCache } from '../features/history/services/historyRepository';
 import { clearVoteSession } from '../features/voting/services/voteSessionState';
 import { createNativePushService } from '../features/inbox/services/nativePush';
@@ -22,6 +24,7 @@ import {
 export interface RoomRepositoryContextValue {
   repository: RoomRepository;
   account?: AccountService;
+  accountDeletion?: AccountDeletion;
   status: SessionStatus;
   issue: SessionIssue;
   user: SessionUser | null;
@@ -74,16 +77,18 @@ function ConfiguredRoomRepositoryProvider({
 }: RoomRepositoryProviderProps) {
   const baseUrl = customBaseUrl ?? process.env.EXPO_PUBLIC_SUPABASE_URL ?? 'http://127.0.0.1:54321';
 
-  const { repository, account } = useMemo<{ repository: RoomRepository; account?: AccountService }>(() => {
+  const { repository, account, accountDeletion } = useMemo<{
+    repository: RoomRepository; account?: AccountService; accountDeletion?: AccountDeletion;
+  }>(() => {
     if (customRepository) return { repository: customRepository };
     const storage = createSecureSessionStorage();
-    const { session, client, account } = createAuthenticatedApiClient({
+    const { session, client, auth, account } = createAuthenticatedApiClient({
       baseUrl,
       publicKey,
       storage,
-      onAccountSessionChange: (user, previous) => {
-        if (previous && previous.id !== user?.id) clearVoteSession(previous.id);
-        liveRepository.publishAccountSession(user);
+      onAccountSessionChange: (user, previous, deletionStatus) => {
+        if (!deletionStatus && previous && previous.id !== user?.id) clearVoteSession(previous.id);
+        liveRepository.publishAccountSession(user, deletionStatus);
       },
       clearPrivateData: async () => {
         clearPrivateHistoryCache();
@@ -96,7 +101,19 @@ function ConfiguredRoomRepositoryProvider({
     });
     const liveRepository = new LiveRoomRepository({ client, session, sessionStorage: storage, requestIdGenerator: createDurableRequestId });
     const repository = Object.assign(liveRepository, createActiveRoomReader(client.callRpc.bind(client)));
-    return { repository, account };
+    const accountDeletion = createAccountDeletion({
+      baseUrl, publicKey, session, auth,
+      clearDeletedData: async userId => {
+        clearVoteSession(userId, false);
+        const results = await Promise.allSettled([
+          getDurableOutbox().clearIdentity(userId),
+          clearPushRegistrationSecrets(),
+          SecureStore.deleteItemAsync(PRIVATE_CACHE_KEY),
+        ]);
+        if (results.some(result => result.status === 'rejected')) throw new Error('ACCOUNT_DATA_CLEANUP_FAILED');
+      },
+    });
+    return { repository, account, accountDeletion };
   }, [customRepository, baseUrl, publicKey]);
 
   const subscribe = useCallback((listener: () => void) => repository.subscribeSession(listener), [repository]);
@@ -206,6 +223,7 @@ function ConfiguredRoomRepositoryProvider({
   const value = useMemo<RoomRepositoryContextValue>(() => ({
     repository,
     account,
+    accountDeletion,
     status: snapshot.status,
     issue: snapshot.issue,
     user: snapshot.user,
@@ -214,7 +232,7 @@ function ConfiguredRoomRepositoryProvider({
     restoreSession,
     ensureSession,
     logout,
-  }), [repository, account, snapshot, isInitializing, restoreSession, ensureSession, logout]);
+  }), [repository, account, accountDeletion, snapshot, isInitializing, restoreSession, ensureSession, logout]);
 
   const roomUpdates = useMemo(() => createRoomSubscription({
     baseUrl,

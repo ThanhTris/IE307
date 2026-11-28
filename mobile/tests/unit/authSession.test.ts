@@ -87,11 +87,27 @@ test('email linking preserves guest UUID and advances the identity epoch', async
   await s.session.restoreSession();
   const before = s.session.getGeneration();
   const proof = new AbortController().signal;
+  expect(await s.account.linkEmail('tester@example.test')).toMatchObject({ ok: true });
+  expect(s.transport.linkEmail).toHaveBeenCalledWith(initial.accessToken, 'tester@example.test');
+  expect(await s.storage.load()).toMatchObject({ user });
   expect(await s.account.verifyCode('tester@example.test', '012345', 'email_change', proof)).toMatchObject({ ok: true });
   expect(s.session.getGeneration()).toBeGreaterThan(before);
   expect(s.clearPrivateData).not.toHaveBeenCalled();
   expect(await s.storage.load()).toMatchObject({ user: { id: user.id, isGuest: false } });
   expect(await s.account.setPassword('Fixture!123', proof)).toMatchObject({ ok: true });
+});
+
+test('discarding a link password proof keeps the linked account session', async () => {
+  const s = accountSetup();
+  await s.session.restoreSession();
+  const controller = new AbortController();
+  expect(await s.account.verifyCode('tester@example.test', '012345', 'email_change', controller.signal)).toMatchObject({ ok: true });
+
+  controller.abort();
+  s.account.discardPasswordProof(controller.signal);
+  expect(await s.storage.load()).toEqual(accountSession);
+  expect(s.transport.logout).not.toHaveBeenCalled();
+  expect(s.transport.updatePassword).not.toHaveBeenCalled();
 });
 
 test('account recovery only sends to the authenticated account email', async () => {
@@ -138,6 +154,27 @@ test('recovery token only authorizes a password change and never replaces the gu
   expect(s.transport.updatePassword).toHaveBeenCalledWith(accountSession.accessToken, 'Fixture!123');
   expect(s.transport.logout).toHaveBeenCalledWith(accountSession.accessToken);
   expect(await s.storage.load()).toEqual(initial);
+});
+
+test('password change checks credentials before comparing the proposed password', async () => {
+  const s = accountSetup();
+  await s.session.restoreSession();
+  const email = 'tester@example.test';
+  const correct = '12345678';
+  const wrong = '01234567';
+  await s.account.signIn({ email, password: correct });
+
+  s.transport.signIn.mockRejectedValueOnce(new AuthFailure({ messageKey: 'INVALID_INPUT', details: { reason: 'invalid_credentials' } }));
+  await expect(s.account.changePassword(wrong, wrong)).resolves.toMatchObject({
+    ok: false, error: { details: { reason: 'invalid_credentials' } },
+  });
+  await expect(s.account.changePassword(correct, correct)).resolves.toMatchObject({
+    ok: false, error: { details: { reason: 'same_password' } },
+  });
+  expect(s.transport.updatePassword).not.toHaveBeenCalled();
+
+  await expect(s.account.changePassword(correct, wrong)).resolves.toMatchObject({ ok: true });
+  expect(s.transport.updatePassword).toHaveBeenCalledWith(accountSession.accessToken, wrong, correct);
 });
 
 test('guest is persisted before becoming active; returned user cannot mutate stored identity', async () => {

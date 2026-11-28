@@ -92,7 +92,7 @@ export function clearWaitingIntent(scope: VoteScope): void {
 }
 
 /** In-memory request state and durable private outbox/cache belong to the authenticated identity and are discarded at logout. */
-export function clearVoteSession(identityId: string): void {
+export function clearVoteSession(identityId: string, clearDurable = true): void {
   for (const [key, intent] of ballotIntents) {
     if (intent.identityId === identityId) ballotIntents.delete(key);
   }
@@ -107,7 +107,7 @@ export function clearVoteSession(identityId: string): void {
     const [storedIdentity] = JSON.parse(key) as [string];
     if (storedIdentity === identityId) submissionReceipts.delete(key);
   }
-  if (identityId && identityId !== 'anonymous' && identityId !== 'unresolved') {
+  if (clearDurable && identityId && identityId !== 'anonymous' && identityId !== 'unresolved') {
     void getDurableOutbox().clearIdentity(identityId).catch(() => undefined);
   }
 }

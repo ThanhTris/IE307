@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useState } from 'react';
 import { Redirect, useFocusEffect, useRouter } from 'expo-router';
 import { resumeHref } from '../features/home/services/resumeRoom';
 import { HomeScreen } from '../features/home/screens/HomeScreen';
@@ -11,16 +11,16 @@ export default function IndexRoute() {
   const [roomRevision, setRoomRevision] = useState(0);
   useFocusEffect(useCallback(() => { setRoomRevision(value => value + 1); }, []));
 
-  // First run on this phone after sign-in: ask for permissions once (remembered per account on this phone).
-  const [onboarded, setOnboarded] = useState<boolean | undefined>();
-  const signedIn = live.status === 'active' && !!live.user;
-  useEffect(() => {
-    if (!signedIn) return;
+  // Ask once on this installation. The user ID is only for migrating an old flag.
+  const [onboarding, setOnboarding] = useState<{ userId: string; done: boolean }>();
+  const userId = live.status === 'active' ? live.user?.id : undefined;
+  useFocusEffect(useCallback(() => {
+    if (!userId) return;
     let active = true;
-    void isPermissionsOnboarded(live.user?.id).then(value => { if (active) setOnboarded(value); });
+    void isPermissionsOnboarded(userId).then(done => { if (active) setOnboarding({ userId, done }); });
     return () => { active = false; };
-  }, [signedIn, live.user?.id]);
-  if (signedIn && onboarded === false) return <Redirect href="/welcome-permissions" />;
+  }, [userId]));
+  if (userId && onboarding?.userId === userId && !onboarding.done) return <Redirect href="/welcome-permissions" />;
 
   if (!live.isInitializing && live.status === 'empty' && live.issue === 'no-session' && !live.user) return <Redirect href="/welcome" />;
 

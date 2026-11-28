@@ -6,11 +6,11 @@ import { AppButton, AppIcon, BrandBanner } from '../../../shared/ui';
 
 /** Presentation-only Home backdrop: never mounts Home's session/network hooks. */
 export function TutorialHomeStage({ onCreate }: { onCreate: () => void }) {
-  const { colors } = useShellTheme(), { textStyle } = useAppFonts();
+  const { colors, dark } = useShellTheme(), { textStyle } = useAppFonts();
   return <>
     <View accessible={false} accessibilityElementsHidden importantForAccessibility="no-hide-descendants" style={styles.dimmed}>
       <Text style={[styles.title, { color: colors.text }, textStyle(700)]}>{'Hôm nay\ncả nhóm ăn gì?'}</Text>
-      <BrandBanner colors={colors} titleTextStyle={textStyle(700)} illustrationSource={require('../../../../assets/brand/home/friends-dining-slot.png')} />
+      <BrandBanner colors={colors} dark={dark} titleTextStyle={textStyle(700)} illustrationSource={require('../../../../assets/brand/home/friends-dining-slot.png')} />
     </View>
     <View style={styles.tiles}>
       <View style={styles.highlight}><AppButton label="Tạo phòng mẫu" onPress={onCreate} icon="plus" iconSize={32} iconLayout="stacked" style={styles.tile} textStyle={textStyle(700)} colors={colors} /></View>

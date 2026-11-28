@@ -4,24 +4,26 @@ import { Text } from '../../../shared/ui/forms/ScaledText';
 import type { ReadResult, SessionUser } from '../../../data/api/contracts';
 import type { AccountService } from '../../../data/auth';
 import type { AccountProfile } from '../../../data/auth/types';
-import { ApiFeatureFrame, AppButton, AppHeader, SheetDialog } from '../../../shared/ui';
+import { ApiFeatureFrame, AppButton, AppHeader, AppIcon, SheetDialog } from '../../../shared/ui';
 import { useShellTheme } from '../../../shared/lib/useShellTheme';
 import { radii, spacing, typography } from '../../../shared/theme/tokens';
 import { useAccountAction } from '../hooks/useAccountAction';
 import { accountErrorMessage } from '../services/accountMessages';
 import type { PersonalHistorySettings } from '../services/profileHistorySettings';
 import { ProfileSettings } from '../components/ProfileSettings';
+import { ProfileLegalLinks } from '../components/ProfileLegalLinks';
 
 type Props = {
   user: SessionUser;
   account?: AccountService;
   historySettings?: PersonalHistorySettings;
+  canDeleteAccount?: boolean;
   onNavigate: (path: string) => void;
   onHome: () => void;
   onLogout: () => Promise<boolean>;
 };
 
-export function ProfileScreen({ user, account, historySettings, onNavigate, onHome, onLogout }: Props) {
+export function ProfileScreen({ user, account, historySettings, canDeleteAccount, onNavigate, onHome, onLogout }: Props) {
   const { colors } = useShellTheme();
   const [confirmLogout, setConfirmLogout] = useState(false);
   const [profile, setProfile] = useState<ReadResult<AccountProfile>>();
@@ -38,6 +40,16 @@ export function ProfileScreen({ user, account, historySettings, onNavigate, onHo
 
   const header = <AppHeader onPressBrand={onHome} onInbox={() => onNavigate('/inbox')} showInbox={!guest} showFriends={false} showProfile={false}
     allowTitleWrap hideDivider colors={{ ...colors, surface: colors.background }} />;
+  const accountTitle = <Text accessibilityRole="header" style={[typography.titleMedium, { color: colors.text }]}>Tài khoản</Text>;
+  const rowGroupStyle = [styles.rows, { backgroundColor: colors.surface, borderColor: colors.line }];
+  const rowDivider = { borderBottomWidth: StyleSheet.hairlineWidth, borderColor: colors.line };
+  const deleteAccountRow = canDeleteAccount ? (
+    <Pressable accessibilityRole="button" accessibilityLabel="Xóa tài khoản" onPress={() => onNavigate('/account/delete-account')} style={styles.row}>
+      <AppIcon name="trash" size={20} color={colors.danger} />
+      <Text style={[typography.bodyBold, styles.rowLabel, { color: colors.danger }]}>Xóa tài khoản</Text>
+      <AppIcon name="next" size={20} color={colors.danger} />
+    </Pressable>
+  ) : null;
 
   return <ApiFeatureFrame active="profile" title="Cá nhân" onNavigate={onNavigate} onHome={onHome} topBar={header}>
     <Text accessibilityRole="header" style={[typography.titleLarge, { color: colors.text }]}>{guest ? 'Khách' : 'Cá nhân'}</Text>
@@ -64,23 +76,27 @@ export function ProfileScreen({ user, account, historySettings, onNavigate, onHo
       <AppButton label="Đăng nhập" onPress={() => onNavigate('/account/sign-in')} colors={colors} />
       <AppButton label="Liên kết email" variant="secondary" onPress={() => onNavigate('/account/link')} colors={colors} />
       <Text style={[typography.caption, { color: colors.muted }]}>Bạn vẫn có thể tạo hoặc tham gia phòng với tư cách khách.</Text>
+      {deleteAccountRow ? <>{accountTitle}<View style={rowGroupStyle}>{deleteAccountRow}</View></> : null}
       <ProfileSettings />
     </> : <>
-      <Text accessibilityRole="header" style={[typography.titleMedium, { color: colors.text }]}>Tài khoản</Text>
-      <View style={[styles.rows, { backgroundColor: colors.surface, borderColor: colors.line }]}>
+      {accountTitle}
+      <View style={rowGroupStyle}>
         <Pressable accessibilityRole="button" onPress={() => onNavigate('/account/edit-profile')}
-          style={[styles.row, { borderBottomWidth: StyleSheet.hairlineWidth, borderColor: colors.line }]}>
+          style={[styles.row, rowDivider]}>
           <Text style={[typography.bodyBold, styles.rowLabel, { color: colors.text }]}>Sửa hồ sơ</Text>
           <Text accessible={false} style={[typography.titleMedium, { color: colors.text }]}>›</Text>
         </Pressable>
-        <Pressable accessibilityRole="button" onPress={() => onNavigate('/account/change-password')} style={styles.row}>
+        <Pressable accessibilityRole="button" onPress={() => onNavigate('/account/change-password')}
+          style={[styles.row, canDeleteAccount && rowDivider]}>
           <Text style={[typography.bodyBold, styles.rowLabel, { color: colors.text }]}>Đổi mật khẩu</Text>
           <Text accessible={false} style={[typography.titleMedium, { color: colors.text }]}>›</Text>
         </Pressable>
+        {deleteAccountRow}
       </View>
       {historySettings ? <ProfileSettings history={historySettings} /> : null}
-      <AppButton label="Đăng xuất" variant="secondary" onPress={() => setConfirmLogout(true)} colors={colors} />
     </>}
+    <ProfileLegalLinks />
+    {!guest ? <AppButton label="Đăng xuất" variant="secondary" onPress={() => setConfirmLogout(true)} colors={colors} /> : null}
     <SheetDialog visible={confirmLogout} title="Đăng xuất?" showClose={false}
       onClose={() => { if (!pending) setConfirmLogout(false); }} colors={colors}>
       <Text style={[typography.body, { color: colors.text }]}>Bạn có thể tiếp tục sử dụng ứng dụng với tài khoản khách</Text>

@@ -26,6 +26,7 @@ export default function ProfileRoute() {
       key={live.user.id + ':' + live.user.isGuest}
       user={live.user}
       account={live.account}
+      canDeleteAccount={!!live.accountDeletion}
       historySettings={historySettings}
       onNavigate={path => { if (path !== '/profile') router.push(path as Href); }}
       onHome={home}

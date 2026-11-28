@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react';
-import { KeyboardAvoidingView, Platform, Pressable, ScrollView, StyleSheet, View } from 'react-native';
+import { KeyboardAvoidingView, Pressable, ScrollView, StyleSheet, View } from 'react-native';
 import { Text } from '../../../shared/ui/forms/ScaledText';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { StatusBar } from 'expo-status-bar';
@@ -53,7 +53,7 @@ export function AccountFormFrame({ title, hero, busy, onBack, error, children }:
   const safeAreaColor = hero ? dark ? colors.primary : colors.green : colors.background;
   return <SafeAreaView style={[styles.root, { backgroundColor: safeAreaColor }]}>
     <StatusBar style={hero || dark ? 'light' : 'dark'} />
-    <KeyboardAvoidingView style={[styles.root, { backgroundColor: colors.background }]} behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
+    <KeyboardAvoidingView style={[styles.root, { backgroundColor: colors.background }]} behavior="padding">
       {!hero ? <AppHeader variant="back" title={title} allowTitleWrap hideDivider onPressBack={busy ? undefined : onBack}
         colors={{ ...colors, surface: colors.background }} /> : null}
       <ScrollView keyboardShouldPersistTaps="handled" contentContainerStyle={styles.scroll}>

@@ -103,6 +103,28 @@ test('linking highlights an invalid email without calling Auth', async () => {
   expect(linkEmail).not.toHaveBeenCalled();
 });
 
+test('a guest verifies the link code before opening the password screen and can leave without saving', async () => {
+  const linkEmail = jest.fn().mockResolvedValue({ ok: true, data: undefined });
+  const verifyCode = jest.fn().mockResolvedValue({ ok: true, data: undefined });
+  const setPassword = jest.fn();
+  const onBack = jest.fn();
+  const account = { linkEmail, verifyCode, setPassword, discardPasswordProof: jest.fn() } as unknown as AccountService;
+  await render(<AccountAccessScreen flow="link" account={account}
+    isGuest onBack={onBack} onNavigate={jest.fn()} onComplete={jest.fn()} />);
+  await fireEvent.changeText(screen.getByLabelText('Email'), 'tuan@example.test');
+  await fireEvent.press(screen.getByRole('button', { name: 'Gửi mã xác minh' }));
+  expect(linkEmail).toHaveBeenCalledWith('tuan@example.test');
+  expect(screen.queryByLabelText('Mật khẩu mới')).toBeNull();
+
+  await fireEvent.changeText(screen.getByLabelText('Mã xác minh'), '123456');
+  await fireEvent.press(screen.getByRole('button', { name: 'Xác minh mã' }));
+  expect(verifyCode).toHaveBeenCalledWith('tuan@example.test', '123456', 'email_change', expect.any(AbortSignal));
+  expect(screen.getByLabelText('Mật khẩu mới')).toBeOnTheScreen();
+  await fireEvent.press(screen.getByRole('button', { name: 'Quay lại' }));
+  expect(onBack).toHaveBeenCalledTimes(1);
+  expect(setPassword).not.toHaveBeenCalled();
+});
+
 test('sign-in shows credential rejection as a toast without marking either field', async () => {
   const signIn = jest.fn().mockResolvedValue({
     ok: false, error: { messageKey: 'AUTH_REQUIRED', details: { reason: 'invalid_credentials' } },

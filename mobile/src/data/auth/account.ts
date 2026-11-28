@@ -32,9 +32,10 @@ export function createAccountService(auth: AccountTransport, session: SessionMan
       }
       await auth.sendCode(address, 'recovery');
     }),
-    linkEmail: (email: string) => run(async ({ requireSession }) => {
+    linkEmail: (email: string) => run(async ({ requireSession, assertCurrent }) => {
       const current = await requireSession();
       if (!current.user.isGuest) throw new AuthFailure({ messageKey: 'VERSION_CONFLICT' });
+      assertCurrent();
       const updated = await auth.linkEmail(current.accessToken, email);
       requireIdentity(current.user.id, updated.id);
       if (!updated.isGuest) throw new AuthFailure({ messageKey: 'MALFORMED_RESPONSE' });
@@ -99,6 +100,9 @@ export function createAccountService(auth: AccountTransport, session: SessionMan
       try {
         requireIdentity(current.user.id, fresh.user.id);
         assertCurrent();
+        if (password === currentPassword) {
+          throw new AuthFailure({ messageKey: 'INVALID_INPUT', details: { reason: 'same_password' } });
+        }
         const updated = await auth.updatePassword(current.accessToken, password, currentPassword);
         requireIdentity(current.user.id, updated.id);
       } finally {
