@@ -3,6 +3,7 @@ import sys
 import tempfile
 import unittest
 from pathlib import Path
+from unittest import mock
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / 'scripts'))
@@ -45,6 +46,26 @@ class ReleaseCatalogueCheckTests(unittest.TestCase):
         self.assertFalse(rc.is_illustration(None))
         advisory = rc.evaluate(rc.DEFAULT_BUNDLE)['advisory']
         self.assertEqual(advisory['Món dùng ảnh minh họa nhóm']['actual'], 0)
+
+    def test_photo_ratio_is_opt_in_and_counts_illustrations_as_missing(self):
+        default = rc.evaluate(rc.DEFAULT_BUNDLE)
+        self.assertFalse([c for c in default['checks'] if c['check'].startswith('Thiếu ảnh chụp')])
+        photo = {'url': 'https://example.test/a.webp', 'usageRights': 'licensed', 'license': 'CC BY 4.0', 'attribution': 'A'}
+        art = {**photo, 'license': 'Apache-2.0', 'attribution': 'Ảnh minh họa nhóm Cơm'}
+        data, rows = rc.cov.build(rc.DEFAULT_BUNDLE)
+        total = len(rows)
+
+        def report(illustrated):
+            for index, row in enumerate(rows):
+                row['dish']['artwork'] = art if index < illustrated else photo
+            with mock.patch.object(rc.cov, 'build', return_value=(data, rows)):
+                checks = rc.evaluate(rc.DEFAULT_BUNDLE, require_photo_ratio=True)['checks']
+            return {c['check']: c for c in checks}['Thiếu ảnh chụp tối đa 10% · Cả bộ']
+
+        allowed = total // 10
+        self.assertTrue(report(allowed)['pass'])
+        self.assertFalse(report(allowed + 1)['pass'])
+        self.assertEqual(report(allowed + 1)['actual'], allowed + 1)
 
     def test_json_report_and_exit_code(self):
         with tempfile.TemporaryDirectory() as tmp:

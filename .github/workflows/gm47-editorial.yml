@@ -4,9 +4,16 @@ on:
     paths:
       - '.github/workflows/gm47-editorial.yml'
       - 'data-preparation/editorial/gm47/**'
+      - 'data-preparation/editorial/gm47-release/**'
       - 'data-preparation/scripts/gm47_catalogue.py'
+      - 'data-preparation/scripts/gm47_release_editorial.py'
+      - 'data-preparation/scripts/gm47_storage_receipt.py'
+      - 'data-preparation/scripts/release_v1_catalogue.py'
+      - 'supabase/seed/catalogue/release-v1/**'
       - 'scripts/gm47_catalogue_check.py'
-      - 'tests/test_gm47_catalogue.py'
+      - 'docs/evidence/roadmap-v2/GM-47/reviewed-dish-ids.txt'
+      - 'scripts/release_catalogue_check.py'
+      - 'tests/test_gm47*.py'
 permissions:
   contents: read
 jobs:
@@ -24,10 +31,24 @@ jobs:
           python-version: '3.12'
       - run: npm ci
       - run: python -m pip install -r scripts/ci-requirements.txt
-      - run: python -m unittest discover -s tests -p 'test_gm47_catalogue.py'
-      - run: python data-preparation/scripts/gm47_catalogue.py
+      - run: python -m unittest discover -s tests -p 'test_gm47*.py'
+      - name: Verify uploaded GM-52 staging images
+        run: |
+          python data-preparation/scripts/gm47_storage_receipt.py \
+            --bucket-url https://cijknqhnmzdsturkzyiz.supabase.co/storage/v1/object/public/dish-images \
+            --candidate-version 1.4.5 --image-prefix '' --thumbnail-prefix thumbnails \
+            --dish-list docs/evidence/roadmap-v2/GM-47/reviewed-dish-ids.txt --with-illustrations
+          python data-preparation/scripts/gm47_release_editorial.py \
+            --storage-receipt .work/gm47-release-editorial/storage-receipt.json
+          python scripts/release_catalogue_check.py \
+            --bundle .work/gm47-release-editorial/with-storage/dishes.json \
+            --json .work/gm47-release-editorial/with-storage/release-floor.json
       - run: npm run qa:start -- --run-id gm47-ci --api-port 55471 --db-port 55472
-      - run: python scripts/gm47_catalogue_check.py --qa-manifest .work/qa/gm47-ci/manifest.json > "${RUNNER_TEMP}/gm47-readback.json"
+      - name: Read back the Storage-linked catalogue on GM-03 QA
+        run: |
+          python scripts/gm47_catalogue_check.py --qa-manifest .work/qa/gm47-ci/manifest.json \
+            --release-editorial --storage-receipt .work/gm47-release-editorial/storage-receipt.json \
+            > "${RUNNER_TEMP}/gm47-readback.json"
       - if: always()
         run: npm run qa:stop -- --run-id gm47-ci
       - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9
@@ -36,5 +57,9 @@ jobs:
           name: gm47-editorial-evidence
           path: |
             ${{ runner.temp }}/gm47-readback.json
-            .work/gm47-editorial/editorial-report.json
+            .work/gm47-release-editorial/storage-receipt.json
+            .work/gm47-release-editorial/with-storage/editorial-report.json
+            .work/gm47-release-editorial/with-storage/manifest.json
+            .work/gm47-release-editorial/with-storage/description-rights-review.csv
+            .work/gm47-release-editorial/with-storage/release-floor.json
           include-hidden-files: true

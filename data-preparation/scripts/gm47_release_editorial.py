@@ -1,0 +1,402 @@
+"""Build a test-demo editorial candidate without changing the merged bundles."""
+import argparse
+import csv
+from pathlib import Path
+import re
+from urllib.parse import urlsplit
+
+import gm47_illustrations as illustrations
+import release_v1_catalogue as upstream
+
+
+ROOT = upstream.ROOT
+gm41 = upstream.gm
+INPUT = ROOT / 'data-preparation/editorial/gm47-release/descriptions.json'
+ARTWORK = INPUT.with_name('artwork-candidates.json')
+OUTPUT = ROOT / '.work/gm47-release-editorial'
+HANDOFF = upstream.INPUT / 'handoff.json'
+FACT_REFERENCE = 'team_authored_fact_reference'
+
+
+def load_baseline():
+    raw = upstream.BUNDLE.read_bytes()
+    manifest = gm41.dc.load_json(upstream.MANIFEST)
+    bundle = gm41.dc.load_json(upstream.BUNDLE)
+    digest = gm41.dc.sha(raw)
+    if (digest != manifest['bundleSha256'] or bundle['datasetVersion'] != manifest['datasetVersion']
+            or bundle['contractVersion'] != manifest['schemaVersion']
+            or gm41.dc.sha(gm41.SCHEMA.read_bytes()) != manifest['schemaSha256']
+            or {key: len(rows) for key, rows in bundle['entities'].items()} != manifest['counts']):
+        raise ValueError('GM-41 release bundle does not match its manifest')
+    return bundle, digest
+
+
+def storage_bucket(url):
+    bucket = url.rstrip('/')
+    locator = urlsplit(bucket)
+    if (locator.scheme != 'https' or not locator.hostname or locator.username is not None
+            or locator.password is not None or locator.query or locator.fragment
+            or re.search(r'\s', url) or not re.fullmatch(r'/storage/v1/object/public/[a-zA-Z0-9_-]+', locator.path)):
+        raise ValueError('Expected an HTTPS public Supabase Storage bucket URL')
+    return bucket
+
+
+def storage_object_key(key, expected):
+    if (not re.fullmatch(r'(?:[a-zA-Z0-9_-]+/)*[a-f0-9-]+\.webp', key)
+            or key.rsplit('/', 1)[-1] != expected.rsplit('/', 1)[-1]):
+        raise ValueError('Storage object key must preserve the reviewed UUID filename')
+    return key
+
+
+def review_dates(review, label):
+    checked_by = review.get('checkedBy')
+    checked_at = review.get('checkedAt')
+    assistance = review.get('assistance')
+    if assistance is not None:
+        if (not isinstance(assistance, dict) or not isinstance(assistance.get('tool'), str)
+                or not assistance['tool'].strip() or not isinstance(assistance.get('checkedAt'), str)):
+            raise ValueError(f'Invalid automated precheck for {label}')
+        assisted_on = gm41.dc.parse_utc(assistance['checkedAt'])
+    else:
+        assisted_on = None
+    if checked_by is None and checked_at is None and assisted_on is not None:
+        return None, assisted_on
+    if (not isinstance(checked_by, str) or not checked_by.strip()
+            or re.match(r'^(codex|chatgpt)\b', checked_by.strip(), flags=re.IGNORECASE)
+            or (assistance and checked_by.strip().casefold() == assistance['tool'].strip().casefold())
+            or not isinstance(checked_at, str)):
+        raise ValueError(f'Expected a named human reviewer and date for {label}')
+    return gm41.dc.parse_utc(checked_at), assisted_on
+
+
+def description_review(row):
+    review = row.get('factReview')
+    if review is None:
+        return None
+    fingerprint = gm41.dc.sha(gm41.dc.encoded([row['locator'], row['description']]))
+    if (not isinstance(review, dict) or review.get('textSha256') != fingerprint
+            or not isinstance(review.get('facts'), str) or not review['facts'].strip()):
+        raise ValueError(f"Invalid or stale GM-47 description review for {row['dishId']}")
+    review_dates(review, f"description {row['dishId']}")
+    return review
+
+
+def validate_photo_origin(row):
+    review = row.get('aiCheck')
+    if (not isinstance(review, dict) or type(review.get('cameraExif')) is not bool
+            or review.get('aiCategory') is not False
+            or not isinstance(review.get('provenance'), str) or not review['provenance'].strip()
+            or not isinstance(review.get('uploadedAt'), str)
+            or (row['license'] == 'Ảnh nhóm tự chụp' and not review['cameraExif'])):
+        raise ValueError(f"Missing or rejected GM-47 photo origin review for {row['dishId']}")
+    human_date, assisted_date = review_dates(review, f"photo {row['dishId']}")
+    verdict = 'real_photo' if human_date is not None else 'pending_human_review'
+    if review.get('verdict') != verdict:
+        raise ValueError(f"Inconsistent GM-47 photo origin review for {row['dishId']}")
+    if gm41.dc.parse_utc(review['uploadedAt']) > min(date for date in (human_date, assisted_date) if date):
+        raise ValueError(f"GM-47 photo source date is after review for {row['dishId']}")
+
+
+def attach_storage(receipt, available, dishes, sources, version, illustration_assets, illustration_groups):
+    """Bind reviewed photos and marked category artwork with verified Storage bytes."""
+    bucket = storage_bucket(receipt['bucketPublicUrl'])
+    release_version = receipt['candidateDatasetVersion']
+    if (not re.fullmatch(r'(0|[1-9][0-9]*)(\.(0|[1-9][0-9]*)){2}', release_version)
+            or tuple(map(int, release_version.split('.'))) <= tuple(map(int, version.split('.')))):
+        raise ValueError('Storage-linked dataset version must be newer than the offline candidate')
+    gm41.dc.parse_utc(receipt['checkedAt'])
+    verified = {row['objectKey']: row for row in receipt['objects']}
+    stored = {key: storage_object_key(row.get('storedObjectKey', key), key) for key, row in verified.items()}
+    if not verified or len(verified) != len(receipt['objects']) or len(set(stored.values())) != len(verified):
+        raise ValueError('Storage receipt must contain unique uploaded object keys')
+
+    used = set()
+    linked = {}
+    for dish_id, row in available.items():
+        main_key = row['objectKey']
+        thumb_key = row['thumbnail']['objectKey']
+        if main_key not in verified and thumb_key not in verified:
+            continue
+        if row['aiCheck']['verdict'] != 'real_photo':
+            raise ValueError(f'Storage receipt requires human photo review for {dish_id}')
+        if (verified.get(main_key, {}).get('sha256') != row['sha256']
+                or verified.get(thumb_key, {}).get('sha256') != row['thumbnail']['sha256']):
+            raise ValueError(f'Storage receipt is missing a verified pair for {dish_id}')
+        ref = gm41.ft.stable_id('source', f"gm47:artwork:{row['source']}:{row['license']}")
+        sources.setdefault(ref, {
+            **gm41.record(ref), 'enteredBy': 'gm47-editorial', 'checkedAt': row['aiCheck']['checkedAt'],
+            'locator': row['source'], 'usageRights': row['usageRights'],
+            'license': row['license'], 'attribution': row['attribution'],
+        })
+        url = f'{bucket}/{stored[main_key]}'
+        dishes[dish_id]['artwork'] = {key: row[key] for key in ('usageRights', 'license', 'attribution')} | {
+            'url': url, 'sourceRef': ref,
+        }
+        linked[dish_id] = {
+            'kind': 'photo', 'url': url, 'thumbnailUrl': f'{bucket}/{stored[thumb_key]}', 'sourceRef': ref,
+        }
+        used.update((main_key, thumb_key))
+
+    groups = {}
+    for group, row in illustration_assets.items():
+        assets = (row['image'], row['thumbnail'])
+        keys = tuple(asset['objectKey'] for asset in assets)
+        if not any(key in verified for key in keys):
+            continue
+        if any(stored.get(key) != key or verified.get(key, {}).get('sha256') != asset['sha256']
+               for key, asset in zip(keys, assets, strict=True)):
+            raise ValueError(f'Storage receipt is missing a verified illustration pair for {group}')
+        groups[group] = (row, keys)
+        used.update(keys)
+    for dish_id, group in illustration_groups.items():
+        if group not in groups or dish_id in linked:
+            continue
+        row, (main_key, thumb_key) = groups[group]
+        ref = gm41.ft.stable_id('source', f"gm47:illustration:{row['source']}:{row['license']}")
+        fields = {key: row[key] for key in ('usageRights', 'license', 'attribution')}
+        sources.setdefault(ref, {
+            **gm41.record(ref), **fields, 'enteredBy': 'gm47-editorial',
+            'checkedAt': receipt['checkedAt'], 'locator': row['source'],
+        })
+        url = f'{bucket}/{main_key}'
+        dishes[dish_id]['artwork'] = {**fields, 'url': url, 'sourceRef': ref}
+        linked[dish_id] = {
+            **fields, 'kind': illustrations.KIND, 'groupCode': group, 'groupLabel': row['groupLabel'],
+            'url': url, 'thumbnailUrl': f'{bucket}/{thumb_key}', 'sourceRef': ref,
+            'source': row['source'], 'licenseUrl': row['licenseUrl'], 'author': row['author'],
+        }
+    if used != verified.keys():
+        raise ValueError('Storage receipt contains objects outside the reviewed artwork inventory')
+    return release_version, linked
+
+
+def build(*, artwork=None, storage_receipt=None):
+    bundle, digest = load_baseline()
+    edit = gm41.dc.load_json(INPUT)
+    if artwork is None:
+        artwork = gm41.dc.load_json(ARTWORK)
+    if (edit['baseDatasetVersion'] != bundle['datasetVersion']
+            or edit['baseSha256'] != digest
+            or artwork['baseDatasetVersion'] != bundle['datasetVersion']
+            or artwork['baseSha256'] != digest):
+        raise ValueError('GM-47 release editorial input requires the pinned GM-41 release bundle')
+
+    entities = bundle['entities']
+    dishes = {row['id']: row for row in entities['dishes']}
+    sources = {row['sourceRef']: row for row in entities['dataSources']}
+    description_refs = {}
+    description_reviews = {}
+    new_evidence = []
+    for row in edit['descriptions']:
+        dish_id = row['dishId']
+        dish = dishes.get(dish_id)
+        description = row['description']
+        locator = urlsplit(row['locator'])
+        if (dish_id in description_refs or dish is None or dish['name'] != row['name']
+                or description != description.strip() or not 80 <= len(description) <= 220
+                or locator.scheme != 'https' or not locator.hostname
+                or locator.username is not None or locator.password is not None):
+            raise ValueError(f'Invalid release description or source for {dish_id}')
+
+        checked_at = row['checkedAt']
+        gm41.dc.parse_utc(checked_at)
+        upstream_ref = gm41.ft.stable_id('dataSource', f"gm41-release-v1:{checked_at}:{row['locator']}")
+        ref = upstream_ref if upstream_ref in sources else gm41.ft.stable_id(
+            'source', f"gm47:description:{checked_at}:{row['locator']}"
+        )
+        if ref not in sources:
+            source = {
+                **gm41.record(ref), 'enteredBy': 'gm47-editorial', 'checkedAt': checked_at,
+                'locator': row['locator'], 'usageRights': 'unknown', 'license': None, 'attribution': None,
+            }
+            entities['dataSources'].append(source)
+            sources[ref] = source
+        elif sources[ref]['locator'] != row['locator']:
+            raise ValueError(f'GM-47 source identity collision for {dish_id}')
+        dish['description'] = description
+        dish['fieldSources']['description'] = ref
+        new_evidence.append({
+            'dishId': dish_id, 'field': 'description', 'sourceRef': ref,
+            'basis': 'editorial_summary', 'note': 'Tự viết từ nguồn tham khảo về cách chế biến hoặc phục vụ.',
+            'sourceMenuItemIds': [],
+        })
+        description_refs[dish_id] = ref
+        description_reviews[dish_id] = description_review(row)
+
+    entities['fieldEvidence'] = [
+        row for row in entities['fieldEvidence']
+        if row['field'] != 'description' or row['dishId'] not in description_refs
+    ] + new_evidence
+    available_artwork = {}
+    for row in artwork['images']:
+        dish_id = row['dishId']
+        validate_photo_origin(row)
+        dish = dishes.get(dish_id)
+        source = urlsplit(row['source'])
+        valid_source = (source.scheme == 'https' and source.netloc == 'commons.wikimedia.org'
+                        and source.path.startswith('/wiki/File:'))
+        license_match = re.fullmatch(r'CC (BY|BY-SA) ([234]\.0)', row['license'])
+        if license_match:
+            rights = 'licensed'
+            license_url = f'https://creativecommons.org/licenses/{license_match[1].lower()}/{license_match[2]}/'
+        elif row['license'] == 'CC0 1.0':
+            rights = 'public_domain'
+            license_url = 'https://creativecommons.org/publicdomain/zero/1.0/'
+        elif row['license'] == 'Public domain (author release)':
+            rights = 'public_domain'
+            license_url = row['source']
+        elif row['license'] == 'Ảnh nhóm tự chụp':
+            rights = 'granted'
+            license_url = row['permissionEvidence']
+            permission = urlsplit(license_url)
+            valid_source = all(link.scheme == 'https' and link.hostname
+                               and link.username is None and link.password is None
+                               for link in (source, permission))
+        else:
+            raise ValueError(f'Unsupported GM-47 artwork license for {dish_id}')
+        gm41.dc.parse_utc(row['checkedAt'])
+        thumbnail = row['thumbnail']
+        if (dish_id in available_artwork or dish is None or dish['name'] != row['name']
+                or row['file'] != f'{dish_id}.webp' or not row['author'] or not row['attribution']
+                or row['objectKey'] != f'images/{dish_id}.webp'
+                or thumbnail['objectKey'] != f'thumbnails/{dish_id}.webp'
+                or (thumbnail['width'], thumbnail['height']) != (400, 300)
+                or not 0 < thumbnail['bytes'] <= row['bytes']
+                or not re.fullmatch(r'[a-f0-9]{64}', thumbnail['sha256'])
+                or min(row['width'], row['height']) < 600 or not 0 < row['bytes'] <= 200_000
+                or row['width'] * 3 != row['height'] * 4 or not re.fullmatch(r'[a-f0-9]{64}', row['sha256'])
+                or not valid_source
+                or row['usageRights'] != rights or row['licenseUrl'] != license_url):
+            raise ValueError(f'Invalid or stale GM-47 artwork evidence for {dish_id}')
+        available_artwork[dish_id] = row
+    total_bytes = sum(row['bytes'] for row in available_artwork.values())
+    if total_bytes != artwork['totalBytes']:
+        raise ValueError('GM-47 prepared artwork byte total does not match its evidence')
+    pending = {row['dishId']: row for row in artwork['awaitingImage']}
+    pending_ids = dishes.keys() - available_artwork.keys()
+    if (len(pending) != len(artwork['awaitingImage']) or pending.keys() != pending_ids
+            or any(row['name'] != dishes[key]['name'] for key, row in pending.items())):
+        raise ValueError('GM-47 pending artwork list does not match the target catalogue')
+
+    handoff = gm41.dc.load_json(HANDOFF)
+    groups = {'baseline-72': {row['id'] for row in gm41.dc.load_json(gm41.BUNDLE)['entities']['dishes']}}
+    for batch in handoff['batches']:
+        name = batch['path'].rsplit('/', 1)[-1].removesuffix('.csv')
+        groups[name] = {row['dishId'] for row in batch['newDishes']}
+    if (handoff['datasetVersion'] != bundle['datasetVersion']
+            or set().union(*groups.values()) != dishes.keys()
+            or sum(map(len, groups.values())) != len(dishes)):
+        raise ValueError('GM-41 handoff groups do not partition the pinned bundle')
+    missing_artwork = [dict(pending[dish_id], batch=name) for name, ids in groups.items()
+                       for dish_id in sorted(ids & pending.keys())]
+
+    illustration_assets = illustrations.load()
+    illustration_groups = illustrations.assignments(dishes[dish_id] for dish_id in sorted(pending))
+    illustration_plan = {
+        dish_id: {'kind': illustrations.KIND, 'groupCode': group,
+                  'groupLabel': illustration_assets[group]['groupLabel'],
+                  'objectKey': illustration_assets[group]['image']['objectKey'],
+                  'thumbnailObjectKey': illustration_assets[group]['thumbnail']['objectKey']}
+        for dish_id, group in illustration_groups.items()
+    }
+
+    bundle['datasetVersion'] = edit['candidateDatasetVersion']
+    linked = {}
+    if storage_receipt is not None:
+        bundle['datasetVersion'], linked = attach_storage(
+            storage_receipt, available_artwork, dishes, sources, bundle['datasetVersion'],
+            illustration_assets, illustration_groups,
+        )
+        entities['dataSources'] = list(sources.values())
+    upstream.validate(bundle)
+    coverage = {}
+    for meal in gm41.ft.MEALS:
+        in_meal = [row for row in dishes.values() if meal in row['mealSlots']]
+        coverage[meal] = {
+            'dishes': len(in_meal),
+            'withDescription': sum(bool(row['description']) for row in in_meal),
+            'withArtwork': sum(row['artwork'] is not None for row in in_meal),
+            'preparedArtwork': sum(row['id'] in available_artwork for row in in_meal),
+        }
+    report = {
+        'baseDatasetVersion': edit['baseDatasetVersion'], 'baseSha256': edit['baseSha256'],
+        'candidateDatasetVersion': bundle['datasetVersion'], 'candidateSha256': gm41.dc.sha(gm41.dc.encoded(bundle)),
+        'usageScope': bundle['usageScope'], 'descriptionSourceRefs': description_refs, 'coverage': coverage,
+        'preparedArtwork': len(available_artwork), 'preparedArtworkBytes': total_bytes,
+        'humanReviewedArtwork': sum(row['aiCheck']['verdict'] == 'real_photo' for row in available_artwork.values()),
+        'thumbnailBytes': sum(row['thumbnail']['bytes'] for row in available_artwork.values()),
+        'linkedArtwork': linked,
+        'linkedIllustrations': sum(row['kind'] == illustrations.KIND for row in linked.values()),
+        'illustrationPlan': illustration_plan,
+        'artworkBatches': {
+            name: {'dishes': len(ids), 'prepared': len(ids & available_artwork.keys()),
+                   'pending': len(ids & pending.keys())}
+            for name, ids in groups.items()
+        },
+        'missingDescription': [
+            {'dishId': row['id'], 'name': row['name']}
+            for row in dishes.values() if not 80 <= len(row['description'] or '') <= 220
+        ],
+        'missingArtwork': missing_artwork,
+    }
+    rights = {}
+    for dish_id, ref in description_refs.items():
+        source = sources[ref]
+        locator = source['locator']
+        if locator not in rights:
+            rights[locator] = {'locator': locator, 'dishIds': [], 'reviewedDishIds': [], 'reviews': [], 'prechecks': []}
+        row = rights[locator]
+        row['dishIds'].append(dish_id)
+        review = description_reviews[dish_id]
+        if review is not None and review.get('assistance'):
+            row['prechecks'].append({
+                'dishId': dish_id, 'facts': review['facts'],
+                **{key: review['assistance'][key] for key in ('tool', 'checkedAt')},
+            })
+        if review is not None and review.get('checkedBy'):
+            row['reviewedDishIds'].append(dish_id)
+            row['reviews'].append({
+                'dishId': dish_id,
+                **{key: review[key] for key in ('checkedBy', 'checkedAt', 'facts')},
+            })
+    for row in rights.values():
+        row['status'] = FACT_REFERENCE if row['dishIds'] == row['reviewedDishIds'] else 'needs_confirmation'
+    report['descriptionRightsReview'] = list(rights.values())
+    return bundle, report
+
+
+if __name__ == '__main__':
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument('--storage-receipt', type=Path, help='Use a receipt from the public Storage verification step')
+    args = parser.parse_args()
+    receipt = gm41.dc.load_json(args.storage_receipt) if args.storage_receipt else None
+    candidate, report = build(storage_receipt=receipt)
+    output = OUTPUT / 'with-storage' if receipt else OUTPUT
+    output.mkdir(parents=True, exist_ok=True)
+    (output / 'dishes.json').write_bytes(gm41.dc.encoded(candidate))
+    (output / 'editorial-report.json').write_bytes(gm41.dc.encoded(report))
+    with (output / 'description-rights-review.csv').open('w', encoding='utf-8-sig', newline='') as stream:
+        writer = csv.writer(stream)
+        writer.writerow(('locator', 'dish_count', 'dish_ids', 'status', 'reviewed_dish_count',
+                         'reviewed_dish_ids', 'checked_by', 'checked_at', 'prechecked_dish_count',
+                         'prechecked_dish_ids'))
+        for row in sorted(report['descriptionRightsReview'], key=lambda item: item['locator']):
+            writer.writerow((row['locator'], len(row['dishIds']), ' '.join(row['dishIds']), row['status'],
+                             len(row['reviewedDishIds']), ' '.join(row['reviewedDishIds']),
+                             ', '.join(sorted({review['checkedBy'] for review in row['reviews']})),
+                             ', '.join(sorted({review['checkedAt'] for review in row['reviews']})),
+                             len(row['prechecks']), ' '.join(review['dishId'] for review in row['prechecks'])))
+    paths = (upstream.BUNDLE, upstream.MANIFEST, gm41.SCHEMA, INPUT, ARTWORK, HANDOFF, illustrations.MANIFEST)
+    manifest = {
+        'schemaVersion': candidate['contractVersion'], 'datasetVersion': candidate['datasetVersion'],
+        'usageScope': candidate['usageScope'], 'fixtureOnly': candidate['fixtureOnly'], 'status': 'draft',
+        'bundleSha256': report['candidateSha256'], 'schemaSha256': gm41.dc.sha(gm41.SCHEMA.read_bytes()),
+        'schemaPath': gm41.SCHEMA.relative_to(ROOT).as_posix(),
+        'counts': {name: len(rows) for name, rows in candidate['entities'].items()},
+        'inputs': {path.relative_to(ROOT).as_posix(): gm41.dc.sha(path.read_bytes()) for path in paths},
+    }
+    if args.storage_receipt:
+        manifest['storageReceiptSha256'] = gm41.dc.sha(args.storage_receipt.read_bytes())
+    (output / 'manifest.json').write_bytes(gm41.dc.encoded(manifest))
+    print(f"GM-47 candidate {candidate['datasetVersion']}: "
+          f"{len(report['descriptionSourceRefs'])} description edits, SHA {report['candidateSha256']}")

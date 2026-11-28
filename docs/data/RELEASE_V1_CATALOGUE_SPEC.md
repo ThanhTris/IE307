@@ -35,6 +35,7 @@ Trí review cả ba. GM-51 chỉ bắt đầu phát hành khi GM-41 và GM-47 Do
 | Mỗi vị (6 vị) | **15 mỗi vị** | Xem bảng vị bên dưới |
 | Mô tả | **100% món** | `description` không rỗng |
 | Ảnh | **100% món** | Có ảnh hoặc ảnh minh họa có quyền, xem mục 5 |
+| Ảnh chụp | **≥ 90% cả bộ và mỗi nhóm hiển thị** | Số món không có ảnh chụp tối đa bằng 10% số món (làm tròn xuống), tính cho cả bộ và từng nhóm trong 6 nhóm bữa chính, 8 nhóm ăn vặt (Trí chốt 2026-11-27) |
 | Giá quan sát | Khuyến nghị ≥ 80% món | Ít nhất một `priceReferences` cho món |
 
 Một món được tính cho nhiều bữa, nhiều nhóm, nhiều miền và nhiều vị cùng lúc, miễn mỗi giá trị có nguồn.
@@ -104,6 +105,8 @@ Từ chối ảnh thuộc danh mục AI-generated, ảnh không rõ nguồn gố
 
 ### Ảnh minh họa theo nhóm
 
+- **Giới hạn (Trí chốt 2026-11-27):** tối đa 10% số món (làm tròn xuống) của cả bộ và của mỗi nhóm hiển thị được dùng ảnh minh họa. Kiểm bằng `python scripts/release_catalogue_check.py --bundle <bundle> --require-photo-ratio`. Danh sách và cách bổ sung: [PHOTO_GAP_2026-11-27](../evidence/roadmap-v2/GM-47/PHOTO_GAP_2026-11-27.md).
+- **Tìm ảnh:** được dùng Google (lọc Creative Commons) làm công cụ tìm; chỉ nhận ảnh khi trang gốc có license cho phép dùng thương mại và chỉnh sửa, hoặc có văn bản cho phép. Đúng món chưa đủ để được dùng.
 - **Khi nào dùng:** chỉ cho món chưa tìm được ảnh chụp có quyền. Ảnh minh họa dùng chung cho các món cùng nhóm. Có ảnh chụp thật thì thay theo UUID món và cập nhật ghi công.
 - **Nguồn được phép:** nhóm tự vẽ, icon có sẵn trong app, hoặc nguồn CC0. Không dùng ảnh web chưa có quyền để làm minh họa, không tạo bằng AI. Bộ đầu tiên của GM-47 dựng từ Material Design Icons trong gói `@expo/vector-icons` của app (Apache-2.0), có chữ "MINH HỌA" trên ảnh.
 - **Metadata:** đánh dấu là ảnh minh họa, không phải ảnh món, để GM-64 hiển thị đúng: `linkedArtwork[dishId].kind = category_illustration` kèm `groupCode`; `artwork.attribution` bắt đầu bằng "Ảnh minh họa nhóm".
@@ -111,7 +114,7 @@ Từ chối ảnh thuộc danh mục AI-generated, ảnh không rõ nguồn gố
 
 **Kỹ thuật:** cạnh ngắn ≥ 600 px, tỉ lệ gần 4:3, xuất WebP hoặc JPEG ≤ 200 KB mỗi ảnh. Ghi tổng dung lượng trong CHECKS.
 
-**Món không tìm được ảnh chụp hợp lệ:** dùng ảnh minh họa theo nhóm và báo Trí danh sách để quyết tự chụp hay giữ ảnh minh họa; không bắt buộc đủ ảnh chụp cho bản nộp đầu. Không đưa vào bundle production món không có ảnh nào.
+**Món không tìm được ảnh chụp hợp lệ:** tạm dùng ảnh minh họa theo nhóm và báo Trí danh sách để quyết tự chụp hoặc xin phép. Bản nộp phải đạt giới hạn 10% ở trên (thay quyết định 2026-11-26 là không bắt buộc đủ ảnh chụp). Không đưa vào bundle production món không có ảnh nào.
 
 ## 6. Nguồn dữ liệu
 
@@ -135,7 +138,7 @@ Nguồn hợp lệ là trang công khai truy cập lại được: menu quán (�
 3. Import và readback trên QA đạt; tạo được phòng 20 món cho cả bốn bữa.
 4. CHECKS ghi số món từng đợt, kết quả các lệnh trên và commit.
 
-**GM-47 Done lại khi:** cùng lệnh kiểm PASS cả hai mục mô tả và ảnh trên bundle đã gộp; mọi ảnh có bằng chứng license trong CHECKS; CHECKS ghi số ảnh chụp, số món dùng ảnh minh họa và danh sách các món đó; tổng dung lượng ảnh được ghi.
+**GM-47 Done lại khi:** cùng lệnh kiểm, chạy kèm `--require-photo-ratio`, PASS mục mô tả, ảnh và tỉ lệ ảnh chụp trên bundle đã gộp; mọi ảnh có bằng chứng license trong CHECKS; CHECKS ghi số ảnh chụp, số món dùng ảnh minh họa và danh sách các món đó; tổng dung lượng ảnh được ghi.
 
 **GM-51 phát hành khi:** lệnh kiểm PASS **toàn bộ** trên bundle production (không còn `test_demo`), quyền dùng nguồn mô tả đã xác nhận, readback trên staging khớp hash và số món.
 
