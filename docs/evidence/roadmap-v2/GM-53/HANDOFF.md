@@ -31,10 +31,10 @@ base `d7b89f2`. Xem [kế hoạch](PLAN.md), [kết quả kiểm](CHECKS.md) và
 ## Bước 5 — kiểm Expo Go trên AVD
 
 Tuấn xác nhận đã kiểm thủ công bằng Expo Go trên điện thoại Android
-ngày 26/11/2026. Ngày 27/11, Trí chạy một phần AVD Chặng 3A và sửa lỗi
-bàn phím bằng `ef6ee889`. Trí kiểm lại ca 320dp và chữ 200%, Tuấn xác
-nhận đã kiểm lại lỗi bàn phím trên Expo Go điện thoại thật.
-[Bằng chứng và các ca còn chờ](CHECKS.md#avd-chặng-3a-và-kiểm-lại-bàn-phím-ngày-27112026)
+ngày 26/11/2026 và xác nhận lại lỗi bàn phím sau sửa. Trí sửa bàn phím
+bằng `ef6ee889`, kiểm lại ca 320dp và chữ 200%, sau đó chạy AVD Chặng
+3A nối QA thật trên mã app tại `9de4903a`. [Lượt 27/11](avd-2026-11-27/RESULTS.md)
+· [Lượt 28/11](avd-2026-11-28/RESULTS.md) · [Bằng chứng và các ca còn chờ](CHECKS.md#tổng-hợp-avd-chặng-3a-ngày-27-và-28-tháng-11)
 
 Dùng stack QA riêng và tài khoản thử nghiệm vì xóa là thao tác thật.
 Không dùng môi trường production. Mở Docker Desktop và Android AVD.
@@ -148,7 +148,7 @@ khẩu hiện tại, áp dụng cả khi quên mật khẩu. Khách vẫn chỉ 
 Sau khi đặt mật khẩu, bấm **Quay lại đăng nhập** để kết thúc phiên cũ.
 Đăng nhập lại bằng mật khẩu mới rồi xác nhận xóa. Kiểm Auth và Edge đã
 xác nhận đường này trên QA. Tuấn xác nhận trọn luồng đạt trên Expo Go
-điện thoại Android ngày 27/11/2026. Lượt AVD vẫn chờ thực hiện.
+điện thoại Android và Trí kiểm luồng đạt trên AVD ngày 27/11/2026.
 [Kết quả kiểm](CHECKS.md#khôi-phục-mật-khẩu-từ-màn-xóa-tài-khoản)
 
 ### Đề xuất UX của Tuấn cho tài khoản email đang đăng nhập

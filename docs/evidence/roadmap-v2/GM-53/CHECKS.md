@@ -21,11 +21,11 @@ của từng lượt kiểm bên dưới.
 | Android export | `npx expo export --platform android --output-dir ../.work/gm53-android-final` | Pass trên `beb4f59`, bundle Hermes `entry-550a40e4d30a7665634bb5c071f1b7af.hbc`. Kiểm thiết bị ghi riêng. |
 | Repo và task indexes | `python scripts/validate_repository.py`, `python scripts/task_readiness.py --check-docs` | Pass sau khi có đầy đủ hồ sơ. |
 | Python regression | `python -m unittest discover -s tests -p 'test_*.py'` | Lượt đầy đủ 731 ca có 11 fail, 2 error, 7 skip. 141 ca của ba bộ validator/project gate/readiness chạy lại đều Pass sau khi hồ sơ có đủ file. Hai error môi trường Windows còn lại ở git init và quyền symlink. |
-| Gate trước review | `python scripts/task_readiness.py --task GM-53 --gate merge --base-ref origin/main --verify-outputs` | READY_FOR_MERGE_REVIEW ở kiểm đầu vào, file và ownership. Bước AVD trong AC còn chờ kết quả. |
+| Gate trước review | `python scripts/task_readiness.py --task GM-53 --gate merge --base-ref origin/main --verify-outputs` | READY_FOR_MERGE_REVIEW ở kiểm đầu vào, file và ownership. Xem bằng chứng AVD và các giới hạn bên dưới. |
 | Expo Go trên điện thoại Android thật | Xác nhận của Tuấn ngày 26/11/2026 | Đã chạy kiểm thủ công. Chưa có SHA bản mở trên điện thoại hoặc kết quả từng ca để đối chiếu. |
 | Kiểm lại bàn phím trên Expo Go điện thoại thật | Xác nhận của Tuấn ngày 27/11/2026 sau khi nhận `ef6ee889` | Pass cho lỗi bàn phím của màn Xóa tài khoản. Bề ngang và cỡ chữ của điện thoại chưa được ghi trong kết quả. |
-| Expo Go AVD nối Auth/REST/worker/Edge | [Kết quả của Trí trên PR #223](https://github.com/ThanhTris/IE307/pull/223#issuecomment-7206330070) | Đạt một phần. Lỗi bàn phím đã sửa và kiểm lại. Xem bảng kết quả bên dưới. |
-| Visual / trợ năng | Đối chiếu [FIGMA_PARITY](FIGMA_PARITY.md) | Bàn phím 320dp và chữ 200% đạt sau sửa. Đối chiếu node Figma, TalkBack và các cấu hình còn thiếu vẫn Not run. |
+| Expo Go AVD nối Auth/REST/worker/Edge | [27/11](avd-2026-11-27/RESULTS.md) và [28/11](avd-2026-11-28/RESULTS.md) | Đã chạy. Luồng Quên mật khẩu, đăng nhập lại và xóa tài khoản đạt. Xem phạm vi và giới hạn từng ca bên dưới. |
+| Visual / trợ năng | Đối chiếu [FIGMA_PARITY](FIGMA_PARITY.md) | Đã kiểm màn hẹp, chữ 200%, chế độ tối và thứ tự tiêu điểm TalkBack trên màn xóa. Đã xem bốn node Figma. Giọng đọc, cặp ảnh đối chiếu và độ tương phản nút đang gửi chưa được xác nhận. |
 
 Jest chạy với Node 24.20.0, npm 11.19.0 và SDK 58.0.25. QA riêng dùng
 API 54381, DB 54382 và Mailpit 54384. Phiên bản ứng dụng và dữ liệu
@@ -100,13 +100,7 @@ Trí báo 74/74 ca trong 6 bộ tài khoản, hồ sơ và phiên trên `ef6ee88
 TypeScript, ESLint thư mục account, kiểm kiến trúc, validator và merge
 gate đạt trong lượt đó. [Bản sửa và kết quả kiểm lại](https://github.com/ThanhTris/IE307/pull/223#issuecomment-7207748920)
 
-**Còn Not run trên AVD:** TalkBack, đối chiếu ảnh theo node Figma, 360dp,
-chữ 200% ở bề ngang thường, phiên email hết hạn, đăng nhập lại bằng tài
-khoản đã xóa, quay lại app từ trình duyệt, vị trí Đăng xuất, so nền hai ô
-xác nhận ở chế độ tối, kiểm lịch sử và nháp của khách mới sau xóa, đặt
-mật khẩu sau OTP rồi đăng nhập, hồi quy ba ô Đổi mật khẩu giống nhau,
-và kiểm bàn phím ở Đăng nhập, Sửa hồ sơ, Đổi mật khẩu. Cần xác nhận
-terms và support hiển thị trong trình duyệt trên thiết bị.
+Các ca còn thiếu sau lượt đầu được cập nhật theo hai lượt dưới đây.
 
 Góp ý UX nhắc nhập lại mật khẩu khi lần thử trước dừng ở bước xác minh
 vẫn mở. PR #221 cũng sửa `AccountFormFrame`. Nhánh của PR merge sau cần
@@ -126,7 +120,36 @@ khoản đang đăng nhập như màn Đổi mật khẩu.
 | Auth, Mailpit và Edge trên `gm53-1126` | Pass. OTP liên kết cùng UUID trước khi đặt mật khẩu. OTP khôi phục cho phép đặt mật khẩu, đăng nhập lại và xóa với ACK. GoTrue trả 403 khi đóng phiên cũ đã bị thu hồi, trường hợp tương ứng `AUTH_REQUIRED` mà app đã xử lý khi đăng xuất. Đăng nhập sau xóa bị từ chối. |
 | Android export | Pass. `npx expo export --platform android --output-dir ../.work/gm53-recovery-android` tạo bundle Hermes `entry-2ba4af112f9ecd014d6b4e9c7537a7a8.hbc`. |
 | Trọn luồng trên Expo Go điện thoại Android | Pass theo xác nhận của Tuấn ngày 27/11/2026 sau hướng dẫn chạy bản `8e95361`. Ca kiểm gồm liên kết email qua OTP, Back ở màn đặt mật khẩu, mở Quên mật khẩu từ màn xóa, khôi phục qua OTP, đăng nhập lại và xóa tài khoản theo đúng luồng yêu cầu. |
-| Trọn luồng trên AVD | Not run cho thay đổi này. Máy thực hiện chưa có Android Emulator hoặc AVD được cấu hình. Ca tái lập ở [HANDOFF](HANDOFF.md#bước-5--kiểm-expo-go-trên-avd). |
+| Trọn luồng trên AVD | Pass theo lượt ngày 27/11 của Trí trên `9de4903a`. Email khác bị chặn và Mailpit không nhận thư. Email đúng khôi phục được, đăng nhập lại và xóa thành công. DB không còn tài khoản và lần đăng nhập sau xóa bị từ chối. [Ảnh và kết quả](avd-2026-11-27/RESULTS.md) |
+
+### Tổng hợp AVD Chặng 3A ngày 27 và 28 tháng 11
+
+Trí kiểm mã app tại `9de4903a` trên Android API 37 với Expo Go và QA
+GM-03 riêng, có Auth, REST, worker và Edge thật. Lượt 27/11 dùng Expo
+Go 58.0.5. Hai bộ ảnh và bảng kết quả được lưu tại
+[27/11](avd-2026-11-27/RESULTS.md) và [28/11](avd-2026-11-28/RESULTS.md).
+
+| Ca | Kết quả |
+| --- | --- |
+| 27/11 — Quên mật khẩu và xóa | Pass trọn luồng sau khi liên kết email nhưng chưa đặt mật khẩu. Kiểm cả nhập email khác và đăng nhập lại bằng tài khoản đã xóa. |
+| 27/11 — Phiên, hồ sơ và legal | Pass khi phiên email hết hạn, Đăng xuất nằm dưới Thông tin ứng dụng, Điều khoản và Hỗ trợ hiển thị, Back về app. Nút Đăng nhập lại ở ca hết phiên đi qua màn chào mừng. |
+| 27/11 — Hồi quy màn tài khoản | Pass hai ca đổi mật khẩu với ba ô giống nhau, bàn phím 320dp và chữ 200% ở Đổi mật khẩu, Sửa hồ sơ, Đăng nhập. Màn xóa đạt ở 360dp, chữ 200% ở bề ngang thường và nền hai ô giống nhau trong chế độ tối. |
+| 28/11 — Xóa khi đang ở vòng 2 | Pass. App báo rời phòng hoặc đợi phòng kết thúc, tài khoản vẫn còn. Phòng kết thúc rồi thử lại thì xóa được, DB không còn user. |
+| 28/11 — Khách mới sau xóa và force-stop | Pass cho ca thẻ phòng của khách cũ không xuất hiện. Tab Lịch sử khách chỉ mời đăng nhập. Nháp phiếu và outbox của tài khoản cũ còn chờ Trí đánh giá bằng chứng. |
+| 28/11 — Sai mật khẩu, pending và Back | Pass. Sai mật khẩu giữ phiên, xóa ô mật khẩu và giữ ô XÓA. Tạm dừng Auth cho thấy các điều khiển khóa và Back không rời màn. Chạy lại Auth thì xóa thành công. |
+| 28/11 — TalkBack và Figma | Đã kiểm thứ tự tiêu điểm, nhãn và trạng thái khóa trên màn xóa, cùng vùng chạm được báo cáo. Đã xem bốn node Figma. Phạm vi và sai khác ghi trong [FIGMA_PARITY](FIGMA_PARITY.md). |
+
+**Giới hạn bằng chứng:** Chưa nghe giọng đọc TalkBack, chưa vuốt tới Hủy
+trên lượt email và chưa chạy TalkBack ở màn khác. Ca lỗi mạng có nút
+Thử lại chưa chụp lại. Lặp cùng `requestId` sau khi đã gửi POST có
+bằng chứng Jest/HTTP, còn thiếu lượt AVD. AVD chưa đọc trực tiếp
+SecureStore/SQLite. Kết quả hiện có về nháp phiếu dựa trên ràng buộc
+của server, kiểm UI và test tự động. Trí quyết định mức bằng chứng đủ
+cho nghiệm thu mục này.
+
+**Sau khi đồng bộ main:** nhánh đã merge `origin/main` tại `365f965`
+trong `7f50db4`. So diff xác nhận phạm vi `mobile/` và `supabase/`
+của nhánh giống trước merge. Hai bộ AVD vẫn ghi theo revision thực tế.
 
 Lượt full Jest đầu gặp timeout ở màn kết quả và dừng sau khi source
 thay đổi. Bộ màn kết quả đã đạt ở lượt kiểm tập trung, chạy với
