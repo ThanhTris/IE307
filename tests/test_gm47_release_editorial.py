@@ -75,6 +75,30 @@ class ReleaseEditorialTest(unittest.TestCase):
                 with self.assertRaisesRegex(ValueError, 'Invalid or stale GM-47 artwork evidence'):
                     editorial.build(artwork=modified)
 
+    def test_followup_third_batch_validates_owner_approved_photos(self):
+        additions = editorial.ARTWORK.with_name('photo-additions-batch3-2026-11-28.json')
+        stock = editorial.load_artwork(additions)
+        photos = editorial.gm41.dc.load_json(additions)['images']
+        self.assertEqual(len(photos), 38)
+        _, report = editorial.build(artwork=stock)
+        self.assertEqual(report['preparedArtwork'], 174)
+        self.assertEqual(report['humanReviewedArtwork'], 174)
+        self.assertEqual(len(report['illustrationPlan']), 79)
+        receipt = {
+            'bucketPublicUrl': 'https://staging.example.invalid/storage/v1/object/public/dish-images',
+            'candidateDatasetVersion': '1.4.8',
+            'checkedAt': '2026-11-28T12:06:29Z',
+            'objects': [{k: asset[k] for k in ('objectKey', 'sha256')}
+                        for row in photos for asset in (row, row['thumbnail'])],
+        }
+        _, linked_report = editorial.build(artwork=stock, storage_receipt=receipt)
+        self.assertEqual(
+            {key for key, row in linked_report['linkedArtwork'].items() if row['kind'] == 'photo'},
+            {row['dishId'] for row in photos},
+        )
+        with self.assertRaisesRegex(ValueError, 'must be newer'):
+            editorial.build(artwork=stock, storage_receipt={**receipt, 'candidateDatasetVersion': '1.4.7'})
+
     def test_storage_receipt_only_checks_the_uploaded_batch(self):
         inventory = editorial.gm41.dc.load_json(editorial.ARTWORK)
         approved, unreviewed = inventory['images'][:2]

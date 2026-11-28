@@ -1,0 +1,199 @@
+{
+  "type": "gm47-photo-approval-in-chat",
+  "reviewer": "Trí",
+  "recordedAt": "2026-11-28T12:06:29Z",
+  "message": "Duyệt mực nướng muối ớt, sò dương, cơm lam, cơm hạt sen, cơm trộn, cơm tôm rum, nghêu hấp thái, sò lông nướng mỡ hành, ốc hương hấp sả, ốc luộc, bún chay, hủ tiếu mực, mì vịt tiềm, mền xừng, chè sen long nhãn, kem sôi, gỏi xoài, nộm bò khô, mỳ ò sốt vanng, cà ri gà, cơm đậu hủ sót cà, càng ghẹ rnag me, ốc móng tay, bún cá châu đóc, chè sương sa, hoa quả dầm, bánh đúc tàu.",
+  "catalogueVersion": "1.4.7",
+  "reviewManifestSha256": "680468401c977f8e773e5b26ba0514b9d557a4347ba621d3d2e9e1bb925cc761",
+  "selections": [
+    {
+      "dishId": "b89909e0-7b3c-5f9e-886f-3c7f36bcf8d7",
+      "name": "Mực nướng muối ớt",
+      "source": "https://commons.wikimedia.org/wiki/File:Grilled_squid.jpg",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/",
+      "sha256": "038f8518f818e8df6702ccef1b025dc00e3aa5eb2032111cb20122df1e56b9de"
+    },
+    {
+      "dishId": "92dcc2c3-1eb7-56af-89dd-2c6b393eef0e",
+      "name": "Sò dương nướng",
+      "source": "https://commons.wikimedia.org/wiki/File:S%C3%B2_d%C6%B0%C6%A1ng_v%E1%BB%9Bi_rau_r%C4%83m_(%C4%83n_%E1%BB%91c_v%E1%BB%9Bi_em_Hy).jpg",
+      "licenseUrl": "https://commons.wikimedia.org/wiki/File:S%C3%B2_d%C6%B0%C6%A1ng_v%E1%BB%9Bi_rau_r%C4%83m_(%C4%83n_%E1%BB%91c_v%E1%BB%9Bi_em_Hy).jpg",
+      "sha256": "ff7796f31cbe7c30eb82e9f09c0b1ab75ae4be88145f76b8c74752ab49035a7f"
+    },
+    {
+      "dishId": "27711275-291a-5edc-8d93-46767f1b9832",
+      "name": "Cơm lam gà nướng",
+      "source": "https://commons.wikimedia.org/wiki/File:Com-lam-cao-bang.jpg",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/",
+      "sha256": "195b2d220945bb9cff7eefa738932bce7433d93f050761be9cdf6e4c37491adb"
+    },
+    {
+      "dishId": "ff96ba1b-bde3-5fd0-b91a-c2f1f0193b21",
+      "name": "Cơm hạt sen",
+      "source": "https://commons.wikimedia.org/wiki/File:Lotus_fried_brown_rice.jpg",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/",
+      "sha256": "08690fad4f695d0122ff43d09727e8a94d69a5406e9562b10afd080ae274bf22"
+    },
+    {
+      "dishId": "d9756559-2697-565c-86e0-36cf39c4da49",
+      "name": "Cơm trộn",
+      "source": "https://commons.wikimedia.org/wiki/File:Bibimbap_4.jpg",
+      "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+      "sha256": "b91b1a2d791e30e17d82d4acbfbb1278d5ef07aa215e877f73557fc28da0868b"
+    },
+    {
+      "dishId": "e0a99abc-3bb4-54e5-85ea-0361df2098b7",
+      "name": "Cơm tôm rim",
+      "source": "https://commons.wikimedia.org/wiki/File:Qu%C3%A1n_B%E1%BA%BFp_Nh%C3%A0_%E1%BB%9F_Q1_(m%C3%B3n_%C4%83n%2C_t%C3%B4m_kho_t%E1%BB%99)_(2).jpg",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/",
+      "sha256": "238c2274d206fdb6fb652ff2f81e5a483c063e9b94010a1e00d454910d45ebac"
+    },
+    {
+      "dishId": "df04074c-027b-597e-a30d-dab217155801",
+      "name": "Nghêu hấp Thái",
+      "source": "https://www.flickr.com/photos/78292210@N05/12767814594/",
+      "licenseUrl": "https://creativecommons.org/licenses/by/2.0/",
+      "sha256": "accecb51986a659d99576a3a6e9aec4909677ed0209f7a3efad48a240e9808d0"
+    },
+    {
+      "dishId": "7dc4a501-9f31-5164-956e-13338699d38d",
+      "name": "Sò lông nướng mỡ hành",
+      "source": "https://www.flickr.com/photos/78292210@N05/12767747353/",
+      "licenseUrl": "https://creativecommons.org/licenses/by/2.0/",
+      "sha256": "3d565f1ebc907e87d0557ec0fd826d052fe4feabc7162128b80be5aa29f6f6a1"
+    },
+    {
+      "dishId": "457070ec-e09c-5d28-9451-5d816b44c009",
+      "name": "Ốc hương hấp sả",
+      "source": "https://commons.wikimedia.org/wiki/File:PQ_2022%2C_Khu_ND_Vin-P%C6%A1n_(%C4%91%E1%BB%93_%C4%83n%2C_d%C4%A9a_%E1%BB%91c_h%C6%B0%C6%A1ng%2C_b%E1%BB%AFa_%C4%83n_t%E1%BB%91i)_(2).jpg",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/",
+      "sha256": "63ac3f7cd24cda34eeaf7854fed4aa9371972695ba941633e4613a678753f738"
+    },
+    {
+      "dishId": "c4fa29a2-c26c-53fc-aea2-28d7bfbe767a",
+      "name": "Ốc luộc",
+      "source": "https://commons.wikimedia.org/wiki/File:%E1%BB%90c_b%C6%B0u_h%E1%BA%A5p_s%E1%BA%A3%2C_ng12th2n2022_(1).jpg",
+      "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+      "sha256": "14e4892204d60b803a74942b3f7861099f52f70737bfe11dc80f38da19b32834"
+    },
+    {
+      "dishId": "52c6435f-c967-5820-8e76-b1917291a1ef",
+      "name": "Bún chay",
+      "source": "https://www.flickr.com/photos/61324768@N00/5815842044/",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/2.0/",
+      "sha256": "e4e87bdd722b18a90c5600bef3b3eb4eadc834bf1f535adfa7ae48df09d0f973"
+    },
+    {
+      "dishId": "65688791-906c-59b0-8282-b9a5c8161f23",
+      "name": "Hủ tiếu mực",
+      "source": "https://commons.wikimedia.org/wiki/File:H%E1%BB%A7_ti%E1%BA%BFu_h%E1%BA%A3i_s%E1%BA%A3n_kh%C3%B4_h%C3%A0_ti%C3%AAn.jpg",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/",
+      "sha256": "fc229ec6ce7122712caf94573e622d2326a5148f06aa81f9c7f86b4bcfed96a1"
+    },
+    {
+      "dishId": "9a5ba9ec-d6c2-5925-90e5-6ab2552f34a5",
+      "name": "Mì vịt tiềm",
+      "source": "https://commons.wikimedia.org/wiki/File:M%C3%AC_v%E1%BB%8Bt_ti%E1%BB%81m.jpg",
+      "licenseUrl": "https://creativecommons.org/licenses/by/2.0/",
+      "sha256": "0b9efb01216532e5acfc8242c84049434ec360997ab632c79e8f5865e2bfc6e9"
+    },
+    {
+      "dishId": "0d270cdc-50bd-5c45-9729-548502e374d8",
+      "name": "Mè xửng",
+      "source": "https://www.flickr.com/photos/27109274@N06/4565463582/",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/2.0/",
+      "sha256": "2a2bbf0c86b062314b15843c0fa10e92deb4efcabf49be4d470c5f8a4873d653"
+    },
+    {
+      "dishId": "74456894-f456-551c-9ff1-1fd2adf21823",
+      "name": "Chè sen long nhãn",
+      "source": "https://commons.wikimedia.org/wiki/File:Nh%C3%A0_m%C3%ACnh_d%E1%BB%8Bp_L%E1%BB%85_2th9n2023_(ch%C3%A8_nh%C3%A3n_nh%E1%BB%A5c_h%E1%BA%A1t_sen)_(1).jpg",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/",
+      "sha256": "590f93ac787219862a5d76b90e48eaa54e15367f15a81c2167e02a45fc67db77"
+    },
+    {
+      "dishId": "a2e88df3-ff3a-5813-b671-d0a44003cc15",
+      "name": "Kem xôi",
+      "source": "https://www.flickr.com/photos/80909308@N06/8667214871/",
+      "licenseUrl": "https://creativecommons.org/licenses/by/2.0/",
+      "sha256": "697fc9f648fec8c7e7b2c15bed9939760e8f9600d4b3573c6a9566c74f62b2fa"
+    },
+    {
+      "dishId": "d718fef9-e8d9-5feb-9193-de22f102505c",
+      "name": "Gỏi xoài tôm khô",
+      "source": "https://commons.wikimedia.org/wiki/File:Vietnamese_mango_salad_with_shrimp.jpg",
+      "licenseUrl": "https://creativecommons.org/licenses/by/2.0/",
+      "sha256": "532beeab6ade8e1311d0446708d873c58b5d4a30bd2ad1ff336eb6ce6e62c5e2"
+    },
+    {
+      "dishId": "b0a7b0aa-7e88-543c-ad30-88e3de570852",
+      "name": "Nộm bò khô",
+      "source": "https://commons.wikimedia.org/wiki/File:G%E1%BB%8Fi_%C4%91u_%C4%91%E1%BB%A7_kh%C3%B4_b%C3%B2.jpg",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/2.0/",
+      "sha256": "590ed53b16a272133c8996847306fb42dcba13c3a16a819929bd890b645deb7b"
+    },
+    {
+      "dishId": "c4782d39-0c86-59d9-b021-4e07a07208f7",
+      "name": "Bánh mì bò sốt vang",
+      "source": "https://www.flickr.com/photos/68147320@N02/40114549733/",
+      "licenseUrl": "https://creativecommons.org/licenses/by/2.0/",
+      "sha256": "fb69ca18770352e8d4839cb13b447b1aa622c204cb1d7c9c0c9deae14e711018"
+    },
+    {
+      "dishId": "3dd69296-7c7f-526a-be2a-ed684ea38f4b",
+      "name": "Bánh mì cà ri gà",
+      "source": "https://www.flickr.com/photos/142284085@N06/40779385253/",
+      "licenseUrl": "https://creativecommons.org/licenses/by/2.0/",
+      "sha256": "b395564fe4aa71b8a12d16bde4ddd6bf64e9a130d833d55c1e75f8ec0ff1f941"
+    },
+    {
+      "dishId": "9cbc5485-896f-5725-bc54-c7d637f54770",
+      "name": "Cơm đậu hủ sốt cà",
+      "source": "https://commons.wikimedia.org/wiki/File:B%E1%BB%AFa_c%C6%A1m_gia_%C4%91%C3%ACnh_ng6th4n2021_(t%C3%B4_%C4%91%E1%BA%ADu_h%C5%A9_s%E1%BB%91t_c%C3%A0)_(1).jpg",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/",
+      "sha256": "a21c724c4ccb9eb3ab273adb6d3a1442877acb9f87c869c8695787c5a563f341"
+    },
+    {
+      "dishId": "d65ea051-320c-5185-85e2-127743dfc038",
+      "name": "Càng ghẹ rang me",
+      "source": "https://www.flickr.com/photos/87232391@N00/4241159194/",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/2.0/",
+      "sha256": "e57848a647770a378910213083727d9f3e898b08b50527b5b62865d93fb33255"
+    },
+    {
+      "dishId": "1bd3aad6-1bb8-5c7f-9253-476194073b01",
+      "name": "Ốc móng tay xào bơ tỏi",
+      "source": "https://commons.wikimedia.org/wiki/File:Razor_Clams_with_lime%2C_herbs%2C_olive_oil_chile%2C_garlic.jpg",
+      "licenseUrl": "https://creativecommons.org/licenses/by/2.0/",
+      "sha256": "7de3f41cc07e6fd9e93281acfade908d44f916f102c087379efbfa19d931f3e9"
+    },
+    {
+      "dishId": "7f6cff9c-e556-5e46-8cae-8ea9e9de160e",
+      "name": "Bún cá Châu Đốc",
+      "source": "https://commons.wikimedia.org/wiki/File:PQ_2022%2C_Khu_ND_Vin-P%C6%A1n_(%C4%91%E1%BB%93_%C4%83n%2C_t%C3%B4_b%C3%BAn_c%C3%A1)_(1).jpg",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/",
+      "sha256": "4b117c4eb6da8aac25cc25cb97f10d30b2ee20b9725f6e6e9bf123780511c569"
+    },
+    {
+      "dishId": "d233a39a-2cf6-5c5c-b82f-f3da99116ff2",
+      "name": "Chè sương sa hạt lựu",
+      "source": "https://commons.wikimedia.org/wiki/File:Che_suong_sa_hot_luu.jpg",
+      "licenseUrl": "https://creativecommons.org/licenses/by/3.0/",
+      "sha256": "e0290549ad7b4e5e1fe8a83a726db3eb1a01a0da4172106170b726a05cbe1710"
+    },
+    {
+      "dishId": "8dce96d9-7896-5fc2-97d0-3ac8ab3d151c",
+      "name": "Hoa quả dầm",
+      "source": "https://commons.wikimedia.org/wiki/File:Fruit_salad_in_large_bowl.jpg",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/",
+      "sha256": "ae0e701eef2fc6d998cc37cd55a3bff7a20dc7b6e09ce4013068e3597915df3c"
+    },
+    {
+      "dishId": "d76dd83a-59ba-5c06-948a-2ad55f5f5bea",
+      "name": "Bánh đúc tàu",
+      "source": "https://commons.wikimedia.org/wiki/File:Banhduc-northern.jpg",
+      "licenseUrl": "https://creativecommons.org/licenses/by/2.0/",
+      "sha256": "5fa1a998cd5dcb8f769aef507dfcf5814bfc2eba0925be0b07f1f7948cf7f2bb"
+    }
+  ]
+}

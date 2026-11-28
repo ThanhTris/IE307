@@ -1,0 +1,1528 @@
+{
+  "baseArtworkSha256": "cede952e8b182ab7619bea21ca1edff9fc0ee0e6f5756ffbcc064f26c7acf8ff",
+  "previousStorageVersion": "1.4.7",
+  "selectionSha256": "b3e9826144a7726e346c54629a2713034e6ff142fa0ddcdfa1db1b886def2d1a",
+  "priorSelectionSha256": "c793ef6d93ed3e914c9388e937b560b414de8dff46534dae7ae03d343bd8ee18",
+  "images": [
+    {
+      "dishId": "0d270cdc-50bd-5c45-9729-548502e374d8",
+      "name": "Mè xửng",
+      "source": "https://www.flickr.com/photos/27109274@N06/4565463582/",
+      "upstreamImage": "https://live.staticflickr.com/3643/4565463582_0fbd8b7f19_b.jpg",
+      "author": "Hilke Kurzke (buechertiger)",
+      "license": "CC BY-SA 2.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/2.0/",
+      "originalWidth": 1022,
+      "originalHeight": 768,
+      "attribution": "Ảnh: Hilke Kurzke (buechertiger) / Flickr, CC BY-SA 2.0 (đã cắt khung 4:3 và nén).",
+      "file": "0d270cdc-50bd-5c45-9729-548502e374d8.webp",
+      "width": 1000,
+      "height": 750,
+      "bytes": 80232,
+      "sha256": "2a2bbf0c86b062314b15843c0fa10e92deb4efcabf49be4d470c5f8a4873d653",
+      "checkedAt": "2026-11-28T09:04:32Z",
+      "usageRights": "licensed",
+      "objectKey": "images/0d270cdc-50bd-5c45-9729-548502e374d8.webp",
+      "thumbnail": {
+        "objectKey": "thumbnails/0d270cdc-50bd-5c45-9729-548502e374d8.webp",
+        "width": 400,
+        "height": 300,
+        "bytes": 22128,
+        "sha256": "108cc1288b4cb6334e20022724b65be25754c8fb973daa19110845dfd9038ba3"
+      },
+      "aiCheck": {
+        "cameraExif": false,
+        "uploadedAt": "2010-04-30T10:44:25Z",
+        "aiCategory": false,
+        "verdict": "real_photo",
+        "checkedBy": "Trí",
+        "checkedAt": "2026-11-28T12:06:29Z",
+        "provenance": "Đĩa kẹo mè xửng Huế phủ mè trắng và đậu phộng (Hilke Kurzke / Flickr, CC BY-SA 2.0).",
+        "assistance": {
+          "tool": "Antigravity",
+          "checkedAt": "2026-11-28T09:04:32Z"
+        }
+      }
+    },
+    {
+      "dishId": "1bd3aad6-1bb8-5c7f-9253-476194073b01",
+      "name": "Ốc móng tay xào bơ tỏi",
+      "source": "https://commons.wikimedia.org/wiki/File:Razor_Clams_with_lime%2C_herbs%2C_olive_oil_chile%2C_garlic.jpg",
+      "upstreamImage": "https://upload.wikimedia.org/wikipedia/commons/f/fc/Razor_Clams_with_lime%2C_herbs%2C_olive_oil_chile%2C_garlic.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "author": "T.Tseng",
+      "license": "CC BY 2.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by/2.0/",
+      "originalWidth": 3264,
+      "originalHeight": 2448,
+      "attribution": "Ảnh: T.Tseng / Wikimedia Commons, CC BY 2.0 (đã cắt khung 4:3 và nén).",
+      "file": "1bd3aad6-1bb8-5c7f-9253-476194073b01.webp",
+      "width": 1000,
+      "height": 750,
+      "bytes": 102226,
+      "sha256": "7de3f41cc07e6fd9e93281acfade908d44f916f102c087379efbfa19d931f3e9",
+      "checkedAt": "2026-11-28T09:04:32Z",
+      "usageRights": "licensed",
+      "objectKey": "images/1bd3aad6-1bb8-5c7f-9253-476194073b01.webp",
+      "thumbnail": {
+        "objectKey": "thumbnails/1bd3aad6-1bb8-5c7f-9253-476194073b01.webp",
+        "width": 400,
+        "height": 300,
+        "bytes": 27184,
+        "sha256": "d98c1ede1a60c3a9615a11710c4a02ed53e9f7d5302052af60d18d72fae8517b"
+      },
+      "aiCheck": {
+        "cameraExif": true,
+        "uploadedAt": "2020-03-03T05:21:45Z",
+        "aiCategory": false,
+        "verdict": "real_photo",
+        "checkedBy": "Trí",
+        "checkedAt": "2026-11-28T12:06:29Z",
+        "provenance": "[Cần cân nhắc] Đĩa ốc móng tay chế biến tỏi ớt chanh thảo mộc 4:3 (T.Tseng / Commons, CC BY 2.0, có EXIF) — phong cách nhà hàng Mỹ thay vì bơ tỏi vỉa hè VN.",
+        "assistance": {
+          "tool": "Antigravity",
+          "checkedAt": "2026-11-28T09:04:32Z"
+        }
+      }
+    },
+    {
+      "dishId": "27711275-291a-5edc-8d93-46767f1b9832",
+      "name": "Cơm lam gà nướng",
+      "source": "https://commons.wikimedia.org/wiki/File:Com-lam-cao-bang.jpg",
+      "upstreamImage": "https://upload.wikimedia.org/wikipedia/commons/c/cc/Com-lam-cao-bang.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "author": "P22852953",
+      "license": "CC BY-SA 4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/",
+      "originalWidth": 1536,
+      "originalHeight": 2048,
+      "attribution": "Ảnh: P22852953 / Wikimedia Commons, CC BY-SA 4.0 (đã thêm viền 4:3 và nén).",
+      "file": "27711275-291a-5edc-8d93-46767f1b9832.webp",
+      "width": 1000,
+      "height": 750,
+      "bytes": 150742,
+      "sha256": "195b2d220945bb9cff7eefa738932bce7433d93f050761be9cdf6e4c37491adb",
+      "checkedAt": "2026-11-28T09:04:32Z",
+      "usageRights": "licensed",
+      "objectKey": "images/27711275-291a-5edc-8d93-46767f1b9832.webp",
+      "thumbnail": {
+        "objectKey": "thumbnails/27711275-291a-5edc-8d93-46767f1b9832.webp",
+        "width": 400,
+        "height": 300,
+        "bytes": 26934,
+        "sha256": "eca48c1209b34b5441bd7cc8782bd4767fd39eabf6b517144ad9d6698c6d5c12"
+      },
+      "aiCheck": {
+        "cameraExif": false,
+        "uploadedAt": "2025-04-10T12:59:54Z",
+        "aiCategory": false,
+        "verdict": "real_photo",
+        "checkedBy": "Trí",
+        "checkedAt": "2026-11-28T12:06:29Z",
+        "provenance": "Mẹt cơm lam ống tre kèm gà nướng vàng ươm và muối vừng tại Cao Bằng (P22852953 / Commons, CC BY-SA 4.0). Đạt cả 2 nhóm Cơm & Lẩu/Nướng.",
+        "assistance": {
+          "tool": "Antigravity",
+          "checkedAt": "2026-11-28T09:04:32Z"
+        }
+      }
+    },
+    {
+      "dishId": "3dd69296-7c7f-526a-be2a-ed684ea38f4b",
+      "name": "Bánh mì cà ri gà",
+      "source": "https://www.flickr.com/photos/142284085@N06/40779385253/",
+      "upstreamImage": "https://live.staticflickr.com/65535/40779385253_48b6d2e709_b.jpg",
+      "author": "Huyzee Vu (hungryhuy)",
+      "license": "CC BY 2.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by/2.0/",
+      "originalWidth": 683,
+      "originalHeight": 1024,
+      "attribution": "Ảnh: Huyzee Vu (hungryhuy) / Flickr, CC BY 2.0 (đã thêm viền 4:3 và nén).",
+      "file": "3dd69296-7c7f-526a-be2a-ed684ea38f4b.webp",
+      "width": 1000,
+      "height": 750,
+      "bytes": 35080,
+      "sha256": "b395564fe4aa71b8a12d16bde4ddd6bf64e9a130d833d55c1e75f8ec0ff1f941",
+      "checkedAt": "2026-11-28T09:04:32Z",
+      "usageRights": "licensed",
+      "objectKey": "images/3dd69296-7c7f-526a-be2a-ed684ea38f4b.webp",
+      "thumbnail": {
+        "objectKey": "thumbnails/3dd69296-7c7f-526a-be2a-ed684ea38f4b.webp",
+        "width": 400,
+        "height": 300,
+        "bytes": 10582,
+        "sha256": "b8efb30003d4f270fe92329508912ca91f5131901b965325768c45d7900fcfc8"
+      },
+      "aiCheck": {
+        "cameraExif": false,
+        "uploadedAt": "2019-05-01T02:32:47Z",
+        "aiCategory": false,
+        "verdict": "real_photo",
+        "checkedBy": "Trí",
+        "checkedAt": "2026-11-28T12:06:29Z",
+        "provenance": "Tô cà ri gà Việt Nam ăn kèm lát bánh mì giòn ngay trong khung hình (Huyzee Vu hungryhuy / Flickr, CC BY 2.0, cạnh ngắn 683 px).",
+        "assistance": {
+          "tool": "Antigravity",
+          "checkedAt": "2026-11-28T09:04:32Z"
+        }
+      }
+    },
+    {
+      "dishId": "457070ec-e09c-5d28-9451-5d816b44c009",
+      "name": "Ốc hương hấp sả",
+      "source": "https://commons.wikimedia.org/wiki/File:PQ_2022%2C_Khu_ND_Vin-P%C6%A1n_(%C4%91%E1%BB%93_%C4%83n%2C_d%C4%A9a_%E1%BB%91c_h%C6%B0%C6%A1ng%2C_b%E1%BB%AFa_%C4%83n_t%E1%BB%91i)_(2).jpg",
+      "upstreamImage": "https://upload.wikimedia.org/wikipedia/commons/e/e3/PQ_2022%2C_Khu_ND_Vin-P%C6%A1n_%28%C4%91%E1%BB%93_%C4%83n%2C_d%C4%A9a_%E1%BB%91c_h%C6%B0%C6%A1ng%2C_b%E1%BB%AFa_%C4%83n_t%E1%BB%91i%29_%282%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "author": "Phương Huy",
+      "license": "CC BY-SA 4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/",
+      "originalWidth": 3024,
+      "originalHeight": 4032,
+      "attribution": "Ảnh: Phương Huy / Wikimedia Commons, CC BY-SA 4.0 (đã thêm viền 4:3 và nén).",
+      "file": "457070ec-e09c-5d28-9451-5d816b44c009.webp",
+      "width": 1000,
+      "height": 750,
+      "bytes": 105086,
+      "sha256": "63ac3f7cd24cda34eeaf7854fed4aa9371972695ba941633e4613a678753f738",
+      "checkedAt": "2026-11-28T09:04:32Z",
+      "usageRights": "licensed",
+      "objectKey": "images/457070ec-e09c-5d28-9451-5d816b44c009.webp",
+      "thumbnail": {
+        "objectKey": "thumbnails/457070ec-e09c-5d28-9451-5d816b44c009.webp",
+        "width": 400,
+        "height": 300,
+        "bytes": 24952,
+        "sha256": "75be20a935f7ac97df5e023e320c24a99efb73d308cc7a48a85963cdcda05f11"
+      },
+      "aiCheck": {
+        "cameraExif": true,
+        "uploadedAt": "2023-09-17T02:44:50Z",
+        "aiCategory": false,
+        "verdict": "real_photo",
+        "checkedBy": "Trí",
+        "checkedAt": "2026-11-28T12:06:29Z",
+        "provenance": "Đĩa ốc hương chín chấm nước chấm tại Phú Quốc (Phương Huy / Commons, CC BY-SA 4.0, có EXIF).",
+        "assistance": {
+          "tool": "Antigravity",
+          "checkedAt": "2026-11-28T09:04:32Z"
+        }
+      }
+    },
+    {
+      "dishId": "52c6435f-c967-5820-8e76-b1917291a1ef",
+      "name": "Bún chay",
+      "source": "https://www.flickr.com/photos/61324768@N00/5815842044/",
+      "upstreamImage": "https://live.staticflickr.com/3556/5815842044_b7e3a36229_b.jpg",
+      "author": "Craig Dugas (crd)",
+      "license": "CC BY-SA 2.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/2.0/",
+      "originalWidth": 1024,
+      "originalHeight": 744,
+      "attribution": "Ảnh: Craig Dugas (crd) / Flickr, CC BY-SA 2.0 (đã cắt khung 4:3 và nén).",
+      "file": "52c6435f-c967-5820-8e76-b1917291a1ef.webp",
+      "width": 1000,
+      "height": 750,
+      "bytes": 95822,
+      "sha256": "e4e87bdd722b18a90c5600bef3b3eb4eadc834bf1f535adfa7ae48df09d0f973",
+      "checkedAt": "2026-11-28T09:04:32Z",
+      "usageRights": "licensed",
+      "objectKey": "images/52c6435f-c967-5820-8e76-b1917291a1ef.webp",
+      "thumbnail": {
+        "objectKey": "thumbnails/52c6435f-c967-5820-8e76-b1917291a1ef.webp",
+        "width": 400,
+        "height": 300,
+        "bytes": 27248,
+        "sha256": "966d2d51ad27989b91dbf405d9fdf04dc79d03c696f192ce27e1bc85a07f22eb"
+      },
+      "aiCheck": {
+        "cameraExif": false,
+        "uploadedAt": "2011-06-09T17:39:56Z",
+        "aiCategory": false,
+        "verdict": "real_photo",
+        "checkedBy": "Trí",
+        "checkedAt": "2026-11-28T12:06:29Z",
+        "provenance": "Tô bún chay kèm tàu hủ chiên vàng, rau sống, đồ chua và đậu phộng (Craig Dugas / Flickr, CC BY-SA 2.0).",
+        "assistance": {
+          "tool": "Antigravity",
+          "checkedAt": "2026-11-28T09:04:32Z"
+        }
+      }
+    },
+    {
+      "dishId": "5a5d30ce-49b1-5cab-b6f6-007fde4c33bc",
+      "name": "Gà nướng lá chanh",
+      "source": "https://commons.wikimedia.org/wiki/File:V%C3%B9ng_C%C3%B9a_%E1%BB%9F_Cam_L%E1%BB%99_th5n2023-Ph%C6%B0%C6%A1ng_Gia_Trang_(x%C3%B4i_hoa_c%C3%BAc_v%E1%BB%9Bi_g%C3%A0_C%C3%B9a_n%C6%B0%E1%BB%9Bng_l%C3%A1_chanh)_(4).jpg",
+      "upstreamImage": "https://thumb.wikimedia.org/wikipedia/commons/thumb/a/a2/V%C3%B9ng_C%C3%B9a_%E1%BB%9F_Cam_L%E1%BB%99_th5n2023-Ph%C6%B0%C6%A1ng_Gia_Trang_%28x%C3%B4i_hoa_c%C3%BAc_v%E1%BB%9Bi_g%C3%A0_C%C3%B9a_n%C6%B0%E1%BB%9Bng_l%C3%A1_chanh%29_%284%29.jpg/1280px-V%C3%B9ng_C%C3%B9a_%E1%BB%9F_Cam_L%E1%BB%99_th5n2023-Ph%C6%B0%C6%A1ng_Gia_Trang_%28x%C3%B4i_hoa_c%C3%BAc_v%E1%BB%9Bi_g%C3%A0_C%C3%B9a_n%C6%B0%E1%BB%9Bng_l%C3%A1_chanh%29_%284%29.jpg",
+      "author": "Phương Huy",
+      "license": "CC BY-SA 4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/",
+      "originalWidth": 3024,
+      "originalHeight": 4032,
+      "attribution": "Ảnh: Phương Huy / Wikimedia Commons, CC BY-SA 4.0 (đã cắt khung 4:3 và nén).",
+      "width": 1000,
+      "height": 750,
+      "bytes": 156384,
+      "sha256": "1ce698a57da209a28eded699a3e0a2e6b53ffe289266c86d47389f5ac23a46ac",
+      "file": "5a5d30ce-49b1-5cab-b6f6-007fde4c33bc.webp",
+      "checkedAt": "2026-11-28T03:12:24Z",
+      "objectKey": "images/5a5d30ce-49b1-5cab-b6f6-007fde4c33bc.webp",
+      "usageRights": "licensed",
+      "thumbnail": {
+        "width": 400,
+        "height": 300,
+        "bytes": 35876,
+        "sha256": "e79321a9c5d3f4f364d2cb0daa32b06905b835be6858753c254a5e286b97bf95",
+        "objectKey": "thumbnails/5a5d30ce-49b1-5cab-b6f6-007fde4c33bc.webp"
+      },
+      "aiCheck": {
+        "cameraExif": false,
+        "uploadedAt": "2023-08-12T15:16:41Z",
+        "aiCategory": false,
+        "verdict": "real_photo",
+        "checkedBy": "Tâm",
+        "checkedAt": "2026-11-28T04:34:05Z",
+        "provenance": "Nguồn ghi rõ gà Cùa nướng lá chanh. Đĩa có xôi hoa cúc ăn kèm.",
+        "assistance": {
+          "tool": "Codex",
+          "checkedAt": "2026-11-28T03:12:24Z"
+        }
+      }
+    },
+    {
+      "dishId": "65688791-906c-59b0-8282-b9a5c8161f23",
+      "name": "Hủ tiếu mực",
+      "source": "https://commons.wikimedia.org/wiki/File:H%E1%BB%A7_ti%E1%BA%BFu_h%E1%BA%A3i_s%E1%BA%A3n_kh%C3%B4_h%C3%A0_ti%C3%AAn.jpg",
+      "upstreamImage": "https://upload.wikimedia.org/wikipedia/commons/6/6e/H%E1%BB%A7_ti%E1%BA%BFu_h%E1%BA%A3i_s%E1%BA%A3n_kh%C3%B4_h%C3%A0_ti%C3%AAn.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "author": "Tonbi ko",
+      "license": "CC BY-SA 4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/",
+      "originalWidth": 1379,
+      "originalHeight": 1000,
+      "attribution": "Ảnh: Tonbi ko / Wikimedia Commons, CC BY-SA 4.0 (đã cắt khung 4:3 và nén).",
+      "file": "65688791-906c-59b0-8282-b9a5c8161f23.webp",
+      "width": 1000,
+      "height": 750,
+      "bytes": 80994,
+      "sha256": "fc229ec6ce7122712caf94573e622d2326a5148f06aa81f9c7f86b4bcfed96a1",
+      "checkedAt": "2026-11-28T09:04:32Z",
+      "usageRights": "licensed",
+      "objectKey": "images/65688791-906c-59b0-8282-b9a5c8161f23.webp",
+      "thumbnail": {
+        "objectKey": "thumbnails/65688791-906c-59b0-8282-b9a5c8161f23.webp",
+        "width": 400,
+        "height": 300,
+        "bytes": 20504,
+        "sha256": "97d3c88d7304d7052fb68b184d2a7f210bc9919c5357b1e7d22ab117da5a847b"
+      },
+      "aiCheck": {
+        "cameraExif": true,
+        "uploadedAt": "2016-11-25T05:04:37Z",
+        "aiCategory": false,
+        "verdict": "real_photo",
+        "checkedBy": "Trí",
+        "checkedAt": "2026-11-28T12:06:29Z",
+        "provenance": "Đĩa hủ tiếu hải sản khô Hà Tiên nổi bật nhiều khoanh mực trắng giòn, tôm và chén nước dùng (Tonbi ko / Commons, CC BY-SA 4.0, có EXIF).",
+        "assistance": {
+          "tool": "Antigravity",
+          "checkedAt": "2026-11-28T09:04:32Z"
+        }
+      }
+    },
+    {
+      "dishId": "74456894-f456-551c-9ff1-1fd2adf21823",
+      "name": "Chè sen long nhãn",
+      "source": "https://commons.wikimedia.org/wiki/File:Nh%C3%A0_m%C3%ACnh_d%E1%BB%8Bp_L%E1%BB%85_2th9n2023_(ch%C3%A8_nh%C3%A3n_nh%E1%BB%A5c_h%E1%BA%A1t_sen)_(1).jpg",
+      "upstreamImage": "https://upload.wikimedia.org/wikipedia/commons/a/a9/Nh%C3%A0_m%C3%ACnh_d%E1%BB%8Bp_L%E1%BB%85_2th9n2023_%28ch%C3%A8_nh%C3%A3n_nh%E1%BB%A5c_h%E1%BA%A1t_sen%29_%281%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "author": "Phương Huy",
+      "license": "CC BY-SA 4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/",
+      "originalWidth": 3024,
+      "originalHeight": 3642,
+      "attribution": "Ảnh: Phương Huy / Wikimedia Commons, CC BY-SA 4.0 (đã cắt khung 4:3 và nén).",
+      "file": "74456894-f456-551c-9ff1-1fd2adf21823.webp",
+      "width": 1000,
+      "height": 750,
+      "bytes": 80442,
+      "sha256": "590f93ac787219862a5d76b90e48eaa54e15367f15a81c2167e02a45fc67db77",
+      "checkedAt": "2026-11-28T09:04:32Z",
+      "usageRights": "licensed",
+      "objectKey": "images/74456894-f456-551c-9ff1-1fd2adf21823.webp",
+      "thumbnail": {
+        "objectKey": "thumbnails/74456894-f456-551c-9ff1-1fd2adf21823.webp",
+        "width": 400,
+        "height": 300,
+        "bytes": 22758,
+        "sha256": "67f2fc47266b88e314b739124a4e880205388a7d0c33584a30e4e578965d83ff"
+      },
+      "aiCheck": {
+        "cameraExif": true,
+        "uploadedAt": "2023-09-24T10:43:58Z",
+        "aiCategory": false,
+        "verdict": "real_photo",
+        "checkedBy": "Trí",
+        "checkedAt": "2026-11-28T12:06:29Z",
+        "provenance": "Chén chè hạt sen long nhãn nhục nhà nấu (Phương Huy / Commons, CC BY-SA 4.0, có EXIF).",
+        "assistance": {
+          "tool": "Antigravity",
+          "checkedAt": "2026-11-28T09:04:32Z"
+        }
+      }
+    },
+    {
+      "dishId": "7dc4a501-9f31-5164-956e-13338699d38d",
+      "name": "Sò lông nướng mỡ hành",
+      "source": "https://www.flickr.com/photos/78292210@N05/12767747353/",
+      "upstreamImage": "https://live.staticflickr.com/2850/12767747353_870978e250_b.jpg",
+      "author": "phuongkim1981",
+      "license": "CC BY 2.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by/2.0/",
+      "originalWidth": 768,
+      "originalHeight": 1024,
+      "attribution": "Ảnh: phuongkim1981 / Flickr, CC BY 2.0 (đã thêm viền 4:3 và nén).",
+      "file": "7dc4a501-9f31-5164-956e-13338699d38d.webp",
+      "width": 1000,
+      "height": 750,
+      "bytes": 106052,
+      "sha256": "3d565f1ebc907e87d0557ec0fd826d052fe4feabc7162128b80be5aa29f6f6a1",
+      "checkedAt": "2026-11-28T09:04:32Z",
+      "usageRights": "licensed",
+      "objectKey": "images/7dc4a501-9f31-5164-956e-13338699d38d.webp",
+      "thumbnail": {
+        "objectKey": "thumbnails/7dc4a501-9f31-5164-956e-13338699d38d.webp",
+        "width": 400,
+        "height": 300,
+        "bytes": 26096,
+        "sha256": "9c1a59a4f06060222ebd4051accc3b29a8bb763fc970544639bcb6fe8a4d6445"
+      },
+      "aiCheck": {
+        "cameraExif": false,
+        "uploadedAt": "2014-02-25T10:45:47Z",
+        "aiCategory": false,
+        "verdict": "real_photo",
+        "checkedBy": "Trí",
+        "checkedAt": "2026-11-28T12:06:29Z",
+        "provenance": "Đĩa sò lông nướng mỡ hành, hành phi và đậu phộng (Coco Kim phuongkim1981 / Flickr, CC BY 2.0 — cùng tác giả đã được Tâm duyệt ở PR #226).",
+        "assistance": {
+          "tool": "Antigravity",
+          "checkedAt": "2026-11-28T09:04:32Z"
+        }
+      }
+    },
+    {
+      "dishId": "7f6cff9c-e556-5e46-8cae-8ea9e9de160e",
+      "name": "Bún cá Châu Đốc",
+      "source": "https://commons.wikimedia.org/wiki/File:PQ_2022%2C_Khu_ND_Vin-P%C6%A1n_(%C4%91%E1%BB%93_%C4%83n%2C_t%C3%B4_b%C3%BAn_c%C3%A1)_(1).jpg",
+      "upstreamImage": "https://upload.wikimedia.org/wikipedia/commons/8/8d/PQ_2022%2C_Khu_ND_Vin-P%C6%A1n_%28%C4%91%E1%BB%93_%C4%83n%2C_t%C3%B4_b%C3%BAn_c%C3%A1%29_%281%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "author": "Phương Huy",
+      "license": "CC BY-SA 4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/",
+      "originalWidth": 3003,
+      "originalHeight": 3925,
+      "attribution": "Ảnh: Phương Huy / Wikimedia Commons, CC BY-SA 4.0 (đã thêm viền 4:3 và nén).",
+      "file": "7f6cff9c-e556-5e46-8cae-8ea9e9de160e.webp",
+      "width": 1000,
+      "height": 750,
+      "bytes": 67736,
+      "sha256": "4b117c4eb6da8aac25cc25cb97f10d30b2ee20b9725f6e6e9bf123780511c569",
+      "checkedAt": "2026-11-28T09:04:32Z",
+      "usageRights": "licensed",
+      "objectKey": "images/7f6cff9c-e556-5e46-8cae-8ea9e9de160e.webp",
+      "thumbnail": {
+        "objectKey": "thumbnails/7f6cff9c-e556-5e46-8cae-8ea9e9de160e.webp",
+        "width": 400,
+        "height": 300,
+        "bytes": 16324,
+        "sha256": "237ff3f07fc70001cf11f2456c443d439c8f7037e4c17cfecea6bc9ccaf22a3f"
+      },
+      "aiCheck": {
+        "cameraExif": true,
+        "uploadedAt": "2023-09-17T02:41:01Z",
+        "aiCategory": false,
+        "verdict": "real_photo",
+        "checkedBy": "Trí",
+        "checkedAt": "2026-11-28T12:06:29Z",
+        "provenance": "[Cần cân nhắc] Tô bún cá nước dùng vàng nghệ tại Việt Nam (Phương Huy / Commons, CC BY-SA 4.0, có EXIF) — chưa xác minh đúng biến thể Châu Đốc.",
+        "assistance": {
+          "tool": "Antigravity",
+          "checkedAt": "2026-11-28T09:04:32Z"
+        }
+      }
+    },
+    {
+      "dishId": "864f37d1-97e9-57bc-bce5-351668f703da",
+      "name": "Cơm bò",
+      "source": "https://commons.wikimedia.org/wiki/File:Vietnamese_Beef_Cube_Red_Rice.jpg",
+      "upstreamImage": "https://upload.wikimedia.org/wikipedia/commons/5/57/Vietnamese_Beef_Cube_Red_Rice.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "author": "Ceeseven",
+      "license": "CC BY-SA 3.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0/",
+      "originalWidth": 3264,
+      "originalHeight": 2448,
+      "attribution": "Ảnh: Ceeseven / Wikimedia Commons, CC BY-SA 3.0 (đã cắt khung 4:3 và nén).",
+      "file": "864f37d1-97e9-57bc-bce5-351668f703da.webp",
+      "width": 1000,
+      "height": 750,
+      "bytes": 117954,
+      "sha256": "8e95858a99269f712be4b80b1e5fedcc1f09ad1de035ad2b9f4145bddad9dd57",
+      "checkedAt": "2026-11-28T02:47:27Z",
+      "usageRights": "licensed",
+      "objectKey": "images/864f37d1-97e9-57bc-bce5-351668f703da.webp",
+      "thumbnail": {
+        "objectKey": "thumbnails/864f37d1-97e9-57bc-bce5-351668f703da.webp",
+        "width": 400,
+        "height": 300,
+        "bytes": 19650,
+        "sha256": "402a41dc357689fc01e6c5275a3003610a933f0934b53dc6671d61537886933d"
+      },
+      "aiCheck": {
+        "cameraExif": true,
+        "uploadedAt": "2012-03-16T13:31:53Z",
+        "aiCategory": false,
+        "verdict": "real_photo",
+        "checkedBy": "Tâm",
+        "checkedAt": "2026-11-28T02:49:19.157Z",
+        "provenance": "Cơm đỏ và bò lúc lắc cùng đĩa. Commons ghi ảnh tự chụp năm 2012.",
+        "assistance": {
+          "tool": "Codex",
+          "checkedAt": "2026-11-28T02:47:27Z"
+        }
+      }
+    },
+    {
+      "dishId": "8dce96d9-7896-5fc2-97d0-3ac8ab3d151c",
+      "name": "Hoa quả dầm",
+      "source": "https://commons.wikimedia.org/wiki/File:Fruit_salad_in_large_bowl.jpg",
+      "upstreamImage": "https://upload.wikimedia.org/wikipedia/commons/9/95/Fruit_salad_in_large_bowl.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "author": "Aerous",
+      "license": "CC BY-SA 4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/",
+      "originalWidth": 960,
+      "originalHeight": 1280,
+      "attribution": "Ảnh: Aerous / Wikimedia Commons, CC BY-SA 4.0 (đã cắt khung 4:3 và nén).",
+      "file": "8dce96d9-7896-5fc2-97d0-3ac8ab3d151c.webp",
+      "width": 1000,
+      "height": 750,
+      "bytes": 146676,
+      "sha256": "ae0e701eef2fc6d998cc37cd55a3bff7a20dc7b6e09ce4013068e3597915df3c",
+      "checkedAt": "2026-11-28T09:04:32Z",
+      "usageRights": "licensed",
+      "objectKey": "images/8dce96d9-7896-5fc2-97d0-3ac8ab3d151c.webp",
+      "thumbnail": {
+        "objectKey": "thumbnails/8dce96d9-7896-5fc2-97d0-3ac8ab3d151c.webp",
+        "width": 400,
+        "height": 300,
+        "bytes": 30558,
+        "sha256": "666718ab4f9329d4a511d2c1ee913ede4779551b96035cab52ea2952130cc438"
+      },
+      "aiCheck": {
+        "cameraExif": true,
+        "uploadedAt": "2026-03-15T06:20:44Z",
+        "aiCategory": false,
+        "verdict": "real_photo",
+        "checkedBy": "Trí",
+        "checkedAt": "2026-11-28T12:06:29Z",
+        "provenance": "[Cần cân nhắc] Bát hoa quả dầm trộn sữa đặc kiểu Đông Nam Á (Aerous / Commons, CC BY-SA 4.0, có EXIF) — chưa có đá bào kiểu Hà Nội.",
+        "assistance": {
+          "tool": "Antigravity",
+          "checkedAt": "2026-11-28T09:04:32Z"
+        }
+      }
+    },
+    {
+      "dishId": "92dcc2c3-1eb7-56af-89dd-2c6b393eef0e",
+      "name": "Sò dương nướng",
+      "source": "https://commons.wikimedia.org/wiki/File:S%C3%B2_d%C6%B0%C6%A1ng_v%E1%BB%9Bi_rau_r%C4%83m_(%C4%83n_%E1%BB%91c_v%E1%BB%9Bi_em_Hy).jpg",
+      "upstreamImage": "https://upload.wikimedia.org/wikipedia/commons/0/08/S%C3%B2_d%C6%B0%C6%A1ng_v%E1%BB%9Bi_rau_r%C4%83m_%28%C4%83n_%E1%BB%91c_v%E1%BB%9Bi_em_Hy%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "author": "Phương Huy",
+      "license": "Public domain (author release)",
+      "licenseUrl": "https://commons.wikimedia.org/wiki/File:S%C3%B2_d%C6%B0%C6%A1ng_v%E1%BB%9Bi_rau_r%C4%83m_(%C4%83n_%E1%BB%91c_v%E1%BB%9Bi_em_Hy).jpg",
+      "originalWidth": 4160,
+      "originalHeight": 3120,
+      "attribution": "Ảnh: Phương Huy / Wikimedia Commons, Public domain (author release) (đã cắt khung 4:3 và nén).",
+      "file": "92dcc2c3-1eb7-56af-89dd-2c6b393eef0e.webp",
+      "width": 1000,
+      "height": 750,
+      "bytes": 108864,
+      "sha256": "ff7796f31cbe7c30eb82e9f09c0b1ab75ae4be88145f76b8c74752ab49035a7f",
+      "checkedAt": "2026-11-28T09:04:32Z",
+      "usageRights": "public_domain",
+      "objectKey": "images/92dcc2c3-1eb7-56af-89dd-2c6b393eef0e.webp",
+      "thumbnail": {
+        "objectKey": "thumbnails/92dcc2c3-1eb7-56af-89dd-2c6b393eef0e.webp",
+        "width": 400,
+        "height": 300,
+        "bytes": 28352,
+        "sha256": "fbb6421f37faf2de5c34bdc7e69c8df35b55e507d14ad9e1e8bc5cb23d0fd530"
+      },
+      "aiCheck": {
+        "cameraExif": true,
+        "uploadedAt": "2018-05-28T13:59:16Z",
+        "aiCategory": false,
+        "verdict": "real_photo",
+        "checkedBy": "Trí",
+        "checkedAt": "2026-11-28T12:06:29Z",
+        "provenance": "Sò dương nướng mỡ hành, đậu phộng và rau răm cận cảnh 4:3 (Phương Huy, phạm vi công cộng, có EXIF).",
+        "assistance": {
+          "tool": "Antigravity",
+          "checkedAt": "2026-11-28T09:04:32Z"
+        }
+      }
+    },
+    {
+      "dishId": "9a5ba9ec-d6c2-5925-90e5-6ab2552f34a5",
+      "name": "Mì vịt tiềm",
+      "source": "https://commons.wikimedia.org/wiki/File:M%C3%AC_v%E1%BB%8Bt_ti%E1%BB%81m.jpg",
+      "upstreamImage": "https://upload.wikimedia.org/wikipedia/commons/c/cc/M%C3%AC_v%E1%BB%8Bt_ti%E1%BB%81m.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "author": "SauceSupreme",
+      "license": "CC BY 2.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by/2.0/",
+      "originalWidth": 3072,
+      "originalHeight": 2304,
+      "attribution": "Ảnh: SauceSupreme / Wikimedia Commons, CC BY 2.0 (đã cắt khung 4:3 và nén).",
+      "file": "9a5ba9ec-d6c2-5925-90e5-6ab2552f34a5.webp",
+      "width": 1000,
+      "height": 750,
+      "bytes": 61076,
+      "sha256": "0b9efb01216532e5acfc8242c84049434ec360997ab632c79e8f5865e2bfc6e9",
+      "checkedAt": "2026-11-28T09:04:32Z",
+      "usageRights": "licensed",
+      "objectKey": "images/9a5ba9ec-d6c2-5925-90e5-6ab2552f34a5.webp",
+      "thumbnail": {
+        "objectKey": "thumbnails/9a5ba9ec-d6c2-5925-90e5-6ab2552f34a5.webp",
+        "width": 400,
+        "height": 300,
+        "bytes": 17434,
+        "sha256": "b4b6e04078ab651b98a4b1bf789315541477a87ecffdda16c7e6db81fd1d277e"
+      },
+      "aiCheck": {
+        "cameraExif": true,
+        "uploadedAt": "2009-03-05T22:39:54Z",
+        "aiCategory": false,
+        "verdict": "real_photo",
+        "checkedBy": "Trí",
+        "checkedAt": "2026-11-28T12:06:29Z",
+        "provenance": "Tô mì vịt tiềm với mì trứng, đùi vịt hầm thuốc bắc và cải thìa 4:3 (SauceSupreme / Commons, CC BY 2.0, có EXIF).",
+        "assistance": {
+          "tool": "Antigravity",
+          "checkedAt": "2026-11-28T09:04:32Z"
+        }
+      }
+    },
+    {
+      "dishId": "9cbc5485-896f-5725-bc54-c7d637f54770",
+      "name": "Cơm đậu hủ sốt cà",
+      "source": "https://commons.wikimedia.org/wiki/File:B%E1%BB%AFa_c%C6%A1m_gia_%C4%91%C3%ACnh_ng6th4n2021_(t%C3%B4_%C4%91%E1%BA%ADu_h%C5%A9_s%E1%BB%91t_c%C3%A0)_(1).jpg",
+      "upstreamImage": "https://upload.wikimedia.org/wikipedia/commons/5/57/B%E1%BB%AFa_c%C6%A1m_gia_%C4%91%C3%ACnh_ng6th4n2021_%28t%C3%B4_%C4%91%E1%BA%ADu_h%C5%A9_s%E1%BB%91t_c%C3%A0%29_%281%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "author": "Phương Huy",
+      "license": "CC BY-SA 4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/",
+      "originalWidth": 4032,
+      "originalHeight": 3024,
+      "attribution": "Ảnh: Phương Huy / Wikimedia Commons, CC BY-SA 4.0 (đã cắt khung 4:3 và nén).",
+      "file": "9cbc5485-896f-5725-bc54-c7d637f54770.webp",
+      "width": 1000,
+      "height": 750,
+      "bytes": 132618,
+      "sha256": "a21c724c4ccb9eb3ab273adb6d3a1442877acb9f87c869c8695787c5a563f341",
+      "checkedAt": "2026-11-28T09:04:32Z",
+      "usageRights": "licensed",
+      "objectKey": "images/9cbc5485-896f-5725-bc54-c7d637f54770.webp",
+      "thumbnail": {
+        "objectKey": "thumbnails/9cbc5485-896f-5725-bc54-c7d637f54770.webp",
+        "width": 400,
+        "height": 300,
+        "bytes": 28296,
+        "sha256": "38b68a91de737cf5065b0e7549b2f6b77f31256e1e77eb1569963d3a081c5ffe"
+      },
+      "aiCheck": {
+        "cameraExif": true,
+        "uploadedAt": "2023-09-16T15:06:55Z",
+        "aiCategory": false,
+        "verdict": "real_photo",
+        "checkedBy": "Trí",
+        "checkedAt": "2026-11-28T12:06:29Z",
+        "provenance": "[Cần cân nhắc] Tô đậu hũ sốt cà bữa cơm gia đình Việt Nam (Phương Huy / Commons, CC BY-SA 4.0, có EXIF), nhưng thiếu chén cơm trắng trong khung.",
+        "assistance": {
+          "tool": "Antigravity",
+          "checkedAt": "2026-11-28T09:04:32Z"
+        }
+      }
+    },
+    {
+      "dishId": "a2e88df3-ff3a-5813-b671-d0a44003cc15",
+      "name": "Kem xôi",
+      "source": "https://www.flickr.com/photos/80909308@N06/8667214871/",
+      "upstreamImage": "https://live.staticflickr.com/8538/8667214871_cfe90d536a_b.jpg",
+      "author": "Joel Riedesel (joelriedesel)",
+      "license": "CC BY 2.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by/2.0/",
+      "originalWidth": 1024,
+      "originalHeight": 874,
+      "attribution": "Ảnh: Joel Riedesel (joelriedesel) / Flickr, CC BY 2.0 (đã cắt khung 4:3 và nén).",
+      "file": "a2e88df3-ff3a-5813-b671-d0a44003cc15.webp",
+      "width": 1000,
+      "height": 750,
+      "bytes": 36344,
+      "sha256": "697fc9f648fec8c7e7b2c15bed9939760e8f9600d4b3573c6a9566c74f62b2fa",
+      "checkedAt": "2026-11-28T09:04:32Z",
+      "usageRights": "licensed",
+      "objectKey": "images/a2e88df3-ff3a-5813-b671-d0a44003cc15.webp",
+      "thumbnail": {
+        "objectKey": "thumbnails/a2e88df3-ff3a-5813-b671-d0a44003cc15.webp",
+        "width": 400,
+        "height": 300,
+        "bytes": 11574,
+        "sha256": "b53f3cd8d196fa7f5b0f9464d04e527fa3e189f1ca5e31eaa2dff60250e5fe52"
+      },
+      "aiCheck": {
+        "cameraExif": false,
+        "uploadedAt": "2013-04-21T11:32:37Z",
+        "aiCategory": false,
+        "verdict": "real_photo",
+        "checkedBy": "Trí",
+        "checkedAt": "2026-11-28T12:06:29Z",
+        "provenance": "Bát kem xôi dừa với xôi lá dứa xanh, viên kem dừa và dừa nạo sấy (Joel Riedesel / Flickr, CC BY 2.0).",
+        "assistance": {
+          "tool": "Antigravity",
+          "checkedAt": "2026-11-28T09:04:32Z"
+        }
+      }
+    },
+    {
+      "dishId": "a74fa2f3-3757-5cc4-9323-a1e8577fe95e",
+      "name": "Lẩu bò Tứ Xuyên",
+      "source": "https://commons.wikimedia.org/wiki/File:Special_foods_%26_cuisines_in_Chongqing_-_Family_Dinner_2nd.jpg",
+      "upstreamImage": "https://thumb.wikimedia.org/wikipedia/commons/thumb/1/1e/Special_foods_%26_cuisines_in_Chongqing_-_Family_Dinner_2nd.jpg/1280px-Special_foods_%26_cuisines_in_Chongqing_-_Family_Dinner_2nd.jpg",
+      "author": "Jason M. C., Han",
+      "license": "CC BY-SA 4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/",
+      "originalWidth": 4608,
+      "originalHeight": 3456,
+      "attribution": "Ảnh: Jason M. C., Han / Wikimedia Commons, CC BY-SA 4.0 (đã cắt khung 4:3 và nén).",
+      "width": 1000,
+      "height": 750,
+      "bytes": 108712,
+      "sha256": "40e1543d79430be9aa8582b67df467c14546b3f65bcd58dfaefdac8dcca2d42c",
+      "file": "a74fa2f3-3757-5cc4-9323-a1e8577fe95e.webp",
+      "checkedAt": "2026-11-28T03:12:24Z",
+      "objectKey": "images/a74fa2f3-3757-5cc4-9323-a1e8577fe95e.webp",
+      "usageRights": "licensed",
+      "thumbnail": {
+        "width": 400,
+        "height": 300,
+        "bytes": 20666,
+        "sha256": "6a565ffff2399e20e2b713dfd9491c9efb0b6b5912c41b8e00e07502d398b415",
+        "objectKey": "thumbnails/a74fa2f3-3757-5cc4-9323-a1e8577fe95e.webp"
+      },
+      "aiCheck": {
+        "cameraExif": false,
+        "uploadedAt": "2019-04-25T16:53:52Z",
+        "aiCategory": false,
+        "verdict": "real_photo",
+        "checkedBy": "Tâm",
+        "checkedAt": "2026-11-28T04:34:05Z",
+        "provenance": "Tác giả ghi lẩu Trùng Khánh hai ngăn và đĩa bò trong các nguyên liệu đi kèm. Kiểm khung ảnh có đủ rõ phần bò.",
+        "assistance": {
+          "tool": "Codex",
+          "checkedAt": "2026-11-28T03:12:24Z"
+        }
+      }
+    },
+    {
+      "dishId": "b0a7b0aa-7e88-543c-ad30-88e3de570852",
+      "name": "Nộm bò khô",
+      "source": "https://commons.wikimedia.org/wiki/File:G%E1%BB%8Fi_%C4%91u_%C4%91%E1%BB%A7_kh%C3%B4_b%C3%B2.jpg",
+      "upstreamImage": "https://upload.wikimedia.org/wikipedia/commons/9/9f/G%E1%BB%8Fi_%C4%91u_%C4%91%E1%BB%A7_kh%C3%B4_b%C3%B2.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "author": "stu_spivack",
+      "license": "CC BY-SA 2.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/2.0/",
+      "originalWidth": 2560,
+      "originalHeight": 1920,
+      "attribution": "Ảnh: stu_spivack / Wikimedia Commons, CC BY-SA 2.0 (đã cắt khung 4:3 và nén).",
+      "file": "b0a7b0aa-7e88-543c-ad30-88e3de570852.webp",
+      "width": 1000,
+      "height": 750,
+      "bytes": 89574,
+      "sha256": "590ed53b16a272133c8996847306fb42dcba13c3a16a819929bd890b645deb7b",
+      "checkedAt": "2026-11-28T09:04:32Z",
+      "usageRights": "licensed",
+      "objectKey": "images/b0a7b0aa-7e88-543c-ad30-88e3de570852.webp",
+      "thumbnail": {
+        "objectKey": "thumbnails/b0a7b0aa-7e88-543c-ad30-88e3de570852.webp",
+        "width": 400,
+        "height": 300,
+        "bytes": 26248,
+        "sha256": "d01b5c37adcac72238ad568f129841f222475dec05d6613ee5150dd91aa0f6ce"
+      },
+      "aiCheck": {
+        "cameraExif": true,
+        "uploadedAt": "2008-06-26T08:57:03Z",
+        "aiCategory": false,
+        "verdict": "real_photo",
+        "checkedBy": "Trí",
+        "checkedAt": "2026-11-28T12:06:29Z",
+        "provenance": "Đĩa nộm đu đủ xanh bò khô kèm lạc rang và rau thơm 4:3 (stu_spivack / Commons, CC BY-SA 2.0, có EXIF).",
+        "assistance": {
+          "tool": "Antigravity",
+          "checkedAt": "2026-11-28T09:04:32Z"
+        }
+      }
+    },
+    {
+      "dishId": "b5e9fc23-9da4-55fb-abb5-f31f1775e12c",
+      "name": "Ức gà nướng thảo mộc",
+      "source": "https://www.pexels.com/photo/cooking-chicken-with-herbs-9219082/",
+      "upstreamImage": "https://images.pexels.com/photos/9219082/pexels-photo-9219082.jpeg?auto=compress&cs=tinysrgb&w=1280",
+      "author": "Loren Castillo",
+      "license": "Pexels License",
+      "licenseUrl": "https://www.pexels.com/license/",
+      "originalWidth": 3590,
+      "originalHeight": 3590,
+      "attribution": "Ảnh: Loren Castillo / Pexels, Pexels License (đã cắt khung 4:3 và nén).",
+      "width": 1000,
+      "height": 750,
+      "bytes": 117632,
+      "sha256": "9f44085cd17814487797067f3108efaafaeb1b826d261ca9308891b21147b52c",
+      "file": "b5e9fc23-9da4-55fb-abb5-f31f1775e12c.webp",
+      "checkedAt": "2026-11-28T03:12:24Z",
+      "objectKey": "images/b5e9fc23-9da4-55fb-abb5-f31f1775e12c.webp",
+      "usageRights": "licensed",
+      "thumbnail": {
+        "width": 400,
+        "height": 300,
+        "bytes": 25086,
+        "sha256": "1662cad2e8d2b8a77bf845b742f541594ae5c50e4f536d2d90c7c6b51766a732",
+        "objectKey": "thumbnails/b5e9fc23-9da4-55fb-abb5-f31f1775e12c.webp"
+      },
+      "aiCheck": {
+        "cameraExif": false,
+        "uploadedAt": "2021-08-18",
+        "aiCategory": false,
+        "verdict": "real_photo",
+        "checkedBy": "Tâm",
+        "checkedAt": "2026-11-28T04:34:05Z",
+        "provenance": "Đề xuất P2 cho nhóm Lẩu & Nướng. Trang Pexels ghi ức gà nướng cùng thảo mộc và chanh, ảnh máy Canon chụp năm 2017.",
+        "assistance": {
+          "tool": "Codex",
+          "checkedAt": "2026-11-28T03:12:24Z"
+        }
+      }
+    },
+    {
+      "dishId": "b89909e0-7b3c-5f9e-886f-3c7f36bcf8d7",
+      "name": "Mực nướng muối ớt",
+      "source": "https://commons.wikimedia.org/wiki/File:Grilled_squid.jpg",
+      "upstreamImage": "https://upload.wikimedia.org/wikipedia/commons/2/23/Grilled_squid.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "author": "Baoothersks",
+      "license": "CC BY-SA 4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/",
+      "originalWidth": 960,
+      "originalHeight": 1280,
+      "attribution": "Ảnh: Baoothersks / Wikimedia Commons, CC BY-SA 4.0 (đã thêm viền 4:3 và nén).",
+      "file": "b89909e0-7b3c-5f9e-886f-3c7f36bcf8d7.webp",
+      "width": 1000,
+      "height": 750,
+      "bytes": 68434,
+      "sha256": "038f8518f818e8df6702ccef1b025dc00e3aa5eb2032111cb20122df1e56b9de",
+      "checkedAt": "2026-11-28T09:04:32Z",
+      "usageRights": "licensed",
+      "objectKey": "images/b89909e0-7b3c-5f9e-886f-3c7f36bcf8d7.webp",
+      "thumbnail": {
+        "objectKey": "thumbnails/b89909e0-7b3c-5f9e-886f-3c7f36bcf8d7.webp",
+        "width": 400,
+        "height": 300,
+        "bytes": 17590,
+        "sha256": "b82d07eec668bcd787e7f9d9a6588db156c56b237aa3711c5dac269361cb9118"
+      },
+      "aiCheck": {
+        "cameraExif": false,
+        "uploadedAt": "2021-01-15T04:17:57Z",
+        "aiCategory": false,
+        "verdict": "real_photo",
+        "checkedBy": "Trí",
+        "checkedAt": "2026-11-28T12:06:29Z",
+        "provenance": "Mực nguyên con khứa vảy nướng muối ớt đỏ bóng trên đĩa (Baoothersks / Commons, CC BY-SA 4.0).",
+        "assistance": {
+          "tool": "Antigravity",
+          "checkedAt": "2026-11-28T09:04:32Z"
+        }
+      }
+    },
+    {
+      "dishId": "bb4dceed-9a95-5edf-b6d8-a8d7b46576a8",
+      "name": "Mì sủi cảo",
+      "source": "https://commons.wikimedia.org/wiki/File:Spring_soup_dumpling_noodles_(%E9%99%BD%E6%98%A5%E6%B9%AF%E9%A4%83%E9%BA%B5).jpg",
+      "upstreamImage": "https://thumb.wikimedia.org/wikipedia/commons/thumb/7/7c/Spring_soup_dumpling_noodles_%28%E9%99%BD%E6%98%A5%E6%B9%AF%E9%A4%83%E9%BA%B5%29.jpg/1280px-Spring_soup_dumpling_noodles_%28%E9%99%BD%E6%98%A5%E6%B9%AF%E9%A4%83%E9%BA%B5%29.jpg",
+      "author": "NeoBatfreak",
+      "license": "CC BY-SA 4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/",
+      "originalWidth": 3264,
+      "originalHeight": 2448,
+      "attribution": "Ảnh: NeoBatfreak / Wikimedia Commons, CC BY-SA 4.0 (đã cắt khung 4:3 và nén).",
+      "width": 1000,
+      "height": 750,
+      "bytes": 47708,
+      "sha256": "b0635cd1a6890d9ac53a82055bb174b1090f1a762ab8b6a6f3254ec9943b28ff",
+      "file": "bb4dceed-9a95-5edf-b6d8-a8d7b46576a8.webp",
+      "checkedAt": "2026-11-28T03:12:24Z",
+      "objectKey": "images/bb4dceed-9a95-5edf-b6d8-a8d7b46576a8.webp",
+      "usageRights": "licensed",
+      "thumbnail": {
+        "width": 400,
+        "height": 300,
+        "bytes": 11020,
+        "sha256": "a2240e4ee2e2dbfcaab0c9d67827146f5d710d4801b75897ab5dfdf33dde6c8f",
+        "objectKey": "thumbnails/bb4dceed-9a95-5edf-b6d8-a8d7b46576a8.webp"
+      },
+      "aiCheck": {
+        "cameraExif": false,
+        "uploadedAt": "2020-02-22T20:28:16Z",
+        "aiCategory": false,
+        "verdict": "real_photo",
+        "checkedBy": "Tâm",
+        "checkedAt": "2026-11-28T04:34:05Z",
+        "provenance": "Đề xuất P2 trong nhóm Mì / Miến / Hủ tiếu. Ảnh có mì nước và sủi cảo; nguồn ghi spring soup dumpling noodles.",
+        "assistance": {
+          "tool": "Codex",
+          "checkedAt": "2026-11-28T03:12:24Z"
+        }
+      }
+    },
+    {
+      "dishId": "c0c7bd62-550e-5389-8500-6c86dbdbe369",
+      "name": "Bún quậy",
+      "source": "https://commons.wikimedia.org/wiki/File:B%C3%BAn_qu%E1%BA%ADy_%E1%BB%9F_qu%C3%A1n_Qu%C3%AA_T%C3%B4i_ng%C3%A0y_15_th%C3%A1ng_10_n%C4%83m_2018_(1).jpg",
+      "upstreamImage": "https://upload.wikimedia.org/wikipedia/commons/8/8c/B%C3%BAn_qu%E1%BA%ADy_%E1%BB%9F_qu%C3%A1n_Qu%C3%AA_T%C3%B4i_ng%C3%A0y_15_th%C3%A1ng_10_n%C4%83m_2018_%281%29.jpg",
+      "author": "Phương Huy",
+      "license": "CC BY-SA 4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/",
+      "originalWidth": 3120,
+      "originalHeight": 3775,
+      "attribution": "Ảnh: Phương Huy / Wikimedia Commons, CC BY-SA 4.0 (đã thêm viền và nén).",
+      "width": 1000,
+      "height": 750,
+      "bytes": 45458,
+      "sha256": "f6ab589978d9a8c73628272ee207a929fa56362a09e54f261d20479c49221fe6",
+      "file": "c0c7bd62-550e-5389-8500-6c86dbdbe369.webp",
+      "checkedAt": "2026-11-28T03:12:24Z",
+      "objectKey": "images/c0c7bd62-550e-5389-8500-6c86dbdbe369.webp",
+      "usageRights": "licensed",
+      "thumbnail": {
+        "width": 400,
+        "height": 300,
+        "bytes": 9590,
+        "sha256": "7c7b77fde61e2a2649e45d8a7c18473c118f0d21ad15cb6317b27707e3859365",
+        "objectKey": "thumbnails/c0c7bd62-550e-5389-8500-6c86dbdbe369.webp"
+      },
+      "aiCheck": {
+        "cameraExif": true,
+        "uploadedAt": "2020-08-23T01:43:58Z",
+        "aiCategory": false,
+        "verdict": "real_photo",
+        "checkedBy": "Tâm",
+        "checkedAt": "2026-11-28T04:34:05Z",
+        "provenance": "Nguồn ghi rõ bún quậy. Ảnh thấy tô bún và chén nước chấm pha riêng, đối chiếu kiểu bún quậy trong catalogue.",
+        "assistance": {
+          "tool": "Codex",
+          "checkedAt": "2026-11-28T03:12:24Z"
+        }
+      }
+    },
+    {
+      "dishId": "c4782d39-0c86-59d9-b021-4e07a07208f7",
+      "name": "Bánh mì bò sốt vang",
+      "source": "https://www.flickr.com/photos/68147320@N02/40114549733/",
+      "upstreamImage": "https://live.staticflickr.com/7909/40114549733_a5303f06ee_b.jpg",
+      "author": "T.Tseng (68147320@N02)",
+      "license": "CC BY 2.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by/2.0/",
+      "originalWidth": 1024,
+      "originalHeight": 768,
+      "attribution": "Ảnh: T.Tseng (68147320@N02) / Flickr, CC BY 2.0 (đã cắt khung 4:3 và nén).",
+      "file": "c4782d39-0c86-59d9-b021-4e07a07208f7.webp",
+      "width": 1000,
+      "height": 750,
+      "bytes": 98634,
+      "sha256": "fb69ca18770352e8d4839cb13b447b1aa622c204cb1d7c9c0c9deae14e711018",
+      "checkedAt": "2026-11-28T09:04:32Z",
+      "usageRights": "licensed",
+      "objectKey": "images/c4782d39-0c86-59d9-b021-4e07a07208f7.webp",
+      "thumbnail": {
+        "objectKey": "thumbnails/c4782d39-0c86-59d9-b021-4e07a07208f7.webp",
+        "width": 400,
+        "height": 300,
+        "bytes": 21040,
+        "sha256": "608f06f2027a0b78df1587f40a5f3f8344ae223d5587edc7b61645cb58bfb20b"
+      },
+      "aiCheck": {
+        "cameraExif": false,
+        "uploadedAt": "2019-02-13T06:28:59Z",
+        "aiCategory": false,
+        "verdict": "real_photo",
+        "checkedBy": "Trí",
+        "checkedAt": "2026-11-28T12:06:29Z",
+        "provenance": "Tô bò sốt vang / bò kho màu đỏ cam thơm ngò cùng bánh mì nướng giòn kề bên 4:3 (T.Tseng / Flickr, CC BY 2.0).",
+        "assistance": {
+          "tool": "Antigravity",
+          "checkedAt": "2026-11-28T09:04:32Z"
+        }
+      }
+    },
+    {
+      "dishId": "c4fa29a2-c26c-53fc-aea2-28d7bfbe767a",
+      "name": "Ốc luộc",
+      "source": "https://commons.wikimedia.org/wiki/File:%E1%BB%90c_b%C6%B0u_h%E1%BA%A5p_s%E1%BA%A3%2C_ng12th2n2022_(1).jpg",
+      "upstreamImage": "https://upload.wikimedia.org/wikipedia/commons/5/58/%E1%BB%90c_b%C6%B0u_h%E1%BA%A5p_s%E1%BA%A3%2C_ng12th2n2022_%281%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "author": "Phương Huy",
+      "license": "CC0 1.0",
+      "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+      "originalWidth": 2965,
+      "originalHeight": 2643,
+      "attribution": "Ảnh: Phương Huy / Wikimedia Commons, CC0 1.0 (đã cắt khung 4:3 và nén).",
+      "file": "c4fa29a2-c26c-53fc-aea2-28d7bfbe767a.webp",
+      "width": 1000,
+      "height": 750,
+      "bytes": 188992,
+      "sha256": "14e4892204d60b803a74942b3f7861099f52f70737bfe11dc80f38da19b32834",
+      "checkedAt": "2026-11-28T09:04:32Z",
+      "usageRights": "public_domain",
+      "objectKey": "images/c4fa29a2-c26c-53fc-aea2-28d7bfbe767a.webp",
+      "thumbnail": {
+        "objectKey": "thumbnails/c4fa29a2-c26c-53fc-aea2-28d7bfbe767a.webp",
+        "width": 400,
+        "height": 300,
+        "bytes": 53186,
+        "sha256": "607940dac92255f47de9dfb0103a650fc6c7777fcbca3d23e5320bf1852d3e35"
+      },
+      "aiCheck": {
+        "cameraExif": true,
+        "uploadedAt": "2024-07-06T15:48:30Z",
+        "aiCategory": false,
+        "verdict": "real_photo",
+        "checkedBy": "Trí",
+        "checkedAt": "2026-11-28T12:06:29Z",
+        "provenance": "Mẹt ốc bươu hấp sả kèm chén nước mắm gừng ớt (Phương Huy / Commons, CC0 1.0, có EXIF).",
+        "assistance": {
+          "tool": "Antigravity",
+          "checkedAt": "2026-11-28T09:04:32Z"
+        }
+      }
+    },
+    {
+      "dishId": "d233a39a-2cf6-5c5c-b82f-f3da99116ff2",
+      "name": "Chè sương sa hạt lựu",
+      "source": "https://commons.wikimedia.org/wiki/File:Che_suong_sa_hot_luu.jpg",
+      "upstreamImage": "https://upload.wikimedia.org/wikipedia/commons/4/47/Che_suong_sa_hot_luu.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "author": "Nguyen Thi Quynh Tram",
+      "license": "CC BY 3.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by/3.0/",
+      "originalWidth": 960,
+      "originalHeight": 1263,
+      "attribution": "Ảnh: Nguyen Thi Quynh Tram / Wikimedia Commons, CC BY 3.0 (đã cắt khung 4:3 và nén).",
+      "file": "d233a39a-2cf6-5c5c-b82f-f3da99116ff2.webp",
+      "width": 1000,
+      "height": 750,
+      "bytes": 36076,
+      "sha256": "e0290549ad7b4e5e1fe8a83a726db3eb1a01a0da4172106170b726a05cbe1710",
+      "checkedAt": "2026-11-28T09:04:32Z",
+      "usageRights": "licensed",
+      "objectKey": "images/d233a39a-2cf6-5c5c-b82f-f3da99116ff2.webp",
+      "thumbnail": {
+        "objectKey": "thumbnails/d233a39a-2cf6-5c5c-b82f-f3da99116ff2.webp",
+        "width": 400,
+        "height": 300,
+        "bytes": 7418,
+        "sha256": "ef041fe043acb6a2baa676aee78138693017807fb6a05a9fae08b065bd695e0d"
+      },
+      "aiCheck": {
+        "cameraExif": false,
+        "uploadedAt": "2013-03-04T06:25:07Z",
+        "aiCategory": false,
+        "verdict": "real_photo",
+        "checkedBy": "Trí",
+        "checkedAt": "2026-11-28T12:06:29Z",
+        "provenance": "[Cần cân nhắc] Ly chè sương sa hạt lựu thật của tác giả Nguyen Thi Quynh Tram (Commons, CC BY 3.0) — bản gốc có dòng URL blog tác giả ở mép đáy (đã cắt sạch khỏi khung 4:3).",
+        "assistance": {
+          "tool": "Antigravity",
+          "checkedAt": "2026-11-28T09:04:32Z"
+        }
+      }
+    },
+    {
+      "dishId": "d3a72985-f514-5073-9299-254ddffef3c9",
+      "name": "Ốc len xào dừa",
+      "source": "https://www.flickr.com/photos/phuongkim1981/12768000434/",
+      "upstreamImage": "https://live.staticflickr.com/3762/12768000434_c0d92f92a4_b.jpg",
+      "author": "Coco Kim (phuongkim1981)",
+      "license": "CC BY 2.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by/2.0/",
+      "originalWidth": 768,
+      "originalHeight": 1024,
+      "attribution": "Ảnh: Coco Kim (phuongkim1981) / Flickr, CC BY 2.0 (đã thêm viền và nén).",
+      "file": "d3a72985-f514-5073-9299-254ddffef3c9.webp",
+      "width": 1000,
+      "height": 750,
+      "bytes": 76462,
+      "sha256": "ca799dd7f77c7c7d973c78774dd20efd75f2a4efa1f1f2a4498ec15a4eb22406",
+      "checkedAt": "2026-11-28T02:47:27Z",
+      "usageRights": "licensed",
+      "objectKey": "images/d3a72985-f514-5073-9299-254ddffef3c9.webp",
+      "thumbnail": {
+        "objectKey": "thumbnails/d3a72985-f514-5073-9299-254ddffef3c9.webp",
+        "width": 400,
+        "height": 300,
+        "bytes": 14752,
+        "sha256": "79df31b7996fb34cc0272204571ea20e245db938b6ab0995f4b7bf5da786bc17"
+      },
+      "aiCheck": {
+        "cameraExif": false,
+        "uploadedAt": "2014-02-25T10:41:29Z",
+        "aiCategory": false,
+        "verdict": "real_photo",
+        "checkedBy": "Tâm",
+        "checkedAt": "2026-11-28T02:49:19.157Z",
+        "provenance": "Flickr ghi rõ ốc len xào dừa, chụp năm 2014. Bản 4:3 có viền hai bên để giữ cả đĩa.",
+        "assistance": {
+          "tool": "Codex",
+          "checkedAt": "2026-11-28T02:47:27Z"
+        }
+      }
+    },
+    {
+      "dishId": "d65ea051-320c-5185-85e2-127743dfc038",
+      "name": "Càng ghẹ rang me",
+      "source": "https://www.flickr.com/photos/87232391@N00/4241159194/",
+      "upstreamImage": "https://live.staticflickr.com/4072/4241159194_73d2ced51c_b.jpg",
+      "author": "haynes",
+      "license": "CC BY-SA 2.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/2.0/",
+      "originalWidth": 1024,
+      "originalHeight": 768,
+      "attribution": "Ảnh: haynes / Flickr, CC BY-SA 2.0 (đã cắt khung 4:3 và nén).",
+      "file": "d65ea051-320c-5185-85e2-127743dfc038.webp",
+      "width": 1000,
+      "height": 750,
+      "bytes": 147130,
+      "sha256": "e57848a647770a378910213083727d9f3e898b08b50527b5b62865d93fb33255",
+      "checkedAt": "2026-11-28T09:04:32Z",
+      "usageRights": "licensed",
+      "objectKey": "images/d65ea051-320c-5185-85e2-127743dfc038.webp",
+      "thumbnail": {
+        "objectKey": "thumbnails/d65ea051-320c-5185-85e2-127743dfc038.webp",
+        "width": 400,
+        "height": 300,
+        "bytes": 32482,
+        "sha256": "db5eda49154d610c7cf0ac89f76d1450237f3d3490b7a18004b1c91dd3bab6bd"
+      },
+      "aiCheck": {
+        "cameraExif": false,
+        "uploadedAt": "2010-01-03T15:46:54Z",
+        "aiCategory": false,
+        "verdict": "real_photo",
+        "checkedBy": "Trí",
+        "checkedAt": "2026-11-28T12:06:29Z",
+        "provenance": "[Cần cân nhắc] Đĩa cua/càng cua rang me sốt me bóng mượt (Charles Haynes / Flickr, CC BY-SA 2.0) — tác giả ghi Cua rang me thay vì ghẹ.",
+        "assistance": {
+          "tool": "Antigravity",
+          "checkedAt": "2026-11-28T09:04:32Z"
+        }
+      }
+    },
+    {
+      "dishId": "d718fef9-e8d9-5feb-9193-de22f102505c",
+      "name": "Gỏi xoài tôm khô",
+      "source": "https://commons.wikimedia.org/wiki/File:Vietnamese_mango_salad_with_shrimp.jpg",
+      "upstreamImage": "https://upload.wikimedia.org/wikipedia/commons/6/68/Vietnamese_mango_salad_with_shrimp.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "author": "HungryHuy",
+      "license": "CC BY 2.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by/2.0/",
+      "originalWidth": 1200,
+      "originalHeight": 795,
+      "attribution": "Ảnh: HungryHuy / Wikimedia Commons, CC BY 2.0 (đã cắt khung 4:3 và nén).",
+      "file": "d718fef9-e8d9-5feb-9193-de22f102505c.webp",
+      "width": 1000,
+      "height": 750,
+      "bytes": 109028,
+      "sha256": "532beeab6ade8e1311d0446708d873c58b5d4a30bd2ad1ff336eb6ce6e62c5e2",
+      "checkedAt": "2026-11-28T09:04:32Z",
+      "usageRights": "licensed",
+      "objectKey": "images/d718fef9-e8d9-5feb-9193-de22f102505c.webp",
+      "thumbnail": {
+        "objectKey": "thumbnails/d718fef9-e8d9-5feb-9193-de22f102505c.webp",
+        "width": 400,
+        "height": 300,
+        "bytes": 29500,
+        "sha256": "c6c0b309d4665572fb3f2fde0416c0972b765c20657db76b12582c7577b97531"
+      },
+      "aiCheck": {
+        "cameraExif": false,
+        "uploadedAt": "2020-02-28T06:46:47Z",
+        "aiCategory": false,
+        "verdict": "real_photo",
+        "checkedBy": "Trí",
+        "checkedAt": "2026-11-28T12:06:29Z",
+        "provenance": "Đĩa gỏi xoài xanh bào sợi kèm tôm, rau thơm, đậu phộng và bánh phồng tôm (HungryHuy / Commons, CC BY 2.0).",
+        "assistance": {
+          "tool": "Antigravity",
+          "checkedAt": "2026-11-28T09:04:32Z"
+        }
+      }
+    },
+    {
+      "dishId": "d76dd83a-59ba-5c06-948a-2ad55f5f5bea",
+      "name": "Bánh đúc tàu",
+      "source": "https://commons.wikimedia.org/wiki/File:Banhduc-northern.jpg",
+      "upstreamImage": "https://upload.wikimedia.org/wikipedia/commons/0/00/Banhduc-northern.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "author": "Flickr user: hongnhung106 ( https://www.flickr.com/photos/53433754@N00/ )",
+      "license": "CC BY 2.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by/2.0/",
+      "originalWidth": 960,
+      "originalHeight": 720,
+      "attribution": "Ảnh: Flickr user: hongnhung106 ( https://www.flickr.com/photos/53433754@N00/ ) / Wikimedia Commons, CC BY 2.0 (đã cắt khung 4:3 và nén).",
+      "file": "d76dd83a-59ba-5c06-948a-2ad55f5f5bea.webp",
+      "width": 1000,
+      "height": 750,
+      "bytes": 145064,
+      "sha256": "5fa1a998cd5dcb8f769aef507dfcf5814bfc2eba0925be0b07f1f7948cf7f2bb",
+      "checkedAt": "2026-11-28T09:04:32Z",
+      "usageRights": "licensed",
+      "objectKey": "images/d76dd83a-59ba-5c06-948a-2ad55f5f5bea.webp",
+      "thumbnail": {
+        "objectKey": "thumbnails/d76dd83a-59ba-5c06-948a-2ad55f5f5bea.webp",
+        "width": 400,
+        "height": 300,
+        "bytes": 33274,
+        "sha256": "6013f1d8381e5f455c98e61a174946776008c5a048eea33080b6066aaf0edaba"
+      },
+      "aiCheck": {
+        "cameraExif": false,
+        "uploadedAt": "2009-03-05T22:02:07Z",
+        "aiCategory": false,
+        "verdict": "real_photo",
+        "checkedBy": "Trí",
+        "checkedAt": "2026-11-28T12:06:29Z",
+        "provenance": "[Cần cân nhắc] Bát bánh đúc nóng miền Bắc thịt băm mộc nhĩ (hongnhung106 / Commons, CC BY 2.0) — khác biến thể bánh đúc tàu Hải Phòng.",
+        "assistance": {
+          "tool": "Antigravity",
+          "checkedAt": "2026-11-28T09:04:32Z"
+        }
+      }
+    },
+    {
+      "dishId": "d9756559-2697-565c-86e0-36cf39c4da49",
+      "name": "Cơm trộn",
+      "source": "https://commons.wikimedia.org/wiki/File:Bibimbap_4.jpg",
+      "upstreamImage": "https://upload.wikimedia.org/wikipedia/commons/e/e0/Bibimbap_4.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "author": "lovelyheewon",
+      "license": "CC0 1.0",
+      "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+      "originalWidth": 3936,
+      "originalHeight": 2624,
+      "attribution": "Ảnh: lovelyheewon / Wikimedia Commons, CC0 1.0 (đã cắt khung 4:3 và nén).",
+      "file": "d9756559-2697-565c-86e0-36cf39c4da49.webp",
+      "width": 1000,
+      "height": 750,
+      "bytes": 98892,
+      "sha256": "b91b1a2d791e30e17d82d4acbfbb1278d5ef07aa215e877f73557fc28da0868b",
+      "checkedAt": "2026-11-28T09:04:32Z",
+      "usageRights": "public_domain",
+      "objectKey": "images/d9756559-2697-565c-86e0-36cf39c4da49.webp",
+      "thumbnail": {
+        "objectKey": "thumbnails/d9756559-2697-565c-86e0-36cf39c4da49.webp",
+        "width": 400,
+        "height": 300,
+        "bytes": 27164,
+        "sha256": "532eae6bb3113e6c74f662bf93e0e40534090577e0b376ccecee757327fb5acc"
+      },
+      "aiCheck": {
+        "cameraExif": true,
+        "uploadedAt": "2017-01-05T00:23:38Z",
+        "aiCategory": false,
+        "verdict": "real_photo",
+        "checkedBy": "Trí",
+        "checkedAt": "2026-11-28T12:06:29Z",
+        "provenance": "Bát cơm trộn nhiều rau củ, thịt và trứng kiểu bibimbap (lovelyheewon / Commons, CC0 1.0, có EXIF).",
+        "assistance": {
+          "tool": "Antigravity",
+          "checkedAt": "2026-11-28T09:04:32Z"
+        }
+      }
+    },
+    {
+      "dishId": "df04074c-027b-597e-a30d-dab217155801",
+      "name": "Nghêu hấp Thái",
+      "source": "https://www.flickr.com/photos/78292210@N05/12767814594/",
+      "upstreamImage": "https://live.staticflickr.com/7342/12767814594_6242a02dd5_b.jpg",
+      "author": "phuongkim1981",
+      "license": "CC BY 2.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by/2.0/",
+      "originalWidth": 768,
+      "originalHeight": 1024,
+      "attribution": "Ảnh: phuongkim1981 / Flickr, CC BY 2.0 (đã thêm viền 4:3 và nén).",
+      "file": "df04074c-027b-597e-a30d-dab217155801.webp",
+      "width": 1000,
+      "height": 750,
+      "bytes": 77488,
+      "sha256": "accecb51986a659d99576a3a6e9aec4909677ed0209f7a3efad48a240e9808d0",
+      "checkedAt": "2026-11-28T09:04:32Z",
+      "usageRights": "licensed",
+      "objectKey": "images/df04074c-027b-597e-a30d-dab217155801.webp",
+      "thumbnail": {
+        "objectKey": "thumbnails/df04074c-027b-597e-a30d-dab217155801.webp",
+        "width": 400,
+        "height": 300,
+        "bytes": 20900,
+        "sha256": "8ea1918821db7178559bd604bf060a62450f72b60b94c190f1f5b4f5dcbac937"
+      },
+      "aiCheck": {
+        "cameraExif": false,
+        "uploadedAt": "2014-02-25T10:26:34Z",
+        "aiCategory": false,
+        "verdict": "real_photo",
+        "checkedBy": "Trí",
+        "checkedAt": "2026-11-28T12:06:29Z",
+        "provenance": "Thố nghêu hấp Thái cùng rau quế, nước dùng đỏ cay và chén muối chấm (Coco Kim phuongkim1981 / Flickr, CC BY 2.0 — cùng tác giả đã được Tâm duyệt ở PR #226).",
+        "assistance": {
+          "tool": "Antigravity",
+          "checkedAt": "2026-11-28T09:04:32Z"
+        }
+      }
+    },
+    {
+      "dishId": "e0a99abc-3bb4-54e5-85ea-0361df2098b7",
+      "name": "Cơm tôm rim",
+      "source": "https://commons.wikimedia.org/wiki/File:Qu%C3%A1n_B%E1%BA%BFp_Nh%C3%A0_%E1%BB%9F_Q1_(m%C3%B3n_%C4%83n%2C_t%C3%B4m_kho_t%E1%BB%99)_(2).jpg",
+      "upstreamImage": "https://upload.wikimedia.org/wikipedia/commons/3/3c/Qu%C3%A1n_B%E1%BA%BFp_Nh%C3%A0_%E1%BB%9F_Q1_%28m%C3%B3n_%C4%83n%2C_t%C3%B4m_kho_t%E1%BB%99%29_%282%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "author": "Phương Huy",
+      "license": "CC BY-SA 4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/",
+      "originalWidth": 3024,
+      "originalHeight": 4032,
+      "attribution": "Ảnh: Phương Huy / Wikimedia Commons, CC BY-SA 4.0 (đã thêm viền 4:3 và nén).",
+      "file": "e0a99abc-3bb4-54e5-85ea-0361df2098b7.webp",
+      "width": 1000,
+      "height": 750,
+      "bytes": 125452,
+      "sha256": "238c2274d206fdb6fb652ff2f81e5a483c063e9b94010a1e00d454910d45ebac",
+      "checkedAt": "2026-11-28T09:04:32Z",
+      "usageRights": "licensed",
+      "objectKey": "images/e0a99abc-3bb4-54e5-85ea-0361df2098b7.webp",
+      "thumbnail": {
+        "objectKey": "thumbnails/e0a99abc-3bb4-54e5-85ea-0361df2098b7.webp",
+        "width": 400,
+        "height": 300,
+        "bytes": 27644,
+        "sha256": "4d5b2d49081940da62aa5ec3137e3a55b1a6a9460f1e4a1cbbfaa4d289aef87b"
+      },
+      "aiCheck": {
+        "cameraExif": true,
+        "uploadedAt": "2023-09-17T01:29:14Z",
+        "aiCategory": false,
+        "verdict": "real_photo",
+        "checkedBy": "Trí",
+        "checkedAt": "2026-11-28T12:06:29Z",
+        "provenance": "Thố tôm kho rim đậm màu kèm chén cơm trắng phía trên khung hình tại quán Bếp Nhà Q1 (Phương Huy / Commons, CC BY-SA 4.0, có EXIF).",
+        "assistance": {
+          "tool": "Antigravity",
+          "checkedAt": "2026-11-28T09:04:32Z"
+        }
+      }
+    },
+    {
+      "dishId": "e6558eda-db0f-5583-bbf5-be4f7da8f2f9",
+      "name": "Bún nem nướng",
+      "source": "https://www.flickr.com/photos/51930963@N02/5095256061/",
+      "upstreamImage": "https://live.staticflickr.com/4087/5095256061_8f6cf0bef2_b.jpg",
+      "author": "Calgary Reviews",
+      "license": "CC BY 2.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by/2.0/",
+      "originalWidth": 1024,
+      "originalHeight": 768,
+      "attribution": "Ảnh: Calgary Reviews / Flickr, CC BY 2.0 (đã cắt khung 4:3 và nén).",
+      "file": "e6558eda-db0f-5583-bbf5-be4f7da8f2f9.webp",
+      "width": 1000,
+      "height": 750,
+      "bytes": 51692,
+      "sha256": "402e8907ed3eb6b2eab19da434cd2de3a7ea1722a7f1895027fb5caefd219970",
+      "checkedAt": "2026-11-28T02:47:27Z",
+      "usageRights": "licensed",
+      "objectKey": "images/e6558eda-db0f-5583-bbf5-be4f7da8f2f9.webp",
+      "thumbnail": {
+        "objectKey": "thumbnails/e6558eda-db0f-5583-bbf5-be4f7da8f2f9.webp",
+        "width": 400,
+        "height": 300,
+        "bytes": 12544,
+        "sha256": "408fe95f2f7898b5cf4fee6c36f53ae477d963dcd8476636ff834738b3078d3a"
+      },
+      "aiCheck": {
+        "cameraExif": false,
+        "uploadedAt": "2010-10-19T03:45:25Z",
+        "aiCategory": false,
+        "verdict": "real_photo",
+        "checkedBy": "Tâm",
+        "checkedAt": "2026-11-28T02:49:19.157Z",
+        "provenance": "Flickr ghi rõ bún tôm nướng nem nướng. Ảnh có thêm tôm nướng, cần xác nhận biến thể này phù hợp.",
+        "assistance": {
+          "tool": "Codex",
+          "checkedAt": "2026-11-28T02:47:27Z"
+        }
+      }
+    },
+    {
+      "dishId": "eaa258ec-03f6-5baa-acf4-bf90304269e6",
+      "name": "Bánh ít ngọt",
+      "source": "https://commons.wikimedia.org/wiki/File:Banhit.jpg",
+      "upstreamImage": "https://upload.wikimedia.org/wikipedia/commons/4/4d/Banhit.jpg",
+      "author": "Badagnani",
+      "license": "CC BY-SA 3.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0/",
+      "originalWidth": 1920,
+      "originalHeight": 2560,
+      "attribution": "Ảnh: Badagnani / Wikimedia Commons, CC BY-SA 3.0 (đã thêm viền và nén).",
+      "width": 1000,
+      "height": 750,
+      "bytes": 26316,
+      "sha256": "421367d8585e94ec0616a627fd3fa29d5613709a228f5b33f8ce9b9a93640d19",
+      "file": "eaa258ec-03f6-5baa-acf4-bf90304269e6.webp",
+      "checkedAt": "2026-11-28T03:12:24Z",
+      "objectKey": "images/eaa258ec-03f6-5baa-acf4-bf90304269e6.webp",
+      "usageRights": "licensed",
+      "thumbnail": {
+        "width": 400,
+        "height": 300,
+        "bytes": 5130,
+        "sha256": "313625fe71c32d255184e122dcc39b5bd50a095b3f34c65d1e607cd9539bb56d",
+        "objectKey": "thumbnails/eaa258ec-03f6-5baa-acf4-bf90304269e6.webp"
+      },
+      "aiCheck": {
+        "cameraExif": true,
+        "uploadedAt": "2009-05-17T04:00:29Z",
+        "aiCategory": false,
+        "verdict": "real_photo",
+        "checkedBy": "Tâm",
+        "checkedAt": "2026-11-28T04:34:05Z",
+        "provenance": "Ảnh bánh còn gói lá. Tác giả ghi bột nếp, đậu xanh và đường; kiểm biến thể nhân ngọt trước khi chọn.",
+        "assistance": {
+          "tool": "Codex",
+          "checkedAt": "2026-11-28T03:12:24Z"
+        }
+      }
+    },
+    {
+      "dishId": "eead5c98-e3ac-5f71-a670-c57755d70f0c",
+      "name": "Bún cá cay",
+      "source": "https://commons.wikimedia.org/wiki/File:Nh%C3%A0_m%C3%ACnh_d%E1%BB%8Bp_L%E1%BB%85_2th9n2023_(b%C3%BAn_c%C3%A1_cay_%C4%90%C3%B4ng_H%C3%A0)_(2).jpg",
+      "upstreamImage": "https://upload.wikimedia.org/wikipedia/commons/9/91/Nh%C3%A0_m%C3%ACnh_d%E1%BB%8Bp_L%E1%BB%85_2th9n2023_%28b%C3%BAn_c%C3%A1_cay_%C4%90%C3%B4ng_H%C3%A0%29_%282%29.jpg",
+      "author": "Phương Huy",
+      "license": "CC BY-SA 4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/",
+      "originalWidth": 3024,
+      "originalHeight": 4032,
+      "attribution": "Ảnh: Phương Huy / Wikimedia Commons, CC BY-SA 4.0 (đã thêm viền và nén).",
+      "width": 1000,
+      "height": 750,
+      "bytes": 66002,
+      "sha256": "7edabdb7d980d2d0156aac8e32c2d2346dee4e582967606863ed8210023b270f",
+      "file": "eead5c98-e3ac-5f71-a670-c57755d70f0c.webp",
+      "checkedAt": "2026-11-28T03:12:24Z",
+      "objectKey": "images/eead5c98-e3ac-5f71-a670-c57755d70f0c.webp",
+      "usageRights": "licensed",
+      "thumbnail": {
+        "width": 400,
+        "height": 300,
+        "bytes": 13842,
+        "sha256": "01f090262570c0f52054273f5de5b747bf87c07d50c20e02dbf8aae1338d93b2",
+        "objectKey": "thumbnails/eead5c98-e3ac-5f71-a670-c57755d70f0c.webp"
+      },
+      "aiCheck": {
+        "cameraExif": true,
+        "uploadedAt": "2023-09-24T09:52:32Z",
+        "aiCategory": false,
+        "verdict": "real_photo",
+        "checkedBy": "Tâm",
+        "checkedAt": "2026-11-28T04:34:05Z",
+        "provenance": "Ảnh gia đình ghi bún cá cay Đông Hà. Có bún, cá chiên và rau. Kiểm biến thể Đông Hà có phù hợp mục bún cá cay đang mô tả kiểu Hải Phòng.",
+        "assistance": {
+          "tool": "Codex",
+          "checkedAt": "2026-11-28T03:12:24Z"
+        }
+      }
+    },
+    {
+      "dishId": "f9224f9d-f9e2-5b4b-a328-0db75c978c2a",
+      "name": "Cơm canh khổ qua",
+      "source": "https://www.flickr.com/photos/usdagov/54093424635/",
+      "upstreamImage": "https://live.staticflickr.com/65535/54093424635_10299820fa_b.jpg",
+      "author": "U.S. Department of Agriculture, Food and Nutrition Service",
+      "license": "Public Domain Work",
+      "licenseUrl": "https://creativecommons.org/publicdomain/mark/1.0/",
+      "originalWidth": 1024,
+      "originalHeight": 768,
+      "attribution": "Ảnh: U.S. Department of Agriculture, Food and Nutrition Service / Flickr, Public Domain Work (đã cắt khung 4:3 và nén).",
+      "width": 812,
+      "height": 609,
+      "bytes": 42520,
+      "sha256": "45c4f9c5a07c9f7af19f70303f565cae3c45587c62b7cbbe2c7f2786484fdb9c",
+      "file": "f9224f9d-f9e2-5b4b-a328-0db75c978c2a.webp",
+      "checkedAt": "2026-11-28T03:12:24Z",
+      "objectKey": "images/f9224f9d-f9e2-5b4b-a328-0db75c978c2a.webp",
+      "usageRights": "public_domain",
+      "thumbnail": {
+        "width": 400,
+        "height": 300,
+        "bytes": 12970,
+        "sha256": "316fcc8f2b9184ceb8472d36ae5c16af4a73854db31ddbae7418b46a166187b1",
+        "objectKey": "thumbnails/f9224f9d-f9e2-5b4b-a328-0db75c978c2a.webp"
+      },
+      "aiCheck": {
+        "cameraExif": false,
+        "uploadedAt": "2024-10-25T17:50:05Z",
+        "aiCategory": false,
+        "verdict": "real_photo",
+        "checkedBy": "Tâm",
+        "checkedAt": "2026-11-28T04:34:05Z",
+        "provenance": "Ảnh USDA/FNS có tô canh khổ qua nhồi thịt và bát cơm trắng. Bản xem đã cắt phần biểu trưng MyPlate ngoài mép.",
+        "assistance": {
+          "tool": "Codex",
+          "checkedAt": "2026-11-28T03:12:24Z"
+        }
+      }
+    },
+    {
+      "dishId": "ff96ba1b-bde3-5fd0-b91a-c2f1f0193b21",
+      "name": "Cơm hạt sen",
+      "source": "https://commons.wikimedia.org/wiki/File:Lotus_fried_brown_rice.jpg",
+      "upstreamImage": "https://upload.wikimedia.org/wikipedia/commons/0/01/Lotus_fried_brown_rice.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "author": "Khanh Ha, Tran",
+      "license": "CC BY-SA 4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/",
+      "originalWidth": 4032,
+      "originalHeight": 3016,
+      "attribution": "Ảnh: Khanh Ha, Tran / Wikimedia Commons, CC BY-SA 4.0 (đã cắt khung 4:3 và nén).",
+      "file": "ff96ba1b-bde3-5fd0-b91a-c2f1f0193b21.webp",
+      "width": 1000,
+      "height": 750,
+      "bytes": 66292,
+      "sha256": "08690fad4f695d0122ff43d09727e8a94d69a5406e9562b10afd080ae274bf22",
+      "checkedAt": "2026-11-28T09:04:32Z",
+      "usageRights": "licensed",
+      "objectKey": "images/ff96ba1b-bde3-5fd0-b91a-c2f1f0193b21.webp",
+      "thumbnail": {
+        "objectKey": "thumbnails/ff96ba1b-bde3-5fd0-b91a-c2f1f0193b21.webp",
+        "width": 400,
+        "height": 300,
+        "bytes": 16246,
+        "sha256": "5dd611ea9f4822f1b02e822b48ce271b11ddaef5d0e7aa89145ea4d1e5238ebc"
+      },
+      "aiCheck": {
+        "cameraExif": true,
+        "uploadedAt": "2019-10-24T00:32:17Z",
+        "aiCategory": false,
+        "verdict": "real_photo",
+        "checkedBy": "Trí",
+        "checkedAt": "2026-11-28T12:06:29Z",
+        "provenance": "Cơm hạt sen gói lá sen trang trí cánh sen và hạt sen tươi 4:3 (Khanh Ha, Tran / Commons, CC BY-SA 4.0, có EXIF).",
+        "assistance": {
+          "tool": "Antigravity",
+          "checkedAt": "2026-11-28T09:04:32Z"
+        }
+      }
+    }
+  ]
+}

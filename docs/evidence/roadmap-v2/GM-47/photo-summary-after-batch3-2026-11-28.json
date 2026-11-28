@@ -1,0 +1,254 @@
+{
+  "recordedAt": "2026-11-28T12:06:29Z",
+  "candidateDatasetVersion": "1.4.8",
+  "totalDishes": 253,
+  "realPhotos": {
+    "mainBaseline": 136,
+    "batch1And2": 11,
+    "batch3OwnerApproved": 27,
+    "cumulativeTotal": 174,
+    "ratioPercent": 68.77
+  },
+  "remainingIllustrations": {
+    "total": 79,
+    "p1": 66,
+    "p2": 13,
+    "overallLimit": 25,
+    "minAdditionalForOverallLimit": 54
+  },
+  "groupChecks": [
+    {
+      "scope": "Cả bộ",
+      "lacking": 79,
+      "limit": 25,
+      "needMore": 54,
+      "pass": false,
+      "examples": [
+        "Bánh bẻng",
+        "Cơm trái dừa",
+        "Lẩu cá linh điên điển",
+        "Lẩu bò sa tế",
+        "Phở cuốn",
+        "Gà nướng ống tre",
+        "Lẩu gà lá giang",
+        "Mận Hà Nội chua ngọt",
+        "Cơm thịt xào mắm ruốc",
+        "Trái cây trộn muối ớt",
+        "Mận lắc",
+        "Cơm mực rim mắm",
+        "Chè bột lọc heo quay",
+        "Bánh trôi tàu",
+        "Bánh ép"
+      ]
+    },
+    {
+      "scope": "Nhóm bữa chính · Cơm",
+      "lacking": 12,
+      "limit": 2,
+      "needMore": 10,
+      "pass": false,
+      "examples": [
+        "Cơm trái dừa",
+        "Cơm thịt xào mắm ruốc",
+        "Cơm mực rim mắm",
+        "Cơm gà kho sả ớt",
+        "Cơm canh chua cá",
+        "Cơm thịt kho",
+        "Cơm lươn xào sả ớt",
+        "Cơm mắm kho",
+        "Cơm canh gà lá giang",
+        "Cơm canh sườn hầm bí đỏ",
+        "Cơm cá kho",
+        "Cơm canh sườn hầm đu đủ"
+      ]
+    },
+    {
+      "scope": "Nhóm bữa chính · Bún / Phở",
+      "lacking": 7,
+      "limit": 2,
+      "needMore": 5,
+      "pass": false,
+      "examples": [
+        "Bún tôm Bình Định",
+        "Bún rạm",
+        "Bún bung",
+        "Bún gạo lứt",
+        "Phở hải sản",
+        "Bún kèn",
+        "Bún bò chay"
+      ]
+    },
+    {
+      "scope": "Nhóm bữa chính · Mì / Miến / Hủ tiếu",
+      "lacking": 6,
+      "limit": 2,
+      "needMore": 4,
+      "pass": false,
+      "examples": [
+        "Bánh tằm bì",
+        "Bánh đa cá",
+        "Bánh hỏi lòng heo",
+        "Bún gạo xào",
+        "Hủ tiếu sa tế",
+        "Bánh canh ghẹ"
+      ]
+    },
+    {
+      "scope": "Nhóm bữa chính · Lẩu & Nướng",
+      "lacking": 16,
+      "limit": 3,
+      "needMore": 13,
+      "pass": false,
+      "examples": [
+        "Lẩu cá linh điên điển",
+        "Lẩu bò sa tế",
+        "Gà nướng ống tre",
+        "Lẩu gà lá giang",
+        "Lẩu cua đồng",
+        "Lẩu gà ớt hiểm",
+        "Gà nướng lá chúc",
+        "Lẩu cá kèo",
+        "Lẩu cá điêu hồng",
+        "Cá sòng nướng",
+        "Lẩu dê",
+        "Lẩu mắm",
+        "Lẩu cá thác lác khổ qua",
+        "Lẩu vịt nấu chao",
+        "Lẩu gà lá é"
+      ]
+    },
+    {
+      "scope": "Nhóm bữa chính · Bánh mì / Xôi",
+      "lacking": 1,
+      "limit": 1,
+      "needMore": 0,
+      "pass": true,
+      "examples": [
+        "Bánh mì lagu"
+      ]
+    },
+    {
+      "scope": "Nhóm bữa chính · Cháo / Súp",
+      "lacking": 7,
+      "limit": 2,
+      "needMore": 5,
+      "pass": false,
+      "examples": [
+        "Cháo bò Tri Tôn",
+        "Súp bồ câu tứ thần",
+        "Cháo trai",
+        "Súp gà đậu ván ý dĩ",
+        "Cháo thịt bò cải bó xôi",
+        "Cháo sườn",
+        "Cháo Tiều"
+      ]
+    },
+    {
+      "scope": "Nhóm ăn vặt · Đồ chiên & Xiên que",
+      "lacking": 4,
+      "limit": 1,
+      "needMore": 3,
+      "pass": false,
+      "examples": [
+        "Bánh bẻng",
+        "Bánh ram ít",
+        "Đậu hũ ky cuộn tôm",
+        "Nem chua rán"
+      ]
+    },
+    {
+      "scope": "Nhóm ăn vặt · Các loại bánh mặn",
+      "lacking": 2,
+      "limit": 2,
+      "needMore": 0,
+      "pass": true,
+      "examples": [
+        "Bánh ép",
+        "Bánh ram ít"
+      ]
+    },
+    {
+      "scope": "Nhóm ăn vặt · Món trộn & Cuốn",
+      "lacking": 4,
+      "limit": 1,
+      "needMore": 3,
+      "pass": false,
+      "examples": [
+        "Phở cuốn",
+        "Bò bía mặn",
+        "Đậu hũ ky cuộn tôm",
+        "Bò bía ngọt"
+      ]
+    },
+    {
+      "scope": "Nhóm ăn vặt · Ốc & Hải sản",
+      "lacking": 3,
+      "limit": 1,
+      "needMore": 2,
+      "pass": false,
+      "examples": [
+        "Giá bể xào",
+        "Ốc tỏi nướng muối ớt",
+        "Ốc giác cà ri"
+      ]
+    },
+    {
+      "scope": "Nhóm ăn vặt · Bánh ngọt",
+      "lacking": 2,
+      "limit": 1,
+      "needMore": 1,
+      "pass": false,
+      "examples": [
+        "Bánh trôi tàu",
+        "Caramen hoa quả"
+      ]
+    },
+    {
+      "scope": "Nhóm ăn vặt · Chè & Kem",
+      "lacking": 4,
+      "limit": 1,
+      "needMore": 3,
+      "pass": false,
+      "examples": [
+        "Chè bột lọc heo quay",
+        "Kem bơ",
+        "Tàu hũ đá sầu riêng",
+        "Dừa dầm"
+      ]
+    },
+    {
+      "scope": "Nhóm ăn vặt · Trái cây & Đồ chua",
+      "lacking": 6,
+      "limit": 1,
+      "needMore": 5,
+      "pass": false,
+      "examples": [
+        "Mận Hà Nội chua ngọt",
+        "Trái cây trộn muối ớt",
+        "Mận lắc",
+        "Thơm chấm muối tôm",
+        "Ổi lắc",
+        "Bưởi chấm muối tôm"
+      ]
+    },
+    {
+      "scope": "Nhóm ăn vặt · Đồ ăn vặt khô",
+      "lacking": 7,
+      "limit": 1,
+      "needMore": 6,
+      "pass": false,
+      "examples": [
+        "Khô cá chỉ vàng nướng",
+        "Mè láo",
+        "Bánh phồng nổ",
+        "Khô gà lá chanh",
+        "Bánh phồng xứ Lạng",
+        "Cơm cháy chà bông",
+        "Mực rim me"
+      ]
+    }
+  ],
+  "batch3ZipSha256": "9a15c88a7dec1b81c8a45e4adec48b644fb6dad5d86a806e9cc5822c910fccaf",
+  "batch3WebpBytes": 3294662,
+  "simulatedBundleSha256": "3939fa6f527bc7468cceeb96f919ed3eb26d785877a5852dc5509bb788cd1d91"
+}

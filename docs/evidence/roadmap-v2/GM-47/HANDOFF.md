@@ -1,5 +1,6 @@
 # GM-47 · Bàn giao bổ sung biên tập
 
+[Lô 3 — 27 ảnh chủ dự án duyệt (tổng 38 bổ sung, 174/253 ảnh thật)](PHOTO_BATCH3_2026-11-28.md) ·
 [Lô gộp 11 ảnh đã duyệt và kết quả rà 87 món](PHOTO_BATCH2_2026-11-28.md) ·
 [Lô ba ảnh ban đầu](PHOTO_FOLLOWUP_2026-11-28.md).
 
