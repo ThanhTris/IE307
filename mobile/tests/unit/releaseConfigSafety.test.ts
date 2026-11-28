@@ -104,6 +104,41 @@ describe('GM-54 release configuration, permissions, and runtime safety', () => {
     expect(raw).not.toMatch(/sb_publishable_|sb_secret_|AIza[0-9A-Za-z_-]+/);
   });
 
+  test('app.config.ts resolves consistently with every eas.json build profile and remote appVersionSource', () => {
+    const eas = JSON.parse(fs.readFileSync(path.resolve(MOBILE_ROOT, 'eas.json'), 'utf8')) as {
+      cli?: { appVersionSource?: string };
+      build?: Record<string, { env?: Record<string, string> }>;
+    };
+    const prevEnv = process.env.EXPO_PUBLIC_APP_ENV;
+    const prevEasId = process.env.EXPO_PUBLIC_EAS_PROJECT_ID;
+    try {
+      expect(eas.cli?.appVersionSource).toBe('remote');
+      for (const profileName of ['development', 'preview', 'production'] as const) {
+        const profile = eas.build?.[profileName];
+        expect(profile).toBeDefined();
+        process.env.EXPO_PUBLIC_APP_ENV = profile?.env?.EXPO_PUBLIC_APP_ENV ?? '';
+        process.env.EXPO_PUBLIC_EAS_PROJECT_ID = '00000000-0000-4000-8000-000000000001';
+        let resolved!: typeof appConfig;
+        jest.isolateModules(() => {
+          // Reload dynamic app.config.ts per EAS profile env using Jest module isolation.
+          // eslint-disable-next-line @typescript-eslint/no-require-imports
+          resolved = require('../../app.config').default as typeof appConfig;
+        });
+        expect(resolved.platforms).toEqual(['android']);
+        expect(resolved.version).toBe('1.0.0');
+        expect(resolved.android?.package).toBe('vn.gicungduoc.mobile');
+        expect(resolved.android?.versionCode).toBeUndefined();
+        expect(resolved.extra?.appEnv).toBe(profile?.env?.EXPO_PUBLIC_APP_ENV);
+        expect(resolved.extra?.eas).toEqual({ projectId: '00000000-0000-4000-8000-000000000001' });
+      }
+    } finally {
+      if (prevEnv === undefined) delete process.env.EXPO_PUBLIC_APP_ENV;
+      else process.env.EXPO_PUBLIC_APP_ENV = prevEnv;
+      if (prevEasId === undefined) delete process.env.EXPO_PUBLIC_EAS_PROJECT_ID;
+      else process.env.EXPO_PUBLIC_EAS_PROJECT_ID = prevEasId;
+    }
+  });
+
   test('no NODE_ENV checks, google.com output=embed, or hardcoded login prefills exist in mobile/src', () => {
     const srcFiles = collectSourceFiles(path.resolve(MOBILE_ROOT, 'src'));
     expect(srcFiles.length).toBeGreaterThan(10);

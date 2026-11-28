@@ -107,10 +107,11 @@ describe('GM-54 Google Places Android headers, response cache, and quota/403 iso
     expect(fetchMock).toHaveBeenCalledTimes(2);
   });
 
-  test('does not cache 403/quota errors and clears cache on dispose()', async () => {
+  test('does not cache 403/429 quota errors and clears cache on dispose()', async () => {
     const fetchMock = jest
       .fn()
       .mockResolvedValueOnce({ ok: false, status: 403, json: async () => ({ error: { status: 'PERMISSION_DENIED' } }) })
+      .mockResolvedValueOnce({ ok: false, status: 429, json: async () => ({ error: { status: 'RESOURCE_EXHAUSTED' } }) })
       .mockResolvedValueOnce({
         ok: true,
         status: 200,
@@ -133,15 +134,30 @@ describe('GM-54 Google Places Android headers, response cache, and quota/403 iso
       },
     });
 
-    const errRes = await repo.fetchNearbyPlaces({
-      resultId: 'res-err',
+    const err403 = await repo.fetchNearbyPlaces({
+      resultId: 'res-err-403',
       winnerDishId: 'dish-com',
       dishName: 'Cơm tấm',
     });
-    expect(errRes).toEqual({
+    expect(err403).toEqual({
       ok: true,
       data: expect.objectContaining({
-        resultId: 'res-err',
+        resultId: 'res-err-403',
+        winnerDishId: 'dish-com',
+        status: 'error',
+        places: [],
+      }),
+    });
+
+    const err429 = await repo.fetchNearbyPlaces({
+      resultId: 'res-err-429',
+      winnerDishId: 'dish-com',
+      dishName: 'Cơm tấm',
+    });
+    expect(err429).toEqual({
+      ok: true,
+      data: expect.objectContaining({
+        resultId: 'res-err-429',
         winnerDishId: 'dish-com',
         status: 'error',
         places: [],
@@ -153,7 +169,7 @@ describe('GM-54 Google Places Android headers, response cache, and quota/403 iso
       winnerDishId: 'dish-com',
       dishName: 'Cơm tấm',
     });
-    expect(fetchMock).toHaveBeenCalledTimes(2);
+    expect(fetchMock).toHaveBeenCalledTimes(3);
     expect(recovered.ok).toBe(true);
     if (recovered.ok) {
       expect(recovered.data.status).toBe('ready');
