@@ -1,0 +1,128 @@
+{
+  "checkedAt": "2026-11-28T03:12:24Z",
+  "p1Reviewed": 93,
+  "p1PhotoCandidates": 6,
+  "p2ReplacementCandidates": 2,
+  "p1WithoutCandidate": 87,
+  "referencePagesReachable": 86,
+  "withPhotosAfterFirstBatchQA": 139,
+  "withPhotosIfAllNewCandidatesApproved": 147,
+  "displayGroupGaps": {
+    "Cơm": {
+      "total": 28,
+      "allowedIllustrations": 2,
+      "missingBefore": 18,
+      "missingIfAllApproved": 17,
+      "needIfAllApproved": 15
+    },
+    "Bún / Phở": {
+      "total": 27,
+      "allowedIllustrations": 2,
+      "missingBefore": 11,
+      "missingIfAllApproved": 9,
+      "needIfAllApproved": 7
+    },
+    "Mì / Miến / Hủ tiếu": {
+      "total": 22,
+      "allowedIllustrations": 2,
+      "missingBefore": 9,
+      "missingIfAllApproved": 8,
+      "needIfAllApproved": 6
+    },
+    "Lẩu & Nướng": {
+      "total": 35,
+      "allowedIllustrations": 3,
+      "missingBefore": 22,
+      "missingIfAllApproved": 19,
+      "needIfAllApproved": 16
+    },
+    "Bánh mì / Xôi": {
+      "total": 13,
+      "allowedIllustrations": 1,
+      "missingBefore": 3,
+      "missingIfAllApproved": 3,
+      "needIfAllApproved": 2
+    },
+    "Cháo / Súp": {
+      "total": 21,
+      "allowedIllustrations": 2,
+      "missingBefore": 7,
+      "missingIfAllApproved": 7,
+      "needIfAllApproved": 5
+    },
+    "Đồ chiên & Xiên que": {
+      "total": 19,
+      "allowedIllustrations": 1,
+      "missingBefore": 4,
+      "missingIfAllApproved": 4,
+      "needIfAllApproved": 3
+    },
+    "Các loại bánh mặn": {
+      "total": 22,
+      "allowedIllustrations": 2,
+      "missingBefore": 3,
+      "missingIfAllApproved": 3,
+      "needIfAllApproved": 1
+    },
+    "Món trộn & Cuốn": {
+      "total": 12,
+      "allowedIllustrations": 1,
+      "missingBefore": 6,
+      "missingIfAllApproved": 6,
+      "needIfAllApproved": 5
+    },
+    "Ốc & Hải sản": {
+      "total": 12,
+      "allowedIllustrations": 1,
+      "missingBefore": 9,
+      "missingIfAllApproved": 9,
+      "needIfAllApproved": 8
+    },
+    "Bánh ngọt": {
+      "total": 17,
+      "allowedIllustrations": 1,
+      "missingBefore": 3,
+      "missingIfAllApproved": 2,
+      "needIfAllApproved": 1
+    },
+    "Chè & Kem": {
+      "total": 16,
+      "allowedIllustrations": 1,
+      "missingBefore": 7,
+      "missingIfAllApproved": 7,
+      "needIfAllApproved": 6
+    },
+    "Trái cây & Đồ chua": {
+      "total": 11,
+      "allowedIllustrations": 1,
+      "missingBefore": 7,
+      "missingIfAllApproved": 7,
+      "needIfAllApproved": 6
+    },
+    "Đồ ăn vặt khô": {
+      "total": 17,
+      "allowedIllustrations": 1,
+      "missingBefore": 8,
+      "missingIfAllApproved": 8,
+      "needIfAllApproved": 7
+    }
+  },
+  "lookupSummary": {
+    "commons": {
+      "requests": 114,
+      "successful": 20
+    },
+    "vi": {
+      "requests": 114,
+      "successful": 94
+    },
+    "en": {
+      "requests": 96,
+      "successful": 91
+    },
+    "focused": {
+      "requests": 33,
+      "successful": 26
+    }
+  }
+}

@@ -1,5 +1,9 @@
 # GM-47 · Kiểm thử
 
+[Lô 3 — 27 ảnh chủ dự án duyệt (tổng 38 bổ sung, 174/253 ảnh thật)](PHOTO_BATCH3_2026-11-28.md) ·
+[Lô gộp 11 ảnh đã duyệt và kết quả rà 87 món](PHOTO_BATCH2_2026-11-28.md) ·
+[Lô ba ảnh ban đầu](PHOTO_FOLLOWUP_2026-11-28.md).
+
 ## Minh họa theo nhóm ngày 26/11/2026
 
 - Áp dụng quyết định của Trí cho bản nộp đầu. Giữ 136 ảnh thật đã duyệt. Gán 117 món đang thiếu vào 14 nhóm từ taxonomy GM-41 theo thứ tự nhóm hiện có, ưu tiên nhóm bữa chính nếu món thuộc cả hai loại. 117 link web tiếp tục dùng để nhận diện món khi tìm ảnh thật. [Quyết định của Trí](https://github.com/ThanhTris/IE307/pull/217#issuecomment-7181026504) · [Danh sách món cần ảnh thật](PHOTO_ASSIGNMENTS.md)
