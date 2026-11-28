@@ -17,13 +17,15 @@ def main():
                         help='Check the GM-47 editorial overlay against the GM-41 release bundle')
     parser.add_argument('--storage-receipt', type=Path,
                         help='Use verified Storage objects when checking the release candidate')
+    parser.add_argument('--photo-additions', type=Path, help='Test the reviewed follow-up photos in QA')
     args = parser.parse_args()
-    if args.storage_receipt and not args.release_editorial:
-        parser.error('--storage-receipt requires --release-editorial')
+    if (args.storage_receipt or args.photo_additions) and not args.release_editorial:
+        parser.error('--storage-receipt and --photo-additions require --release-editorial')
     if args.release_editorial:
         base, _ = release_editorial.load_baseline()
         receipt = gm41.dc.load_json(args.storage_receipt) if args.storage_receipt else None
-        bundle, report = release_editorial.build(storage_receipt=receipt)
+        bundle, report = release_editorial.build(artwork=release_editorial.load_artwork(args.photo_additions),
+                                                 storage_receipt=receipt)
     else:
         base = gm41.dc.load_json(gm41.BUNDLE)
         bundle, report = build()

@@ -31,6 +31,54 @@ def load_baseline():
     return bundle, digest
 
 
+def load_artwork(photo_additions=None, baseline_path=None):
+    baseline_path = ARTWORK if baseline_path is None else baseline_path
+    raw = baseline_path.read_bytes()
+    inventory = gm41.dc.load_json(baseline_path)
+    if photo_additions is None:
+        return inventory
+    additions = gm41.dc.load_json(photo_additions)
+    if additions['baseArtworkSha256'] != gm41.dc.sha(raw):
+        raise ValueError('GM-47 additions require the pinned artwork inventory')
+    previous = additions['previousStorageVersion']
+    if not re.fullmatch(r'(0|[1-9][0-9]*)(\.(0|[1-9][0-9]*)){2}', previous):
+        raise ValueError('GM-47 additions require a valid previous Storage version')
+    added = additions['images']
+    ids = {row['dishId'] for row in added}
+    awaiting = {row['dishId'] for row in inventory['awaitingImage']}
+    if (not ids or len(ids) != len(added) or not ids <= awaiting
+            or any(row['aiCheck']['verdict'] != 'real_photo' for row in added)):
+        raise ValueError('GM-47 additions must be unique, reviewed photos for illustrated dishes')
+    inventory['images'] = sorted(inventory['images'] + added, key=lambda row: row['dishId'])
+    inventory['awaitingImage'] = [row for row in inventory['awaitingImage'] if row['dishId'] not in ids]
+    inventory['totalBytes'] += sum(row['bytes'] for row in added)
+    inventory['previousStorageVersion'] = previous
+    return inventory
+
+
+def valid_flickr_photo(source, upstream_image):
+    page = re.fullmatch(r'/photos/[A-Za-z0-9_@.-]+/([0-9]+)/?', source.path)
+    if (source.scheme != 'https' or source.netloc != 'www.flickr.com'
+            or not page or source.query or source.fragment):
+        return False
+    image = urlsplit(upstream_image)
+    return (image.scheme == 'https' and image.netloc == 'live.staticflickr.com'
+            and not image.query and not image.fragment
+            and re.fullmatch(rf'/[0-9]+/{page[1]}_[a-f0-9]+(?:_[a-z0-9]+)?\.jpg', image.path) is not None)
+
+
+def valid_pexels_photo(source, upstream_image):
+    page = re.fullmatch(r'/photo/[a-z0-9-]+-([0-9]+)/?', source.path)
+    if (source.scheme != 'https' or source.netloc != 'www.pexels.com'
+            or not page or source.query or source.fragment):
+        return False
+    image = urlsplit(upstream_image)
+    photo_id = page[1]
+    return (image.scheme == 'https' and image.netloc == 'images.pexels.com'
+            and not image.fragment
+            and image.path == f'/photos/{photo_id}/pexels-photo-{photo_id}.jpeg')
+
+
 def storage_bucket(url):
     bucket = url.rstrip('/')
     locator = urlsplit(bucket)
@@ -93,7 +141,10 @@ def validate_photo_origin(row):
     verdict = 'real_photo' if human_date is not None else 'pending_human_review'
     if review.get('verdict') != verdict:
         raise ValueError(f"Inconsistent GM-47 photo origin review for {row['dishId']}")
-    if gm41.dc.parse_utc(review['uploadedAt']) > min(date for date in (human_date, assisted_date) if date):
+    uploaded_at = review['uploadedAt']
+    if row['license'] == 'Pexels License' and re.fullmatch(r'[0-9]{4}-[0-9]{2}-[0-9]{2}', uploaded_at):
+        uploaded_at += 'T00:00:00Z'
+    if gm41.dc.parse_utc(uploaded_at) > min(date for date in (human_date, assisted_date) if date):
         raise ValueError(f"GM-47 photo source date is after review for {row['dishId']}")
 
 
@@ -174,7 +225,7 @@ def build(*, artwork=None, storage_receipt=None):
     bundle, digest = load_baseline()
     edit = gm41.dc.load_json(INPUT)
     if artwork is None:
-        artwork = gm41.dc.load_json(ARTWORK)
+        artwork = load_artwork()
     if (edit['baseDatasetVersion'] != bundle['datasetVersion']
             or edit['baseSha256'] != digest
             or artwork['baseDatasetVersion'] != bundle['datasetVersion']
@@ -237,6 +288,7 @@ def build(*, artwork=None, storage_receipt=None):
                         and source.path.startswith('/wiki/File:'))
         license_match = re.fullmatch(r'CC (BY|BY-SA) ([234]\.0)', row['license'])
         if license_match:
+            valid_source = valid_source or valid_flickr_photo(source, row.get('upstreamImage', ''))
             rights = 'licensed'
             license_url = f'https://creativecommons.org/licenses/{license_match[1].lower()}/{license_match[2]}/'
         elif row['license'] == 'CC0 1.0':
@@ -245,6 +297,16 @@ def build(*, artwork=None, storage_receipt=None):
         elif row['license'] == 'Public domain (author release)':
             rights = 'public_domain'
             license_url = row['source']
+        elif row['license'] == 'Public Domain Work':
+            rights = 'public_domain'
+            license_url = 'https://creativecommons.org/publicdomain/mark/1.0/'
+            valid_source = (source.path == '/photos/usdagov/54093424635/'
+                            and row['author'] == 'U.S. Department of Agriculture, Food and Nutrition Service'
+                            and valid_flickr_photo(source, row.get('upstreamImage', '')))
+        elif row['license'] == 'Pexels License':
+            rights = 'licensed'
+            license_url = 'https://www.pexels.com/license/'
+            valid_source = valid_pexels_photo(source, row.get('upstreamImage', ''))
         elif row['license'] == 'Ảnh nhóm tự chụp':
             rights = 'granted'
             license_url = row['permissionEvidence']
@@ -303,8 +365,12 @@ def build(*, artwork=None, storage_receipt=None):
     bundle['datasetVersion'] = edit['candidateDatasetVersion']
     linked = {}
     if storage_receipt is not None:
+        previous_version = artwork.get('previousStorageVersion', bundle['datasetVersion'])
+        if tuple(map(int, previous_version.split('.'))) < tuple(map(int, bundle['datasetVersion'].split('.'))):
+            raise ValueError('GM-47 previous Storage version predates the editorial candidate')
         bundle['datasetVersion'], linked = attach_storage(
-            storage_receipt, available_artwork, dishes, sources, bundle['datasetVersion'],
+            storage_receipt, available_artwork, dishes, sources,
+            previous_version,
             illustration_assets, illustration_groups,
         )
         entities['dataSources'] = list(sources.values())
@@ -368,9 +434,12 @@ def build(*, artwork=None, storage_receipt=None):
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--storage-receipt', type=Path, help='Use a receipt from the public Storage verification step')
+    parser.add_argument('--photo-additions', type=Path, help='Use the reviewed follow-up photos for this release')
     args = parser.parse_args()
+    if args.photo_additions and not args.photo_additions.resolve().is_relative_to(ROOT):
+        parser.error('--photo-additions must be inside the repository to record it in the manifest')
     receipt = gm41.dc.load_json(args.storage_receipt) if args.storage_receipt else None
-    candidate, report = build(storage_receipt=receipt)
+    candidate, report = build(artwork=load_artwork(args.photo_additions), storage_receipt=receipt)
     output = OUTPUT / 'with-storage' if receipt else OUTPUT
     output.mkdir(parents=True, exist_ok=True)
     (output / 'dishes.json').write_bytes(gm41.dc.encoded(candidate))
@@ -387,6 +456,8 @@ if __name__ == '__main__':
                              ', '.join(sorted({review['checkedAt'] for review in row['reviews']})),
                              len(row['prechecks']), ' '.join(review['dishId'] for review in row['prechecks'])))
     paths = (upstream.BUNDLE, upstream.MANIFEST, gm41.SCHEMA, INPUT, ARTWORK, HANDOFF, illustrations.MANIFEST)
+    if args.photo_additions:
+        paths += (args.photo_additions.resolve(),)
     manifest = {
         'schemaVersion': candidate['contractVersion'], 'datasetVersion': candidate['datasetVersion'],
         'usageScope': candidate['usageScope'], 'fixtureOnly': candidate['fixtureOnly'], 'status': 'draft',

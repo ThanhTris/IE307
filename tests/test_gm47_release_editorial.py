@@ -5,6 +5,7 @@ import sys
 from tempfile import TemporaryDirectory
 import unittest
 from unittest.mock import patch
+from urllib.parse import urlsplit
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / 'data-preparation/scripts'))
 
@@ -13,6 +14,67 @@ import gm47_storage_receipt as receipt_cli
 
 
 class ReleaseEditorialTest(unittest.TestCase):
+    def test_followup_adds_only_approved_illustrated_dishes(self):
+        additions = editorial.ARTWORK.with_name('photo-additions-2026-11-28.json')
+        baseline = editorial.load_artwork()
+        extended = editorial.load_artwork(additions)
+        photos = editorial.gm41.dc.load_json(additions)['images']
+        added_ids = {row['dishId'] for row in photos}
+        self.assertEqual(len(photos), 3)
+        self.assertEqual({row['dishId'] for row in extended['images']} -
+                         {row['dishId'] for row in baseline['images']}, added_ids)
+        old_pending = {row['dishId'] for row in baseline['awaitingImage']}
+        self.assertEqual({row['dishId'] for row in extended['awaitingImage']}, old_pending - added_ids)
+        self.assertEqual(len(extended['images']), 139)
+        self.assertEqual(len(extended['awaitingImage']), 114)
+        receipt = {
+            'bucketPublicUrl': 'https://staging.example.invalid/storage/v1/object/public/dish-images',
+            'candidateDatasetVersion': '1.4.6',
+            'checkedAt': '2026-11-28T03:00:00Z',
+            'objects': [{k: asset[k] for k in ('objectKey','sha256')}
+                        for row in photos for asset in (row, row['thumbnail'])],
+        }
+        _, report = editorial.build(artwork=extended, storage_receipt=receipt)
+        self.assertEqual({key for key, row in report['linkedArtwork'].items() if row['kind']=='photo'},
+                         added_ids)
+        with self.assertRaisesRegex(ValueError, 'must be newer'):
+            editorial.build(artwork=extended, storage_receipt={**receipt, 'candidateDatasetVersion': '1.4.5'})
+        broken = deepcopy(extended)
+        flickr = next(row for row in broken['images'] if 'flickr.com' in row['source'])
+        flickr['license'] = 'CC BY-NC 2.0'
+        with self.assertRaisesRegex(ValueError, 'Unsupported GM-47 artwork license'):
+            editorial.build(artwork=broken)
+
+    def test_flickr_requires_exact_origin_photo_id(self):
+        source = 'https://www.flickr.com/photos/51930963@N02/5095256061/'
+        image = 'https://live.staticflickr.com/4087/5095256061_8f6cf0bef2_b.jpg'
+        self.assertTrue(editorial.valid_flickr_photo(urlsplit(source), image))
+        for bad_source, bad_image in (
+            (source+'?other=1', image),
+            (source.replace('www.flickr.com','www.flickr.com.invalid'), image),
+            (source, image.replace('5095256061','5095256062')),
+            (source, image.replace('live.staticflickr.com','images.invalid')),
+        ):
+            self.assertFalse(editorial.valid_flickr_photo(urlsplit(bad_source), bad_image))
+
+    def test_followup_second_batch_validates_pexels_and_usda_evidence(self):
+        additions = editorial.ARTWORK.with_name('photo-additions-batch2-2026-11-28.json')
+        stock = editorial.load_artwork(additions)
+        _, report = editorial.build(artwork=stock)
+        self.assertEqual(report['preparedArtwork'], 147)
+        self.assertEqual(len(report['illustrationPlan']), 106)
+        for license, replacement in (
+            ('Pexels License', ('upstreamImage', 'https://images.pexels.com/photos/12/pexels-photo-12.jpeg')),
+            ('Public Domain Work', ('source', 'https://www.flickr.com/photos/unknown/54093424635/')),
+        ):
+            with self.subTest(license=license):
+                modified = deepcopy(stock)
+                row = next(row for row in modified['images'] if row['license'] == license)
+                key, value = replacement
+                row[key] = value
+                with self.assertRaisesRegex(ValueError, 'Invalid or stale GM-47 artwork evidence'):
+                    editorial.build(artwork=modified)
+
     def test_storage_receipt_only_checks_the_uploaded_batch(self):
         inventory = editorial.gm41.dc.load_json(editorial.ARTWORK)
         approved, unreviewed = inventory['images'][:2]

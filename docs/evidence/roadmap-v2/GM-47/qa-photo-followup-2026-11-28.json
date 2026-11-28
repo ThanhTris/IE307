@@ -1,0 +1,9 @@
+{
+  "engine": "PostgreSQL 17.11, Docker network none",
+  "releaseId": "dish-catalogue-v1:1.4.6:gm18.2",
+  "sha256": "d1f45abf8ed5ee226ec8acef78e95b83c4944982a0e6543ed53a832bc98c3ac3",
+  "testOnly": true,
+  "dishes": 253,
+  "photos": 139,
+  "illustrations": 114
+}

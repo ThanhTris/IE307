@@ -9,7 +9,7 @@ from urllib.error import HTTPError, URLError
 from urllib.request import HTTPRedirectHandler, Request, build_opener
 
 import gm47_illustrations as illustrations
-from gm47_release_editorial import ARTWORK, OUTPUT, build, gm41, storage_bucket, storage_object_key
+from gm47_release_editorial import ARTWORK, OUTPUT, build, gm41, load_artwork, storage_bucket, storage_object_key
 
 
 class NoRedirect(HTTPRedirectHandler):
@@ -46,9 +46,10 @@ def main():
                            help='Verify the exact UUIDs in reviewed-dish-ids.txt from an upload batch')
     parser.add_argument('--with-illustrations', action='store_true',
                         help='Verify shared illustration pairs for the dishes still missing photos')
+    parser.add_argument('--photo-additions', type=Path, help='Verify the reviewed follow-up photos')
     args = parser.parse_args()
     bucket = storage_bucket(args.bucket_url)
-    inventory = gm41.dc.load_json(ARTWORK)
+    inventory = load_artwork(args.photo_additions, ARTWORK)
     _, report = build(artwork=inventory)
     reviewed = {row['dishId']: row for row in inventory['images']}
     if args.dish_list is not None:

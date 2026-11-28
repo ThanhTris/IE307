@@ -1,0 +1,38 @@
+{
+  "type": "gm47-photo-followup-review",
+  "catalogueVersion": "1.4.5",
+  "reviewedAt": "2026-11-28T02:49:19.157Z",
+  "selections": [
+    {
+      "candidateId": "com-bo",
+      "dishId": "864f37d1-97e9-57bc-bce5-351668f703da",
+      "name": "Cơm bò",
+      "source": "https://commons.wikimedia.org/wiki/File:Vietnamese_Beef_Cube_Red_Rice.jpg",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0/",
+      "sha256": "8e95858a99269f712be4b80b1e5fedcc1f09ad1de035ad2b9f4145bddad9dd57",
+      "decision": "approved_photo"
+    },
+    {
+      "candidateId": "oc-len-xao-dua",
+      "dishId": "d3a72985-f514-5073-9299-254ddffef3c9",
+      "name": "Ốc len xào dừa",
+      "source": "https://www.flickr.com/photos/phuongkim1981/12768000434/",
+      "licenseUrl": "https://creativecommons.org/licenses/by/2.0/",
+      "sha256": "ca799dd7f77c7c7d973c78774dd20efd75f2a4efa1f1f2a4498ec15a4eb22406",
+      "decision": "approved_photo"
+    },
+    {
+      "candidateId": "bun-nem-nuong",
+      "dishId": "e6558eda-db0f-5583-bbf5-be4f7da8f2f9",
+      "name": "Bún nem nướng",
+      "source": "https://www.flickr.com/photos/51930963@N02/5095256061/",
+      "licenseUrl": "https://creativecommons.org/licenses/by/2.0/",
+      "sha256": "402e8907ed3eb6b2eab19da434cd2de3a7ea1722a7f1895027fb5caefd219970",
+      "decision": "approved_photo"
+    },
+    {
+      "dishId": "afecb2ef-01f9-58ec-b2ca-586cc7083ed7",
+      "decision": "keep_illustration"
+    }
+  ]
+}

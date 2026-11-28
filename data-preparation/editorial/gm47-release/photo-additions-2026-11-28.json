@@ -1,0 +1,127 @@
+{
+  "baseArtworkSha256": "cede952e8b182ab7619bea21ca1edff9fc0ee0e6f5756ffbcc064f26c7acf8ff",
+  "previousStorageVersion": "1.4.5",
+  "selectionSha256": "dab88424f454c0bc41173e278dfae97868fd4cc8c48a4cc367a4c2357511a3a8",
+  "images": [
+    {
+      "dishId": "864f37d1-97e9-57bc-bce5-351668f703da",
+      "name": "Cơm bò",
+      "source": "https://commons.wikimedia.org/wiki/File:Vietnamese_Beef_Cube_Red_Rice.jpg",
+      "upstreamImage": "https://upload.wikimedia.org/wikipedia/commons/5/57/Vietnamese_Beef_Cube_Red_Rice.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "author": "Ceeseven",
+      "license": "CC BY-SA 3.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0/",
+      "originalWidth": 3264,
+      "originalHeight": 2448,
+      "attribution": "Ảnh: Ceeseven / Wikimedia Commons, CC BY-SA 3.0 (đã cắt khung 4:3 và nén).",
+      "file": "864f37d1-97e9-57bc-bce5-351668f703da.webp",
+      "width": 1000,
+      "height": 750,
+      "bytes": 117954,
+      "sha256": "8e95858a99269f712be4b80b1e5fedcc1f09ad1de035ad2b9f4145bddad9dd57",
+      "checkedAt": "2026-11-28T02:47:27Z",
+      "usageRights": "licensed",
+      "objectKey": "images/864f37d1-97e9-57bc-bce5-351668f703da.webp",
+      "thumbnail": {
+        "objectKey": "thumbnails/864f37d1-97e9-57bc-bce5-351668f703da.webp",
+        "width": 400,
+        "height": 300,
+        "bytes": 19650,
+        "sha256": "402a41dc357689fc01e6c5275a3003610a933f0934b53dc6671d61537886933d"
+      },
+      "aiCheck": {
+        "cameraExif": true,
+        "uploadedAt": "2012-03-16T13:31:53Z",
+        "aiCategory": false,
+        "verdict": "real_photo",
+        "checkedBy": "Tâm",
+        "checkedAt": "2026-11-28T02:49:19.157Z",
+        "provenance": "Cơm đỏ và bò lúc lắc cùng đĩa. Commons ghi ảnh tự chụp năm 2012.",
+        "assistance": {
+          "tool": "Codex",
+          "checkedAt": "2026-11-28T02:47:27Z"
+        }
+      }
+    },
+    {
+      "dishId": "d3a72985-f514-5073-9299-254ddffef3c9",
+      "name": "Ốc len xào dừa",
+      "source": "https://www.flickr.com/photos/phuongkim1981/12768000434/",
+      "upstreamImage": "https://live.staticflickr.com/3762/12768000434_c0d92f92a4_b.jpg",
+      "author": "Coco Kim (phuongkim1981)",
+      "license": "CC BY 2.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by/2.0/",
+      "originalWidth": 768,
+      "originalHeight": 1024,
+      "attribution": "Ảnh: Coco Kim (phuongkim1981) / Flickr, CC BY 2.0 (đã thêm viền và nén).",
+      "file": "d3a72985-f514-5073-9299-254ddffef3c9.webp",
+      "width": 1000,
+      "height": 750,
+      "bytes": 76462,
+      "sha256": "ca799dd7f77c7c7d973c78774dd20efd75f2a4efa1f1f2a4498ec15a4eb22406",
+      "checkedAt": "2026-11-28T02:47:27Z",
+      "usageRights": "licensed",
+      "objectKey": "images/d3a72985-f514-5073-9299-254ddffef3c9.webp",
+      "thumbnail": {
+        "objectKey": "thumbnails/d3a72985-f514-5073-9299-254ddffef3c9.webp",
+        "width": 400,
+        "height": 300,
+        "bytes": 14752,
+        "sha256": "79df31b7996fb34cc0272204571ea20e245db938b6ab0995f4b7bf5da786bc17"
+      },
+      "aiCheck": {
+        "cameraExif": false,
+        "uploadedAt": "2014-02-25T10:41:29Z",
+        "aiCategory": false,
+        "verdict": "real_photo",
+        "checkedBy": "Tâm",
+        "checkedAt": "2026-11-28T02:49:19.157Z",
+        "provenance": "Flickr ghi rõ ốc len xào dừa, chụp năm 2014. Bản 4:3 có viền hai bên để giữ cả đĩa.",
+        "assistance": {
+          "tool": "Codex",
+          "checkedAt": "2026-11-28T02:47:27Z"
+        }
+      }
+    },
+    {
+      "dishId": "e6558eda-db0f-5583-bbf5-be4f7da8f2f9",
+      "name": "Bún nem nướng",
+      "source": "https://www.flickr.com/photos/51930963@N02/5095256061/",
+      "upstreamImage": "https://live.staticflickr.com/4087/5095256061_8f6cf0bef2_b.jpg",
+      "author": "Calgary Reviews",
+      "license": "CC BY 2.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by/2.0/",
+      "originalWidth": 1024,
+      "originalHeight": 768,
+      "attribution": "Ảnh: Calgary Reviews / Flickr, CC BY 2.0 (đã cắt khung 4:3 và nén).",
+      "file": "e6558eda-db0f-5583-bbf5-be4f7da8f2f9.webp",
+      "width": 1000,
+      "height": 750,
+      "bytes": 51692,
+      "sha256": "402e8907ed3eb6b2eab19da434cd2de3a7ea1722a7f1895027fb5caefd219970",
+      "checkedAt": "2026-11-28T02:47:27Z",
+      "usageRights": "licensed",
+      "objectKey": "images/e6558eda-db0f-5583-bbf5-be4f7da8f2f9.webp",
+      "thumbnail": {
+        "objectKey": "thumbnails/e6558eda-db0f-5583-bbf5-be4f7da8f2f9.webp",
+        "width": 400,
+        "height": 300,
+        "bytes": 12544,
+        "sha256": "408fe95f2f7898b5cf4fee6c36f53ae477d963dcd8476636ff834738b3078d3a"
+      },
+      "aiCheck": {
+        "cameraExif": false,
+        "uploadedAt": "2010-10-19T03:45:25Z",
+        "aiCategory": false,
+        "verdict": "real_photo",
+        "checkedBy": "Tâm",
+        "checkedAt": "2026-11-28T02:49:19.157Z",
+        "provenance": "Flickr ghi rõ bún tôm nướng nem nướng. Ảnh có thêm tôm nướng, cần xác nhận biến thể này phù hợp.",
+        "assistance": {
+          "tool": "Codex",
+          "checkedAt": "2026-11-28T02:47:27Z"
+        }
+      }
+    }
+  ]
+}

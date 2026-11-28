@@ -1,0 +1,74 @@
+{
+  "type": "gm47-photo-approval-in-chat",
+  "reviewer": "Tâm",
+  "recordedAt": "2026-11-28T04:34:05Z",
+  "message": "8 ảnh đó đều ổn rồi",
+  "catalogueVersion": "1.4.6",
+  "reviewManifestSha256": "eebdf8cd8582680945098107700f8072168f31a15359d242812e4f5e5f70574b",
+  "selections": [
+    {
+      "candidateId": "bun-quay-1",
+      "dishId": "c0c7bd62-550e-5389-8500-6c86dbdbe369",
+      "name": "Bún quậy",
+      "source": "https://commons.wikimedia.org/wiki/File:B%C3%BAn_qu%E1%BA%ADy_%E1%BB%9F_qu%C3%A1n_Qu%C3%AA_T%C3%B4i_ng%C3%A0y_15_th%C3%A1ng_10_n%C4%83m_2018_(1).jpg",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/",
+      "sha256": "f6ab589978d9a8c73628272ee207a929fa56362a09e54f261d20479c49221fe6"
+    },
+    {
+      "candidateId": "bun-ca-cay-2",
+      "dishId": "eead5c98-e3ac-5f71-a670-c57755d70f0c",
+      "name": "Bún cá cay",
+      "source": "https://commons.wikimedia.org/wiki/File:Nh%C3%A0_m%C3%ACnh_d%E1%BB%8Bp_L%E1%BB%85_2th9n2023_(b%C3%BAn_c%C3%A1_cay_%C4%90%C3%B4ng_H%C3%A0)_(2).jpg",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/",
+      "sha256": "7edabdb7d980d2d0156aac8e32c2d2346dee4e582967606863ed8210023b270f"
+    },
+    {
+      "candidateId": "ga-la-chanh-4",
+      "dishId": "5a5d30ce-49b1-5cab-b6f6-007fde4c33bc",
+      "name": "Gà nướng lá chanh",
+      "source": "https://commons.wikimedia.org/wiki/File:V%C3%B9ng_C%C3%B9a_%E1%BB%9F_Cam_L%E1%BB%99_th5n2023-Ph%C6%B0%C6%A1ng_Gia_Trang_(x%C3%B4i_hoa_c%C3%BAc_v%E1%BB%9Bi_g%C3%A0_C%C3%B9a_n%C6%B0%E1%BB%9Bng_l%C3%A1_chanh)_(4).jpg",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/",
+      "sha256": "1ce698a57da209a28eded699a3e0a2e6b53ffe289266c86d47389f5ac23a46ac"
+    },
+    {
+      "candidateId": "banh-it-ngot",
+      "dishId": "eaa258ec-03f6-5baa-acf4-bf90304269e6",
+      "name": "Bánh ít ngọt",
+      "source": "https://commons.wikimedia.org/wiki/File:Banhit.jpg",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0/",
+      "sha256": "421367d8585e94ec0616a627fd3fa29d5613709a228f5b33f8ce9b9a93640d19"
+    },
+    {
+      "candidateId": "lau-bo-chongqing",
+      "dishId": "a74fa2f3-3757-5cc4-9323-a1e8577fe95e",
+      "name": "Lẩu bò Tứ Xuyên",
+      "source": "https://commons.wikimedia.org/wiki/File:Special_foods_%26_cuisines_in_Chongqing_-_Family_Dinner_2nd.jpg",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/",
+      "sha256": "40e1543d79430be9aa8582b67df467c14546b3f65bcd58dfaefdac8dcca2d42c"
+    },
+    {
+      "candidateId": "com-canh-kho-qua",
+      "dishId": "f9224f9d-f9e2-5b4b-a328-0db75c978c2a",
+      "name": "Cơm canh khổ qua",
+      "source": "https://www.flickr.com/photos/usdagov/54093424635/",
+      "licenseUrl": "https://creativecommons.org/publicdomain/mark/1.0/",
+      "sha256": "45c4f9c5a07c9f7af19f70303f565cae3c45587c62b7cbbe2c7f2786484fdb9c"
+    },
+    {
+      "candidateId": "mi-sui-cao",
+      "dishId": "bb4dceed-9a95-5edf-b6d8-a8d7b46576a8",
+      "name": "Mì sủi cảo",
+      "source": "https://commons.wikimedia.org/wiki/File:Spring_soup_dumpling_noodles_(%E9%99%BD%E6%98%A5%E6%B9%AF%E9%A4%83%E9%BA%B5).jpg",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/",
+      "sha256": "b0635cd1a6890d9ac53a82055bb174b1090f1a762ab8b6a6f3254ec9943b28ff"
+    },
+    {
+      "candidateId": "uc-ga-pexels",
+      "dishId": "b5e9fc23-9da4-55fb-abb5-f31f1775e12c",
+      "name": "Ức gà nướng thảo mộc",
+      "source": "https://www.pexels.com/photo/cooking-chicken-with-herbs-9219082/",
+      "licenseUrl": "https://www.pexels.com/license/",
+      "sha256": "9f44085cd17814487797067f3108efaafaeb1b826d261ca9308891b21147b52c"
+    }
+  ]
+}

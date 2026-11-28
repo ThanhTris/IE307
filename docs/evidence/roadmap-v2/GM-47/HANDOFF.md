@@ -1,5 +1,8 @@
 # GM-47 · Bàn giao bổ sung biên tập
 
+[Lô gộp 11 ảnh đã duyệt và kết quả rà 87 món](PHOTO_BATCH2_2026-11-28.md) ·
+[Lô ba ảnh ban đầu](PHOTO_FOLLOWUP_2026-11-28.md).
+
 ## Lô release v1 ngày 25/11/2026
 
 Nhận [GM-41 bundle 1.3.0](../GM-41/HANDOFF.md) qua #210, gồm 253 UUID, trên target `6cd5e1a`. [Nguồn mô tả](../../../../data-preparation/editorial/gm47-release/descriptions.json) và [hồ sơ ảnh](../../../../data-preparation/editorial/gm47-release/artwork-candidates.json) được ghim vào SHA-256 của bundle đầu vào. Dựng candidate QA `1.4.4` vào `.work/gm47-release-editorial/` cùng manifest, báo cáo và danh sách nguồn mô tả.
